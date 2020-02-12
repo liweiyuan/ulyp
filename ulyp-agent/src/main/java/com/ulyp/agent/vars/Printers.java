@@ -46,8 +46,9 @@ public class Printers {
         }
     }
 
-    private static final ConcurrentMap<Class, Printer> cache = new ConcurrentHashMap<>(1024);
+    private static final ConcurrentMap<Class<?>, Printer> cache = new ConcurrentHashMap<>(1024);
 
+    // TODO printers should tell if they are able to print a paramter, instead of if/else mess
     private Printer printerForClass(Class<?> type) {
 
         return cache.computeIfAbsent(
@@ -58,8 +59,10 @@ public class Printers {
                     } else if (t.getName().equals("java.lang.String")) {
 
                         return StringPrinter.instance;
-                    }
-                    if (isCollection(t)) {
+                    } else if (t == Class.class) {
+
+                        return ClassPrinter.instance;
+                    } else if (isCollection(t)) {
 
                         return CollectionPrinter.instance;
                     } else if (t.getName().startsWith("java.util.concurrent.atomic")) {
@@ -68,17 +71,12 @@ public class Printers {
                     } else if (isNumber(t) || isEnum(t) || isBoolean(t)) {
 
                         return ToStringPrinter.instance;
-                    } else if (hasId(t)) {
-                        return CustomClassPrinter.instance;
                     } else {
+
                         return CustomClassPrinter.instance;
                     }
                 }
         );
-    }
-
-    private boolean hasId(Class<?> ctClass) {
-        return false;
     }
 
     private boolean isCollection(Class<?> ctClass) {
