@@ -28,6 +28,10 @@ Example of running java app with the agent:
 
 	java -javaagent:C:\Work\Tools\ulyp-agent-0.1\ulyp-agent-0.1.jar -Dulyp.packages=com.demo,org.hibernate,org.h2 -Dulyp.start-method=JpaProxyUserRepositoryIntegrationTest.sampleTestCase YourClassName
 
+# Build
+
+./gradlew clean build
+
 # Example (hibernate + h2 database)
 Simple hibernate test recording:
  
