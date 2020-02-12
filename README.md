@@ -32,6 +32,29 @@ Example of running java app with the agent:
 
 ./gradlew clean build
 
+# Simplest example: Fibbonaci numbers
+
+	package com.example;
+
+	public class FibbonaciTest {
+	    @Test
+	    public void test() {
+		Assert.assertEquals(13, compute(7));
+	    }
+
+	    public static int compute(int n) {
+		if (n <= 1)
+		    return n;
+		return compute(n - 1) + compute(n - 2);
+	    }
+	}
+
+In order to activate ulyp the test should be executed with the following additional VM keys: 
+
+	-javaagent:C:\Work\ulyp\ulyp-agent\build\libs\ulyp-agent-0.1.jar -Dulyp.packages=com.example -Dulyp.start-method=FibbonaciTest.compute
+
+![Ulyp UI](https://github.com/0xaa4eb/ulyp/blob/master/images/fibbonaci.png)
+
 # Example (hibernate + h2 database)
 Simple hibernate test recording:
  
@@ -44,6 +67,6 @@ Simple hibernate test recording:
 		dave = repository.save(dave);
 	}
   
-The whole method traces tree could be investigated in the UI:
+The whole method traces tree may be investigated in the UI:
 
 ![Ulyp UI](https://github.com/0xaa4eb/ulyp/blob/master/images/hibernate.png)
