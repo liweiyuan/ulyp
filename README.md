@@ -7,6 +7,27 @@ Please note, the agent has very high performance impact and it's very intrusive.
 # Usage
 Ulyp is bundled with very simple desktop UI written on JavaFX and agent itself.
 
+Agent has the following props which are set as java system properties (via -Dkey=value)
+
+<table border="1">
+<tr>
+		<th>Property</th>
+		<th>Mandatory</th>
+		<th>Default value</th>
+		<th>Example</th>
+		<th>Description</th>
+</tr>
+<tr><td>ulyp.packages</td><td>Yes</td><td>-</td><td>org.hibernate,org.h2</td><td>Packages of classes that agent will instrument</td></tr>
+<tr><td>ulyp.start-method</td><td>Yes</td><td>-</td><td>UserDao.save</td><td>Method where tracing will start</td></tr>
+<tr><td>ulyp.ui-host</td><td>No</td><td>localhost</td><td>localhost</td><td>Target host for UI connection</td></tr>
+<tr><td>ulyp.ui-port</td><td>No</td><td>13991</td><td>13991</td><td>Target port for UI connection</td></tr>
+<tr><td>ulyp.log</td><td>No</td><td>-</td><td>Used as -Dulyp.log</td><td>Turns on agent logging</td></tr>
+</table>
+
+Example of running java app with the agent:
+
+	java -javaagent:C:\Work\Tools\ulyp-agent-0.1\ulyp-agent-0.1.jar -Dulyp.packages=com.demo,org.hibernate,org.h2 -Dulyp.start-method=JpaProxyUserRepositoryIntegrationTest.sampleTestCase YourClassName
+
 # Example (hibernate + h2 database)
 Simple hibernate test recording:
  
