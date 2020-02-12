@@ -70,7 +70,8 @@ public class Tracer {
                         .addAllEnterTraces(traceLog.getEnterTraces())
                         .addAllExitTraces(traceLog.getExitTraces()))
                 .setMainClassName(context.getMainClassName())
-                .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime());
+                .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
+                .setLifetimeMillis(System.currentTimeMillis() - traceLog.getEpochMillisCreatedTime());
 
         context.getTransport().upload(requestBuilder.build());
 

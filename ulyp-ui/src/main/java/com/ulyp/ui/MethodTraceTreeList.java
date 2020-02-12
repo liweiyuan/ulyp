@@ -7,6 +7,7 @@ import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.text.TextFlow;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,10 +33,10 @@ public class MethodTraceTreeList {
         this.onDestroy = onDestroy;
     }
 
-    public void add(MethodTraceTree tree, long time) {
+    public void add(MethodTraceTree tree, Duration lifetime) {
         long stamp = counter++;
 
-        MethodTraceTreeTab tab = new MethodTraceTreeTab(from(tree, stamp, time), tree, tree.getSearchIndex(), stamp);
+        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, stamp, lifetime), tree, tree.getSearchIndex(), stamp);
 
         if (tab.getSearchIndex().contains(textSearch)) {
             addToVisible(tab);
@@ -66,7 +67,7 @@ public class MethodTraceTreeList {
         );
     }
 
-    private Tab from(MethodTraceTree tree, long stamp, long time) {
+    private Tab tabFrom(MethodTraceTree tree, long stamp, Duration lifetime) {
         TreeView<TextFlow> view = new TreeView<>(fromNode(tree.getRoot()));
         view.prefHeightProperty().bind(stackTabs.heightProperty());
         view.prefWidthProperty().bind(stackTabs.widthProperty());
@@ -74,7 +75,7 @@ public class MethodTraceTreeList {
         scrollPane.prefHeightProperty().bind(stackTabs.heightProperty());
         scrollPane.prefWidthProperty().bind(stackTabs.widthProperty());
         return new Tab(
-                tree.getRoot().getMethodInfo().getMethodName() + "(" + stamp + ", " + time + "ms)",
+                tree.getRoot().getMethodInfo().getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
                 scrollPane
         );
     }

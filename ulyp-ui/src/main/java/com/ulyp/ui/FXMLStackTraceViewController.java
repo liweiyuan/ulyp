@@ -15,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -87,7 +88,7 @@ public class FXMLStackTraceViewController implements Initializable {
             processTabPane.getTabs().add(processTab.getTab());
         }
 
-        processTab.getTabList().add(tree, 0);
+        processTab.getTabList().add(tree, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void call(Event event) {

@@ -41,7 +41,8 @@ message TMethodTraceLogUploadRequest {
     repeated TMethodInfo methodInfos = 2;
     string mainClassName = 3;
     int64 createEpochMillis = 4;
-    int64 traceLogId = 5;
+    int64 lifetimeMillis = 5;
+    int64 traceLogId = 6;
 }
 
 message TMethodTraceLogUploadResponse {
