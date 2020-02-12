@@ -7,7 +7,7 @@ Please note, the agent has very high performance impact and it's very intrusive.
 # Usage
 Ulyp is bundled with very simple desktop UI written on JavaFX and agent itself.
 
-# Examples
+# Example (hibernate + h2 database)
 Simple hibernate test recording:
  
  	@Autowired
