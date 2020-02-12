@@ -51,10 +51,6 @@ jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-
-    baseName = 'ulyp-agent'
-
-
 }
 
 shadowJar {
@@ -64,7 +60,7 @@ shadowJar {
     relocate 'com.google', 'shadowed.com.google'
     relocate 'javax.annotation', 'shadowed.javax.annotation'
 
-    archiveName = "${rootProject.name}-${rootProject.version}.jar"
+    archiveName = "${rootProject.name}-agent-${rootProject.version}.jar"
 
     mergeServiceFiles()
 
