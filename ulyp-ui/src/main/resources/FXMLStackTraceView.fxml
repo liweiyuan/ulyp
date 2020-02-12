@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-stylesheet DarkTheme.css?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="com.ulyp.ui.FXMLStackTraceViewController">
+  <children>
+    <MenuBar>
+      <menus>
+        <Menu mnemonicParsing="false" text="Tabs">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#call" text="Clear all" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Settings">
+          <items>
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <HBox spacing="15">
+      <padding><Insets top="7" left="15" right="15" bottom="5"/></padding>
+      <Label text="Search" />
+      <TextField fx:id="searchField" onKeyReleased="#onKeyReleased" prefWidth="200.0"/>
+    </HBox>
+    <TabPane fx:id="processTabPane" VBox.vgrow="ALWAYS" onKeyReleased="#tabPaneKeyPressed" />
+  </children>
+</VBox>

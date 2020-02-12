@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.ulyp.transport";
+option java_outer_classname = "HelloWorldProto";
+
+package ulyp;
+
+service UploadingService {
+
+  rpc Upload (TMethodTraceLogUploadRequest) returns (TMethodTraceLogUploadResponse) {}
+}
+
+message TMethodInfo {
+    int64 id = 1;
+    string className = 2;
+    string methodName = 3;
+    bool returnsSomething = 4;
+}
+
+message TMethodEnterTrace {
+    int64 methodId = 1;
+    int64 callId = 2;
+    repeated string args = 3;
+}
+
+message TMethodExitTrace {
+    int64 methodId = 1;
+    int64 callId = 2;
+    string returnValue = 3;
+    string thrown = 4;
+}
+
+message TMethodTraceLog {
+    repeated TMethodEnterTrace enterTraces = 2;
+    repeated TMethodExitTrace exitTraces = 3;
+}
+
+message TMethodTraceLogUploadRequest {
+    TMethodTraceLog traceLog = 1;
+    repeated TMethodInfo methodInfos = 2;
+    string mainClassName = 3;
+    int64 createEpochMillis = 4;
+    int64 traceLogId = 5;
+}
+
+message TMethodTraceLogUploadResponse {
+
+}
