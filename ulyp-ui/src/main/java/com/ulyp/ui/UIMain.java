@@ -31,6 +31,8 @@ public class UIMain extends Application {
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.setOnCloseRequest(event -> System.exit(0));
+        stage.setTitle("Ulyp");
+
         InputStream iconStream = UIMain.class.getClassLoader().getResourceAsStream("icon.png");
         if (iconStream == null) {
             throw new RuntimeException("Icon not found");
