@@ -46,19 +46,6 @@ public class UIMain extends Application {
     }
 
     private void startStackTracesProcessing() throws IOException {
-        /*
-        context.getConnectionAcceptExecutor().submit(
-                new StackTraceListener(
-                        context.getRequestProcessingExecutor(),
-                        stackTrace -> {
-                            MethodTree tree = MethodTreeUtils.from(stackTrace);
-                            long hash = tree.hashCode();
-                            viewController.onStackTraceUploaded(stackTrace, tree, hash);
-                        }
-                )
-        );
-        */
-
         Server server = ServerBuilder.forPort(UploadingTransport.DEFAULT_ADDRESS.port)
                 .addService(new UploadingServiceImpl(r -> viewController.onMethodTraceTreeUploaded(r)))
                 .build()

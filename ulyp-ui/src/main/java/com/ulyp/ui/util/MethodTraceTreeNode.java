@@ -33,10 +33,6 @@ public class MethodTraceTreeNode {
         return parent;
     }
 
-    public TMethodEnterTrace getMethodEnterTrace() {
-        return methodEnterTrace;
-    }
-
     public long getCallId() {
         return methodEnterTrace.getCallId();
     }

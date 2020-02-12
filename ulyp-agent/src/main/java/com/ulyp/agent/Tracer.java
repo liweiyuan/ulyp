@@ -24,7 +24,7 @@ public class Tracer {
         threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log));
         log.log(() -> "Tracing active, trace log id = " + threadLocalTraceLog.get().getId());
 
-        push(methodDescription, args);
+        onMethodEnter(methodDescription, args);
     }
 
     public void endTracingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
@@ -32,7 +32,7 @@ public class Tracer {
 
         if (traceLog != null) {
             log.log(() -> "May end tracing, trace log id = " + methodDescription.getId());
-            pop(methodDescription, result, thrown);
+            onMethodExit(methodDescription, result, thrown);
 
             if (traceLog.isComplete()) {
                 enqueueToPrinter(threadLocalTraceLog.pop());
@@ -40,23 +40,23 @@ public class Tracer {
         }
     }
 
-    public void push(MethodDescription ctMethodInfo, Object[] args) {
+    public void onMethodEnter(MethodDescription method, Object[] args) {
         MethodTraceLog methodTracesLog = threadLocalTraceLog.get();
         if (methodTracesLog == null) {
             return;
         }
-        String[] argsStrings = PrintersSupport.print(ctMethodInfo.getParamPrinters(), args);
-        methodTracesLog.onMethodEnter(ctMethodInfo.getId(), argsStrings);
+        String[] argsStrings = PrintersSupport.print(method.getParamPrinters(), args);
+        methodTracesLog.onMethodEnter(method.getId(), argsStrings);
     }
 
-    public void pop(MethodDescription ctMethodInfo, Object result, Throwable thrown) {
+    public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
         MethodTraceLog methodTracesLog = threadLocalTraceLog.get();
         if (methodTracesLog == null) return;
 
         methodTracesLog.onMethodExit(
-                ctMethodInfo.getId(),
-                result != null ? ctMethodInfo.getResultPrinter().print(result) : "",
-                thrown != null ? ctMethodInfo.getExceptionPrinter().print(thrown) : "");
+                method.getId(),
+                result != null ? method.getResultPrinter().print(result) : "",
+                thrown != null ? method.getExceptionPrinter().print(thrown) : "");
     }
 
     private void enqueueToPrinter(MethodTraceLog traceLog) {

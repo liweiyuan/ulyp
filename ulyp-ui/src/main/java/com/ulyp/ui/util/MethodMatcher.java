@@ -1,7 +1,5 @@
 package com.ulyp.ui.util;
 
-import com.ulyp.ui.util.StringUtils;
-
 public class MethodMatcher {
     private final String classSimpleName;
     private final String methodSimpleName;

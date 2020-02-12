@@ -17,7 +17,7 @@ public class BbTransformer implements Transformer {
     public static final Log log = context.getLog();
     public static final Settings settings = context.getSettings();
     @SuppressWarnings("unused")
-    public static final Tracer stack = new Tracer(context);
+    public static final Tracer tracer = new Tracer(context);
 
     @Override
     public DynamicType.Builder<?> transform(
@@ -29,7 +29,6 @@ public class BbTransformer implements Transformer {
         if (typeDescription.isInterface()) {
             return builder;
         }
-        /*log.log(() -> "Will instrument the following class " + typeDescription.getName());*/
 
         final AsmVisitorWrapper methodsStartVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
@@ -68,11 +67,7 @@ public class BbTransformer implements Transformer {
                             if (desc.isConstructor() || desc.isTypeInitializer()) {
                                 return false;
                             }
-                            boolean shouldPush = !settings.shouldStartTracing(desc) && settings.shouldStartAndLogArguments(desc);
-                            /*if (shouldPush) {
-                                log.log(() -> "Should LOG upon " + typeDescription.getName() + "." + desc.getActualName());
-                            }*/
-                            return shouldPush;
+                            return !settings.shouldStartTracing(desc) && settings.shouldStartAndLogArguments(desc);
                         }, Advice.to(MethodAdviceWithLoggedArg.class));
 
         return builder
@@ -88,7 +83,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            stack.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
+            tracer.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -96,7 +91,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
-            stack.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
         }
     }
 
@@ -106,7 +101,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            stack.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
+            tracer.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -114,7 +109,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
-            stack.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
         }
     }
 
@@ -124,7 +119,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            stack.push(context.getMethodCache().get(executable), arguments);
+            tracer.onMethodEnter(context.getMethodCache().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -132,7 +127,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Thrown Throwable throwable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            stack.pop(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.onMethodExit(context.getMethodCache().get(executable), returnValue, throwable);
         }
     }
 
@@ -142,7 +137,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            stack.push(context.getMethodCache().get(executable), arguments);
+            tracer.onMethodEnter(context.getMethodCache().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -150,7 +145,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Thrown Throwable throwable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            stack.pop(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.onMethodExit(context.getMethodCache().get(executable), returnValue, throwable);
         }
     }
 }

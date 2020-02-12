@@ -6,7 +6,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import com.ulyp.transport.TMethodTraceLogUploadResponse;
 import com.ulyp.transport.UploadingServiceGrpc;
-import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.netty.NettyChannelBuilder;
