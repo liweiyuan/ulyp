@@ -43,14 +43,14 @@ public class Settings {
     public static Settings fromJavaProperties() {
         String packagesToInstrument = System.getProperty("ulyp.packages");
         if (packagesToInstrument == null) {
-            throw new RuntimeException("Please specify property cs.package");
+            throw new RuntimeException("Please specify property ulyp.packages");
         }
         List<String> packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
         System.out.println("Packages: " + packages);
 
-        String tracedMethods = System.getProperty("ulyp.method");
+        String tracedMethods = System.getProperty("ulyp.start-method");
         if (tracedMethods == null) {
-            throw new RuntimeException("Please specify property cs.method");
+            throw new RuntimeException("Please specify property ulyp.start-method");
         }
         List<MethodMatcher> matchers = Arrays.stream(tracedMethods.split(","))
                 .map(str -> new MethodMatcher(
