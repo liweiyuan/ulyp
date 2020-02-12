@@ -8,9 +8,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 public class UIMain extends Application {
@@ -19,7 +21,7 @@ public class UIMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("FXMLStackTraceView.fxml"));
+        FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("FXMLStackTraceView.fxml"));
         Parent root = loader.load();
 
         this.viewController = loader.getController();
@@ -29,6 +31,11 @@ public class UIMain extends Application {
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.setOnCloseRequest(event -> System.exit(0));
+        InputStream iconStream = UIMain.class.getClassLoader().getResourceAsStream("icon.png");
+        if (iconStream == null) {
+            throw new RuntimeException("Icon not found");
+        }
+        stage.getIcons().add(new Image(iconStream));
         stage.show();
 
         startStackTracesProcessing();
