@@ -15,20 +15,17 @@ public class Settings {
     private UiAddress uiAddress;
     private final List<String> packages;
     private final List<MethodMatcher> methodToStartProfiling;
-    private final List<MethodMatcher> methodsToLogArguments;
     private final boolean loggingTurnedOn;
 
     public Settings(
             UiAddress uiAddress,
             List<String> packages,
             List<MethodMatcher> methodToStartProfiling,
-            List<MethodMatcher> methodsToLogArguments,
             boolean loggingTurnedOn)
     {
         this.uiAddress = uiAddress;
         this.packages = packages;
         this.methodToStartProfiling = methodToStartProfiling;
-        this.methodsToLogArguments = methodsToLogArguments;
         this.loggingTurnedOn = loggingTurnedOn;
     }
 
@@ -71,15 +68,11 @@ public class Settings {
         String uiHost = System.getProperty("ulyp.ui-host", UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty("ulyp.ui-port", String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
-        return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, logArgsExecs, loggingTurnedOn);
+        return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn);
     }
 
     public boolean shouldStartTracing(MethodDescription description) {
         return methodMatches(methodToStartProfiling, description);
-    }
-
-    public boolean shouldStartAndLogArguments(MethodDescription description) {
-        return methodMatches(methodsToLogArguments, description);
     }
 
     public boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {

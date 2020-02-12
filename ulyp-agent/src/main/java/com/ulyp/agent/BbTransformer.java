@@ -36,21 +36,12 @@ public class BbTransformer implements Transformer {
                             if (desc.isConstructor() || desc.isTypeInitializer()) {
                                 return false;
                             }
-                            boolean shouldStart = !settings.shouldStartAndLogArguments(desc) && settings.shouldStartTracing(desc);
+                            boolean shouldStart = settings.shouldStartTracing(desc);
                             if (shouldStart) {
                                 log.log(() -> "Should start tracing at " + typeDescription.getName() + "." + desc.getActualName());
                             }
                             return shouldStart;
-                        }, Advice.to(StartMethodAdvice.class));
-
-        final AsmVisitorWrapper methodsLogStartVisitor =
-                new AsmVisitorWrapper.ForDeclaredMethods()
-                        .method(desc -> {
-                            if (desc.isConstructor() || desc.isTypeInitializer()) {
-                                return false;
-                            }
-                            return settings.shouldStartTracing(desc) && settings.shouldStartAndLogArguments(desc);
-                        }, Advice.to(StartMethodAdviceWithLoggedArg.class));
+                        }, Advice.to(StartTracingMethodAdvice.class));
 
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
@@ -58,26 +49,15 @@ public class BbTransformer implements Transformer {
                             if (desc.isConstructor() || desc.isTypeInitializer()) {
                                 return false;
                             }
-                            return !settings.shouldStartAndLogArguments(desc) && !settings.shouldStartTracing(desc);
+                            return !settings.shouldStartTracing(desc);
                         }, Advice.to(MethodAdvice.class));
-
-        final AsmVisitorWrapper methodsWithLogVisitor =
-                new AsmVisitorWrapper.ForDeclaredMethods()
-                        .method(desc -> {
-                            if (desc.isConstructor() || desc.isTypeInitializer()) {
-                                return false;
-                            }
-                            return !settings.shouldStartTracing(desc) && settings.shouldStartAndLogArguments(desc);
-                        }, Advice.to(MethodAdviceWithLoggedArg.class));
 
         return builder
                 .visit(methodsStartVisitor)
-                .visit(methodsLogStartVisitor)
-                .visit(methodsVisitor)
-                .visit(methodsWithLogVisitor);
+                .visit(methodsVisitor);
     }
 
-    public static class StartMethodAdviceWithLoggedArg {
+    public static class StartTracingMethodAdvice {
 
         @Advice.OnMethodEnter
         static void enter(
@@ -92,42 +72,6 @@ public class BbTransformer implements Transformer {
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
             tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
-        }
-    }
-
-    public static class StartMethodAdvice {
-
-        @Advice.OnMethodEnter
-        static void enter(
-                @Advice.Origin Executable executable,
-                @Advice.AllArguments Object[] arguments) {
-            tracer.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
-        }
-
-        @Advice.OnMethodExit(onThrowable = Throwable.class)
-        static void exit(
-                @Advice.Origin Executable executable,
-                @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
-                @Advice.Thrown Throwable throwable) {
-            tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
-        }
-    }
-
-    public static class MethodAdviceWithLoggedArg {
-
-        @Advice.OnMethodEnter
-        static void enter(
-                @Advice.Origin Executable executable,
-                @Advice.AllArguments Object[] arguments) {
-            tracer.onMethodEnter(context.getMethodCache().get(executable), arguments);
-        }
-
-        @Advice.OnMethodExit(onThrowable = Throwable.class)
-        static void exit(
-                @Advice.Origin Executable executable,
-                @Advice.Thrown Throwable throwable,
-                @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            tracer.onMethodExit(context.getMethodCache().get(executable), returnValue, throwable);
         }
     }
 
