@@ -32,22 +32,22 @@ public class UIMain extends Application {
         stage.setMaximized(true);
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setTitle("Ulyp");
-
         InputStream iconStream = UIMain.class.getClassLoader().getResourceAsStream("icon.png");
         if (iconStream == null) {
             throw new RuntimeException("Icon not found");
         }
         stage.getIcons().add(new Image(iconStream));
+
         stage.show();
 
-        startStackTracesProcessing();
+        startGrpcServer();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    private void startStackTracesProcessing() throws IOException {
+    private void startGrpcServer() throws IOException {
         Server server = ServerBuilder.forPort(UploadingTransport.DEFAULT_ADDRESS.port)
                 .addService(new UploadingServiceImpl(r -> viewController.onMethodTraceTreeUploaded(r)))
                 .build()

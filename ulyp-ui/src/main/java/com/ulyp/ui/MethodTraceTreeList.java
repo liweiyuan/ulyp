@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MethodTreeList {
+public class MethodTraceTreeList {
 
     private long counter = 0;
 
@@ -24,7 +24,7 @@ public class MethodTreeList {
     private final TabList visibleTabs;
     private final TabList invisibleTabs;
 
-    public MethodTreeList(TabPane stackTabs, Consumer<Event> onDestroy) {
+    public MethodTraceTreeList(TabPane stackTabs, Consumer<Event> onDestroy) {
         this.visibleTabs = new TabList(stackTabs.getTabs());
         this.invisibleTabs = new TabList();
 
@@ -35,7 +35,7 @@ public class MethodTreeList {
     public void add(MethodTraceTree tree, long time) {
         long stamp = counter++;
 
-        MethodTreeTab tab = new MethodTreeTab(from(tree, stamp, time), tree, tree.getSearchIndex(), stamp);
+        MethodTraceTreeTab tab = new MethodTraceTreeTab(from(tree, stamp, time), tree, tree.getSearchIndex(), stamp);
 
         if (tab.getSearchIndex().contains(textSearch)) {
             addToVisible(tab);
@@ -44,7 +44,7 @@ public class MethodTreeList {
         }
     }
 
-    private void addToVisible(MethodTreeTab treeTab) {
+    private void addToVisible(MethodTraceTreeTab treeTab) {
         visibleTabs.add(treeTab);
         treeTab.getJavaFxTab().setOnClosed(
                 event -> {
@@ -55,7 +55,7 @@ public class MethodTreeList {
         );
     }
 
-    private void addToInvisible(MethodTreeTab treeTab) {
+    private void addToInvisible(MethodTraceTreeTab treeTab) {
         invisibleTabs.add(treeTab);
         treeTab.getJavaFxTab().setOnClosed(
                 event -> {
@@ -91,9 +91,9 @@ public class MethodTreeList {
     public void applySearch(String strToSearch) {
         this.textSearch = strToSearch;
 
-        List<MethodTreeTab> tabs = new ArrayList<>(visibleTabs.getTabs());
+        List<MethodTraceTreeTab> tabs = new ArrayList<>(visibleTabs.getTabs());
         tabs.addAll(invisibleTabs.getTabs());
-        tabs.sort(Comparator.comparing(MethodTreeTab::getOrderStamp));
+        tabs.sort(Comparator.comparing(MethodTraceTreeTab::getOrderStamp));
 
         visibleTabs.clear();
         invisibleTabs.clear();
@@ -109,7 +109,7 @@ public class MethodTreeList {
     }
 
     public void selectNextLeftTab() {
-        List<MethodTreeTab> tabs = visibleTabs.getTabs();
+        List<MethodTraceTreeTab> tabs = visibleTabs.getTabs();
         for (int i = 1; i < tabs.size(); i++) {
             if (tabs.get(i).getJavaFxTab().isSelected()) {
                 stackTabs.getSelectionModel().select(i - 1);
@@ -119,7 +119,7 @@ public class MethodTreeList {
     }
 
     public void selectNextRightTab() {
-        List<MethodTreeTab> tabs = visibleTabs.getTabs();
+        List<MethodTraceTreeTab> tabs = visibleTabs.getTabs();
         for (int i = 0; i < tabs.size() - 1; i++) {
             if (tabs.get(i).getJavaFxTab().isSelected()) {
                 stackTabs.getSelectionModel().select(i + 1);
@@ -128,8 +128,8 @@ public class MethodTreeList {
         }
     }
 
-    public List<MethodTreeTab> methodTrees() {
-        List<MethodTreeTab> l = new ArrayList<>();
+    public List<MethodTraceTreeTab> methodTrees() {
+        List<MethodTraceTreeTab> l = new ArrayList<>();
         l.addAll(visibleTabs.getTabs());
         l.addAll(invisibleTabs.getTabs());
         return l;

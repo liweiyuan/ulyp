@@ -25,7 +25,7 @@ public class TabList {
         this(new ArrayList<>());
     }
 
-    public void add(MethodTreeTab tab) {
+    public void add(MethodTraceTreeTab tab) {
         tabs.add(tab.getJavaFxTab());
         searchIndices.add(tab.getSearchIndex());
         orderStamps.add(tab.getOrderStamp());
@@ -43,10 +43,10 @@ public class TabList {
         methodTrees.clear();
     }
 
-    public List<MethodTreeTab> getTabs() {
-        List<MethodTreeTab> result = new ArrayList<>();
+    public List<MethodTraceTreeTab> getTabs() {
+        List<MethodTraceTreeTab> result = new ArrayList<>();
         for (int i = 0; i < tabs.size(); i++) {
-            result.add(new MethodTreeTab(
+            result.add(new MethodTraceTreeTab(
                     tabs.get(i),
                     methodTrees.get(i),
                     searchIndices.get(i),

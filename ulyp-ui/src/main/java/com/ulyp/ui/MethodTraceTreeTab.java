@@ -4,14 +4,14 @@ import com.ulyp.ui.util.MethodTraceTree;
 import com.ulyp.ui.util.SearchIndex;
 import javafx.scene.control.Tab;
 
-public class MethodTreeTab {
+public class MethodTraceTreeTab {
 
     private final Tab tab;
     private final MethodTraceTree methodTree;
     private final SearchIndex searchIndex;
     private final long orderStamp;
 
-    public MethodTreeTab(Tab tab, MethodTraceTree methodTree, SearchIndex searchIndex, long orderStamp) {
+    public MethodTraceTreeTab(Tab tab, MethodTraceTree methodTree, SearchIndex searchIndex, long orderStamp) {
         this.tab = tab;
         this.methodTree = methodTree;
         this.searchIndex = searchIndex;
