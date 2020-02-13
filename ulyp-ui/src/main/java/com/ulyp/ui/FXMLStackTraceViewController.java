@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -40,29 +39,6 @@ public class FXMLStackTraceViewController implements Initializable {
     public TextField searchField;
 
     public Map<String, ProcessTab> mainClassToTab = new HashMap<>();
-
-    private static class ProcessTab {
-        private final Tab tab;
-        private final TabPane tabPane;
-        private final MethodTraceTreeList tabList;
-
-        private ProcessTab(TabPane processTabPane, String mainClassName, Consumer<Event> onClose) {
-            this.tab = new Tab(mainClassName);
-            this.tabPane = new TabPane();
-            this.tabList = new MethodTraceTreeList(tabPane, onClose);
-            tab.setContent(tabPane);
-            tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
-            tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
-        }
-
-        public Tab getTab() {
-            return tab;
-        }
-
-        public MethodTraceTreeList getTabList() {
-            return tabList;
-        }
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
