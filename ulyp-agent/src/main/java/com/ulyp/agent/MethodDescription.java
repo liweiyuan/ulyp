@@ -1,9 +1,9 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.util.MethodInfoUtils;
-import com.ulyp.agent.vars.ExceptionPrinter;
-import com.ulyp.agent.vars.Printer;
-import com.ulyp.agent.vars.Printers;
+import com.ulyp.agent.printer.ExceptionPrinter;
+import com.ulyp.agent.printer.Printer;
+import com.ulyp.agent.printer.Printers;
 import com.ulyp.transport.TMethodInfo;
 
 import java.lang.reflect.Executable;
