@@ -98,6 +98,7 @@ public class MethodTraceTreeNode {
         }
         words.add(methodInfo.getMethodName());
         words.add(StringUtils.toSimpleName(methodInfo.getClassName()));
+        words.add(methodInfo.getClassName());
         return new HashSetIndex(words);
     }
 
