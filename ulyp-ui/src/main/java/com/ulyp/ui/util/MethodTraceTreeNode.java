@@ -9,49 +9,42 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class MethodTraceTreeNode {
 
-    private final MethodTraceTreeNode parent;
     private final TMethodEnterTrace methodEnterTrace;
-    private TMethodExitTrace methodExitTrace;
+    private final TMethodExitTrace methodExitTrace;
     private final TMethodInfo methodInfo;
     private final List<MethodTraceTreeNode> children;
-    private String resultCache = null;
+    private final int nodeCount;
 
-    public MethodTraceTreeNode(MethodTraceTreeNode parent, TMethodEnterTrace methodEnterTrace, TMethodInfo methodInfo) {
-        this.parent = parent;
+    MethodTraceTreeNode(
+            TMethodEnterTrace methodEnterTrace,
+            TMethodExitTrace methodExitTrace,
+            TMethodInfo methodInfo,
+            List<MethodTraceTreeNode> children,
+            int nodeCount)
+    {
         this.methodEnterTrace = methodEnterTrace;
+        this.methodExitTrace = methodExitTrace;
         this.methodInfo = methodInfo;
-        this.children = new ArrayList<>();
+        this.children = children;
+        this.nodeCount = nodeCount;
     }
 
-    public MethodTraceTreeNode getParent() {
-        return parent;
-    }
-
-    public long getCallId() {
-        return methodEnterTrace.getCallId();
+    public int getNodeCount() {
+        return nodeCount;
     }
 
     public TMethodInfo getMethodInfo() {
         return methodInfo;
     }
 
-    public void setMethodExitTrace(TMethodExitTrace methodExitTrace) {
-        this.methodExitTrace = methodExitTrace;
-    }
-
     public List<MethodTraceTreeNode> getChildren() {
         return children;
-    }
-
-    public void addChild(MethodTraceTreeNode node) {
-        children.add(node);
     }
 
     public TextFlow toTextFlow() {
@@ -78,7 +71,8 @@ public class MethodTraceTreeNode {
         Text methodParamsText = new Text(builder.toString());
         methodParamsText.setFont(Font.font("monospace"));
 
-        return new TextFlow(returnValueText, methodNameText, methodParamsText);
+        TextFlow textFlow = new TextFlow(returnValueText, methodNameText, methodParamsText);
+        return textFlow;
     }
 
     private void appendArgs(StringBuilder builder) {
@@ -103,22 +97,16 @@ public class MethodTraceTreeNode {
     }
 
     private String getResult() {
-        if (resultCache != null) {
-            return resultCache;
-        }
-
         if (methodInfo == null || methodExitTrace == null) {
-            return resultCache = "???";
+            return "???";
         }
 
         if (!methodExitTrace.getThrown().isEmpty()) {
-            return resultCache = resultToString(methodExitTrace.getThrown());
+            return resultToString(methodExitTrace.getThrown());
         } else {
-            return resultCache = (
-                    methodInfo.getReturnsSomething() && !methodExitTrace.getReturnValue().isEmpty()
+            return methodInfo.getReturnsSomething() && !methodExitTrace.getReturnValue().isEmpty()
                     ? resultToString(methodExitTrace.getReturnValue())
-                    : "void"
-            );
+                    : "void";
         }
     }
 

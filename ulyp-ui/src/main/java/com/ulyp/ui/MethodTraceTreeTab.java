@@ -8,13 +8,11 @@ public class MethodTraceTreeTab {
 
     private final Tab tab;
     private final MethodTraceTree methodTree;
-    private final SearchIndex searchIndex;
     private final long orderStamp;
 
-    public MethodTraceTreeTab(Tab tab, MethodTraceTree methodTree, SearchIndex searchIndex, long orderStamp) {
+    public MethodTraceTreeTab(Tab tab, MethodTraceTree methodTree, long orderStamp) {
         this.tab = tab;
         this.methodTree = methodTree;
-        this.searchIndex = searchIndex;
         this.orderStamp = orderStamp;
     }
 
@@ -22,19 +20,11 @@ public class MethodTraceTreeTab {
         return tab;
     }
 
-    public MethodTraceTree getMethodTree() {
-        return methodTree;
-    }
-
     public SearchIndex getSearchIndex() {
-        return searchIndex;
+        return methodTree.getSearchIndex();
     }
 
     public long getOrderStamp() {
         return orderStamp;
-    }
-
-    public String toShortString() {
-        return "order=" + orderStamp + "\n" + methodTree.toString();
     }
 }

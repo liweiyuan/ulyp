@@ -2,7 +2,7 @@ package com.ulyp.ui;
 
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import com.ulyp.ui.util.MethodTraceTree;
-import com.ulyp.ui.util.MethodTraceTreeUtils;
+import com.ulyp.ui.util.MethodTraceTreeBuilder;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.time.Duration;
@@ -46,10 +47,11 @@ public class FXMLStackTraceViewController implements Initializable {
     }
 
     public void onMethodTraceTreeUploaded(TMethodTraceLogUploadRequest request) {
-        MethodTraceTree methodTraceTree = MethodTraceTreeUtils.from(request);
+        MethodTraceTree methodTraceTree = MethodTraceTreeBuilder.from(request);
         Platform.runLater(() -> addTree(request, methodTraceTree));
     }
 
+    @NotNull
     private ProcessTab getOrCreateProcessTab(String mainClassName) {
         ProcessTab processTab = processesByMainClass.get(mainClassName);
         if (processTab == null) {

@@ -15,15 +15,13 @@ import java.util.function.Consumer;
 
 public class MethodTraceTreeList {
 
-    private long counter = 0;
-
     private final TabPane stackTabs;
     private final Consumer<Event> onDestroy;
-
-    private String textSearch = "";
-
     private final TabList visibleTabs;
     private final TabList invisibleTabs;
+
+    private String textSearch = "";
+    private long idGenerator = 0;
 
     public MethodTraceTreeList(TabPane stackTabs, Consumer<Event> onDestroy) {
         this.visibleTabs = new TabList(stackTabs.getTabs());
@@ -34,9 +32,9 @@ public class MethodTraceTreeList {
     }
 
     public void add(MethodTraceTree tree, Duration lifetime) {
-        long stamp = counter++;
+        long id = idGenerator++;
 
-        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, stamp, lifetime), tree, tree.getSearchIndex(), stamp);
+        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, id, lifetime), tree, id);
 
         if (tab.getSearchIndex().contains(textSearch)) {
             addToVisible(tab);
