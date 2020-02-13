@@ -33,7 +33,7 @@ public class BbTransformer implements Transformer {
         final AsmVisitorWrapper methodsStartVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
                         .method(desc -> {
-                            if (desc.isConstructor() || desc.isTypeInitializer()) {
+                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
                                 return false;
                             }
                             boolean shouldStart = settings.shouldStartTracing(desc);
@@ -46,7 +46,7 @@ public class BbTransformer implements Transformer {
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
                         .method(desc -> {
-                            if (desc.isConstructor() || desc.isTypeInitializer()) {
+                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
                                 return false;
                             }
                             return !settings.shouldStartTracing(desc);
