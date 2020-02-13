@@ -5,6 +5,7 @@ import com.ulyp.transport.TMethodEnterTrace;
 import com.ulyp.transport.TMethodExitTrace;
 import com.ulyp.transport.TMethodInfo;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -79,6 +80,7 @@ public class MethodTraceTreeNode {
         builder.append(")");
 
         Text methodParamsText = new Text(builder.toString());
+        methodParamsText.setFont(Font.font("monospace"));
 
         return new TextFlow(returnValueText, methodNameText, methodParamsText);
     }
