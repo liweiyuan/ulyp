@@ -2,7 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.agent.util.Log;
-import com.ulyp.agent.vars.PrintersSupport;
+import com.ulyp.agent.printer.PrintersSupport;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 
