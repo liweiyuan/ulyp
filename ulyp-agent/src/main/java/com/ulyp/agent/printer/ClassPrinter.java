@@ -1,4 +1,4 @@
-package com.ulyp.agent.vars;
+package com.ulyp.agent.printer;
 
 public class ClassPrinter implements Printer {
 
