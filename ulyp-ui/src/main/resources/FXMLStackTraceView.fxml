@@ -17,7 +17,7 @@
       <menus>
         <Menu mnemonicParsing="false" text="Tabs">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#call" text="Clear all" />
+            <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Clear all" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Settings">

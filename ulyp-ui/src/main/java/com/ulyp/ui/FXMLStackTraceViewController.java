@@ -69,7 +69,7 @@ public class FXMLStackTraceViewController implements Initializable {
         processTab.getTabList().add(tree, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
-    public void clear(Event event) {
+    public void clearAll(Event event) {
         processTabPane.getTabs().clear();
         processesByMainClass.clear();
     }
