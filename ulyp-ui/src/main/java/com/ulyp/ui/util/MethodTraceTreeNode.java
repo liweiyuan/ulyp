@@ -54,10 +54,6 @@ public class MethodTraceTreeNode {
         children.add(node);
     }
 
-    public boolean matchesTo(MethodMatcher methodMatcher) {
-        return methodMatcher.matchesExact(this.methodInfo.getClassName(), this.getMethodInfo().getMethodName());
-    }
-
     public TextFlow toTextFlow() {
         StringBuilder builder = new StringBuilder(1024 * 10);
         builder.append(getResult()).append(" : ");
