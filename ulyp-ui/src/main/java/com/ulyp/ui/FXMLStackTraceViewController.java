@@ -38,7 +38,7 @@ public class FXMLStackTraceViewController implements Initializable {
     @FXML
     public TextField searchField;
 
-    public Map<String, ProcessTab> mainClassToTab = new HashMap<>();
+    public Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -50,31 +50,33 @@ public class FXMLStackTraceViewController implements Initializable {
         Platform.runLater(() -> addTree(request, methodTraceTree));
     }
 
-    private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTree tree) {
-        String mainClassName = request.getMainClassName();
-
-        ProcessTab processTab = mainClassToTab.get(mainClassName);
+    private ProcessTab getOrCreateProcessTab(String mainClassName) {
+        ProcessTab processTab = processesByMainClass.get(mainClassName);
         if (processTab == null) {
             Consumer<Event> closer = ev -> {
-                ProcessTab processTabToRemove = mainClassToTab.remove(mainClassName);
+                ProcessTab processTabToRemove = processesByMainClass.remove(mainClassName);
                 processTabPane.getTabs().remove(processTabToRemove.getTab());
             };
 
-            mainClassToTab.put(request.getMainClassName(), processTab = new ProcessTab(processTabPane, mainClassName, closer));
+            processesByMainClass.put(mainClassName, processTab = new ProcessTab(processTabPane, mainClassName, closer));
             processTabPane.getTabs().add(processTab.getTab());
         }
+        return processTab;
+    }
 
+    private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTree tree) {
+        ProcessTab processTab = getOrCreateProcessTab(request.getMainClassName());
         processTab.getTabList().add(tree, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
-    public void call(Event event) {
+    public void clear(Event event) {
         processTabPane.getTabs().clear();
-        mainClassToTab.clear();
+        processesByMainClass.clear();
     }
 
     public void tabPaneKeyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.A || event.getCode() == KeyCode.D) {
-            for (ProcessTab processTab : mainClassToTab.values()) {
+            for (ProcessTab processTab : processesByMainClass.values()) {
                 if (processTab.getTab().isSelected()) {
                     if (event.getCode() == KeyCode.A) {
                         processTab.getTabList().selectNextLeftTab();
@@ -92,7 +94,7 @@ public class FXMLStackTraceViewController implements Initializable {
             return;
         }
 
-        mainClassToTab.values().forEach(
+        processesByMainClass.values().forEach(
                 processTab -> processTab.getTabList().applySearch(searchField.getText().trim())
         );
     }
