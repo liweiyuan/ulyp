@@ -30,7 +30,7 @@ Example of running java app with the agent:
 
 # Build
 
-./gradlew clean build
+./gradlew clean build test
 
 # Simplest example: Fibbonaci numbers
 
