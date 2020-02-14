@@ -1,11 +1,11 @@
 package com.ulyp.ui;
 
-import com.ulyp.ui.util.MethodTraceTreeNode;
 import com.ulyp.ui.util.MethodTraceTree;
 import com.ulyp.ui.util.SearchIndex;
 import javafx.event.Event;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.text.TextFlow;
+import javafx.scene.control.ScrollPane;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class MethodTraceTreeList {
     }
 
     private Tab tabFrom(MethodTraceTree tree, long stamp, Duration lifetime) {
-        TreeView<TextFlow> view = new TreeView<>(fromNode(tree.getRoot()));
+        TreeView<Node> view = new TreeView<>(MethodTraceTreeRenderer.renderTree(tree));
         view.prefHeightProperty().bind(stackTabs.heightProperty());
         view.prefWidthProperty().bind(stackTabs.widthProperty());
         ScrollPane scrollPane = new ScrollPane(view);
@@ -76,15 +76,6 @@ public class MethodTraceTreeList {
                 tree.getRoot().getMethodInfo().getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
                 scrollPane
         );
-    }
-
-    private TreeItem<TextFlow> fromNode(MethodTraceTreeNode node) {
-        TreeItem<TextFlow> item = new TreeItem<>(node.toTextFlow());
-
-        for (MethodTraceTreeNode child : node.getChildren()) {
-            item.getChildren().add(fromNode(child));
-        }
-        return item;
     }
 
     public void applySearch(String strToSearch) {
@@ -125,12 +116,5 @@ public class MethodTraceTreeList {
                 return;
             }
         }
-    }
-
-    public List<MethodTraceTreeTab> methodTrees() {
-        List<MethodTraceTreeTab> l = new ArrayList<>();
-        l.addAll(visibleTabs.getTabs());
-        l.addAll(invisibleTabs.getTabs());
-        return l;
     }
 }

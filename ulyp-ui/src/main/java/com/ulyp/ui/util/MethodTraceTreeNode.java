@@ -1,14 +1,10 @@
 package com.ulyp.ui.util;
 
-import com.google.protobuf.ProtocolStringList;
 import com.ulyp.transport.TMethodEnterTrace;
 import com.ulyp.transport.TMethodExitTrace;
 import com.ulyp.transport.TMethodInfo;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +27,7 @@ public class MethodTraceTreeNode {
         this.methodEnterTrace = methodEnterTrace;
         this.methodExitTrace = methodExitTrace;
         this.methodInfo = methodInfo;
-        this.children = children;
+        this.children = Collections.unmodifiableList(children);
         this.nodeCount = nodeCount;
     }
 
@@ -43,46 +39,16 @@ public class MethodTraceTreeNode {
         return methodInfo;
     }
 
+    public TMethodEnterTrace getMethodEnterTrace() {
+        return methodEnterTrace;
+    }
+
+    public TMethodExitTrace getMethodExitTrace() {
+        return methodExitTrace;
+    }
+
     public List<MethodTraceTreeNode> getChildren() {
         return children;
-    }
-
-    public TextFlow toTextFlow() {
-        StringBuilder builder = new StringBuilder(1024 * 10);
-        builder.append(getResult()).append(" : ");
-        Text returnValueText = new Text(builder.toString());
-        if (!methodExitTrace.getThrown().isEmpty()) {
-            returnValueText.setFill(Color.RED);
-        }
-
-        builder.setLength(0);
-        builder.append(StringUtils.toSimpleName(methodInfo.getClassName()))
-                .append(".")
-                .append(methodInfo.getMethodName());
-
-        Text methodNameText = new Text(builder.toString());
-        methodNameText.setStyle("-fx-font-weight: bold");
-
-        builder.setLength(0);
-        builder.append("(");
-        appendArgs(builder);
-        builder.append(")");
-
-        Text methodParamsText = new Text(builder.toString());
-        methodParamsText.setFont(Font.font("monospace"));
-
-        TextFlow textFlow = new TextFlow(returnValueText, methodNameText, methodParamsText);
-        return textFlow;
-    }
-
-    private void appendArgs(StringBuilder builder) {
-        ProtocolStringList args = methodEnterTrace.getArgsList();
-        for (int i = 0; i < args.size(); i++) {
-            builder.append(args.get(i));
-            if (i < args.size() - 1) {
-                builder.append(", ");
-            }
-        }
     }
 
     public SearchIndex getSearchIndex() {
@@ -96,16 +62,15 @@ public class MethodTraceTreeNode {
         return new HashSetIndex(words);
     }
 
-    private String getResult() {
-        if (methodInfo == null || methodExitTrace == null) {
-            return "???";
-        }
-
+    /**
+     * @return either printed return value, or printed throwable if something was thrown
+     */
+    public String getResult() {
         if (!methodExitTrace.getThrown().isEmpty()) {
-            return resultToString(methodExitTrace.getThrown());
+            return methodExitTrace.getThrown();
         } else {
             return methodInfo.getReturnsSomething() && !methodExitTrace.getReturnValue().isEmpty()
-                    ? resultToString(methodExitTrace.getReturnValue())
+                    ? methodExitTrace.getReturnValue()
                     : "void";
         }
     }
@@ -116,28 +81,7 @@ public class MethodTraceTreeNode {
         builder.append(methodInfo.getClassName())
                 .append(".")
                 .append(methodInfo.getMethodName());
-        builder.append("(");
-        appendArgs(builder);
-        builder.append(")");
+        builder.append(methodEnterTrace.getArgsList());
         return builder.toString();
-    }
-
-    private String resultToString(Object str) {
-        if (str != null) {
-            String input = (String) str;
-            if (input.length() < 100) {
-                return input;
-            }
-            StringBuilder output = new StringBuilder(input.length() + 10);
-            for (int i = 0; i < input.length(); i++) {
-                if (i % 100 == 0) {
-                    output.append("\n");
-                }
-                output.append(input.charAt(i));
-            }
-            return output.toString();
-        } else {
-            return "null";
-        }
     }
 }
