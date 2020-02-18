@@ -55,16 +55,7 @@ public class Settings {
                         str.substring(str.indexOf('.') + 1))
                 ).collect(Collectors.toList());
 
-        // TODO must be removed as not used
-        String logArgumentsMethods = System.getProperty("ulyp.method2", "0.0");
-        List<MethodMatcher> logArgsExecs = Arrays.stream(logArgumentsMethods.split(","))
-                .map(str -> new MethodMatcher(
-                        str.substring(0, str.indexOf('.')),
-                        str.substring(str.indexOf('.') + 1))
-                ).collect(Collectors.toList());
-
         boolean loggingTurnedOn = System.getProperty("ulyp.log") != null;
-
         String uiHost = System.getProperty("ulyp.ui-host", UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty("ulyp.ui-port", String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
