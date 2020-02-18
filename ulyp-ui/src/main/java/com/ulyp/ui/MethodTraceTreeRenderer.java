@@ -1,8 +1,8 @@
 package com.ulyp.ui;
 
 import com.google.protobuf.ProtocolStringList;
-import com.ulyp.ui.util.MethodTraceTree;
-import com.ulyp.ui.util.MethodTraceTreeNode;
+import com.ulyp.agent.transport.MethodTraceTree;
+import com.ulyp.agent.transport.MethodTraceTreeNode;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

@@ -1,13 +1,11 @@
-package com.ulyp.ui.util;
+package com.ulyp.agent.transport;
 
 import com.ulyp.transport.TMethodEnterTrace;
 import com.ulyp.transport.TMethodExitTrace;
 import com.ulyp.transport.TMethodInfo;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MethodTraceTreeNode {
 
@@ -49,17 +47,6 @@ public class MethodTraceTreeNode {
 
     public List<MethodTraceTreeNode> getChildren() {
         return children;
-    }
-
-    public SearchIndex getSearchIndex() {
-        Set<String> words = new HashSet<>(methodEnterTrace.getArgsList());
-        if (methodInfo.getReturnsSomething() && !methodExitTrace.getReturnValue().isEmpty()) {
-            words.add(methodExitTrace.getReturnValue());
-        }
-        words.add(methodInfo.getMethodName());
-        words.add(StringUtils.toSimpleName(methodInfo.getClassName()));
-        words.add(methodInfo.getClassName());
-        return new HashSetIndex(words);
     }
 
     /**

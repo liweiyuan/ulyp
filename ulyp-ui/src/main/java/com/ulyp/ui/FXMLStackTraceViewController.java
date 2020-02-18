@@ -1,8 +1,8 @@
 package com.ulyp.ui;
 
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import com.ulyp.ui.util.MethodTraceTree;
-import com.ulyp.ui.util.MethodTraceTreeBuilder;
+import com.ulyp.agent.transport.MethodTraceTree;
+import com.ulyp.agent.transport.MethodTraceTreeBuilder;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
