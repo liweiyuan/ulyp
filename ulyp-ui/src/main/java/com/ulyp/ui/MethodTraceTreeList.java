@@ -73,7 +73,7 @@ public class MethodTraceTreeList {
         scrollPane.prefHeightProperty().bind(stackTabs.heightProperty());
         scrollPane.prefWidthProperty().bind(stackTabs.widthProperty());
         return new Tab(
-                tree.getRoot().getMethodInfo().getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
+                tree.getRoot().getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
                 scrollPane
         );
     }

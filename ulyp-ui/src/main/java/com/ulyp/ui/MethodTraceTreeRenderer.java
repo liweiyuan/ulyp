@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.util.List;
+
 public class MethodTraceTreeRenderer {
 
     public static TreeItem<Node> renderTree(MethodTraceTree tree) {
@@ -34,14 +36,14 @@ public class MethodTraceTreeRenderer {
         StringBuilder builder = new StringBuilder(1024 * 10);
         builder.append(trimText(node.getResult())).append(" : ");
         Text returnValueText = new Text(builder.toString());
-        if (!node.getMethodExitTrace().getThrown().isEmpty()) {
+        if (!node.getThrownValue().isEmpty()) {
             returnValueText.setFill(Color.RED);
         }
 
         builder.setLength(0);
-        builder.append(StringUtils.toSimpleName(node.getMethodInfo().getClassName()))
+        builder.append(StringUtils.toSimpleName(node.getClassName()))
                 .append(".")
-                .append(node.getMethodInfo().getMethodName());
+                .append(node.getMethodName());
 
         Text methodNameText = new Text(builder.toString());
         methodNameText.setStyle("-fx-font-weight: bold");
@@ -63,7 +65,7 @@ public class MethodTraceTreeRenderer {
     }
 
     private static void appendArgsTo(MethodTraceTreeNode node, StringBuilder builder) {
-        ProtocolStringList args = node.getMethodEnterTrace().getArgsList();
+        List<String> args = node.getArgs();
         for (int i = 0; i < args.size(); i++) {
             builder.append(args.get(i));
             if (i < args.size() - 1) {

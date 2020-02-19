@@ -2,14 +2,19 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.tests.SeveralMethodsCases;
 import com.ulyp.agent.tests.SimpleCases;
+import com.ulyp.agent.transport.MethodTraceTree;
+import com.ulyp.agent.transport.MethodTraceTreeBuilder;
+import com.ulyp.agent.transport.MethodTraceTreeNode;
 import com.ulyp.transport.TMethodEnterTrace;
 import com.ulyp.transport.TMethodExitTrace;
-import com.ulyp.transport.TMethodInfo;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class InstrumentationCodeTest extends InstrumentationTest {
 
@@ -21,31 +26,16 @@ public class InstrumentationCodeTest extends InstrumentationTest {
     }
 
     @Test
-    public void shouldSendMethodInfos() {
-        TMethodTraceLogUploadRequest request = executeClass(SimpleCases.class, "com.ulyp.agent.tests", "SimpleCases.returnIntWithEmptyParams");
-
-        List<TMethodInfo> methodInfosList = request.getMethodInfosList();
-        TMethodInfo methodInfo = methodInfosList.stream()
-                .filter(info -> info.getClassName().equals(SimpleCases.class.getName()) && info.getMethodName().equals("returnIntWithEmptyParams"))
-                .findAny()
-                .orElseThrow(() -> new AssertionError("Copuld not find method info"));
-
-        Assert.assertEquals(methodInfo.getId(), request.getTraceLog().getEnterTraces(0).getMethodId());
-    }
-
-    @Test
     public void shouldProvideValidTracesForSimpleMethod() {
-        TMethodTraceLogUploadRequest request = executeClass(SimpleCases.class, "com.ulyp.agent.tests", "SimpleCases.returnIntWithEmptyParams");
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                SimpleCases.class,
+                "com.ulyp.agent.tests",
+                "SimpleCases.returnIntWithEmptyParams"
+        ));
 
-        Assert.assertEquals(1, request.getTraceLog().getEnterTracesCount());
-        Assert.assertEquals(1, request.getTraceLog().getExitTracesCount());
-
-        TMethodEnterTrace enterTrace = request.getTraceLog().getEnterTraces(0);
-        Assert.assertEquals(0, enterTrace.getArgsCount());
-
-        TMethodExitTrace exitTraces = request.getTraceLog().getExitTraces(0);
-        Assert.assertEquals("124234232", exitTraces.getReturnValue());
-        Assert.assertEquals("", exitTraces.getThrown());
+        MethodTraceTreeNode root = tree.getRoot();
+        assertThat(root.getChildren(), Matchers.empty());
+//        assertThat();
     }
 
     @Test
