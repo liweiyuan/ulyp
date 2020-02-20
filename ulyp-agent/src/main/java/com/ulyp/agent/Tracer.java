@@ -55,7 +55,7 @@ public class Tracer {
 
         methodTracesLog.onMethodExit(
                 method.getId(),
-                result != null ? method.getResultPrinter().print(result) : "",
+                thrown == null && result != null ? method.getResultPrinter().print(result) : "",
                 thrown != null ? method.getExceptionPrinter().print(thrown) : "");
     }
 
