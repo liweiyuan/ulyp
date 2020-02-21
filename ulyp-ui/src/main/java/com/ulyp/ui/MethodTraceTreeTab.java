@@ -1,8 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.ui.util.HashSetIndex;
 import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.ui.util.SearchIndex;
 import javafx.scene.control.Tab;
 
 public class MethodTraceTreeTab {
@@ -19,10 +17,6 @@ public class MethodTraceTreeTab {
 
     public Tab getJavaFxTab() {
         return tab;
-    }
-
-    public SearchIndex getSearchIndex() {
-        return HashSetIndex.empty();
     }
 
     public long getOrderStamp() {

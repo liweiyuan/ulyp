@@ -1,7 +1,6 @@
 package com.ulyp.ui;
 
 import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.ui.util.SearchIndex;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -36,11 +35,11 @@ public class MethodTraceTreeList {
 
         MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, id, lifetime), tree, id);
 
-        if (tab.getSearchIndex().contains(textSearch)) {
-            addToVisible(tab);
-        } else {
-            addToInvisible(tab);
-        }
+//        if (tab.getSearchIndex().contains(textSearch)) {
+        addToVisible(tab);
+//        } else {
+//            addToInvisible(tab);
+//        }
     }
 
     private void addToVisible(MethodTraceTreeTab treeTab) {
@@ -89,12 +88,12 @@ public class MethodTraceTreeList {
         invisibleTabs.clear();
 
         for (int i = 0; i < tabs.size(); i++) {
-            SearchIndex index = tabs.get(i).getSearchIndex();
-            if (index.contains(strToSearch)) {
+//            SearchIndex index = tabs.get(i).getSearchIndex();
+//            if (index.contains(strToSearch)) {
                 addToVisible(tabs.get(i));
-            } else {
-                addToInvisible(tabs.get(i));
-            }
+//            } else {
+//                addToInvisible(tabs.get(i));
+//            }
         }
     }
 
