@@ -53,18 +53,15 @@ public class UIMain extends Application {
                 .build()
                 .start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    server.shutdownNow();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                server.shutdownNow();
 
-                    server.awaitTermination(1, TimeUnit.MINUTES);
-                } catch (InterruptedException e) {
-                    e.printStackTrace(System.err);
-                }
-
+                server.awaitTermination(1, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                e.printStackTrace(System.err);
             }
-        });
+
+        }));
     }
 }
