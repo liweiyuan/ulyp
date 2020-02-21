@@ -21,8 +21,8 @@ public class Tracer {
     }
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
-        threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log));
-        log.log(() -> "Tracing active, trace log id = " + threadLocalTraceLog.get().getId());
+        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log));
+        log.log(() -> "Tracing active, trace log id = " + traceLog.getId());
 
         onMethodEnter(methodDescription, args);
     }
