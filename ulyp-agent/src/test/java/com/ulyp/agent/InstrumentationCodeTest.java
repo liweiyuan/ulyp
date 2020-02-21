@@ -117,11 +117,11 @@ public class InstrumentationCodeTest extends InstrumentationTest {
     }
 
     @Test
-    public void shouldBeValidForSeveralMethodCalls() {
+    public void shouldBeValidForTwoMethodCalls() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
                 SeveralMethodsCases.class,
                 "com.ulyp.agent.tests",
-                "SeveralMethodsCases.callTwoMethod1s"
+                "SeveralMethodsCases.callTwoMethods"
         ));
 
         MethodTraceTreeNode root = tree.getRoot();
@@ -154,5 +154,18 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(call2.getResult(), is("void"));
         assertThat(call2.getNodeCount(), is(1));
         assertThat(call2.getMethodName(), is("method2"));
+    }
+
+    @Test
+    public void shouldBeValidForManyMethodCalls() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                SeveralMethodsCases.class,
+                "com.ulyp.agent.tests",
+                "SeveralMethodsCases.fibonacci"
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getNodeCount(), is(177));
     }
 }

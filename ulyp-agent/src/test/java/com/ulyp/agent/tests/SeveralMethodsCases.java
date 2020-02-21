@@ -15,15 +15,15 @@ public class SeveralMethodsCases {
         System.out.println("c");
     }
 
-    public int callRequrive(int v) {
+    public int fibonacci(int v) {
         if (v <= 1) {
             return v;
         }
-        return callRequrive(v - 1) + callRequrive(v - 2);
+        return fibonacci(v - 1) + fibonacci(v - 2);
     }
 
     public static void main(String[] args) {
-        SafeCaller.call(() -> new SeveralMethodsCases().callRequrive(3));
+        SafeCaller.call(() -> new SeveralMethodsCases().fibonacci(10));
         SafeCaller.call(() -> new SeveralMethodsCases().callTwoMethods());
     }
 }
