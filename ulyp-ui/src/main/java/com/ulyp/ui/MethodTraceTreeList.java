@@ -65,7 +65,7 @@ public class MethodTraceTreeList {
     }
 
     private Tab tabFrom(MethodTraceTree tree, long stamp, Duration lifetime) {
-        TreeView<Node> view = new TreeView<>(MethodTraceTreeRenderer.renderTree(tree));
+        TreeView<Node> view = new TreeView<>(new MethodTraceTreeFxItem(tree.getRoot(), tree.getRoot().getNodeCount()));
         view.prefHeightProperty().bind(stackTabs.heightProperty());
         view.prefWidthProperty().bind(stackTabs.widthProperty());
         ScrollPane scrollPane = new ScrollPane(view);

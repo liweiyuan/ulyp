@@ -19,19 +19,6 @@ import java.util.List;
 
 public class MethodTraceTreeRenderer {
 
-    public static TreeItem<Node> renderTree(MethodTraceTree tree) {
-        return renderNode(tree.getRoot(), tree.getRoot().getNodeCount());
-    }
-
-    private static TreeItem<Node> renderNode(MethodTraceTreeNode node, int totalNodeCountInTree) {
-        TreeItem<Node> item = new TreeItem<>(render(node, totalNodeCountInTree));
-
-        for (MethodTraceTreeNode child : node.getChildren()) {
-            item.getChildren().add(renderNode(child, totalNodeCountInTree));
-        }
-        return item;
-    }
-
     public static Node render(MethodTraceTreeNode node, int totalNodeCountInTree) {
         StringBuilder builder = new StringBuilder(1024 * 10);
         builder.append(trimText(node.getResult())).append(" : ");

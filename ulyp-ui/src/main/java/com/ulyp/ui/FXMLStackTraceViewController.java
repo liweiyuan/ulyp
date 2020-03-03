@@ -48,6 +48,7 @@ public class FXMLStackTraceViewController implements Initializable {
 
     public void onMethodTraceTreeUploaded(TMethodTraceLogUploadRequest request) {
         MethodTraceTree methodTraceTree = MethodTraceTreeBuilder.from(request);
+        System.out.println("New tree " + methodTraceTree.getRoot().getNodeCount());
         Platform.runLater(() -> addTree(request, methodTraceTree));
     }
 
