@@ -16,17 +16,20 @@ public class Settings {
     private final List<String> packages;
     private final List<MethodMatcher> methodToStartProfiling;
     private final boolean loggingTurnedOn;
+    private final int maxTreeDepth;
 
     public Settings(
             UiAddress uiAddress,
             List<String> packages,
             List<MethodMatcher> methodToStartProfiling,
-            boolean loggingTurnedOn)
+            boolean loggingTurnedOn,
+            int maxTreeDepth)
     {
         this.uiAddress = uiAddress;
         this.packages = packages;
         this.methodToStartProfiling = methodToStartProfiling;
         this.loggingTurnedOn = loggingTurnedOn;
+        this.maxTreeDepth = maxTreeDepth;
     }
 
     public UiAddress getUiAddress() {
@@ -59,7 +62,8 @@ public class Settings {
         String uiHost = System.getProperty("ulyp.ui-host", UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty("ulyp.ui-port", String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
-        return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn);
+        int maxTreeDepth = Integer.parseInt(System.getProperty("ulyp.max-depth", String.valueOf(Integer.MAX_VALUE)));
+        return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn, maxTreeDepth);
     }
 
     public boolean shouldStartTracing(MethodDescription description) {
@@ -142,6 +146,10 @@ public class Settings {
                     "classSimpleName='" + classSimpleName + '\'' +
                     ", methodSimpleName='" + methodSimpleName + '\'' + '}';
         }
+    }
+
+    public int getMaxTreeDepth() {
+        return maxTreeDepth;
     }
 
     public List<String> getPackages() {

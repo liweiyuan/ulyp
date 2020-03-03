@@ -9,6 +9,67 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TestUtil {
 
+    public static class ForkAgentSettings {
+        private Class<?> mainClassName;
+        private String packages;
+        private String startMethod;
+        private int maxDepth = Integer.MAX_VALUE;
+
+        public ForkAgentSettings setPackages(String packages) {
+            this.packages = packages;
+            return this;
+        }
+
+        public ForkAgentSettings setStartMethod(String startMethod) {
+            this.startMethod = startMethod;
+            return this;
+        }
+
+        public ForkAgentSettings setMaxDepth(int maxDepth) {
+            this.maxDepth = maxDepth;
+            return this;
+        }
+
+        public ForkAgentSettings setMainClassName(Class<?> mainClassName) {
+            this.mainClassName = mainClassName;
+            return this;
+        }
+    }
+
+    public static void runClassInSeparateJavaProcess(ForkAgentSettings settings, int uiPort) {
+        File agentJar = findAgentJar();
+        String cp = System.getProperty("java.class.path");
+
+        try {
+            ProcessBuilder ps = new ProcessBuilder(
+                    "java",
+                    "-javaagent:" + agentJar.getAbsolutePath(),
+                    "-Dulyp.packages=" + settings.packages,
+                    "-Dulyp.start-method=" + settings.startMethod,
+                    "-Dulyp.ui-port=" + uiPort,
+                    "-Dulyp.max-depth=" + settings.maxDepth,
+                    "-cp",
+                    cp,
+                    settings.mainClassName.getName()
+            );
+
+            ps.redirectErrorStream(true);
+
+            Process pr = ps.start();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+            int code = pr.waitFor();
+            Assert.assertEquals(0, code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
     public static void runClassInSeparateJavaProcess(Class<?> cl, String packages, String startMethod, int uiPort) {
         File agentJar = findAgentJar();
         String cp = System.getProperty("java.class.path");

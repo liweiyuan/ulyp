@@ -157,6 +157,27 @@ public class InstrumentationCodeTest extends InstrumentationTest {
     }
 
     @Test
+    public void shouldNotLogTracesIfMaxDepthExceeded() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                new TestUtil.ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
+                .setPackages("com.ulyp.agent.tests")
+                .setStartMethod("SeveralMethodsCases.callTwoMethods")
+                .setMaxDepth(1)
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getChildren(), is(empty()));
+        assertThat(root.getArgs(), is(empty()));
+        assertThat(root.getReturnValue(), is(emptyString()));
+        assertThat(root.getThrownValue(), is(emptyString()));
+        assertThat(root.getResult(), is("void"));
+        assertThat(root.getNodeCount(), is(1));
+        assertThat(root.getMethodName(), is("callTwoMethods"));
+        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SeveralMethodsCases"));
+    }
+
+    @Test
     public void shouldBeValidForManyMethodCalls() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
                 SeveralMethodsCases.class,
