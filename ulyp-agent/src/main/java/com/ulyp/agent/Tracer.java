@@ -2,7 +2,6 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.agent.util.Log;
-import com.ulyp.agent.printer.PrintersSupport;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 
@@ -21,7 +20,7 @@ public class Tracer {
     }
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
-        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log));
+        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log, context.getSettings().getMaxTreeDepth()));
         log.log(() -> "Tracing active, trace log id = " + traceLog.getId());
 
         onMethodEnter(methodDescription, args);
@@ -45,8 +44,7 @@ public class Tracer {
         if (methodTracesLog == null) {
             return;
         }
-        String[] argsStrings = PrintersSupport.print(method.getParamPrinters(), args);
-        methodTracesLog.onMethodEnter(method.getId(), argsStrings);
+        methodTracesLog.onMethodEnter(method.getId(), method.getParamPrinters(), args);
     }
 
     public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
