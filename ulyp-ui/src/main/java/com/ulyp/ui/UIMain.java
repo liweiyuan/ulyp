@@ -49,6 +49,7 @@ public class UIMain extends Application {
 
     private void startGrpcServer() throws IOException {
         Server server = ServerBuilder.forPort(UploadingTransport.DEFAULT_ADDRESS.port)
+                .maxInboundMessageSize(128 * 1024 * 1024)
                 .addService(new UploadingServiceImpl(r -> viewController.onMethodTraceTreeUploaded(r)))
                 .build()
                 .start();
