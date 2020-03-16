@@ -1,17 +1,17 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.util.MethodInfoUtils;
-import com.ulyp.agent.printer.ExceptionPrinter;
-import com.ulyp.agent.printer.Printer;
-import com.ulyp.agent.printer.Printers;
+import com.ulyp.core.printers.ThrowablePrinter;
+import com.ulyp.core.printers.ObjectBinaryPrinter;
+import com.ulyp.core.printers.Printers;
 import com.ulyp.transport.TMethodInfo;
 
 import java.lang.reflect.Executable;
 
 public class MethodDescription {
 
-    private final Printer[] paramPrinters;
-    private final Printer resultPrinter;
+    private final ObjectBinaryPrinter[] paramPrinters;
+    private final ObjectBinaryPrinter resultPrinter;
     private final TMethodInfo methodInfo;
 
     public MethodDescription(long id, Executable executable) {
@@ -24,16 +24,12 @@ public class MethodDescription {
         return methodInfo.getId();
     }
 
-    public Printer[] getParamPrinters() {
+    public ObjectBinaryPrinter[] getParamPrinters() {
         return paramPrinters;
     }
 
-    public Printer getResultPrinter() {
+    public ObjectBinaryPrinter getResultPrinter() {
         return resultPrinter;
-    }
-
-    public Printer getExceptionPrinter() {
-        return ExceptionPrinter.instance;
     }
 
     public TMethodInfo getMethodInfo() {

@@ -23,7 +23,7 @@ public class MethodTraceTreeRenderer {
         StringBuilder builder = new StringBuilder(1024 * 10);
         builder.append(trimText(node.getResult())).append(" : ");
         Text returnValueText = new Text(builder.toString());
-        if (!node.getThrownValue().isEmpty()) {
+        if (node.hasThrown()) {
             returnValueText.setFill(Color.RED);
         }
 

@@ -5,6 +5,7 @@ import com.ulyp.agent.util.Log;
 import com.ulyp.agent.util.NoopLog;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.agent.util.SysoutLog;
+import com.ulyp.core.ProcessInfo;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +15,6 @@ public class RuntimeAgentContext implements ProgramContext {
     private final UploadingTransport transport;
     private final MethodDescriptionDictionary methodCache;
     private final Log log;
-    private final String mainClassName;
 
     public RuntimeAgentContext() {
         this.settings = Settings.fromJavaProperties();
@@ -24,8 +24,7 @@ public class RuntimeAgentContext implements ProgramContext {
             this.log = new NoopLog();
         }
         this.methodCache = new MethodDescriptionDictionary(log);
-        this.transport = new UploadingTransport(settings.getUiAddress());
-        this.mainClassName = ProcessUtils.getMainClassName().orElse("Unknown");
+        this.transport = new UploadingTransport(new ProcessInfo(ProcessUtils.getMainClassName()), settings.getUiAddress());
 
         Thread shutdown = new Thread(
                 () -> {
@@ -57,10 +56,5 @@ public class RuntimeAgentContext implements ProgramContext {
     @Override
     public Log getLog() {
         return log;
-    }
-
-    @Override
-    public String getMainClassName() {
-        return mainClassName;
     }
 }

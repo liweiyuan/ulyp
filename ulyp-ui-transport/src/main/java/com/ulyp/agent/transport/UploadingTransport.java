@@ -3,9 +3,9 @@ package com.ulyp.agent.transport;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import com.ulyp.transport.TMethodTraceLogUploadResponse;
-import com.ulyp.transport.UploadingServiceGrpc;
+import com.ulyp.core.MethodTraceLog;
+import com.ulyp.core.ProcessInfo;
+import com.ulyp.transport.*;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.netty.NettyChannelBuilder;
@@ -19,13 +19,16 @@ public final class UploadingTransport {
     public static final UiAddress DEFAULT_ADDRESS = new UiAddress("localhost", 13991);
 
     private final ManagedChannel channel;
+    private final ProcessInfo processInfo;
     private final UploadingServiceGrpc.UploadingServiceFutureStub uploadingServiceFutureStub;
 
     private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Response-processor", true));
     private final Set<Long> traceLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
     private volatile boolean active = true;
 
-    public UploadingTransport(UiAddress address) {
+    public UploadingTransport(ProcessInfo processInfo, UiAddress address) {
+        this.processInfo = processInfo;
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
                 .nameResolverFactory(new DnsNameResolverProvider())
                 .usePlaintext()

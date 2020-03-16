@@ -1,13 +1,13 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.transport.TMethodEnterTrace;
-import com.ulyp.transport.TMethodExitTrace;
-import com.ulyp.transport.TMethodInfo;
-import com.ulyp.transport.TMethodTraceLogUploadRequest;
+import com.ulyp.core.MethodEnterTraceList;
+import com.ulyp.core.MethodExitTraceList;
+import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MethodTraceTreeBuilder {
@@ -20,20 +20,34 @@ public class MethodTraceTreeBuilder {
 
         private final NodeBuilder parent;
         private final TMethodInfo methodInfo;
-        private final TMethodEnterTrace methodEnterTrace;
-        private TMethodExitTrace methodExitTrace;
+        private final long callId;
+        private final List<String> args;
+        private String returnValue;
+        private boolean thrown;
         private final List<NodeBuilder> children = new ArrayList<>();
 
-        private NodeBuilder(NodeBuilder parent, TMethodInfo methodInfo, TMethodEnterTrace methodEnterTrace) {
+        private NodeBuilder(NodeBuilder parent, TMethodInfo methodInfo, SMethodEnterTraceDecoder decoder) {
             this.parent = parent;
             this.methodInfo = methodInfo;
-            this.methodEnterTrace = methodEnterTrace;
+            this.callId = decoder.callId();
+
+            this.args = new ArrayList<>();
+            SMethodEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
+            while (arguments.hasNext()) {
+                arguments = arguments.next();
+                args.add(arguments.value());
+            }
         }
 
-        private NodeBuilder addChild(TMethodInfo methodInfo, TMethodEnterTrace methodEnterTrace) {
-            NodeBuilder child = new NodeBuilder(this, methodInfo, methodEnterTrace);
+        private NodeBuilder addChild(TMethodInfo methodInfo, SMethodEnterTraceDecoder enterTrace) {
+            NodeBuilder child = new NodeBuilder(this, methodInfo, enterTrace);
             children.add(child);
             return child;
+        }
+
+        private void setExitTraceData(SMethodExitTraceDecoder decoder) {
+            this.returnValue = decoder.returnValue();
+            this.thrown = decoder.thrown() == BooleanType.T;
         }
 
         private MethodTraceTreeNode build() {
@@ -46,8 +60,9 @@ public class MethodTraceTreeBuilder {
             }
 
             return new MethodTraceTreeNode(
-                    methodEnterTrace,
-                    methodExitTrace,
+                    args,
+                    returnValue,
+                    thrown,
                     methodInfo,
                     children,
                     nodeCount
@@ -70,21 +85,31 @@ public class MethodTraceTreeBuilder {
         }
 
         private MethodTraceTree build() {
-            List<TMethodEnterTrace> enterTracesList = request.getTraceLog().getEnterTracesList();
-            List<TMethodExitTrace> exitTracesList = request.getTraceLog().getExitTracesList();
+            MethodEnterTraceList enterTracesList = new MethodEnterTraceList(request.getTraceLog().getEnterTraces());
+            MethodExitTraceList exitTracesList = new MethodExitTraceList(request.getTraceLog().getExitTraces());
 
-            NodeBuilder root = new NodeBuilder(null, methodIdToInfoMap.get(enterTracesList.get(0).getMethodId()), enterTracesList.get(0));
+            Iterator<SMethodEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
+            Iterator<SMethodExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
+
+            SMethodEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
+            SMethodExitTraceDecoder currentExitTrace = exitTraceIt.next();
+
+            NodeBuilder root = new NodeBuilder(null, methodIdToInfoMap.get(currentEnterTrace.methodId()), currentEnterTrace);
+            currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
+
             NodeBuilder currentNode = root;
-            int enterIndex = 1, exitIndex = 0;
 
-            for (; enterIndex < enterTracesList.size() || exitIndex < exitTracesList.size(); ) {
-                long currentCallId = currentNode.methodEnterTrace.getCallId();
-                if (exitTracesList.get(exitIndex).getCallId() == currentCallId) {
-                    currentNode.methodExitTrace = exitTracesList.get(exitIndex++);
+            for (; currentEnterTrace != null || currentExitTrace != null; ) {
+                long currentCallId = currentNode.callId;
+                if (currentExitTrace != null && currentExitTrace.callId() == currentCallId) {
+                    currentNode.setExitTraceData(currentExitTrace);
+                    currentExitTrace = exitTraceIt.hasNext() ? exitTraceIt.next() : null;
                     currentNode = currentNode.parent;
+                } else if (currentEnterTrace != null) {
+                    currentNode = currentNode.addChild(methodIdToInfoMap.get(currentEnterTrace.methodId()), currentEnterTrace);
+                    currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
                 } else {
-                    currentNode = currentNode.addChild(methodIdToInfoMap.get(enterTracesList.get(enterIndex).getMethodId()), enterTracesList.get(enterIndex));
-                    enterIndex++;
+                    throw new RuntimeException("Inconsistent state");
                 }
             }
             return new MethodTraceTree(root.build());

@@ -1,4 +1,4 @@
-package com.ulyp.agent.printer;
+package com.ulyp.core.printers;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -10,9 +10,9 @@ import java.util.concurrent.ConcurrentMap;
 public class Printers {
 
     public static final Printers instance = new Printers();
-    private static final Printer[] empty = new Printer[0];
+    private static final ObjectBinaryPrinter[] empty = new ObjectBinaryPrinter[0];
 
-    public Printer[] paramPrinters(Executable method) {
+    public ObjectBinaryPrinter[] paramPrinters(Executable method) {
         try {
             Parameter[] parameters;
             try {
@@ -24,7 +24,7 @@ public class Printers {
             if (parameters.length == 0) {
                 return empty;
             }
-            Printer[] convs = new Printer[parameters.length];
+            ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[parameters.length];
             for (int i = 0; i < convs.length; i++) {
                 convs[i] = printerForClass(parameters[i].getType());
             }
@@ -34,7 +34,7 @@ public class Printers {
         }
     }
 
-    public Printer resultPrinter(Executable method) {
+    public ObjectBinaryPrinter resultPrinter(Executable method) {
         try {
             if (method instanceof Constructor) {
                 return printerForClass(method.getDeclaringClass());
@@ -46,34 +46,34 @@ public class Printers {
         }
     }
 
-    private static final ConcurrentMap<Class<?>, Printer> cache = new ConcurrentHashMap<>(1024);
+    private static final ConcurrentMap<Class<?>, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
     // TODO printers should tell if they are able to print a paramter, instead of if/else mess
-    private Printer printerForClass(Class<?> type) {
+    private ObjectBinaryPrinter printerForClass(Class<?> type) {
 
         return cache.computeIfAbsent(
                 type, t -> {
                     if (t.isPrimitive()) {
 
-                        return ToStringPrinter.instance;
+                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else if (t.getName().equals("java.lang.String")) {
 
-                        return StringPrinter.instance;
+                        return ObjectBinaryPrinterType.STRING.getPrinter();
                     } else if (t == Class.class) {
 
-                        return ClassPrinter.instance;
+                        return ObjectBinaryPrinterType.CLASS.getPrinter();
                     } else if (isCollection(t)) {
 
-                        return CollectionPrinter.instance;
+                        return ObjectBinaryPrinterType.COLLECTION.getPrinter();
                     } else if (t.getName().startsWith("java.util.concurrent.atomic")) {
 
-                        return ToStringPrinter.instance;
+                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else if (isNumber(t) || isEnum(t) || isBoolean(t)) {
 
-                        return ToStringPrinter.instance;
+                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else {
 
-                        return CustomClassPrinter.instance;
+                        return ObjectBinaryPrinterType.IDENTITY.getPrinter();
                     }
                 }
         );

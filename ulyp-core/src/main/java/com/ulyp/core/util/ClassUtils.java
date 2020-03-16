@@ -1,4 +1,4 @@
-package com.ulyp.agent.util;
+package com.ulyp.core.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

@@ -1,6 +1,9 @@
 package com.ulyp.agent.tests;
 
+@SuppressWarnings("all")
 public class SimpleCases {
+
+    private static volatile Object store;
 
     public static class TestObject {}
 
@@ -24,11 +27,16 @@ public class SimpleCases {
         throw new RuntimeException("exception message");
     }
 
+    public void consumesInt(int v) {
+        store = v;
+    }
+
     public static void main(String[] args) {
         SafeCaller.call(() -> new SimpleCases().returnIntWithEmptyParams());
         SafeCaller.call(() -> new SimpleCases().returnTestObjectWithEmptyParams());
         SafeCaller.call(() -> new SimpleCases().returnStringWithEmptyParams());
         SafeCaller.call(() -> new SimpleCases().returnNullObjectWithEmptyParams());
         SafeCaller.call(() -> new SimpleCases().throwsRuntimeException());
+        SafeCaller.call(() -> new SimpleCases().consumesInt(45324));
     }
 }
