@@ -10,10 +10,10 @@ import com.ulyp.transport.TMethodTraceLogUploadRequest;
 public class Tracer {
 
     private final EnhancedThreadLocal<MethodTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
-    private final ProgramContext context;
+    private final AgentContext context;
     private final Log log;
 
-    public Tracer(ProgramContext context) {
+    public Tracer(AgentContext context) {
         this.context = context;
         this.log = context.getLog();
     }

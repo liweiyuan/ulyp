@@ -13,7 +13,7 @@ import java.lang.reflect.Executable;
 
 public class BbTransformer implements Transformer {
 
-    public static final ProgramContext context = new ProgramContext();
+    public static final AgentContext context = new AgentContext();
     public static final Log log = context.getLog();
     public static final Settings settings = context.getSettings();
     @SuppressWarnings("unused")

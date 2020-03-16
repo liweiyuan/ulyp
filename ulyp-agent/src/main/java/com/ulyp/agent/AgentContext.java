@@ -9,14 +9,14 @@ import com.ulyp.core.ProcessInfo;
 
 import java.util.concurrent.TimeUnit;
 
-public class ProgramContext {
+public class AgentContext {
 
     private final Settings settings;
     private final UploadingTransport transport;
     private final MethodDescriptionDictionary methodCache;
     private final Log log;
 
-    public ProgramContext() {
+    public AgentContext() {
         this.settings = Settings.fromJavaProperties();
         if (settings.loggingTurnedOn()) {
             this.log = new SysoutLog();
