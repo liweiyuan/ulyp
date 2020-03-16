@@ -66,7 +66,7 @@ public class Tracer {
         requestBuilder
                 .setTraceLogId(traceLog.getId())
                 .setTraceLog(log)
-                .setMainClassName("?")
+                .setMainClassName(context.getProcessInfo().getMainClassName())
                 .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(System.currentTimeMillis() - traceLog.getEpochMillisCreatedTime());
 

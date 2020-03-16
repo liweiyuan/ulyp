@@ -14,6 +14,7 @@ public class AgentContext {
     private final Settings settings;
     private final UploadingTransport transport;
     private final MethodDescriptionDictionary methodCache;
+    private final ProcessInfo processInfo;
     private final Log log;
 
     public AgentContext() {
@@ -24,7 +25,8 @@ public class AgentContext {
             this.log = new NoopLog();
         }
         this.methodCache = new MethodDescriptionDictionary(log);
-        this.transport = new UploadingTransport(new ProcessInfo(ProcessUtils.getMainClassName()), settings.getUiAddress());
+        this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
+        this.transport = new UploadingTransport(settings.getUiAddress());
 
         Thread shutdown = new Thread(
                 () -> {
@@ -36,6 +38,10 @@ public class AgentContext {
                 }
         );
         Runtime.getRuntime().addShutdownHook(shutdown);
+    }
+
+    public ProcessInfo getProcessInfo() {
+        return processInfo;
     }
 
     public UploadingTransport getTransport() {

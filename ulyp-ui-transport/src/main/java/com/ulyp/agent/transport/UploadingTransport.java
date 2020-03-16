@@ -19,7 +19,6 @@ public final class UploadingTransport {
     public static final UiAddress DEFAULT_ADDRESS = new UiAddress("localhost", 13991);
 
     private final ManagedChannel channel;
-    private final ProcessInfo processInfo;
     private final UploadingServiceGrpc.UploadingServiceFutureStub uploadingServiceFutureStub;
 
     private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Response-processor", true));
@@ -27,8 +26,7 @@ public final class UploadingTransport {
 
     private volatile boolean active = true;
 
-    public UploadingTransport(ProcessInfo processInfo, UiAddress address) {
-        this.processInfo = processInfo;
+    public UploadingTransport(UiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
                 .nameResolverFactory(new DnsNameResolverProvider())
                 .usePlaintext()
