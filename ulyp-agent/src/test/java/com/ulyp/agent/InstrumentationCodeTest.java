@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.TestUtil.ForkAgentSettings;
 import com.ulyp.agent.tests.SeveralMethodsCases;
 import com.ulyp.agent.tests.SimpleCases;
 import com.ulyp.agent.transport.MethodTraceTree;
@@ -8,6 +9,9 @@ import com.ulyp.agent.transport.MethodTraceTreeNode;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -34,7 +38,6 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("'asdvdsa2'"));
-        assertThat(root.getThrownValue(), is(emptyString()));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));
@@ -52,8 +55,8 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
-        assertThat(root.getReturnValue(), is(emptyString()));
-        assertThat(root.getThrownValue(), is(emptyString()));
+        assertThat(root.getReturnValue(), is("null"));
+        assertThat(root.getResult(), is("null"));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
@@ -72,7 +75,6 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("124234232"));
-        assertThat(root.getThrownValue(), is(emptyString()));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
         assertThat(root.getMethodName(), is("returnIntWithEmptyParams"));
@@ -91,7 +93,6 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), matchesRegex("TestObject@\\d+"));
-        assertThat(root.getThrownValue(), is(emptyString()));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
         assertThat(root.getMethodName(), is("returnTestObjectWithEmptyParams"));
@@ -109,8 +110,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
-        assertThat(root.getReturnValue(), is(emptyString()));
-        assertThat(root.getThrownValue(), is("RuntimeException: 'exception message'"));
+        assertThat(root.getReturnValue(), is("RuntimeException: exception message"));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
@@ -128,8 +128,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(root.getChildren(), is(hasSize(2)));
         assertThat(root.getArgs(), is(empty()));
-        assertThat(root.getReturnValue(), is(emptyString()));
-        assertThat(root.getThrownValue(), is(emptyString()));
+        assertThat(root.getReturnValue(), is("null"));
         assertThat(root.getResult(), is("void"));
         assertThat(root.getNodeCount(), is(3));
         assertThat(root.getMethodName(), is("callTwoMethods"));
@@ -139,8 +138,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(call1.getChildren(), is(empty()));
         assertThat(call1.getArgs(), is(empty()));
-        assertThat(call1.getReturnValue(), is(emptyString()));
-        assertThat(call1.getThrownValue(), is(emptyString()));
+        assertThat(call1.getReturnValue(), is("null"));
         assertThat(call1.getResult(), is("void"));
         assertThat(call1.getNodeCount(), is(1));
         assertThat(call1.getMethodName(), is("method1"));
@@ -149,8 +147,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(call2.getChildren(), is(empty()));
         assertThat(call2.getArgs(), is(empty()));
-        assertThat(call2.getReturnValue(), is(emptyString()));
-        assertThat(call2.getThrownValue(), is(emptyString()));
+        assertThat(call2.getReturnValue(), is("null"));
         assertThat(call2.getResult(), is("void"));
         assertThat(call2.getNodeCount(), is(1));
         assertThat(call2.getMethodName(), is("method2"));
@@ -159,7 +156,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
     @Test
     public void shouldNotLogTracesIfMaxDepthExceeded() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new TestUtil.ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
+                new ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
                 .setPackages("com.ulyp.agent.tests")
                 .setStartMethod("SeveralMethodsCases.callTwoMethods")
                 .setMaxDepth(1)
@@ -169,8 +166,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
-        assertThat(root.getReturnValue(), is(emptyString()));
-        assertThat(root.getThrownValue(), is(emptyString()));
+        assertThat(root.getReturnValue(), is("null"));
         assertThat(root.getResult(), is("void"));
         assertThat(root.getNodeCount(), is(1));
         assertThat(root.getMethodName(), is("callTwoMethods"));
@@ -188,5 +184,34 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getNodeCount(), is(177));
+    }
+
+    @Test
+    public void shouldBeValidForIntArgument() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                new ForkAgentSettings().setMainClassName(SimpleCases.class)
+                        .setPackages("com.ulyp.agent.tests")
+                        .setStartMethod("SimpleCases.consumesInt")
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getChildren(), is(empty()));
+        assertThat(root.getArgs(), is(Collections.singletonList("45324")));
+        assertThat(root.getResult(), is("void"));
+    }
+
+    @Test
+    public void shouldBeValidForIntAndStringArgument() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                new ForkAgentSettings().setMainClassName(SimpleCases.class)
+                        .setPackages("com.ulyp.agent.tests")
+                        .setStartMethod("SimpleCases.consumesMapAndEnums")
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getChildren(), is(empty()));
+        assertThat(root.getResult(), is("void"));
     }
 }

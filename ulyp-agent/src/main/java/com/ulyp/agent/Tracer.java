@@ -2,6 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.agent.util.Log;
+import com.ulyp.core.MethodTraceLog;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 
@@ -9,18 +10,16 @@ import com.ulyp.transport.TMethodTraceLogUploadRequest;
 public class Tracer {
 
     private final EnhancedThreadLocal<MethodTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
-    private final ProgramContext context;
-    private final MethodDescriptionDictionary methodCache;
+    private final AgentContext context;
     private final Log log;
 
-    public Tracer(ProgramContext context) {
+    public Tracer(AgentContext context) {
         this.context = context;
-        this.methodCache = context.getMethodCache();
         this.log = context.getLog();
     }
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
-        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(log, context.getSettings().getMaxTreeDepth()));
+        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(context.getSettings().getMaxTreeDepth()));
         log.log(() -> "Tracing active, trace log id = " + traceLog.getId());
 
         onMethodEnter(methodDescription, args);
@@ -51,28 +50,26 @@ public class Tracer {
         MethodTraceLog methodTracesLog = threadLocalTraceLog.get();
         if (methodTracesLog == null) return;
 
-        methodTracesLog.onMethodExit(
-                method.getId(),
-                thrown == null && result != null ? method.getResultPrinter().print(result) : "",
-                thrown != null ? method.getExceptionPrinter().print(thrown) : "");
+        methodTracesLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
     }
 
     private void enqueueToPrinter(MethodTraceLog traceLog) {
+        TMethodTraceLog log = TMethodTraceLog.newBuilder()
+                .setEnterTraces(traceLog.getEnterTraces().toByteString())
+                .setExitTraces(traceLog.getExitTraces().toByteString())
+                .build();
+
         TMethodTraceLogUploadRequest.Builder requestBuilder = TMethodTraceLogUploadRequest.newBuilder();
         for (MethodDescription description : context.getMethodCache().getMethodInfos()) {
             requestBuilder.addMethodInfos(description.getMethodInfo());
         }
         requestBuilder
                 .setTraceLogId(traceLog.getId())
-                .setTraceLog(TMethodTraceLog.newBuilder()
-                        .addAllEnterTraces(traceLog.getEnterTraces())
-                        .addAllExitTraces(traceLog.getExitTraces()))
-                .setMainClassName(context.getMainClassName())
+                .setTraceLog(log)
+                .setMainClassName(context.getProcessInfo().getMainClassName())
                 .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(System.currentTimeMillis() - traceLog.getEpochMillisCreatedTime());
 
         context.getTransport().upload(requestBuilder.build());
-
-        log.log(() -> "Sent trace log UI log with " + traceLog.size() + " traces");
     }
 }

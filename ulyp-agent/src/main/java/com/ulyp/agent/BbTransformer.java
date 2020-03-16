@@ -7,13 +7,14 @@ import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
+import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
 import java.lang.reflect.Executable;
 
 public class BbTransformer implements Transformer {
 
-    public static final ProgramContext context = new RuntimeAgentContext();
+    public static final AgentContext context = new AgentContext();
     public static final Log log = context.getLog();
     public static final Settings settings = context.getSettings();
     @SuppressWarnings("unused")
@@ -32,25 +33,37 @@ public class BbTransformer implements Transformer {
 
         final AsmVisitorWrapper methodsStartVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
-                        .method(desc -> {
-                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
-                                return false;
-                            }
-                            boolean shouldStart = settings.shouldStartTracing(desc);
-                            if (shouldStart) {
-                                log.log(() -> "Should start tracing at " + typeDescription.getName() + "." + desc.getActualName());
-                            }
-                            return shouldStart;
-                        }, Advice.to(StartTracingMethodAdvice.class));
+                        .method(
+                                ElementMatchers
+                                        .isMethod()
+                                        .and(ElementMatchers.not(ElementMatchers.isAbstract()))
+                                        .and(ElementMatchers.not(ElementMatchers.isConstructor()))
+                                        .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
+                                        .and(ElementMatchers.not(ElementMatchers.isToString()))
+                                        .and(desc -> {
+                                            boolean shouldStart = settings.shouldStartTracing(desc);
+                                            if (shouldStart) {
+                                                log.log(() -> "Should start tracing at " + typeDescription.getName() + "." + desc.getActualName());
+                                            }
+                                            return shouldStart;
+                                        }),
+                                Advice.to(StartTracingMethodAdvice.class));
 
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
-                        .method(desc -> {
-                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
-                                return false;
-                            }
-                            return !settings.shouldStartTracing(desc);
-                        }, Advice.to(MethodAdvice.class));
+                        .method(ElementMatchers
+                                        .isMethod()
+                                        .and(ElementMatchers.not(ElementMatchers.isAbstract()))
+                                        .and(ElementMatchers.not(ElementMatchers.isConstructor()))
+                                        .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
+                                        .and(ElementMatchers.not(ElementMatchers.isToString()))
+                                        .and(desc -> {
+                                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
+                                                return false;
+                                            }
+                                            return !settings.shouldStartTracing(desc);
+                                        }),
+                                Advice.to(MethodAdvice.class));
 
         return builder
                 .visit(methodsStartVisitor)

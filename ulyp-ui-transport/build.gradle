@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.vontikov:sbe-generator-plugin:0.0.1"
+    }
+}
+
 plugins {
     id 'java'
     id 'com.google.protobuf' version '0.8.8'
@@ -14,10 +25,12 @@ def protocVersion = protobufVersion
 def grpcVersion = '1.27.0'
 
 dependencies {
+    compile project(':ulyp-core')
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"
     compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.2.1'
+    compile group: 'org.agrona', name: 'agrona', version: '1.4.0'
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
     compileOnly "io.grpc:grpc-netty:${grpcVersion}"
     compile group: 'org.jetbrains', name: 'annotations', version: '18.0.0'

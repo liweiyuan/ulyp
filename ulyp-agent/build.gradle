@@ -21,6 +21,7 @@ def protobufVersion = '3.11.0'
 def protocVersion = protobufVersion
 
 dependencies {
+    compile project(':ulyp-core')
     compile project(':ulyp-ui-transport')
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"

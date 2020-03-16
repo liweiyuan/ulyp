@@ -1,6 +1,7 @@
 rootProject.name = 'ulyp'
 
 include 'ulyp-ui'
+include 'ulyp-core'
 include 'ulyp-agent'
 include 'ulyp-ui-transport'
 

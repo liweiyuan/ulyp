@@ -1,7 +1,5 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.transport.TMethodEnterTrace;
-import com.ulyp.transport.TMethodExitTrace;
 import com.ulyp.transport.TMethodInfo;
 
 import java.util.Collections;
@@ -14,21 +12,22 @@ public class MethodTraceTreeNode {
     private final boolean isVoidMethod;
     private final List<String> args;
     private final String returnValue;
-    private final String thrownValue;
+    private final boolean thrown;
     private final List<MethodTraceTreeNode> children;
     private final int nodeCount;
 
     MethodTraceTreeNode(
-            TMethodEnterTrace methodEnterTrace,
-            TMethodExitTrace methodExitTrace,
+            List<String> args,
+            String returnValue,
+            boolean thrown,
             TMethodInfo methodInfo,
             List<MethodTraceTreeNode> children,
             int nodeCount)
     {
         this.isVoidMethod = !methodInfo.getReturnsSomething();
-        this.args = methodEnterTrace.getArgsList();
-        this.returnValue = methodExitTrace.getReturnValue();
-        this.thrownValue = methodExitTrace.getThrown();
+        this.args = args;
+        this.returnValue = returnValue;
+        this.thrown = thrown;
         this.className = methodInfo.getClassName();
         this.methodName = methodInfo.getMethodName();
 
@@ -56,8 +55,8 @@ public class MethodTraceTreeNode {
         return returnValue;
     }
 
-    public String getThrownValue() {
-        return thrownValue;
+    public boolean hasThrown() {
+        return thrown;
     }
 
     public List<MethodTraceTreeNode> getChildren() {
@@ -68,11 +67,7 @@ public class MethodTraceTreeNode {
      * @return either printed return value, or printed throwable if something was thrown
      */
     public String getResult() {
-        if (!thrownValue.isEmpty()) {
-            return thrownValue;
-        } else {
-            return isVoidMethod ? "void" : returnValue;
-        }
+        return (isVoidMethod && !hasThrown()) ? "void" : returnValue;
     }
 
     public String toString() {
