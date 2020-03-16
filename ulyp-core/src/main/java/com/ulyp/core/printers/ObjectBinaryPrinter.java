@@ -12,5 +12,9 @@ public abstract class ObjectBinaryPrinter {
         return id;
     }
 
+    /**
+     * @param obj object to print
+     * @param out target binary stream to print to
+     */
     public abstract void write(Object obj, BinaryStream out);
 }

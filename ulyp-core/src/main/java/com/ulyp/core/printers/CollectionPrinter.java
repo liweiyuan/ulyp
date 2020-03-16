@@ -19,7 +19,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
             switch (collection.size()) {
                 case 0:
                     out.write(ClassUtils.getSimpleName(collection.getClass()) + "{}");
-                    break;
+                    return;
                 case 1:
                     out.write(ClassUtils.getSimpleName(collection.getClass()) +
                                     "{ " +
@@ -27,6 +27,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
                                     collection.iterator().next() +
                                     " }"
                     );
+                    return;
                 default:
                     out.write(ClassUtils.getSimpleName(collection.getClass()) + "{ " + collection.size() +" }");
             }

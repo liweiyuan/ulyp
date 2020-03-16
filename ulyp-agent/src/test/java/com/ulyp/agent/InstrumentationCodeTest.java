@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.TestUtil.ForkAgentSettings;
 import com.ulyp.agent.tests.SeveralMethodsCases;
 import com.ulyp.agent.tests.SimpleCases;
 import com.ulyp.agent.transport.MethodTraceTree;
@@ -8,6 +9,9 @@ import com.ulyp.agent.transport.MethodTraceTreeNode;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -152,7 +156,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
     @Test
     public void shouldNotLogTracesIfMaxDepthExceeded() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new TestUtil.ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
+                new ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
                 .setPackages("com.ulyp.agent.tests")
                 .setStartMethod("SeveralMethodsCases.callTwoMethods")
                 .setMaxDepth(1)
@@ -180,5 +184,34 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getNodeCount(), is(177));
+    }
+
+    @Test
+    public void shouldBeValidForIntArgument() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                new ForkAgentSettings().setMainClassName(SimpleCases.class)
+                        .setPackages("com.ulyp.agent.tests")
+                        .setStartMethod("SimpleCases.consumesInt")
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getChildren(), is(empty()));
+        assertThat(root.getArgs(), is(Collections.singletonList("45324")));
+        assertThat(root.getResult(), is("void"));
+    }
+
+    @Test
+    public void shouldBeValidForIntAndStringArgument() {
+        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+                new ForkAgentSettings().setMainClassName(SimpleCases.class)
+                        .setPackages("com.ulyp.agent.tests")
+                        .setStartMethod("SimpleCases.consumesMapAndEnums")
+        ));
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getChildren(), is(empty()));
+        assertThat(root.getResult(), is("void"));
     }
 }

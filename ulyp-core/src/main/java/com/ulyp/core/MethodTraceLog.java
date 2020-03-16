@@ -4,6 +4,7 @@ import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodTraceLog {
@@ -39,7 +40,7 @@ public class MethodTraceLog {
         long callId = popCurrentCallId();
         //log.log(() -> "Method exit, log id " + id + ", call id = " + callId + ", method id = " + methodId + ", enter traces cnt = " + enterTraces.size() + ", exit traces cnt = " + exitTraces.size());
 
-        if (callIdsStack.size() < maxDepth) {
+        if (callId >= 0 && callIdsStack.size() < maxDepth) {
             if (thrown == null) {
                 exitTraces.add(callId, methodId, false, resultPrinter, result);
             } else {
