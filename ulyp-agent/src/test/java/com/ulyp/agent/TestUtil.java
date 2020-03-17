@@ -104,11 +104,12 @@ public class TestUtil {
     }
 
     private static File findAgentJar() {
+        // TODO remove version from here
         File userDir = new File(System.getProperty("user.dir"));
         if (userDir.getName().equals("ulyp-agent")) {
-            File file = new File(userDir.getAbsoluteFile() + "/build/libs/ulyp-agent-0.1.jar");
+            File file = new File(userDir.getAbsoluteFile() + "/build/libs/ulyp-agent-0.2.jar");
             if (!file.exists()) {
-                Assert.fail("Could not find ulyp-agent-0.1.jar");
+                Assert.fail("Could not find ulyp-agent-0.2.jar");
             }
             return file;
         } else {
