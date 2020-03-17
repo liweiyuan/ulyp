@@ -12,6 +12,13 @@ import java.util.stream.Collectors;
 
 public class Settings {
 
+    public static final String PACKAGES_PROPERTY = "ulyp.packages";
+    public static final String START_METHOD_PROPERTY = "ulyp.start-method";
+    public static final String LOG_PROPERTY = "ulyp.log";
+    public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
+    public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
+    public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
+
     private UiAddress uiAddress;
     private final List<String> packages;
     private final List<MethodMatcher> methodToStartProfiling;
@@ -41,26 +48,28 @@ public class Settings {
     }
 
     public static Settings fromJavaProperties() {
-        String packagesToInstrument = System.getProperty("ulyp.packages");
+        String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         if (packagesToInstrument == null) {
-            throw new RuntimeException("Please specify property ulyp.packages");
+            throw new RuntimeException("Please specify property " + PACKAGES_PROPERTY + " in the following format -D" + PACKAGES_PROPERTY + "=com.example,org.hibernate");
         }
         List<String> packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
         System.out.println("Packages: " + packages);
 
-        String tracedMethods = System.getProperty("ulyp.start-method");
+        String tracedMethods = System.getProperty(START_METHOD_PROPERTY);
         if (tracedMethods == null) {
-            throw new RuntimeException("Please specify property ulyp.start-method");
+            throw new RuntimeException("Please specify property " + START_METHOD_PROPERTY);
         }
+
+        // TODO validate
         List<MethodMatcher> matchers = Arrays.stream(tracedMethods.split(","))
                 .map(str -> new MethodMatcher(
                         str.substring(0, str.indexOf('.')),
                         str.substring(str.indexOf('.') + 1))
                 ).collect(Collectors.toList());
 
-        boolean loggingTurnedOn = System.getProperty("ulyp.log") != null;
-        String uiHost = System.getProperty("ulyp.ui-host", UploadingTransport.DEFAULT_ADDRESS.hostName);
-        int uiPort = Integer.parseInt(System.getProperty("ulyp.ui-port", String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
+        boolean loggingTurnedOn = System.getProperty(LOG_PROPERTY) != null;
+        String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
+        int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
         int maxTreeDepth = Integer.parseInt(System.getProperty("ulyp.max-depth", String.valueOf(Integer.MAX_VALUE)));
         return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn, maxTreeDepth);
@@ -142,9 +151,7 @@ public class Settings {
 
         @Override
         public String toString() {
-            return "MethodMatcher{" +
-                    "classSimpleName='" + classSimpleName + '\'' +
-                    ", methodSimpleName='" + methodSimpleName + '\'' + '}';
+            return "MethodMatcher{classSimpleName='" + classSimpleName + '\'' + ", methodSimpleName='" + methodSimpleName + '\'' + '}';
         }
     }
 

@@ -1,5 +1,6 @@
-package com.ulyp.agent;
+package com.ulyp.agent.util;
 
+import com.ulyp.agent.Settings;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -9,34 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TestUtil {
 
-    public static class ForkAgentSettings {
-        private Class<?> mainClassName;
-        private String packages;
-        private String startMethod;
-        private int maxDepth = Integer.MAX_VALUE;
-
-        public ForkAgentSettings setPackages(String packages) {
-            this.packages = packages;
-            return this;
-        }
-
-        public ForkAgentSettings setStartMethod(String startMethod) {
-            this.startMethod = startMethod;
-            return this;
-        }
-
-        public ForkAgentSettings setMaxDepth(int maxDepth) {
-            this.maxDepth = maxDepth;
-            return this;
-        }
-
-        public ForkAgentSettings setMainClassName(Class<?> mainClassName) {
-            this.mainClassName = mainClassName;
-            return this;
-        }
-    }
-
-    public static void runClassInSeparateJavaProcess(ForkAgentSettings settings, int uiPort) {
+    public static void runClassInSeparateJavaProcess(AgentSettings settings, int uiPort) {
         File agentJar = findAgentJar();
         String cp = System.getProperty("java.class.path");
 
@@ -44,13 +18,13 @@ public class TestUtil {
             ProcessBuilder ps = new ProcessBuilder(
                     "java",
                     "-javaagent:" + agentJar.getAbsolutePath(),
-                    "-Dulyp.packages=" + settings.packages,
-                    "-Dulyp.start-method=" + settings.startMethod,
-                    "-Dulyp.ui-port=" + uiPort,
-                    "-Dulyp.max-depth=" + settings.maxDepth,
+                    "-D" + Settings.PACKAGES_PROPERTY + "=" + settings.getPackages(),
+                    "-D" + Settings.START_METHOD_PROPERTY + "=" + settings.getStartMethod(),
+                    "-D" + Settings.UI_PORT_PROPERTY + "=" + uiPort,
+                    "-D" + Settings.MAX_DEPTH_PROPERTY + "=" + settings.getMaxDepth(),
                     "-cp",
                     cp,
-                    settings.mainClassName.getName()
+                    settings.getMainClassName().getName()
             );
 
             ps.redirectErrorStream(true);
@@ -78,9 +52,9 @@ public class TestUtil {
             ProcessBuilder ps = new ProcessBuilder(
                     "java",
                     "-javaagent:" + agentJar.getAbsolutePath(),
-                    "-Dulyp.packages=" + packages,
-                    "-Dulyp.start-method=" + startMethod,
-                    "-Dulyp.ui-port=" + uiPort,
+                    "-D" + Settings.PACKAGES_PROPERTY + "=" + packages,
+                    "-D" + Settings.START_METHOD_PROPERTY + "=" + startMethod,
+                    "-D" + Settings.UI_PORT_PROPERTY + "=" + uiPort,
                     "-cp",
                     cp,
                     cl.getName()
@@ -104,16 +78,17 @@ public class TestUtil {
     }
 
     private static File findAgentJar() {
-        // TODO remove version from here
         File userDir = new File(System.getProperty("user.dir"));
         if (userDir.getName().equals("ulyp-agent")) {
+            // TODO remove version from here
             File file = new File(userDir.getAbsoluteFile() + "/build/libs/ulyp-agent-0.2.jar");
             if (!file.exists()) {
                 Assert.fail("Could not find ulyp-agent-0.2.jar");
             }
             return file;
         } else {
-            return null;
+            Assert.fail("Expected current folder to be ulyp-agent, but instead was " + userDir.getName());
+            throw new RuntimeException("Test failed"); // Will not happen, but needed for compiler
         }
     }
 

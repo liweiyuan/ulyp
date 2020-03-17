@@ -1,5 +1,8 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.util.AgentSettings;
+import com.ulyp.agent.util.TestUtil;
+import com.ulyp.agent.util.UIServerStub;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -9,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class AbstractInstrumentationTest {
 
     @NotNull
-    protected TMethodTraceLogUploadRequest executeClass(TestUtil.ForkAgentSettings settings) {
+    protected TMethodTraceLogUploadRequest executeClass(AgentSettings settings) {
         int port = TestUtil.pickEmptyPort();
         UIServerStub stub = new UIServerStub(port);
 
@@ -27,11 +30,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected TMethodTraceLogUploadRequest executeClass(
-            Class<?> cl,
-            String packages,
-            String startMethod)
-    {
+    protected TMethodTraceLogUploadRequest executeClass(Class<?> cl, String packages, String startMethod) {
         int port = TestUtil.pickEmptyPort();
         UIServerStub stub = new UIServerStub(port);
 

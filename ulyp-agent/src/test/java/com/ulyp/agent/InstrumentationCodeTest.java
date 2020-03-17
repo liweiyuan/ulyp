@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.TestUtil.ForkAgentSettings;
+import com.ulyp.agent.util.AgentSettings;
 import com.ulyp.agent.tests.SeveralMethodsTestCases;
 import com.ulyp.agent.tests.SimpleTestCases;
 import com.ulyp.agent.transport.MethodTraceTree;
@@ -155,7 +155,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
     @Test
     public void shouldNotLogTracesIfMaxDepthExceeded() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SeveralMethodsTestCases.class)
+                new AgentSettings().setMainClassName(SeveralMethodsTestCases.class)
                 .setPackages("com.ulyp.agent.tests")
                 .setStartMethod("SeveralMethodsTestCases.callTwoMethods")
                 .setMaxDepth(1)
@@ -173,22 +173,9 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void shouldBeValidForManyMethodCalls() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SeveralMethodsTestCases.class,
-                "com.ulyp.agent.tests",
-                "SeveralMethodsTestCases.fibonacci"
-        ));
-
-        MethodTraceTreeNode root = tree.getRoot();
-
-        assertThat(root.getNodeCount(), is(177));
-    }
-
-    @Test
     public void shouldBeValidForIntArgument() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SimpleTestCases.class)
+                new AgentSettings().setMainClassName(SimpleTestCases.class)
                         .setPackages("com.ulyp.agent.tests")
                         .setStartMethod("SimpleTestCases.consumesInt")
         ));
@@ -203,7 +190,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
     @Test
     public void shouldBeValidForIntAndStringArgument() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SimpleTestCases.class)
+                new AgentSettings().setMainClassName(SimpleTestCases.class)
                         .setPackages("com.ulyp.agent.tests")
                         .setStartMethod("SimpleTestCases.consumesMapAndEnums")
         ));

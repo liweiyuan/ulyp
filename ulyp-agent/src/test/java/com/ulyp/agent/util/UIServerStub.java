@@ -1,4 +1,4 @@
-package com.ulyp.agent;
+package com.ulyp.agent.util;
 
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import com.ulyp.transport.TMethodTraceLogUploadResponse;
