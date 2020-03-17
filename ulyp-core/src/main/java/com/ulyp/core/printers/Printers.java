@@ -65,10 +65,7 @@ public class Printers {
                     } /*else if (isCollection(t)) {
 
                         return ObjectBinaryPrinterType.COLLECTION.getPrinter();
-                    } */else if (t.getName().startsWith("java.util.concurrent.atomic")) {
-
-                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else if (isBoxedNumber(t) || isBoxedBoolean(t)) {
+                    } */else if (isBoxedNumber(t) || isBoxedBoolean(t)) {
 
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else if (isEnum(t)) {
