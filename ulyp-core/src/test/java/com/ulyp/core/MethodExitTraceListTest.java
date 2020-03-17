@@ -17,8 +17,8 @@ public class MethodExitTraceListTest {
 
         MethodExitTraceList list = new MethodExitTraceList();
 
-        list.add(1, 6, true, ObjectBinaryPrinterType.STRING.getPrinter(), "sdfsdfsdfsdf");
-        list.add(2321, 6545, false, ObjectBinaryPrinterType.IDENTITY.getPrinter(), obj);
+        list.add(1, 6, true, ObjectBinaryPrinterType.STRING_PRINTER.getPrinter(), "sdfsdfsdfsdf");
+        list.add(2321, 6545, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter(), obj);
 
         assertEquals(2, list.size());
 

@@ -1,12 +1,12 @@
 package com.ulyp.core.printers;
 
 public enum ObjectBinaryPrinterType {
-    IDENTITY(new IdentityPrinter(0)),
-    CLASS(new ClassPrinter(1)),
-    STRING(new StringPrinter(2)),
+    IDENTITY_PRINTER(new IdentityPrinter(0)),
+    CLASS_PRINTER(new ClassPrinter(1)),
+    STRING_PRINTER(new StringPrinter(2)),
     COLLECTION(new CollectionPrinter(3)),
     TO_STRING_PRINTER(new ToStringPrinter(4)),
-    THROWABLE(new ThrowablePrinter(5)),
+    THROWABLE_PRINTER(new ThrowablePrinter(5)),
     ENUM_PRINTER(new EnumPrinter(6));
 
     private final ObjectBinaryPrinter printer;

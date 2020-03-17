@@ -58,10 +58,10 @@ public class Printers {
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else if (t.getName().equals("java.lang.String")) {
 
-                        return ObjectBinaryPrinterType.STRING.getPrinter();
+                        return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter();
                     } else if (t == Class.class) {
 
-                        return ObjectBinaryPrinterType.CLASS.getPrinter();
+                        return ObjectBinaryPrinterType.CLASS_PRINTER.getPrinter();
                     } /*else if (isCollection(t)) {
 
                         return ObjectBinaryPrinterType.COLLECTION.getPrinter();
@@ -76,7 +76,7 @@ public class Printers {
                         return ObjectBinaryPrinterType.ENUM_PRINTER.getPrinter();
                     } else {
 
-                        return ObjectBinaryPrinterType.IDENTITY.getPrinter();
+                        return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter();
                     }
                 }
         );

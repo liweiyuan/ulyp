@@ -17,11 +17,11 @@ public class MethodEnterTraceListTest {
 
         Object obj = new Object();
 
-        list.add(5344, 231, new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.IDENTITY.getPrinter()}, new Object[] { obj });
+        list.add(5344, 231, new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter()}, new Object[] { obj });
         list.add(65345, 2341, new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter() }, new Object[] {"zasda"});
         list.add(7, 3, new ObjectBinaryPrinter[] {
                 ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter(),
-                ObjectBinaryPrinterType.IDENTITY.getPrinter()},
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter()},
                 new Object[] {"cvxzxda", obj});
 
         assertEquals(3, list.size());

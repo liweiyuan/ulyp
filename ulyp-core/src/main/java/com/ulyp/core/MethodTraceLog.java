@@ -4,7 +4,6 @@ import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodTraceLog {
@@ -44,7 +43,7 @@ public class MethodTraceLog {
             if (thrown == null) {
                 exitTraces.add(callId, methodId, false, resultPrinter, result);
             } else {
-                exitTraces.add(callId, methodId, true, ObjectBinaryPrinterType.THROWABLE.getPrinter(), thrown);
+                exitTraces.add(callId, methodId, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
             }
         }
     }
