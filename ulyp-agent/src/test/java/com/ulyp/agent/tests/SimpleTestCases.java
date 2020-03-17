@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class SimpleCases {
+public class SimpleTestCases {
 
     public enum TestEnum {
         T1("3.4"),
@@ -64,13 +64,13 @@ public class SimpleCases {
     }
 
     public static void main(String[] args) {
-        SafeCaller.call(() -> new SimpleCases().returnIntWithEmptyParams());
-        SafeCaller.call(() -> new SimpleCases().returnTestObjectWithEmptyParams());
-        SafeCaller.call(() -> new SimpleCases().returnStringWithEmptyParams());
-        SafeCaller.call(() -> new SimpleCases().returnNullObjectWithEmptyParams());
-        SafeCaller.call(() -> new SimpleCases().throwsRuntimeException());
-        SafeCaller.call(() -> new SimpleCases().consumesInt(45324));
-        SafeCaller.call(() -> new SimpleCases().consumesIntAndString(45324, "asdasd"));
-        SafeCaller.call(() -> new SimpleCases().consumesMapAndEnums(new HashMap<TestEnum, TestEnum>() {{ put(TestEnum.T1, TestEnum.T2); }}, TestEnum.T1, TestEnum.T2));
+        SafeCaller.call(() -> new SimpleTestCases().returnIntWithEmptyParams());
+        SafeCaller.call(() -> new SimpleTestCases().returnTestObjectWithEmptyParams());
+        SafeCaller.call(() -> new SimpleTestCases().returnStringWithEmptyParams());
+        SafeCaller.call(() -> new SimpleTestCases().returnNullObjectWithEmptyParams());
+        SafeCaller.call(() -> new SimpleTestCases().throwsRuntimeException());
+        SafeCaller.call(() -> new SimpleTestCases().consumesInt(45324));
+        SafeCaller.call(() -> new SimpleTestCases().consumesIntAndString(45324, "asdasd"));
+        SafeCaller.call(() -> new SimpleTestCases().consumesMapAndEnums(new HashMap<TestEnum, TestEnum>() {{ put(TestEnum.T1, TestEnum.T2); }}, TestEnum.T1, TestEnum.T2));
     }
 }

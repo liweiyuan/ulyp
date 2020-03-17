@@ -1,6 +1,6 @@
 package com.ulyp.agent.tests;
 
-public class SeveralMethodsCases {
+public class SeveralMethodsTestCases {
 
     public void callTwoMethods() {
         method1();
@@ -23,7 +23,7 @@ public class SeveralMethodsCases {
     }
 
     public static void main(String[] args) {
-        SafeCaller.call(() -> new SeveralMethodsCases().fibonacci(10));
-        SafeCaller.call(() -> new SeveralMethodsCases().callTwoMethods());
+        SafeCaller.call(() -> new SeveralMethodsTestCases().fibonacci(10));
+        SafeCaller.call(() -> new SeveralMethodsTestCases().callTwoMethods());
     }
 }

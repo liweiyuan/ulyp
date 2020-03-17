@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.BoxedNumbersCases;
+import com.ulyp.agent.tests.BoxedNumbersTestCases;
 import com.ulyp.agent.transport.MethodTraceTree;
 import com.ulyp.agent.transport.MethodTraceTreeBuilder;
 import com.ulyp.agent.transport.MethodTraceTreeNode;
@@ -11,14 +11,14 @@ import java.util.Arrays;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class BoxedNumbersTest extends InstrumentationTest {
+public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testPrimitiveIntSum() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                BoxedNumbersCases.class,
+                BoxedNumbersTestCases.class,
                 "com.ulyp.agent.tests",
-                "BoxedNumbersCases.primitiveIntSum"
+                "BoxedNumbersTestCases.primitiveIntSum"
         ));
 
         MethodTraceTreeNode root = tree.getRoot();
@@ -30,9 +30,9 @@ public class BoxedNumbersTest extends InstrumentationTest {
     @Test
     public void testBoxedIntSum() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                BoxedNumbersCases.class,
+                BoxedNumbersTestCases.class,
                 "com.ulyp.agent.tests",
-                "BoxedNumbersCases.boxedIntSum"
+                "BoxedNumbersTestCases.boxedIntSum"
         ));
 
         MethodTraceTreeNode root = tree.getRoot();
@@ -44,9 +44,9 @@ public class BoxedNumbersTest extends InstrumentationTest {
     @Test
     public void testPrimitiveDoubleSum() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                BoxedNumbersCases.class,
+                BoxedNumbersTestCases.class,
                 "com.ulyp.agent.tests",
-                "BoxedNumbersCases.primitiveDoubleSum"
+                "BoxedNumbersTestCases.primitiveDoubleSum"
         ));
 
         MethodTraceTreeNode root = tree.getRoot();
@@ -58,9 +58,9 @@ public class BoxedNumbersTest extends InstrumentationTest {
     @Test
     public void testBoxedDoubleSum() {
         MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                BoxedNumbersCases.class,
+                BoxedNumbersTestCases.class,
                 "com.ulyp.agent.tests",
-                "BoxedNumbersCases.boxedDoubleSum"
+                "BoxedNumbersTestCases.boxedDoubleSum"
         ));
 
         MethodTraceTreeNode root = tree.getRoot();

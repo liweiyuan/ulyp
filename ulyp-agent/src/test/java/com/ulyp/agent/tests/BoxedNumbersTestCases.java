@@ -1,7 +1,7 @@
 package com.ulyp.agent.tests;
 
 @SuppressWarnings("all")
-public class BoxedNumbersCases {
+public class BoxedNumbersTestCases {
 
     public static volatile Object store0 = new Object();
     public static volatile Object store1 = new Object();
@@ -27,9 +27,9 @@ public class BoxedNumbersCases {
     }
 
     public static void main(String[] args) {
-        SafeCaller.call(() -> new BoxedNumbersCases().boxedIntSum(Integer.valueOf(-234), Integer.valueOf(23)));
-        SafeCaller.call(() -> new BoxedNumbersCases().boxedDoubleSum(Double.valueOf(-5434.23), Double.valueOf(321.2453)));
-        SafeCaller.call(() -> new BoxedNumbersCases().primitiveDoubleSum(Double.valueOf(-5434.23), Double.valueOf(321.2453)));
-        SafeCaller.call(() -> new BoxedNumbersCases().primitiveIntSum(-234, 23));
+        SafeCaller.call(() -> new BoxedNumbersTestCases().boxedIntSum(Integer.valueOf(-234), Integer.valueOf(23)));
+        SafeCaller.call(() -> new BoxedNumbersTestCases().boxedDoubleSum(Double.valueOf(-5434.23), Double.valueOf(321.2453)));
+        SafeCaller.call(() -> new BoxedNumbersTestCases().primitiveDoubleSum(Double.valueOf(-5434.23), Double.valueOf(321.2453)));
+        SafeCaller.call(() -> new BoxedNumbersTestCases().primitiveIntSum(-234, 23));
     }
 }

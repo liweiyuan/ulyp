@@ -6,7 +6,8 @@ import org.junit.Assert;
 
 import java.util.concurrent.TimeUnit;
 
-public class InstrumentationTest {
+public class AbstractInstrumentationTest {
+
     @NotNull
     protected TMethodTraceLogUploadRequest executeClass(TestUtil.ForkAgentSettings settings) {
         int port = TestUtil.pickEmptyPort();
