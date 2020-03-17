@@ -10,7 +10,6 @@ buildscript {
 plugins {
     id 'java'
     id 'application'
-    id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
 mainClassName = 'com.ulyp.ui.UIMain'
@@ -40,13 +39,13 @@ dependencies {
 }
 
 jar.baseName = 'ulyp-ui'
-version = 0.1
 
 sourceSets {
     main.java.srcDirs = ['src/main/java', '../src/main/java']
 }
 
 jar {
+    mainClassName = 'com.ulyp.ui.UIMain'
     archiveName = "ulyp-ui-${rootProject.version}.jar"
 
     manifest {
@@ -63,8 +62,4 @@ jar {
 
 compileJava {
     options.debug = true
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
 }
