@@ -68,7 +68,7 @@ public class Printers {
                     } */else if (t.getName().startsWith("java.util.concurrent.atomic")) {
 
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else if (isNumber(t) || isBoolean(t)) {
+                    } else if (isBoxedNumber(t) || isBoxedBoolean(t)) {
 
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
                     } else if (isEnum(t)) {
@@ -91,7 +91,7 @@ public class Printers {
         return false;
     }
 
-    private boolean isNumber(Class<?> ctClass) {
+    private boolean isBoxedNumber(Class<?> ctClass) {
         if(ctClass == null || ctClass.getName().equals("java.lang.Object")) {
             return false;
         }
@@ -100,7 +100,7 @@ public class Printers {
         if(ctSuperclass != null && ctSuperclass.getName().equals("java.lang.Number")) {
             return true;
         } else {
-            return isNumber(ctSuperclass);
+            return isBoxedNumber(ctSuperclass);
         }
     }
 
@@ -108,7 +108,7 @@ public class Printers {
         return ctClass.isEnum();
     }
 
-    private boolean isBoolean(Class<?> ctClass) {
+    private boolean isBoxedBoolean(Class<?> ctClass) {
         return ctClass.getName().equals("java.lang.Boolean");
     }
 }
