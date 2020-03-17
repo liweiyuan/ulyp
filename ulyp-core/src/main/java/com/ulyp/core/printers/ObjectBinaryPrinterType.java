@@ -6,7 +6,8 @@ public enum ObjectBinaryPrinterType {
     STRING(new StringPrinter(2)),
     COLLECTION(new CollectionPrinter(3)),
     TO_STRING_PRINTER(new ToStringPrinter(4)),
-    THROWABLE(new ThrowablePrinter(5));
+    THROWABLE(new ThrowablePrinter(5)),
+    ENUM_PRINTER(new EnumPrinter(6));
 
     private final ObjectBinaryPrinter printer;
 

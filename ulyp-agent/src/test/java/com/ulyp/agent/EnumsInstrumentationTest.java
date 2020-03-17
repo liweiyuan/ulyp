@@ -7,6 +7,7 @@ import com.ulyp.agent.transport.MethodTraceTreeNode;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
@@ -22,5 +23,7 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(3));
+        assertThat(root.getArgs().get(1), is("T1"));
+        assertThat(root.getArgs().get(2), is("T2"));
     }
 }

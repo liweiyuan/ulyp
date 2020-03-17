@@ -68,9 +68,12 @@ public class Printers {
                     } */else if (t.getName().startsWith("java.util.concurrent.atomic")) {
 
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else if (isNumber(t) || isEnum(t) || isBoolean(t)) {
+                    } else if (isNumber(t) || isBoolean(t)) {
 
                         return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
+                    } else if (isEnum(t)) {
+
+                        return ObjectBinaryPrinterType.ENUM_PRINTER.getPrinter();
                     } else {
 
                         return ObjectBinaryPrinterType.IDENTITY.getPrinter();
