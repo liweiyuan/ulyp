@@ -2,11 +2,11 @@ package com.ulyp.core;
 
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
-import com.ulyp.transport.SMethodEnterTraceDecoder;
-import com.ulyp.transport.SMethodEnterTraceEncoder;
+import com.ulyp.transport.TMethodEnterTraceDecoder;
+import com.ulyp.transport.TMethodEnterTraceEncoder;
 
 // Flexible SBE wrapper
-public class MethodEnterTraceList extends AbstractSbeRecordList<SMethodEnterTraceEncoder, SMethodEnterTraceDecoder> {
+public class MethodEnterTraceList extends AbstractSbeRecordList<TMethodEnterTraceEncoder, TMethodEnterTraceDecoder> {
 
     public MethodEnterTraceList() {
     }
@@ -20,7 +20,7 @@ public class MethodEnterTraceList extends AbstractSbeRecordList<SMethodEnterTrac
             encoder.callId(callId);
             encoder.methodId(methodId);
 
-            SMethodEnterTraceEncoder.ArgumentsEncoder argumentsEncoder = encoder.argumentsCount(args.length);
+            TMethodEnterTraceEncoder.ArgumentsEncoder argumentsEncoder = encoder.argumentsCount(args.length);
 
             for (int i = 0; i < args.length; i++) {
                 argumentsEncoder = argumentsEncoder.next();

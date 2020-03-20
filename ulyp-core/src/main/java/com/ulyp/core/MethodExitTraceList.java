@@ -3,11 +3,11 @@ package com.ulyp.core;
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.SMethodExitTraceDecoder;
-import com.ulyp.transport.SMethodExitTraceEncoder;
+import com.ulyp.transport.TMethodExitTraceDecoder;
+import com.ulyp.transport.TMethodExitTraceEncoder;
 
 // Flexible SBE wrapper
-public class MethodExitTraceList extends AbstractSbeRecordList<SMethodExitTraceEncoder, SMethodExitTraceDecoder> {
+public class MethodExitTraceList extends AbstractSbeRecordList<TMethodExitTraceEncoder, TMethodExitTraceDecoder> {
 
     public MethodExitTraceList() {
     }

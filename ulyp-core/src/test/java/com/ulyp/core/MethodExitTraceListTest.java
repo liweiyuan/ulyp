@@ -2,7 +2,7 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.SMethodExitTraceDecoder;
+import com.ulyp.transport.TMethodExitTraceDecoder;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -22,10 +22,10 @@ public class MethodExitTraceListTest {
 
         assertEquals(2, list.size());
 
-        Iterator<SMethodExitTraceDecoder> it = list.iterator();
+        Iterator<TMethodExitTraceDecoder> it = list.iterator();
         assertTrue(it.hasNext());
 
-        SMethodExitTraceDecoder decoder = it.next();
+        TMethodExitTraceDecoder decoder = it.next();
 
         assertEquals(1, decoder.callId());
         assertEquals(6, decoder.methodId());

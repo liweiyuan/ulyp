@@ -22,33 +22,33 @@ public class MethodTraceTreeBuilder {
     private static class NodeBuilder {
 
         private final NodeBuilder parent;
-        private final SMethodDescriptionDecoder methodDescription;
+        private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
         private final List<String> args;
         private String returnValue;
         private boolean thrown;
         private final List<NodeBuilder> children = new ArrayList<>();
 
-        private NodeBuilder(NodeBuilder parent, SMethodDescriptionDecoder methodDescription, SMethodEnterTraceDecoder decoder) {
+        private NodeBuilder(NodeBuilder parent, TMethodDescriptionDecoder methodDescription, TMethodEnterTraceDecoder decoder) {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
 
             this.args = new ArrayList<>();
-            SMethodEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
+            TMethodEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
             while (arguments.hasNext()) {
                 arguments = arguments.next();
                 args.add(arguments.value());
             }
         }
 
-        private NodeBuilder addChild(SMethodDescriptionDecoder methodDescription, SMethodEnterTraceDecoder enterTrace) {
+        private NodeBuilder addChild(TMethodDescriptionDecoder methodDescription, TMethodEnterTraceDecoder enterTrace) {
             NodeBuilder child = new NodeBuilder(this, methodDescription, enterTrace);
             children.add(child);
             return child;
         }
 
-        private void setExitTraceData(SMethodExitTraceDecoder decoder) {
+        private void setExitTraceData(TMethodExitTraceDecoder decoder) {
             this.returnValue = decoder.returnValue();
             this.thrown = decoder.thrown() == BooleanType.T;
         }
@@ -76,7 +76,7 @@ public class MethodTraceTreeBuilder {
     private static class Builder {
 
         private final TMethodTraceLogUploadRequest request;
-        private final Long2ObjectMap<SMethodDescriptionDecoder> methodIdToInfoMap;
+        private final Long2ObjectMap<TMethodDescriptionDecoder> methodIdToInfoMap;
 
         private Builder(TMethodTraceLogUploadRequest request) {
             this.request = request;
@@ -84,10 +84,10 @@ public class MethodTraceTreeBuilder {
             MethodDescriptionList methodDescriptionList = new MethodDescriptionList(request.getMethodDescriptionList().getData());
             this.methodIdToInfoMap = new Long2ObjectOpenHashMap<>(methodDescriptionList.size() * 2);
 
-            Iterator<SMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
+            Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
 
             while (iterator.hasNext()) {
-                SMethodDescriptionDecoder methodDescription = iterator.next();
+                TMethodDescriptionDecoder methodDescription = iterator.next();
                 this.methodIdToInfoMap.put(methodDescription.id(), methodDescription);
             }
         }
@@ -96,11 +96,11 @@ public class MethodTraceTreeBuilder {
             MethodEnterTraceList enterTracesList = new MethodEnterTraceList(request.getTraceLog().getEnterTraces());
             MethodExitTraceList exitTracesList = new MethodExitTraceList(request.getTraceLog().getExitTraces());
 
-            Iterator<SMethodEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
-            Iterator<SMethodExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
+            Iterator<TMethodEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
+            Iterator<TMethodExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
 
-            SMethodEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
-            SMethodExitTraceDecoder currentExitTrace = exitTraceIt.next();
+            TMethodEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
+            TMethodExitTraceDecoder currentExitTrace = exitTraceIt.next();
 
             NodeBuilder root = new NodeBuilder(null, methodIdToInfoMap.get(currentEnterTrace.methodId()), currentEnterTrace);
             currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;

@@ -1,7 +1,7 @@
 package com.ulyp.agent.transport;
 
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.SMethodDescriptionDecoder;
+import com.ulyp.transport.TMethodDescriptionDecoder;
 import com.ulyp.transport.TMethodInfo;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class MethodTraceTreeNode {
             List<String> args,
             String returnValue,
             boolean thrown,
-            SMethodDescriptionDecoder methodDescription,
+            TMethodDescriptionDecoder methodDescription,
             List<MethodTraceTreeNode> children,
             int nodeCount)
     {

@@ -2,7 +2,7 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
-import com.ulyp.transport.SMethodEnterTraceDecoder;
+import com.ulyp.transport.TMethodEnterTraceDecoder;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -26,35 +26,35 @@ public class MethodEnterTraceListTest {
 
         assertEquals(3, list.size());
 
-        Iterator<SMethodEnterTraceDecoder> it = list.iterator();
+        Iterator<TMethodEnterTraceDecoder> it = list.iterator();
 
         assertTrue(it.hasNext());
 
-        SMethodEnterTraceDecoder t0 = it.next();
+        TMethodEnterTraceDecoder t0 = it.next();
 
         assertEquals(5344, t0.callId());
         assertEquals(231, t0.methodId());
-        SMethodEnterTraceDecoder.ArgumentsDecoder t0args = t0.arguments();
+        TMethodEnterTraceDecoder.ArgumentsDecoder t0args = t0.arguments();
         assertTrue(t0args.hasNext());
         assertEquals("Object@" + System.identityHashCode(obj), t0args.next().value());
         assertFalse(t0args.hasNext());
 
         assertTrue(it.hasNext());
 
-        SMethodEnterTraceDecoder t1 = it.next();
+        TMethodEnterTraceDecoder t1 = it.next();
         assertEquals(65345, t1.callId());
         assertEquals(2341, t1.methodId());
-        SMethodEnterTraceDecoder.ArgumentsDecoder t1args = t1.arguments();
+        TMethodEnterTraceDecoder.ArgumentsDecoder t1args = t1.arguments();
         assertTrue(t1args.hasNext());
         assertEquals("zasda", t1args.next().value());
         assertFalse(t1args.hasNext());
 
         assertTrue(it.hasNext());
 
-        SMethodEnterTraceDecoder t2 = it.next();
+        TMethodEnterTraceDecoder t2 = it.next();
         assertEquals(7, t2.callId());
         assertEquals(3, t2.methodId());
-        SMethodEnterTraceDecoder.ArgumentsDecoder t2args = t2.arguments();
+        TMethodEnterTraceDecoder.ArgumentsDecoder t2args = t2.arguments();
         assertTrue(t2args.hasNext());
         assertEquals("cvxzxda", t2args.next().value());
         assertEquals("Object@" + System.identityHashCode(obj), t2args.next().value());
