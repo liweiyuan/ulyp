@@ -4,4 +4,5 @@ include 'ulyp-ui'
 include 'ulyp-core'
 include 'ulyp-agent'
 include 'ulyp-ui-transport'
+include 'ulyp-ui-repository'
 

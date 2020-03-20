@@ -23,9 +23,13 @@ message TMethodTraceLog {
     bytes exitTraces = 3;
 }
 
+message TMethodDescriptionList {
+    bytes data = 1;
+}
+
 message TMethodTraceLogUploadRequest {
     TMethodTraceLog traceLog = 1;
-    repeated TMethodInfo methodInfos = 2;
+    TMethodDescriptionList methodDescriptionList = 2;
     string mainClassName = 3;
     int64 createEpochMillis = 4;
     int64 lifetimeMillis = 5;

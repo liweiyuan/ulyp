@@ -1,5 +1,7 @@
 package com.ulyp.agent.transport;
 
+import com.ulyp.transport.BooleanType;
+import com.ulyp.transport.SMethodDescriptionDecoder;
 import com.ulyp.transport.TMethodInfo;
 
 import java.util.Collections;
@@ -20,16 +22,16 @@ public class MethodTraceTreeNode {
             List<String> args,
             String returnValue,
             boolean thrown,
-            TMethodInfo methodInfo,
+            SMethodDescriptionDecoder methodDescription,
             List<MethodTraceTreeNode> children,
             int nodeCount)
     {
-        this.isVoidMethod = !methodInfo.getReturnsSomething();
+        this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.args = args;
         this.returnValue = returnValue;
         this.thrown = thrown;
-        this.className = methodInfo.getClassName();
-        this.methodName = methodInfo.getMethodName();
+        this.className = methodDescription.className();
+        this.methodName = methodDescription.methodName();
 
         this.children = Collections.unmodifiableList(children);
         this.nodeCount = nodeCount;

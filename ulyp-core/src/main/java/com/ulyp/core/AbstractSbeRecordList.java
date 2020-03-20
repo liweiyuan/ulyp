@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlyweight, Decoder extends MessageDecoderFlyweight> implements Iterable<Decoder> {
 
@@ -20,6 +21,7 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
 
     private Encoder encoder;
     private Decoder decoder;
+    private Supplier<Decoder> decoderSupplier;
 
     protected final MutableDirectBuffer buffer;
 
@@ -52,7 +54,14 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
         Type[] genericTypes = parameterizedSuperclass.getActualTypeArguments();
         try {
             encoder = (Encoder) Class.forName(genericTypes[0].getTypeName()).newInstance();
-            decoder = (Decoder) Class.forName(genericTypes[1].getTypeName()).newInstance();
+            decoderSupplier = () -> {
+                try {
+                    return (Decoder) Class.forName(genericTypes[1].getTypeName()).newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            decoder = decoderSupplier.get();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,10 +105,14 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
 
     @Override
     public Iterator<Decoder> iterator() {
-        return new IndexedIterator();
+        return new ZeroCopyIterator();
     }
 
-    public class IndexedIterator implements Iterator<Decoder> {
+    public Iterator<Decoder> copyingIterator() {
+        return new CopyingIterator();
+    }
+
+    private class ZeroCopyIterator implements Iterator<Decoder> {
 
         private int addr = LIST_HEADER_LENGTH;
 
@@ -116,6 +129,30 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
             int encodedLength = buffer.getInt(addr);
             int blockLength = buffer.getInt(addr + Integer.BYTES);
 
+            decoder.wrap(buffer, addr + RECORD_HEADER_LENGTH, blockLength, 0);
+            addr += RECORD_HEADER_LENGTH + encodedLength;
+            return decoder;
+        }
+    }
+
+    private class CopyingIterator implements Iterator<Decoder> {
+
+        private int addr = LIST_HEADER_LENGTH;
+
+        @Override
+        public boolean hasNext() {
+            return addr < length() && buffer.getInt(addr) > 0;
+        }
+
+        @Override
+        public Decoder next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            int encodedLength = buffer.getInt(addr);
+            int blockLength = buffer.getInt(addr + Integer.BYTES);
+
+            Decoder decoder = decoderSupplier.get();
             decoder.wrap(buffer, addr + RECORD_HEADER_LENGTH, blockLength, 0);
             addr += RECORD_HEADER_LENGTH + encodedLength;
             return decoder;

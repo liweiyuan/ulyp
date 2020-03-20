@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.util.Log;
+import com.ulyp.core.MethodDescription;
 
 import java.lang.reflect.Executable;
 import java.util.Collection;

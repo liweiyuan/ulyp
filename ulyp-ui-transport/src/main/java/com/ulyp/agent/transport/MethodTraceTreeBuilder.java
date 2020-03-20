@@ -1,10 +1,13 @@
 package com.ulyp.agent.transport;
 
+import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.MethodEnterTraceList;
 import com.ulyp.core.MethodExitTraceList;
 import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.agrona.DirectBuffer;
+import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,16 +22,16 @@ public class MethodTraceTreeBuilder {
     private static class NodeBuilder {
 
         private final NodeBuilder parent;
-        private final TMethodInfo methodInfo;
+        private final SMethodDescriptionDecoder methodDescription;
         private final long callId;
         private final List<String> args;
         private String returnValue;
         private boolean thrown;
         private final List<NodeBuilder> children = new ArrayList<>();
 
-        private NodeBuilder(NodeBuilder parent, TMethodInfo methodInfo, SMethodEnterTraceDecoder decoder) {
+        private NodeBuilder(NodeBuilder parent, SMethodDescriptionDecoder methodDescription, SMethodEnterTraceDecoder decoder) {
             this.parent = parent;
-            this.methodInfo = methodInfo;
+            this.methodDescription = methodDescription;
             this.callId = decoder.callId();
 
             this.args = new ArrayList<>();
@@ -39,8 +42,8 @@ public class MethodTraceTreeBuilder {
             }
         }
 
-        private NodeBuilder addChild(TMethodInfo methodInfo, SMethodEnterTraceDecoder enterTrace) {
-            NodeBuilder child = new NodeBuilder(this, methodInfo, enterTrace);
+        private NodeBuilder addChild(SMethodDescriptionDecoder methodDescription, SMethodEnterTraceDecoder enterTrace) {
+            NodeBuilder child = new NodeBuilder(this, methodDescription, enterTrace);
             children.add(child);
             return child;
         }
@@ -63,7 +66,7 @@ public class MethodTraceTreeBuilder {
                     args,
                     returnValue,
                     thrown,
-                    methodInfo,
+                    methodDescription,
                     children,
                     nodeCount
             );
@@ -73,14 +76,19 @@ public class MethodTraceTreeBuilder {
     private static class Builder {
 
         private final TMethodTraceLogUploadRequest request;
-        private final Long2ObjectMap<TMethodInfo> methodIdToInfoMap;
+        private final Long2ObjectMap<SMethodDescriptionDecoder> methodIdToInfoMap;
 
         private Builder(TMethodTraceLogUploadRequest request) {
             this.request = request;
-            this.methodIdToInfoMap = new Long2ObjectOpenHashMap<>(request.getMethodInfosCount() * 2);
 
-            for (TMethodInfo methodInfo : request.getMethodInfosList()) {
-                this.methodIdToInfoMap.put(methodInfo.getId(), methodInfo);
+            MethodDescriptionList methodDescriptionList = new MethodDescriptionList(request.getMethodDescriptionList().getData());
+            this.methodIdToInfoMap = new Long2ObjectOpenHashMap<>(methodDescriptionList.size() * 2);
+
+            Iterator<SMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
+
+            while (iterator.hasNext()) {
+                SMethodDescriptionDecoder methodDescription = iterator.next();
+                this.methodIdToInfoMap.put(methodDescription.id(), methodDescription);
             }
         }
 
