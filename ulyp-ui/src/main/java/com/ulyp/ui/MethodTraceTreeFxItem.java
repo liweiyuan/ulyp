@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.agent.transport.MethodTraceTreeNode;
+import com.ulyp.core.MethodTraceTreeNode;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;

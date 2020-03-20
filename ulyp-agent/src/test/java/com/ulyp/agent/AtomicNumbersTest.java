@@ -1,9 +1,8 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.tests.AtomicNumbersTestCases;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeBuilder;
-import com.ulyp.agent.transport.MethodTraceTreeNode;
+import com.ulyp.core.MethodTraceTree;
+import com.ulyp.core.MethodTraceTreeNode;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,11 +14,11 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testAtomicIntegerSum() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 AtomicNumbersTestCases.class,
                 "com.ulyp.agent.tests",
                 "AtomicNumbersTestCases.intSum"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -29,11 +28,11 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testBoxedDoubleSum() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 AtomicNumbersTestCases.class,
                 "com.ulyp.agent.tests",
                 "AtomicNumbersTestCases.longSum"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 

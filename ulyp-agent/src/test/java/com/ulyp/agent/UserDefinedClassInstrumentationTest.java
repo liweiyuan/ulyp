@@ -1,11 +1,8 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.EnumTestCases;
 import com.ulyp.agent.tests.UserDefinedClassTestCases;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeBuilder;
-import com.ulyp.agent.transport.MethodTraceTreeNode;
-import org.hamcrest.Matchers;
+import com.ulyp.core.MethodTraceTree;
+import com.ulyp.core.MethodTraceTreeNode;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -16,11 +13,11 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
     @Test
     public void shouldPrintEnumNames() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 UserDefinedClassTestCases.class,
                 "com.ulyp.agent.tests",
                 "UserDefinedClassTestCases.returnInnerClass"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 

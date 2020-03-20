@@ -1,13 +1,8 @@
-package com.ulyp.agent.transport;
+package com.ulyp.core;
 
-import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.MethodEnterTraceList;
-import com.ulyp.core.MethodExitTraceList;
 import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import org.agrona.DirectBuffer;
-import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,8 +10,12 @@ import java.util.List;
 
 public class MethodTraceTreeBuilder {
 
-    public static MethodTraceTree from(TMethodTraceLogUploadRequest request) {
-        return new Builder(request).build();
+    public static MethodTraceTree from(
+            MethodEnterTraceList enterTracesList,
+            MethodExitTraceList exitTracesList,
+            MethodDescriptionList methodDescriptionList)
+    {
+        return new Builder(enterTracesList, exitTracesList, methodDescriptionList).build();
     }
 
     private static class NodeBuilder {
@@ -75,13 +74,15 @@ public class MethodTraceTreeBuilder {
 
     private static class Builder {
 
-        private final TMethodTraceLogUploadRequest request;
+        private final MethodEnterTraceList enterTracesList;
+        private final MethodExitTraceList exitTracesList;
         private final Long2ObjectMap<TMethodDescriptionDecoder> methodIdToInfoMap;
 
-        private Builder(TMethodTraceLogUploadRequest request) {
-            this.request = request;
+        private Builder(MethodEnterTraceList enterTracesList, MethodExitTraceList exitTracesList, MethodDescriptionList methodDescriptionList) {
+            this.enterTracesList = enterTracesList;
+            this.exitTracesList = exitTracesList;
 
-            MethodDescriptionList methodDescriptionList = new MethodDescriptionList(request.getMethodDescriptionList().getData());
+//            MethodDescriptionList methodDescriptionList = new MethodDescriptionList(request.getMethodDescriptionList().getData());
             this.methodIdToInfoMap = new Long2ObjectOpenHashMap<>(methodDescriptionList.size() * 2);
 
             Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
@@ -93,9 +94,6 @@ public class MethodTraceTreeBuilder {
         }
 
         private MethodTraceTree build() {
-            MethodEnterTraceList enterTracesList = new MethodEnterTraceList(request.getTraceLog().getEnterTraces());
-            MethodExitTraceList exitTracesList = new MethodExitTraceList(request.getTraceLog().getExitTraces());
-
             Iterator<TMethodEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
             Iterator<TMethodExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
 

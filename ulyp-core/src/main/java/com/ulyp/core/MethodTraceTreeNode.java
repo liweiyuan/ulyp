@@ -1,10 +1,8 @@
-package com.ulyp.agent.transport;
+package com.ulyp.core;
 
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
-import com.ulyp.transport.TMethodInfo;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MethodTraceTreeNode {
@@ -33,7 +31,7 @@ public class MethodTraceTreeNode {
         this.className = methodDescription.className();
         this.methodName = methodDescription.methodName();
 
-        this.children = Collections.unmodifiableList(children);
+        this.children = children;
         this.nodeCount = nodeCount;
     }
 

@@ -1,8 +1,11 @@
 package com.ulyp.ui;
 
+import com.ulyp.core.MethodDescriptionList;
+import com.ulyp.core.MethodEnterTraceList;
+import com.ulyp.core.MethodExitTraceList;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeBuilder;
+import com.ulyp.core.MethodTraceTree;
+import com.ulyp.core.MethodTraceTreeBuilder;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -47,7 +50,11 @@ public class FXMLStackTraceViewController implements Initializable {
     }
 
     public void onMethodTraceTreeUploaded(TMethodTraceLogUploadRequest request) {
-        MethodTraceTree methodTraceTree = MethodTraceTreeBuilder.from(request);
+        MethodTraceTree methodTraceTree = MethodTraceTreeBuilder.from(
+                new MethodEnterTraceList(request.getTraceLog().getEnterTraces()),
+                new MethodExitTraceList(request.getTraceLog().getExitTraces()),
+                new MethodDescriptionList(request.getMethodDescriptionList().getData())
+        );
         System.out.println("New tree " + methodTraceTree.getRoot().getNodeCount());
         Platform.runLater(() -> addTree(request, methodTraceTree));
     }

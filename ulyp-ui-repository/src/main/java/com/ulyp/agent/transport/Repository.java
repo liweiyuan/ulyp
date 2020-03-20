@@ -1,6 +1,6 @@
 package com.ulyp.agent.transport;
 
-public interface Storage {
+public interface Repository {
 
     void insert();
 }

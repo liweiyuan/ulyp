@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.agent.transport.MethodTraceTree;
+import com.ulyp.core.MethodTraceTree;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.*;

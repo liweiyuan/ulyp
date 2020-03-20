@@ -1,12 +1,9 @@
 package com.ulyp.ui;
 
-import com.google.protobuf.ProtocolStringList;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeNode;
+import com.ulyp.core.MethodTraceTreeNode;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;

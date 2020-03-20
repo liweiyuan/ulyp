@@ -3,11 +3,8 @@ package com.ulyp.agent;
 import com.ulyp.agent.util.AgentSettings;
 import com.ulyp.agent.tests.SeveralMethodsTestCases;
 import com.ulyp.agent.tests.SimpleTestCases;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeBuilder;
-import com.ulyp.agent.transport.MethodTraceTreeNode;
-import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import org.junit.Assert;
+import com.ulyp.core.MethodTraceTree;
+import com.ulyp.core.MethodTraceTreeNode;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -18,19 +15,12 @@ import static org.junit.Assert.assertThat;
 public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
-    public void shouldReturnValidMainClassName() {
-        TMethodTraceLogUploadRequest request = executeClass(SimpleTestCases.class, "com.ulyp.agent.tests", "SimpleTestCases.returnIntWithEmptyParams");
-
-        Assert.assertEquals(SimpleTestCases.class.getName(), request.getMainClassName());
-    }
-
-    @Test
     public void shouldBeValidForStringReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
                 "com.ulyp.agent.tests",
                 "SimpleTestCases.returnStringWithEmptyParams"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -44,11 +34,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForNullReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
                 "com.ulyp.agent.tests",
                 "SimpleTestCases.returnNullObjectWithEmptyParams"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -63,11 +53,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
                 "com.ulyp.agent.tests",
                 "SimpleTestCases.returnIntWithEmptyParams"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -81,11 +71,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTestObjectReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
                 "com.ulyp.agent.tests",
                 "SimpleTestCases.returnTestObjectWithEmptyParams"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -99,11 +89,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidIfMethodThrowsException() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
                 "com.ulyp.agent.tests",
                 "SimpleTestCases.throwsRuntimeException"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -117,11 +107,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTwoMethodCalls() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 SeveralMethodsTestCases.class,
                 "com.ulyp.agent.tests",
                 "SeveralMethodsTestCases.callTwoMethods"
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -154,12 +144,12 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldNotLogTracesIfMaxDepthExceeded() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 new AgentSettings().setMainClassName(SeveralMethodsTestCases.class)
                 .setPackages("com.ulyp.agent.tests")
                 .setStartMethod("SeveralMethodsTestCases.callTwoMethods")
                 .setMaxDepth(1)
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -174,11 +164,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntArgument() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 new AgentSettings().setMainClassName(SimpleTestCases.class)
                         .setPackages("com.ulyp.agent.tests")
                         .setStartMethod("SimpleTestCases.consumesInt")
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -189,11 +179,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntAndStringArgument() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
+        MethodTraceTree tree = executeClass(
                 new AgentSettings().setMainClassName(SimpleTestCases.class)
                         .setPackages("com.ulyp.agent.tests")
                         .setStartMethod("SimpleTestCases.consumesMapAndEnums")
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
