@@ -1,7 +1,6 @@
 package com.ulyp.agent.log;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.*;
@@ -40,16 +39,6 @@ public class LoggingSettings {
             ctx = Configurator.initialize(builder.build());
         } else {
             ctx = null;
-        }
-    }
-
-    public static void main(String[] args) {
-        Logger logger = AgentLogManager.getLogger(LoggingSettings.class);
-        logger.debug("asdasdasdasd");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

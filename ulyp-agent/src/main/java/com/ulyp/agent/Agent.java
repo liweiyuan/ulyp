@@ -2,7 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.LoggingSettings;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.description.NamedElement;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
@@ -15,7 +15,7 @@ public class Agent {
 
         Settings settings = BbTransformer.settings;
 
-        ElementMatcher.Junction<NamedElement> matcher = null;
+        ElementMatcher.Junction<TypeDescription> matcher = null;
 
         for (int i = 0; i < settings.getPackages().size(); i++) {
             if (matcher == null) {

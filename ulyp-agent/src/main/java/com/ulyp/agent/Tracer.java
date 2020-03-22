@@ -9,7 +9,10 @@ import com.ulyp.transport.TMethodDescriptionList;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 @SuppressWarnings("unused")
+@ThreadSafe
 public class Tracer {
 
     private final EnhancedThreadLocal<MethodTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();

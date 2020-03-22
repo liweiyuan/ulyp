@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
+import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.util.Log;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
@@ -29,10 +30,14 @@ public class BbTransformer implements Transformer {
             final DynamicType.Builder<?> builder,
             final TypeDescription typeDescription,
             final ClassLoader classLoader,
-            final JavaModule module) {
-
+            final JavaModule module)
+    {
         if (typeDescription.isInterface()) {
             return builder;
+        }
+
+        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+            logger.trace("Scanning type {}", typeDescription);
         }
 
         final AsmVisitorWrapper methodsStartVisitor =
