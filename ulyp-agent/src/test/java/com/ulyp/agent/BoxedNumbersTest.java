@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.BoxedNumbersTestCases;
+import com.test.cases.BoxedNumbersTestCases;
 import com.ulyp.agent.util.MethodTraceTree;
 import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testPrimitiveIntSum() {
         MethodTraceTree tree = executeClass(
                 BoxedNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "BoxedNumbersTestCases.primitiveIntSum"
         );
 
@@ -30,7 +30,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testBoxedIntSum() {
         MethodTraceTree tree = executeClass(
                 BoxedNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "BoxedNumbersTestCases.boxedIntSum"
         );
 
@@ -44,7 +44,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testPrimitiveDoubleSum() {
         MethodTraceTree tree = executeClass(
                 BoxedNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "BoxedNumbersTestCases.primitiveDoubleSum"
         );
 
@@ -58,7 +58,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testBoxedDoubleSum() {
         MethodTraceTree tree = executeClass(
                 BoxedNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "BoxedNumbersTestCases.boxedDoubleSum"
         );
 

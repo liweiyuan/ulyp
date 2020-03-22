@@ -3,8 +3,8 @@ package com.ulyp.agent.util;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodTraceTreeNode {
 
@@ -15,29 +15,27 @@ public class MethodTraceTreeNode {
     private final String returnValue;
     private final boolean thrown;
     private final List<MethodTraceTreeNode> children;
-    private final int nodeCount;
 
     public MethodTraceTreeNode(
             List<String> args,
             String returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
-            List<MethodTraceTreeNode> children,
-            int nodeCount)
+            List<MethodTraceTreeNode> children)
     {
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.args = args;
         this.returnValue = returnValue;
         this.thrown = thrown;
+        int tmpLimit = methodDescription.limit();
         this.className = methodDescription.className();
         this.methodName = methodDescription.methodName();
-
-        this.children = children;
-        this.nodeCount = nodeCount;
+        methodDescription.limit(tmpLimit);
+        this.children = children != null ? children : Collections.emptyList();
     }
 
-    public int getNodeCount() {
-        return nodeCount;
+    public int getSubtreeNodeCount() {
+        return 1 + children.stream().map(MethodTraceTreeNode::getSubtreeNodeCount).reduce(0, Integer::sum);
     }
 
     public String getClassName() {

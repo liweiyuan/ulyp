@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.UserDefinedClassTestCases;
+import com.test.cases.UserDefinedClassTestCases;
 import com.ulyp.agent.util.MethodTraceTree;
 import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
@@ -15,7 +15,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
     public void shouldPrintEnumNames() {
         MethodTraceTree tree = executeClass(
                 UserDefinedClassTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "UserDefinedClassTestCases.returnInnerClass"
         );
 

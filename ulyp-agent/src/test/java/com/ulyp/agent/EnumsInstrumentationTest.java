@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.EnumTestCases;
+import com.test.cases.EnumTestCases;
 import com.ulyp.agent.util.MethodTraceTree;
 import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.hamcrest.Matchers;
@@ -15,7 +15,7 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
     public void shouldPrintEnumNames() {
         MethodTraceTree tree = executeClass(
                 EnumTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "EnumTestCases.consumesMapAndEnums"
         );
 

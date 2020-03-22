@@ -40,7 +40,7 @@ public class MethodTraceTreeRenderer {
         Text methodParamsText = new Text(builder.toString());
         methodParamsText.setFont(Font.font("monospace"));
 
-        Rectangle rect = new Rectangle(600.0 * node.getNodeCount() / totalNodeCountInTree,20, Paint.valueOf("#efefef"));
+        Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20, Paint.valueOf("#efefef"));
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_LEFT);
         stack.getChildren().addAll(rect, new TextFlow(returnValueText, methodNameText, methodParamsText));

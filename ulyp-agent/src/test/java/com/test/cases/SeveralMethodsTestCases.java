@@ -1,4 +1,4 @@
-package com.ulyp.agent.tests;
+package com.test.cases;
 
 public class SeveralMethodsTestCases {
 

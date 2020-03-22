@@ -58,10 +58,8 @@ public class MethodTraceTreeBuilder {
 
         private MethodTraceTreeNode build() {
             List<MethodTraceTreeNode> children = new ArrayList<>();
-            int nodeCount = 1;
             for (NodeBuilder child : this.children) {
                 MethodTraceTreeNode builtNode = child.build();
-                nodeCount += builtNode.getNodeCount();
                 children.add(builtNode);
             }
 
@@ -70,8 +68,7 @@ public class MethodTraceTreeBuilder {
                     returnValue,
                     thrown,
                     methodDescription,
-                    children,
-                    nodeCount
+                    children
             );
         }
     }

@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.SeveralMethodsTestCases;
+import com.test.cases.RecursionTestCases;
 import com.ulyp.agent.util.MethodTraceTree;
 import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
@@ -13,13 +13,13 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
     @Test
     public void testFibonacciMethodCall() {
         MethodTraceTree tree = executeClass(
-                SeveralMethodsTestCases.class,
-                "com.ulyp.agent.tests",
-                "SeveralMethodsTestCases.fibonacci"
+                RecursionTestCases.class,
+                "com.test.cases",
+                "RecursionTestCases.fibonacci"
         );
 
         MethodTraceTreeNode root = tree.getRoot();
 
-        assertThat(root.getNodeCount(), is(177));
+        assertThat(root.getSubtreeNodeCount(), is(177));
     }
 }

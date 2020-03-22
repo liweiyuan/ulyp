@@ -1,4 +1,4 @@
-package com.ulyp.agent.tests;
+package com.test.cases;
 
 import java.util.HashMap;
 import java.util.Map;

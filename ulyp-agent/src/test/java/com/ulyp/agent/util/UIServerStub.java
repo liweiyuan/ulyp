@@ -44,6 +44,5 @@ public class UIServerStub implements AutoCloseable {
         server.awaitTermination(1, TimeUnit.MINUTES);
 
         executorService.shutdownNow();
-
     }
 }

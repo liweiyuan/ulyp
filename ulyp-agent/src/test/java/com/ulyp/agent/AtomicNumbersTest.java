@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.tests.AtomicNumbersTestCases;
+import com.test.cases.AtomicNumbersTestCases;
 import com.ulyp.agent.util.MethodTraceTree;
 import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     public void testAtomicIntegerSum() {
         MethodTraceTree tree = executeClass(
                 AtomicNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "AtomicNumbersTestCases.intSum"
         );
 
@@ -30,7 +30,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     public void testBoxedDoubleSum() {
         MethodTraceTree tree = executeClass(
                 AtomicNumbersTestCases.class,
-                "com.ulyp.agent.tests",
+                "com.test.cases",
                 "AtomicNumbersTestCases.longSum"
         );
 

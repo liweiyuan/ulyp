@@ -15,7 +15,7 @@ public class MethodTraceTreeNode {
     private String returnValue;
     private boolean thrown;
     private List<MethodTraceTreeNode> children;
-    private int nodeCount;
+    private int subtreeNodeCount;
 
     public MethodTraceTreeNode(
             List<String> args,
@@ -23,7 +23,7 @@ public class MethodTraceTreeNode {
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
             List<MethodTraceTreeNode> children,
-            int nodeCount)
+            int subtreeNodeCount)
     {
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.args = args;
@@ -34,15 +34,15 @@ public class MethodTraceTreeNode {
         this.methodName = methodDescription.methodName();
         methodDescription.limit(originalLimit);
         this.children = children;
-        this.nodeCount = nodeCount;
+        this.subtreeNodeCount = subtreeNodeCount;
     }
 
     public long getId() {
         return id;
     }
 
-    public int getNodeCount() {
-        return nodeCount;
+    public int getSubtreeNodeCount() {
+        return subtreeNodeCount;
     }
 
     public String getClassName() {
@@ -109,8 +109,8 @@ public class MethodTraceTreeNode {
         return this;
     }
 
-    public MethodTraceTreeNode setNodeCount(int nodeCount) {
-        this.nodeCount = nodeCount;
+    public MethodTraceTreeNode setSubtreeNodeCount(int subtreeNodeCount) {
+        this.subtreeNodeCount = subtreeNodeCount;
         return this;
     }
 
