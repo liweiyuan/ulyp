@@ -10,7 +10,7 @@ import java.lang.instrument.Instrumentation;
 public class Agent {
 
     public static void premain(String args, Instrumentation instrumentation) {
-        System.out.printf("Starting %s\n", Agent.class.getSimpleName());
+        System.out.println("Starting ULYP agent");
 
         Settings settings = BbTransformer.settings;
 
