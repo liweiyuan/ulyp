@@ -1,7 +1,5 @@
 package com.ulyp.agent.tests;
 
-import java.util.HashMap;
-
 @SuppressWarnings("all")
 public class SimpleTestCases {
 
@@ -41,6 +39,8 @@ public class SimpleTestCases {
         store1 = s;
     }
 
+    public static void staticMethod() {}
+
     public static void main(String[] args) {
         SafeCaller.call(() -> new SimpleTestCases().returnIntWithEmptyParams());
         SafeCaller.call(() -> new SimpleTestCases().returnTestObjectWithEmptyParams());
@@ -49,5 +49,6 @@ public class SimpleTestCases {
         SafeCaller.call(() -> new SimpleTestCases().throwsRuntimeException());
         SafeCaller.call(() -> new SimpleTestCases().consumesInt(45324));
         SafeCaller.call(() -> new SimpleTestCases().consumesIntAndString(45324, "asdasd"));
+        staticMethod();
     }
 }

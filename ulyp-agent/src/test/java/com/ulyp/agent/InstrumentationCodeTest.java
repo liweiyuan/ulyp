@@ -15,6 +15,20 @@ import static org.junit.Assert.assertThat;
 public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
+    public void shouldTraceStaticMethodCall() {
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.ulyp.agent.tests",
+                "SimpleTestCases.staticMethod"
+        );
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getMethodName(), is("staticMethod"));
+        assertThat(root.getArgs(), empty());
+    }
+
+    @Test
     public void shouldBeValidForStringReturningMethodWithEmptyArgs() {
         MethodTraceTree tree = executeClass(
                 SimpleTestCases.class,
