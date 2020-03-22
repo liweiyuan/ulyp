@@ -57,12 +57,7 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isConstructor()))
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
-                                        .and(desc -> {
-                                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
-                                                return false;
-                                            }
-                                            return !settings.shouldStartTracing(desc);
-                                        }),
+                                        .and(desc -> !settings.shouldStartTracing(desc)),
                                 Advice.to(MethodAdvice.class));
 
         return builder
