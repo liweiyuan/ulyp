@@ -3,8 +3,8 @@ package com.ulyp.agent;
 import com.ulyp.agent.util.AgentSettings;
 import com.ulyp.agent.tests.SeveralMethodsTestCases;
 import com.ulyp.agent.tests.SimpleTestCases;
-import com.ulyp.core.MethodTraceTree;
-import com.ulyp.core.MethodTraceTreeNode;
+import com.ulyp.agent.util.MethodTraceTree;
+import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
 
 import java.util.Collections;

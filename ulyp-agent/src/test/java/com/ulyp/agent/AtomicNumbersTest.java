@@ -1,8 +1,8 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.tests.AtomicNumbersTestCases;
-import com.ulyp.core.MethodTraceTree;
-import com.ulyp.core.MethodTraceTreeNode;
+import com.ulyp.agent.util.MethodTraceTree;
+import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
 
 import java.util.Arrays;

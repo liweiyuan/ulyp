@@ -1,6 +1,10 @@
-package com.ulyp.core;
+package com.ulyp.agent.util;
 
-import com.ulyp.transport.*;
+import com.ulyp.core.*;
+import com.ulyp.transport.BooleanType;
+import com.ulyp.transport.TMethodDescriptionDecoder;
+import com.ulyp.transport.TMethodEnterTraceDecoder;
+import com.ulyp.transport.TMethodExitTraceDecoder;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
@@ -81,8 +85,6 @@ public class MethodTraceTreeBuilder {
         private Builder(MethodEnterTraceList enterTracesList, MethodExitTraceList exitTracesList, MethodDescriptionList methodDescriptionList) {
             this.enterTracesList = enterTracesList;
             this.exitTracesList = exitTracesList;
-
-//            MethodDescriptionList methodDescriptionList = new MethodDescriptionList(request.getMethodDescriptionList().getData());
             this.methodIdToInfoMap = new Long2ObjectOpenHashMap<>(methodDescriptionList.size() * 2);
 
             Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();

@@ -1,9 +1,10 @@
-package com.ulyp.core;
+package com.ulyp.agent.util;
 
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodTraceTreeNode {
 
@@ -16,7 +17,7 @@ public class MethodTraceTreeNode {
     private final List<MethodTraceTreeNode> children;
     private final int nodeCount;
 
-    MethodTraceTreeNode(
+    public MethodTraceTreeNode(
             List<String> args,
             String returnValue,
             boolean thrown,

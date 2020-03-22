@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.MethodTraceTreeNode;
+import com.ulyp.storage.MethodTraceTreeNode;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

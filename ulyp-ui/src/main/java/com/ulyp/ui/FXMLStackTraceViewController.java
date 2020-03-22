@@ -3,9 +3,11 @@ package com.ulyp.ui;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.MethodEnterTraceList;
 import com.ulyp.core.MethodExitTraceList;
+import com.ulyp.storage.MethodTraceTreeNode;
+import com.ulyp.storage.Storage;
+import com.ulyp.storage.StoringService;
+import com.ulyp.storage.inmem.InMemoryStorage;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import com.ulyp.core.MethodTraceTree;
-import com.ulyp.core.MethodTraceTreeBuilder;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -42,6 +44,10 @@ public class FXMLStackTraceViewController implements Initializable {
     @FXML
     public TextField searchField;
 
+    private final Storage storage = new InMemoryStorage();
+
+    private final StoringService storingService = new StoringService(storage);
+
     public Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
     @Override
@@ -50,13 +56,13 @@ public class FXMLStackTraceViewController implements Initializable {
     }
 
     public void onMethodTraceTreeUploaded(TMethodTraceLogUploadRequest request) {
-        MethodTraceTree methodTraceTree = MethodTraceTreeBuilder.from(
+        MethodTraceTreeNode root = storingService.store(
                 new MethodEnterTraceList(request.getTraceLog().getEnterTraces()),
                 new MethodExitTraceList(request.getTraceLog().getExitTraces()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData())
         );
-        System.out.println("New tree " + methodTraceTree.getRoot().getNodeCount());
-        Platform.runLater(() -> addTree(request, methodTraceTree));
+
+        Platform.runLater(() -> addTree(request, root));
     }
 
     @NotNull
@@ -74,9 +80,9 @@ public class FXMLStackTraceViewController implements Initializable {
         return processTab;
     }
 
-    private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTree tree) {
+    private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTreeNode node) {
         ProcessTab processTab = getOrCreateProcessTab(request.getMainClassName());
-        processTab.getTabList().add(tree, Duration.ofMillis(request.getLifetimeMillis()));
+        processTab.getTabList().add(node, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void clearAll(Event event) {

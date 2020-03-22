@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.MethodTraceTree;
+import com.ulyp.storage.MethodTraceTreeNode;
 import javafx.scene.control.Tab;
 
 public class MethodTraceTreeTab {
@@ -8,7 +8,7 @@ public class MethodTraceTreeTab {
     private final Tab tab;
     private final long orderStamp;
 
-    public MethodTraceTreeTab(Tab tab, MethodTraceTree methodTree, long orderStamp) {
+    public MethodTraceTreeTab(Tab tab, long orderStamp) {
         this.tab = tab;
         this.orderStamp = orderStamp;
     }

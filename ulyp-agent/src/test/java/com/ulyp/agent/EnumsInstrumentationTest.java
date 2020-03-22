@@ -1,8 +1,8 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.tests.EnumTestCases;
-import com.ulyp.core.MethodTraceTree;
-import com.ulyp.core.MethodTraceTreeNode;
+import com.ulyp.agent.util.MethodTraceTree;
+import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 

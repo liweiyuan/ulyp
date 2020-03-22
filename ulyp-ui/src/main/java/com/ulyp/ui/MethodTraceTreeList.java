@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.MethodTraceTree;
+import com.ulyp.storage.MethodTraceTreeNode;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -30,10 +30,10 @@ public class MethodTraceTreeList {
         this.onDestroy = onDestroy;
     }
 
-    public void add(MethodTraceTree tree, Duration lifetime) {
+    public void add(MethodTraceTreeNode tree, Duration lifetime) {
         long id = idGenerator++;
 
-        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, id, lifetime), tree, id);
+        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, id, lifetime), id);
 
 //        if (tab.getSearchIndex().contains(textSearch)) {
         addToVisible(tab);
@@ -64,15 +64,15 @@ public class MethodTraceTreeList {
         );
     }
 
-    private Tab tabFrom(MethodTraceTree tree, long stamp, Duration lifetime) {
-        TreeView<Node> view = new TreeView<>(new MethodTraceTreeFxItem(tree.getRoot(), tree.getRoot().getNodeCount()));
+    private Tab tabFrom(MethodTraceTreeNode node, long stamp, Duration lifetime) {
+        TreeView<Node> view = new TreeView<>(new MethodTraceTreeFxItem(node, 1));
         view.prefHeightProperty().bind(stackTabs.heightProperty());
         view.prefWidthProperty().bind(stackTabs.widthProperty());
         ScrollPane scrollPane = new ScrollPane(view);
         scrollPane.prefHeightProperty().bind(stackTabs.heightProperty());
         scrollPane.prefWidthProperty().bind(stackTabs.widthProperty());
         return new Tab(
-                tree.getRoot().getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
+                node.getMethodName() + "(" + stamp + ", " + lifetime.toMillis() + "ms)",
                 scrollPane
         );
     }
