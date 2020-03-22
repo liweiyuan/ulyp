@@ -12,42 +12,13 @@ import java.util.stream.Collectors;
 
 public class Settings {
 
-    public static final String PACKAGES_PROPERTY = "ulyp.packages";
-    public static final String START_METHOD_PROPERTY = "ulyp.start-method";
-    public static final String LOG_PROPERTY = "ulyp.log";
-    public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
-    public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
-    public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
+    private static final Settings instance = loadFromSystemProperties();
 
-    private UiAddress uiAddress;
-    private final List<String> packages;
-    private final List<MethodMatcher> methodToStartProfiling;
-    private final boolean loggingTurnedOn;
-    private final int maxTreeDepth;
-
-    public Settings(
-            UiAddress uiAddress,
-            List<String> packages,
-            List<MethodMatcher> methodToStartProfiling,
-            boolean loggingTurnedOn,
-            int maxTreeDepth)
-    {
-        this.uiAddress = uiAddress;
-        this.packages = packages;
-        this.methodToStartProfiling = methodToStartProfiling;
-        this.loggingTurnedOn = loggingTurnedOn;
-        this.maxTreeDepth = maxTreeDepth;
+    public static Settings getInstance() {
+        return instance;
     }
 
-    public UiAddress getUiAddress() {
-        return uiAddress;
-    }
-
-    public boolean loggingTurnedOn() {
-        return loggingTurnedOn;
-    }
-
-    public static Settings fromJavaProperties() {
+    private static Settings loadFromSystemProperties() {
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         if (packagesToInstrument == null) {
             throw new RuntimeException("Please specify property " + PACKAGES_PROPERTY + " in the following format -D" + PACKAGES_PROPERTY + "=com.example,org.hibernate");
@@ -60,7 +31,7 @@ public class Settings {
             throw new RuntimeException("Please specify property " + START_METHOD_PROPERTY);
         }
 
-        // TODO validate
+        // TODO validate matchers
         List<MethodMatcher> matchers = Arrays.stream(tracedMethods.split(","))
                 .map(str -> new MethodMatcher(
                         str.substring(0, str.indexOf('.')),
@@ -75,17 +46,47 @@ public class Settings {
         return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn, maxTreeDepth);
     }
 
+    public static final String PACKAGES_PROPERTY = "ulyp.packages";
+    public static final String START_METHOD_PROPERTY = "ulyp.start-method";
+    public static final String LOG_PROPERTY = "ulyp.log";
+    public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
+    public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
+    public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
+
+    private UiAddress uiAddress;
+    private final List<String> packages;
+    private final List<MethodMatcher> startTracingMethods;
+    private final boolean loggingTurnedOn;
+    private final int maxTreeDepth;
+
+    private Settings(
+            UiAddress uiAddress,
+            List<String> packages,
+            List<MethodMatcher> startTracingMethods,
+            boolean loggingTurnedOn,
+            int maxTreeDepth)
+    {
+        this.uiAddress = uiAddress;
+        this.packages = packages;
+        this.startTracingMethods = startTracingMethods;
+        this.loggingTurnedOn = loggingTurnedOn;
+        this.maxTreeDepth = maxTreeDepth;
+    }
+
+    public UiAddress getUiAddress() {
+        return uiAddress;
+    }
+
+    public boolean loggingTurnedOn() {
+        return loggingTurnedOn;
+    }
+
     public boolean shouldStartTracing(MethodDescription description) {
-        return methodMatches(methodToStartProfiling, description);
+        return methodMatches(startTracingMethods, description);
     }
 
     public boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
         try {
-
-            if (description.isAbstract()) {
-                return false;
-            }
-
             boolean profileThis = classMatches(
                     methodsToMatch,
                     description.getDeclaringType().asGenericType(),

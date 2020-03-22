@@ -18,7 +18,7 @@ public class AgentContext {
     private final Log log;
 
     public AgentContext() {
-        this.settings = Settings.fromJavaProperties();
+        this.settings = Settings.getInstance();
         if (settings.loggingTurnedOn()) {
             this.log = new SysoutLog();
         } else {

@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.util.Log;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
@@ -9,6 +10,7 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Executable;
 
@@ -19,6 +21,8 @@ public class BbTransformer implements Transformer {
     public static final Settings settings = context.getSettings();
     @SuppressWarnings("unused")
     public static final Tracer tracer = new Tracer(context);
+
+    private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
 
     @Override
     public DynamicType.Builder<?> transform(
@@ -41,11 +45,11 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
-                                            boolean shouldStart = settings.shouldStartTracing(desc);
-                                            if (shouldStart) {
-                                                log.log(() -> "Should start tracing at " + typeDescription.getName() + "." + desc.getActualName());
+                                            boolean shouldStartTracing = settings.shouldStartTracing(desc);
+                                            if (shouldStartTracing) {
+                                                logger.debug("Should start tracing at {}.{}", typeDescription.getName(), desc.getActualName());
                                             }
-                                            return shouldStart;
+                                            return shouldStartTracing;
                                         }),
                                 Advice.to(StartTracingMethodAdvice.class));
 
@@ -57,7 +61,13 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isConstructor()))
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
-                                        .and(desc -> !settings.shouldStartTracing(desc)),
+                                        .and(desc -> {
+                                            boolean shouldTrace = !settings.shouldStartTracing(desc);
+                                            if (shouldTrace) {
+                                                logger.debug("Should trace at {}.{}", typeDescription.getName(), desc.getActualName());
+                                            }
+                                            return shouldTrace;
+                                        }),
                                 Advice.to(MethodAdvice.class));
 
         return builder
