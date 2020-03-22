@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -15,18 +16,24 @@ public class Agent {
 
         Settings settings = BbTransformer.settings;
 
-        ElementMatcher.Junction<TypeDescription> matcher = null;
+        ElementMatcher.Junction<TypeDescription> matcherUserDefinedPackages = null;
 
         for (int i = 0; i < settings.getPackages().size(); i++) {
-            if (matcher == null) {
-                matcher = ElementMatchers.nameStartsWith(settings.getPackages().get(i));
+            if (matcherUserDefinedPackages == null) {
+                matcherUserDefinedPackages = ElementMatchers.nameStartsWith(settings.getPackages().get(i));
             } else {
-                matcher = matcher.or(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+                matcherUserDefinedPackages = matcherUserDefinedPackages.or(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
             }
         }
 
+        ElementMatcher.Junction<TypeDescription> finalMatcher = ElementMatchers
+                .not(ElementMatchers.nameStartsWith("com.ulyp"))
+                .and(matcherUserDefinedPackages);
+
+        AgentLogManager.getLogger(Agent.class).trace("Matcher for scanning is {}", finalMatcher);
+
         new AgentBuilder.Default()
-                .type(matcher)
+                .type(finalMatcher)
                 .transform(new BbTransformer())
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
                 .installOn(instrumentation);
