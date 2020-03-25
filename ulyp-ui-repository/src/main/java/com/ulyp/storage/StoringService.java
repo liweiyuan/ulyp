@@ -95,8 +95,7 @@ public class StoringService {
                     returnValue,
                     thrown,
                     methodDescription,
-                    children,
-                    1
+                    children
             );
             storage.persist(node);
             if (parent != null) {
