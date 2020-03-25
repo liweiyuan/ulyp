@@ -3,6 +3,7 @@ package com.ulyp.storage;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MethodTraceTreeNode {
@@ -12,6 +13,7 @@ public class MethodTraceTreeNode {
     private String methodName;
     private boolean isVoidMethod;
     private List<String> args;
+    private List<String> parameterNames;
     private String returnValue;
     private boolean thrown;
     private List<MethodTraceTreeNode> children;
@@ -29,6 +31,11 @@ public class MethodTraceTreeNode {
         this.returnValue = returnValue;
         this.thrown = thrown;
         int originalLimit = methodDescription.limit();
+        TMethodDescriptionDecoder.ParameterNamesDecoder paramNamesDecoder = methodDescription.parameterNames();
+        this.parameterNames = new ArrayList<>();
+        while (paramNamesDecoder.hasNext()) {
+            this.parameterNames.add(paramNamesDecoder.next().value());
+        }
         this.className = methodDescription.className();
         this.methodName = methodDescription.methodName();
         methodDescription.limit(originalLimit);
@@ -54,6 +61,10 @@ public class MethodTraceTreeNode {
 
     public List<String> getArgs() {
         return args;
+    }
+
+    public List<String> getParameterNames() {
+        return parameterNames;
     }
 
     public String getReturnValue() {

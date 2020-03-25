@@ -48,6 +48,9 @@
     <sbe:message name="TMethodDescription" id="5">
         <field name="id" id="1" type="int64"/>
         <field name="returnsSomething" id="2" type="BooleanType"/>
+        <group name="parameterNames" id="15" dimensionType="groupSizeEncoding">
+            <data name="value" id="16" type="varStringEncoding"/>
+        </group>
         <data name="className" id="12" type="varStringEncoding"/>
         <data name="methodName" id="13" type="varStringEncoding"/>
     </sbe:message>
