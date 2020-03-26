@@ -8,6 +8,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,9 @@ public class MethodTraceTreeRenderer {
                 output.add(new Text(node.getArgs().get(i)));
             } else {
                 output.add(new Text(node.getArgs().get(i)));
+            }
+            if (i < node.getArgs().size() - 1) {
+                output.add(new Text(", "));
             }
         }
 

@@ -23,4 +23,17 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
         assertThat(root.getResult(), matchesPattern("TestClass@\\d+"));
     }
+
+    @Test
+    public void shouldNotFailIfToStringCallsTracedMethod() {
+        MethodTraceTree tree = executeClass(
+                UserDefinedClassTestCases.class,
+                "com.test.cases",
+                "UserDefinedClassTestCases.returnClassThatCallsSelfInToString"
+        );
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+//        assertThat(root.getResult(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
+    }
 }

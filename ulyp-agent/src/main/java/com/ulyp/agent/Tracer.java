@@ -26,21 +26,17 @@ public class Tracer {
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
         MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(context.getSettings().getMaxTreeDepth()));
-        log.log(() -> "Tracing active, trace log id = " + traceLog.getId());
-
         onMethodEnter(methodDescription, args);
     }
 
     public void endTracingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
         MethodTraceLog traceLog = threadLocalTraceLog.get();
 
-        if (traceLog != null) {
-            log.log(() -> "May end tracing, trace log id = " + methodDescription.getId());
-            onMethodExit(methodDescription, result, thrown);
+        log.log(() -> "May end tracing, trace log id = " + methodDescription.getId());
+        onMethodExit(methodDescription, result, thrown);
 
-            if (traceLog.isComplete()) {
-                enqueueToPrinter(threadLocalTraceLog.pop());
-            }
+        if (traceLog.isComplete()) {
+            enqueueToPrinter(threadLocalTraceLog.pop());
         }
     }
 
