@@ -1,9 +1,14 @@
 package com.ulyp.core.printers;
 
-public class ClassPrinter extends ObjectBinaryPrinter {
+public class ClassObjectPrinter extends ObjectBinaryPrinter {
 
-    protected ClassPrinter(int id) {
+    protected ClassObjectPrinter(int id) {
         super(id);
+    }
+
+    @Override
+    boolean supports(Class<?> clazz) {
+        return clazz == Class.class;
     }
 
     @Override

@@ -3,8 +3,6 @@ package com.ulyp.agent.transport;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.ulyp.core.MethodTraceLog;
-import com.ulyp.core.ProcessInfo;
 import com.ulyp.transport.*;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;

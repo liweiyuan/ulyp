@@ -7,6 +7,11 @@ public class EnumPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    boolean supports(Class<?> clazz) {
+        return clazz.isEnum();
+    }
+
+    @Override
     public void write(Object obj, BinaryStream out) {
         if (obj == null) {
             out.write("null");

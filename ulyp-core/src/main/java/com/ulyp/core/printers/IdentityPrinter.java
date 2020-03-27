@@ -9,6 +9,11 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    boolean supports(Class<?> clazz) {
+        return true;
+    }
+
+    @Override
     public void write(Object obj, BinaryStream out) {
         if (obj == null) {
             out.write("null");

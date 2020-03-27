@@ -9,6 +9,11 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    boolean supports(Class<?> clazz) {
+        return clazz.getName().equals("java.lang.String");
+    }
+
+    @Override
     public void write(Object obj, BinaryStream out) {
         String s = (String) obj;
         String printed;

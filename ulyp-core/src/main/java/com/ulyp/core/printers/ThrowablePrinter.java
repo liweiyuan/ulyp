@@ -9,6 +9,11 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    boolean supports(Class<?> clazz) {
+        return false;
+    }
+
+    @Override
     public void write(Object obj, BinaryStream out) {
         Throwable t = (Throwable) obj;
         /*StringPrinter.instance.print(*//*)*/

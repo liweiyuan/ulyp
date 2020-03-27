@@ -12,6 +12,8 @@ public abstract class ObjectBinaryPrinter {
         return id;
     }
 
+    abstract boolean supports(Class<?> clazz);
+
     /**
      * @param obj object to print
      * @param out target binary stream to print to

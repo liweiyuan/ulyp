@@ -11,6 +11,20 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    boolean supports(Class<?> clazz) {
+        return false;
+    }
+
+    private boolean isCollection(Class<?> clazz) {
+        for (Class<?> interfce : clazz.getInterfaces()) {
+            if(interfce.getName().equals("java.util.Collection")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void write(Object obj, BinaryStream out) {
         Collection<?> collection = (Collection<?>) obj;
         if(collection == null) {
