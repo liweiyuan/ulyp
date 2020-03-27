@@ -12,7 +12,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(Class<?> clazz) {
-        return false;
+        return isCollection(clazz);
     }
 
     private boolean isCollection(Class<?> clazz) {
@@ -34,14 +34,14 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
                 case 0:
                     out.write(ClassUtils.getSimpleName(collection.getClass()) + "{}");
                     return;
-                case 1:
-                    out.write(ClassUtils.getSimpleName(collection.getClass()) +
-                                    "{ " +
-//                        IdentityPrinter.instance.print(collection.iterator().next()) +
-                                    collection.iterator().next() +
-                                    " }"
-                    );
-                    return;
+//                case 1:
+//                    out.write(ClassUtils.getSimpleName(collection.getClass()) +
+//                                    "{ " +
+////                        IdentityPrinter.instance.print(collection.iterator().next()) +
+////                                    collection.iterator().next() +
+//                                    " }"
+//                    );
+//                    return;
                 default:
                     out.write(ClassUtils.getSimpleName(collection.getClass()) + "{ " + collection.size() +" }");
             }

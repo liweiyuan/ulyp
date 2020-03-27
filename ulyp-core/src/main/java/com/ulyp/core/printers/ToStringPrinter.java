@@ -1,5 +1,9 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.util.ClassUtils;
+
+import java.lang.reflect.Method;
+
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
     protected ToStringPrinter(int id) {
@@ -8,28 +12,26 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(Class<?> clazz) {
-        return clazz.isPrimitive() || isBoxedNumber(clazz) || isBoxedBoolean(clazz);
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().equals("toString") && method.getReturnType() == String.class && method.getParameterCount() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void write(Object obj, BinaryStream out) {
-        out.write(obj != null ? obj.toString() : "null");
-    }
-
-    private boolean isBoxedNumber(Class<?> ctClass) {
-        if(ctClass == null || ctClass.getName().equals("java.lang.Object")) {
-            return false;
-        }
-
-        Class<?> ctSuperclass = ctClass.getSuperclass();
-        if(ctSuperclass != null && ctSuperclass.getName().equals("java.lang.Number")) {
-            return true;
+        if (obj != null) {
+            String s;
+            try {
+                s = obj.toString();
+                out.write(ClassUtils.getSimpleName(obj.getClass()) + "| " + s);
+            } catch (Exception e) {
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, out);
+            }
         } else {
-            return isBoxedNumber(ctSuperclass);
+            out.write("null");
         }
-    }
-
-    private boolean isBoxedBoolean(Class<?> ctClass) {
-        return ctClass.getName().equals("java.lang.Boolean");
     }
 }
