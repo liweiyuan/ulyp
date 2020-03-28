@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Printers {
 
-    public static final Printers instance = new Printers();
+    private static final Printers instance = new Printers();
     private static final ObjectBinaryPrinter[] empty = new ObjectBinaryPrinter[0];
     private static final ObjectBinaryPrinter[] printers;
 
@@ -29,7 +29,11 @@ public class Printers {
         }
     }
 
-    public ObjectBinaryPrinter[] paramPrinters(Executable method) {
+    public static Printers getInstance() {
+        return instance;
+    }
+
+    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(Executable method) {
         try {
             Parameter[] parameters;
             try {
@@ -43,7 +47,7 @@ public class Printers {
             }
             ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[parameters.length];
             for (int i = 0; i < convs.length; i++) {
-                convs[i] = printerForClass(parameters[i].getType());
+                convs[i] = determinePrinterForType(parameters[i].getType());
             }
             return convs;
         } catch (Exception e) {
@@ -51,12 +55,12 @@ public class Printers {
         }
     }
 
-    public ObjectBinaryPrinter resultPrinter(Executable method) {
+    public ObjectBinaryPrinter determinePrinterForReturnType(Executable method) {
         try {
             if (method instanceof Constructor) {
-                return printerForClass(method.getDeclaringClass());
+                return determinePrinterForType(method.getDeclaringClass());
             } else {
-                return printerForClass(((Method)method).getReturnType());
+                return determinePrinterForType(((Method)method).getReturnType());
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare converters for method params " + method, e);
@@ -65,7 +69,7 @@ public class Printers {
 
     private static final ConcurrentMap<Class<?>, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
-    private ObjectBinaryPrinter printerForClass(Class<?> type) {
+    public ObjectBinaryPrinter determinePrinterForType(Class<?> type) {
         return cache.computeIfAbsent(
                 type, t -> {
                     for (ObjectBinaryPrinter printer : printers) {

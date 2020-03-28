@@ -7,7 +7,9 @@ public enum ObjectBinaryPrinterType {
     COLLECTION(new CollectionPrinter(3), 1),
     TO_STRING_PRINTER(new ToStringPrinter(4), 10),
     THROWABLE_PRINTER(new ThrowablePrinter(5), 20),
-    ENUM_PRINTER(new EnumPrinter(6), 20);
+    ENUM_PRINTER(new EnumPrinter(6), 20),
+    JAVA_LANG_OBJECT_PRINTER(new JavaLangObjectBinaryPrinter(7), 100),
+    NUMBER_PRINTER(new NumbersPrinter(6), 0);
 
     private final ObjectBinaryPrinter printer;
     private final int order;

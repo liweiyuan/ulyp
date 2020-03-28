@@ -26,8 +26,8 @@ public class MethodDescription {
         this.className = executable.getDeclaringClass().getName();
         this.methodName = executable instanceof Constructor ? "<init>" : executable.getName();
         this. returnsSomething= !(executable instanceof Method) || !((Method) executable).getReturnType().equals(Void.TYPE);
-        this.paramPrinters = Printers.instance.paramPrinters(executable);
-        this.resultPrinter = Printers.instance.resultPrinter(executable);
+        this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(executable);
+        this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(executable);
         boolean hasParamNames = executable.getParameterCount() > 0 && executable.getParameters()[0].isNamePresent();
         if (hasParamNames) {
             this.parameterNames = new ArrayList<>(executable.getParameterCount());
