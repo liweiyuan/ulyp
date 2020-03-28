@@ -26,7 +26,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
             String s;
             try {
                 s = obj.toString();
-                out.write(ClassUtils.getSimpleName(obj.getClass()) + "| " + s);
+                out.write(ClassUtils.getSimpleName(obj.getClass()) + "{ " + s + "}");
             } catch (Exception e) {
                 ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, out);
             }
