@@ -13,7 +13,7 @@ public class AgentContext {
 
     private final Settings settings;
     private final UploadingTransport transport;
-    private final MethodDescriptionDictionary methodCache;
+    private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final ProcessInfo processInfo;
     private final Log log;
 
@@ -24,7 +24,7 @@ public class AgentContext {
         } else {
             this.log = new NoopLog();
         }
-        this.methodCache = new MethodDescriptionDictionary(log);
+        this.methodDescriptionDictionary = new MethodDescriptionDictionary(log);
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
         this.transport = new UploadingTransport(settings.getUiAddress());
 
@@ -52,8 +52,8 @@ public class AgentContext {
         return settings;
     }
 
-    public MethodDescriptionDictionary getMethodCache() {
-        return methodCache;
+    public MethodDescriptionDictionary getMethodDescriptionDictionary() {
+        return methodDescriptionDictionary;
     }
 
     public Log getLog() {

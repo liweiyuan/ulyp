@@ -62,7 +62,7 @@ public class Tracer {
                 .build();
 
         MethodDescriptionList methodDescriptionList = new MethodDescriptionList();
-        for (MethodDescription description : context.getMethodCache().getMethodInfos()) {
+        for (MethodDescription description : context.getMethodDescriptionDictionary().getMethodInfos()) {
             methodDescriptionList.add(description);
         }
 

@@ -86,7 +86,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
+            tracer.startOrContinueTracing(context.getMethodDescriptionDictionary().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -94,7 +94,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
-            tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.endTracingIfPossible(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
         }
     }
 
@@ -104,7 +104,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.onMethodEnter(context.getMethodCache().get(executable), arguments);
+            tracer.onMethodEnter(context.getMethodDescriptionDictionary().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -112,7 +112,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Thrown Throwable throwable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            tracer.onMethodExit(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.onMethodExit(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
         }
     }
 }

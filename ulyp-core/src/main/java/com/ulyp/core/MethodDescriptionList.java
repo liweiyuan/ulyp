@@ -28,7 +28,7 @@ public class MethodDescriptionList extends AbstractSbeRecordList<TMethodDescript
                 paramNamesEncoder.value(argumentName);
             }
 
-            encoder.className(methodDescription.getClassName());
+            encoder.className(methodDescription.getClassDescription().getName());
             encoder.methodName(methodDescription.getMethodName());
         });
     }
