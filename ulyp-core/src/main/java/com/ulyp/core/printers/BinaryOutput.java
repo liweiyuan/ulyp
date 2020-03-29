@@ -1,6 +1,6 @@
 package com.ulyp.core.printers;
 
-public interface BinaryStream {
+public interface BinaryOutput {
 
     void write(final String value);
 }

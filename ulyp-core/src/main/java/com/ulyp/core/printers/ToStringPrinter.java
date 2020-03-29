@@ -21,7 +21,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
+    public void write(Object obj, BinaryOutput out) {
         if (obj != null) {
             String s;
             try {

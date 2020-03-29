@@ -14,7 +14,7 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
+    public void write(Object obj, BinaryOutput out) {
         String s = (String) obj;
         String printed;
         if(s == null) {

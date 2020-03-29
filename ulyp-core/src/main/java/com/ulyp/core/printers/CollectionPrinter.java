@@ -25,7 +25,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
+    public void write(Object obj, BinaryOutput out) {
         Collection<?> collection = (Collection<?>) obj;
         if(collection == null) {
             out.write("null");

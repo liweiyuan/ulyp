@@ -14,7 +14,7 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
+    public void write(Object obj, BinaryOutput out) {
         Throwable t = (Throwable) obj;
         /*StringPrinter.instance.print(*//*)*/
         out.write(ClassUtils.getSimpleName(t.getClass()) + ": " + t.getMessage());

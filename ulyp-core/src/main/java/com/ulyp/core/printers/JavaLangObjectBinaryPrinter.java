@@ -12,7 +12,7 @@ public class JavaLangObjectBinaryPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
+    public void write(Object obj, BinaryOutput out) {
         if (obj != null) {
             Class<?> type = obj.getClass();
             if (type != Object.class) {
