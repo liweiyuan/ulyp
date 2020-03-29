@@ -11,6 +11,7 @@ public class MethodTraceLog {
 
     private final long id = idGenerator.incrementAndGet();
 
+    private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final MethodEnterTraceList enterTraces = new MethodEnterTraceList();
     private final MethodExitTraceList exitTraces = new MethodExitTraceList();
     private final LongArrayList callIdsStack = new LongArrayList();
@@ -20,9 +21,12 @@ public class MethodTraceLog {
     private boolean active = true;
     private long callIdCounter = 0;
 
-    public MethodTraceLog(int maxDepth) {
+    private final long[] argClassIds = new long[256];
+
+    public MethodTraceLog(MethodDescriptionDictionary methodDescriptionDictionary, int maxDepth) {
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
+        this.methodDescriptionDictionary = methodDescriptionDictionary;
     }
 
     public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object[] args) {
@@ -33,11 +37,14 @@ public class MethodTraceLog {
         active = false;
         try {
             long callId = callIdCounter++;
-            //log.log(() -> "Method enter, log id " + id + ", call id = " + callId + ", method id = " + methodId + ", enter traces cnt = " + enterTraces.size() + ", exit traces cnt = " + exitTraces.size());
             pushCurrentMethodCallId(callId);
 
             if (callIdsStack.size() <= maxDepth) {
-                enterTraces.add(callId, methodId, printers, args);
+                for (int i = 0; i < args.length; i++) {
+                    argClassIds[i] = args[i] != null ? methodDescriptionDictionary.get(args[i].getClass()).getId() : -1;
+                }
+
+                enterTraces.add(callId, methodId, argClassIds, printers, args);
             }
         } finally {
             active = true;

@@ -2,9 +2,8 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.agent.util.Log;
-import com.ulyp.core.MethodDescription;
-import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.MethodTraceLog;
+import com.ulyp.core.*;
+import com.ulyp.transport.TClassDescriptionList;
 import com.ulyp.transport.TMethodDescriptionList;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
@@ -25,7 +24,10 @@ public class Tracer {
     }
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
-        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(context.getSettings().getMaxTreeDepth()));
+        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(
+                context.getMethodDescriptionDictionary(),
+                context.getSettings().getMaxTreeDepth())
+        );
         onMethodEnter(methodDescription, args);
     }
 
@@ -62,8 +64,12 @@ public class Tracer {
                 .build();
 
         MethodDescriptionList methodDescriptionList = new MethodDescriptionList();
-        for (MethodDescription description : context.getMethodDescriptionDictionary().getMethodInfos()) {
+        for (MethodDescription description : context.getMethodDescriptionDictionary().getMethodDescriptions()) {
             methodDescriptionList.add(description);
+        }
+        ClassDescriptionList classDescriptionList = new ClassDescriptionList();
+        for (ClassDescription classDescription : context.getMethodDescriptionDictionary().getClassDescriptions()) {
+            classDescriptionList.add(classDescription);
         }
 
         TMethodTraceLogUploadRequest.Builder requestBuilder = TMethodTraceLogUploadRequest.newBuilder();
@@ -72,6 +78,7 @@ public class Tracer {
                 .setTraceLogId(traceLog.getId())
                 .setTraceLog(log)
                 .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodDescriptionList.toByteString()).build())
+                .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
                 .setMainClassName(context.getProcessInfo().getMainClassName())
                 .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(System.currentTimeMillis() - traceLog.getEpochMillisCreatedTime());

@@ -1,9 +1,6 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.util.*;
-import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.MethodEnterTraceList;
-import com.ulyp.core.MethodExitTraceList;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -22,11 +19,7 @@ public class AbstractInstrumentationTest {
         try {
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
-            return MethodTraceTreeBuilder.from(
-                    new MethodEnterTraceList(request.getTraceLog().getEnterTraces()),
-                    new MethodExitTraceList(request.getTraceLog().getExitTraces()),
-                    new MethodDescriptionList(request.getMethodDescriptionList().getData())
-            );
+            return MethodTraceTreeBuilder.from(request);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Could not capture trace log: " + e.getMessage());
@@ -44,11 +37,7 @@ public class AbstractInstrumentationTest {
         try {
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
-            return MethodTraceTreeBuilder.from(
-                    new MethodEnterTraceList(request.getTraceLog().getEnterTraces()),
-                    new MethodExitTraceList(request.getTraceLog().getExitTraces()),
-                    new MethodDescriptionList(request.getMethodDescriptionList().getData())
-            );
+            return MethodTraceTreeBuilder.from(request);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Could not capture trace log: " + e.getMessage());

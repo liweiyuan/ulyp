@@ -13,6 +13,7 @@ public class MethodTraceTreeNode {
     private final String methodName;
     private final boolean isVoidMethod;
     private final List<String> args;
+    private final List<String> argTypes;
     private final List<String> parameterNames;
     private final String returnValue;
     private final boolean thrown;
@@ -20,6 +21,7 @@ public class MethodTraceTreeNode {
 
     public MethodTraceTreeNode(
             List<String> args,
+            List<String> argTypes,
             String returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
@@ -27,6 +29,7 @@ public class MethodTraceTreeNode {
     {
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.args = args;
+        this.argTypes = argTypes;
         this.returnValue = returnValue;
         this.thrown = thrown;
         int tmpLimit = methodDescription.limit();
@@ -51,6 +54,10 @@ public class MethodTraceTreeNode {
 
     public String getMethodName() {
         return methodName;
+    }
+
+    public List<String> getArgTypes() {
+        return argTypes;
     }
 
     public List<String> getArgs() {

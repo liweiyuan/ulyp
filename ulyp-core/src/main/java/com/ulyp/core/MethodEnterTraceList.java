@@ -15,7 +15,7 @@ public class MethodEnterTraceList extends AbstractSbeRecordList<TMethodEnterTrac
         super(bytes);
     }
 
-    public void add(long callId, long methodId, ObjectBinaryPrinter[] printers, Object[] args) {
+    public void add(long callId, long methodId, long[] argsClassIds, ObjectBinaryPrinter[] printers, Object[] args) {
         super.add(encoder -> {
             encoder.callId(callId);
             encoder.methodId(methodId);
@@ -24,6 +24,7 @@ public class MethodEnterTraceList extends AbstractSbeRecordList<TMethodEnterTrac
 
             for (int i = 0; i < args.length; i++) {
                 argumentsEncoder = argumentsEncoder.next();
+                argumentsEncoder.classId(argsClassIds[i]);
                 printers[i].write(args[i], argumentsEncoder::value);
             }
         });
