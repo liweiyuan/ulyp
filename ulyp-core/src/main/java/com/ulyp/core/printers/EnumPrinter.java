@@ -1,5 +1,7 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.printers.bytes.BinaryOutput;
+
 public class EnumPrinter extends ObjectBinaryPrinter {
 
     protected EnumPrinter(int id) {

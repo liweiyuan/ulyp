@@ -1,5 +1,7 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.printers.bytes.BinaryOutput;
+
 public class StringPrinter extends ObjectBinaryPrinter {
 
     private static final int MAX_LENGTH = 800;

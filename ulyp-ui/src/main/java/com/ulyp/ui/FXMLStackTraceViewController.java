@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.MethodEnterTraceList;
 import com.ulyp.core.MethodExitTraceList;
@@ -46,8 +47,6 @@ public class FXMLStackTraceViewController implements Initializable {
 
     private final Storage storage = new InMemoryStorage();
 
-    private final StoringService storingService = new StoringService(storage);
-
     public Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
     @Override
@@ -56,11 +55,12 @@ public class FXMLStackTraceViewController implements Initializable {
     }
 
     public void onMethodTraceTreeUploaded(TMethodTraceLogUploadRequest request) {
-        MethodTraceTreeNode root = storingService.store(
+        MethodTraceTreeNode root = new StoringService(
                 new MethodEnterTraceList(request.getTraceLog().getEnterTraces()),
                 new MethodExitTraceList(request.getTraceLog().getExitTraces()),
-                new MethodDescriptionList(request.getMethodDescriptionList().getData())
-        );
+                new MethodDescriptionList(request.getMethodDescriptionList().getData()),
+                new ClassDescriptionList(request.getClassDescriptionList().getData()),
+                storage).store();
 
         Platform.runLater(() -> addTree(request, root));
     }

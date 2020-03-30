@@ -1,5 +1,7 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.printers.bytes.BinaryOutput;
+
 public class NumbersPrinter extends ObjectBinaryPrinter {
 
     protected NumbersPrinter(int id) {

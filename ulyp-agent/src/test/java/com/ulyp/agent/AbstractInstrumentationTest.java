@@ -19,7 +19,7 @@ public class AbstractInstrumentationTest {
         try {
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
-            return MethodTraceTreeBuilder.from(request);
+            return new MethodTraceTreeBuilder(request).build();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Could not capture trace log: " + e.getMessage());
@@ -37,7 +37,7 @@ public class AbstractInstrumentationTest {
         try {
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
-            return MethodTraceTreeBuilder.from(request);
+            return new MethodTraceTreeBuilder(request).build();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Could not capture trace log: " + e.getMessage());

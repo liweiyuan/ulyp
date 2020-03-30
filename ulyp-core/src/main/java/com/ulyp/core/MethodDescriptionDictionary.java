@@ -1,5 +1,7 @@
 package com.ulyp.core;
 
+import com.ulyp.core.util.ClassUtils;
+
 import java.lang.reflect.Executable;
 import java.util.Collection;
 import java.util.Map;
@@ -20,7 +22,10 @@ public class MethodDescriptionDictionary {
     }
 
     public ClassDescription get(Class<?> clazz) {
-        return classDescriptionMap.computeIfAbsent(clazz, cl -> new ClassDescription(idGenerator.incrementAndGet(), cl.getName()));
+        return classDescriptionMap.computeIfAbsent(
+                clazz,
+                cl -> new ClassDescription(idGenerator.incrementAndGet(), ClassUtils.getSimpleNameSafe(cl), cl.getName())
+        );
     }
 
     public Collection<MethodDescription> getMethodDescriptions() {

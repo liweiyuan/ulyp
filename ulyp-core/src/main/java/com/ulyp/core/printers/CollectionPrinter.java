@@ -1,5 +1,6 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.util.ClassUtils;
 
 import java.util.Collection;

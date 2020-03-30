@@ -3,26 +3,25 @@ package com.ulyp.core.printers;
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
-import com.ulyp.core.util.ClassUtils;
 
-public class IdentityPrinter extends ObjectBinaryPrinter {
+public class NullObjectPrinter extends ObjectBinaryPrinter {
 
-    protected IdentityPrinter(int id) {
+    protected NullObjectPrinter(int id) {
         super(id);
     }
 
     @Override
     boolean supports(Class<?> clazz) {
-        return true;
+        return false;
     }
 
     @Override
     public String read(ClassDescription classDescription, BinaryInput binaryInput) {
-        return classDescription.getSimpleName() + "@" + binaryInput.readInt();
+        return "null";
     }
 
     @Override
     public void write(Object obj, BinaryOutput out) {
-        out.write(System.identityHashCode(obj));
+        out.write(0);
     }
 }

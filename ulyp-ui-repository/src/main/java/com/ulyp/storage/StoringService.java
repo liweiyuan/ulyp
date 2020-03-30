@@ -1,24 +1,46 @@
 package com.ulyp.storage;
 
 import com.ulyp.core.*;
-import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.TMethodDescriptionDecoder;
-import com.ulyp.transport.TMethodEnterTraceDecoder;
-import com.ulyp.transport.TMethodExitTraceDecoder;
+import com.ulyp.core.printers.bytes.BinaryInputImpl;
+import com.ulyp.core.printers.ObjectBinaryPrinter;
+import com.ulyp.core.printers.ObjectBinaryPrinterType;
+import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.*;
 
 public class StoringService {
 
+    private final MethodEnterTraceList enterTracesList;
+    private final MethodExitTraceList exitTracesList;
+    private final MethodDescriptionList methodDescriptionList;
+    private final Long2ObjectMap<ClassDescription> classIdMap;
     private final Storage storage;
 
-    public StoringService(Storage storage) {
+    public StoringService(MethodEnterTraceList enterTracesList,
+                          MethodExitTraceList exitTracesList,
+                          MethodDescriptionList methodDescriptionList,
+                          ClassDescriptionList classDescriptionList,
+                          Storage storage)
+    {
         this.storage = storage;
+        this.enterTracesList = enterTracesList;
+        this.exitTracesList = exitTracesList;
+        this.methodDescriptionList = methodDescriptionList;
+
+        this.classIdMap = new Long2ObjectOpenHashMap<>();
+        for (TClassDescriptionDecoder classDescription : classDescriptionList) {
+            this.classIdMap.put(
+                    classDescription.id(),
+                    new ClassDescription(classDescription.id(), classDescription.simpleClassName(), classDescription.className())
+            );
+        }
     }
 
-    public MethodTraceTreeNode store(MethodEnterTraceList enterTracesList, MethodExitTraceList exitTracesList, MethodDescriptionList methodDescriptionList) {
+    public MethodTraceTreeNode store()
+    {
         Long2ObjectMap<TMethodDescriptionDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
         Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
         while (iterator.hasNext()) {
@@ -80,12 +102,17 @@ public class StoringService {
             TMethodEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
             while (arguments.hasNext()) {
                 arguments = arguments.next();
-                args.add(arguments.value());
+                UnsafeBuffer buffer = new UnsafeBuffer();
+                arguments.wrapValue(buffer);
+                args.add(ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(classIdMap.get(arguments.classId()), new BinaryInputImpl(buffer)));
             }
         }
 
         private void setExitTraceData(TMethodExitTraceDecoder decoder) {
-            this.returnValue = decoder.returnValue();
+            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
+            UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
+            decoder.wrapReturnValue(returnValueBuffer);
+            this.returnValue = printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer));
             this.thrown = decoder.thrown() == BooleanType.T;
         }
 

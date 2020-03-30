@@ -17,6 +17,7 @@ public class ClassDescriptionList extends AbstractSbeRecordList<TClassDescriptio
     public void add(ClassDescription classDescription) {
         super.add(encoder -> {
             encoder.id(classDescription.getId());
+            encoder.simpleClassName(classDescription.getSimpleName());
             encoder.className(classDescription.getName());
         });
     }

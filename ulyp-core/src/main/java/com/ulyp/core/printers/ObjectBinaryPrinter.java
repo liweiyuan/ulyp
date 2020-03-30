@@ -1,5 +1,10 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.ClassDescription;
+import com.ulyp.core.printers.bytes.BinaryInput;
+import com.ulyp.core.printers.bytes.BinaryOutput;
+import com.ulyp.transport.TClassDescriptionDecoder;
+
 public abstract class ObjectBinaryPrinter {
 
     private final int id;
@@ -10,6 +15,10 @@ public abstract class ObjectBinaryPrinter {
 
     public final int getId() {
         return id;
+    }
+
+    public String read(ClassDescription classDescription, BinaryInput binaryInput) {
+        return binaryInput.readString();
     }
 
     abstract boolean supports(Class<?> clazz);

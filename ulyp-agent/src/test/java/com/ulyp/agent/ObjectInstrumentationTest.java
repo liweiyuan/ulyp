@@ -41,4 +41,19 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         assertThat(root.getArgs().get(0), is("asdasd"));
         assertThat(root.getArgs().get(1), is("34"));
     }
+
+    @Test
+    public void shouldPrintNullArguments() {
+        MethodTraceTree tree = executeClass(
+                ObjectTestCases.class,
+                "com.test.cases",
+                "ObjectTestCases.acceptsTwoNulls"
+        );
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getArgs(), Matchers.hasSize(2));
+        assertThat(root.getArgs().get(0), is("null"));
+        assertThat(root.getArgs().get(1), is("null"));
+    }
 }

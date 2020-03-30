@@ -1,5 +1,6 @@
 package com.ulyp.agent.util;
 
+import com.ulyp.core.ClassDescription;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
 
@@ -13,7 +14,7 @@ public class MethodTraceTreeNode {
     private final String methodName;
     private final boolean isVoidMethod;
     private final List<String> args;
-    private final List<String> argTypes;
+    private final List<ClassDescription> argTypes;
     private final List<String> parameterNames;
     private final String returnValue;
     private final boolean thrown;
@@ -21,7 +22,7 @@ public class MethodTraceTreeNode {
 
     public MethodTraceTreeNode(
             List<String> args,
-            List<String> argTypes,
+            List<ClassDescription> argTypes,
             String returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
@@ -56,7 +57,7 @@ public class MethodTraceTreeNode {
         return methodName;
     }
 
-    public List<String> getArgTypes() {
+    public List<ClassDescription> getArgTypes() {
         return argTypes;
     }
 

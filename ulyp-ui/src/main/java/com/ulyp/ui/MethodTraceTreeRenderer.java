@@ -71,18 +71,6 @@ public class MethodTraceTreeRenderer {
         return returnValueText;
     }
 
-    private static void appendArgsTo(MethodTraceTreeNode node, StringBuilder builder) {
-        List<String> args = node.getArgs();
-        for (int i = 0; i < args.size(); i++) {
-            builder.append(node.getParameterNames().get(i));
-
-            builder.append(args.get(i));
-            if (i < args.size() - 1) {
-                builder.append(", ");
-            }
-        }
-    }
-
     private static String trimText(String text) {
         if (text.length() < 100) {
             return text;

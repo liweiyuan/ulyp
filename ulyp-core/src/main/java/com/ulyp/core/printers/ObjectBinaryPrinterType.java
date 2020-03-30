@@ -1,7 +1,7 @@
 package com.ulyp.core.printers;
 
 public enum ObjectBinaryPrinterType {
-    IDENTITY_PRINTER(new IdentityPrinter(0), Integer.MAX_VALUE),
+    IDENTITY_PRINTER(new IdentityPrinter(0), Integer.MAX_VALUE / 2),
     CLASS_OBJECT_PRINTER(new ClassObjectPrinter(1), 20),
     STRING_PRINTER(new StringPrinter(2), 0),
     COLLECTION(new CollectionPrinter(3), 1),
@@ -9,7 +9,21 @@ public enum ObjectBinaryPrinterType {
     THROWABLE_PRINTER(new ThrowablePrinter(5), 20),
     ENUM_PRINTER(new EnumPrinter(6), 20),
     JAVA_LANG_OBJECT_PRINTER(new JavaLangObjectBinaryPrinter(7), 100),
-    NUMBER_PRINTER(new NumbersPrinter(6), 0);
+    NUMBER_PRINTER(new NumbersPrinter(8), 0),
+    // null printer should come last and it support no type
+    NULL_PRINTER(new NullObjectPrinter(9), Integer.MAX_VALUE);
+
+    public static final ObjectBinaryPrinter[] printers = new ObjectBinaryPrinter[256];
+
+    static {
+        for (ObjectBinaryPrinterType printerType : values()) {
+            printers[printerType.getPrinter().getId()] = printerType.getPrinter();
+        }
+    }
+
+    public static ObjectBinaryPrinter printerForId(int id) {
+        return printers[id];
+    }
 
     private final ObjectBinaryPrinter printer;
     private final int order;
