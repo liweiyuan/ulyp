@@ -1,5 +1,7 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.ClassDescription;
+import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.util.ClassUtils;
 
@@ -26,11 +28,16 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
+    public String read(ClassDescription classDescription, BinaryInput binaryInput) {
+        return classDescription.getSimpleName() + binaryInput.readString();
+    }
+
+    @Override
     public void write(Object obj, BinaryOutput out) throws Exception {
         Collection<?> collection = (Collection<?>) obj;
         switch (collection.size()) {
             case 0:
-                out.write(ClassUtils.getSimpleName(collection.getClass()) + "{}");
+                out.write("{}");
                 return;
 //                case 1:
 //                    out.write(ClassUtils.getSimpleName(collection.getClass()) +
@@ -41,7 +48,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 //                    );
 //                    return;
             default:
-                out.write(ClassUtils.getSimpleName(collection.getClass()) + "{ " + collection.size() +" }");
+                out.write("{ " + collection.size() +" }");
         }
     }
 }
