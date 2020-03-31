@@ -12,16 +12,14 @@ public class StringPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(Class<?> clazz) {
-        return clazz.getName().equals("java.lang.String");
+        return clazz == String.class;
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
+    public void write(Object obj, BinaryOutput out) throws Exception {
         String s = (String) obj;
         String printed;
-        if(s == null) {
-            printed = "null";
-        } else if (s.length() > MAX_LENGTH) {
+        if (s.length() > MAX_LENGTH) {
             printed = "'" + s.substring(0, MAX_LENGTH) + "...'(" + s.length() + ")";
         } else {
             printed = "'" + s + "'";

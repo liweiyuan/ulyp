@@ -3,7 +3,6 @@ package com.ulyp.core.printers;
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
-import com.ulyp.transport.TClassDescriptionDecoder;
 
 public abstract class ObjectBinaryPrinter {
 
@@ -27,5 +26,5 @@ public abstract class ObjectBinaryPrinter {
      * @param obj object to print
      * @param out target binary stream to print to
      */
-    public abstract void write(Object obj, BinaryOutput out);
+    public abstract void write(Object obj, BinaryOutput out) throws Exception;
 }

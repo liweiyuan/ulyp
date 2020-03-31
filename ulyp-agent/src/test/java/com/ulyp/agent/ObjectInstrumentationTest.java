@@ -43,6 +43,21 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
     }
 
     @Test
+    public void shouldChooseValidPrinterAtRuntimeForJavaClasses() {
+        MethodTraceTree tree = executeClass(
+                ObjectTestCases.class,
+                "com.test.cases",
+                "ObjectTestCases.acceptsTwoObjects3"
+        );
+
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getArgs(), Matchers.hasSize(2));
+        assertThat(root.getArgs().get(0), matchesPattern("ObjectTestCases$X@.+"));
+        assertThat(root.getArgs().get(1), is("34"));
+    }
+
+    @Test
     public void shouldPrintNullArguments() {
         MethodTraceTree tree = executeClass(
                 ObjectTestCases.class,

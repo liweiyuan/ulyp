@@ -1,7 +1,8 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.ClassDescription;
+import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
-import com.ulyp.core.util.ClassUtils;
 
 public class ThrowablePrinter extends ObjectBinaryPrinter {
 
@@ -15,9 +16,13 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
+    public String read(ClassDescription classDescription, BinaryInput binaryInput) {
+        return classDescription.getSimpleName() + ": " + binaryInput.readString();
+    }
+
+    @Override
+    public void write(Object obj, BinaryOutput out) throws Exception {
         Throwable t = (Throwable) obj;
-        /*StringPrinter.instance.print(*//*)*/
-        out.write(ClassUtils.getSimpleName(t.getClass()) + ": " + t.getMessage());
+        out.write(t.getMessage());
     }
 }

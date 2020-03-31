@@ -5,7 +5,7 @@ import org.agrona.DirectBuffer;
 public class BinaryInputImpl implements BinaryInput {
 
     private final DirectBuffer buffer;
-    private int pos = 0;
+    private int bytePos = 0;
 
     public BinaryInputImpl(DirectBuffer buffer) {
         this.buffer = buffer;
@@ -13,13 +13,21 @@ public class BinaryInputImpl implements BinaryInput {
 
     @Override
     public int readInt() {
-        return buffer.getInt(pos);
+        int val = buffer.getInt(bytePos);
+        bytePos += Integer.BYTES;
+        return val;
     }
 
     @Override
     public String readString() {
-        byte[] b = new byte[buffer.capacity()];
-        buffer.getBytes(0, b);
-        return new String(b);
+        int length = readInt();
+        if (length > 0) {
+            byte[] bytes = new byte[length];
+            buffer.getBytes(bytePos, bytes);
+            bytePos += length;
+            return new String(bytes);
+        } else {
+            return null;
+        }
     }
 }

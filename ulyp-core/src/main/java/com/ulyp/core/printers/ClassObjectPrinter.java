@@ -14,12 +14,8 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
-        if (obj == null) {
-            out.write("null");
-        } else {
-            Class<?> clazz = (Class<?>) obj;
-            out.write("Class{" + clazz.getName() + "}");
-        }
+    public void write(Object obj, BinaryOutput out) throws Exception {
+        Class<?> clazz = (Class<?>) obj;
+        out.write("Class{" + clazz.getName() + "}");
     }
 }

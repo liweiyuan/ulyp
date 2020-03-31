@@ -14,12 +14,8 @@ public class NumbersPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
-        if (obj == null) {
-            out.write("null");
-        } else {
-            out.write(obj.toString());
-        }
+    public void write(Object obj, BinaryOutput out) throws Exception {
+        out.write(obj.toString());
     }
 
     private boolean isBoxedNumber(Class<?> clazz) {

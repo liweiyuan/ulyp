@@ -8,7 +8,7 @@ public enum ObjectBinaryPrinterType {
     TO_STRING_PRINTER(new ToStringPrinter(4), 10),
     THROWABLE_PRINTER(new ThrowablePrinter(5), 20),
     ENUM_PRINTER(new EnumPrinter(6), 20),
-    JAVA_LANG_OBJECT_PRINTER(new JavaLangObjectBinaryPrinter(7), 100),
+    DYNAMIC_OBJECT_PRINTER(new DynamicObjectBinaryPrinter(7), 100),
     NUMBER_PRINTER(new NumbersPrinter(8), 0),
     // null printer should come last and it support no type
     NULL_PRINTER(new NullObjectPrinter(9), Integer.MAX_VALUE);
@@ -17,6 +17,9 @@ public enum ObjectBinaryPrinterType {
 
     static {
         for (ObjectBinaryPrinterType printerType : values()) {
+            if (printers[printerType.getPrinter().getId()] != null) {
+                throw new RuntimeException("Duplicate id");
+            }
             printers[printerType.getPrinter().getId()] = printerType.getPrinter();
         }
     }

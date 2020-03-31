@@ -18,7 +18,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     private boolean isCollection(Class<?> clazz) {
         for (Class<?> interfce : clazz.getInterfaces()) {
-            if(interfce.getName().equals("java.util.Collection")) {
+            if(interfce == Collection.class) {
                 return true;
             }
         }
@@ -26,15 +26,12 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
+    public void write(Object obj, BinaryOutput out) throws Exception {
         Collection<?> collection = (Collection<?>) obj;
-        if(collection == null) {
-            out.write("null");
-        } else {
-            switch (collection.size()) {
-                case 0:
-                    out.write(ClassUtils.getSimpleName(collection.getClass()) + "{}");
-                    return;
+        switch (collection.size()) {
+            case 0:
+                out.write(ClassUtils.getSimpleName(collection.getClass()) + "{}");
+                return;
 //                case 1:
 //                    out.write(ClassUtils.getSimpleName(collection.getClass()) +
 //                                    "{ " +
@@ -43,9 +40,8 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 //                                    " }"
 //                    );
 //                    return;
-                default:
-                    out.write(ClassUtils.getSimpleName(collection.getClass()) + "{ " + collection.size() +" }");
-            }
+            default:
+                out.write(ClassUtils.getSimpleName(collection.getClass()) + "{ " + collection.size() +" }");
         }
     }
 }

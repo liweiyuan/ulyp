@@ -3,7 +3,6 @@ package com.ulyp.core.printers;
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
-import com.ulyp.core.util.ClassUtils;
 
 public class IdentityPrinter extends ObjectBinaryPrinter {
 
@@ -22,7 +21,7 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
+    public void write(Object obj, BinaryOutput out) throws Exception {
         out.write(System.identityHashCode(obj));
     }
 }

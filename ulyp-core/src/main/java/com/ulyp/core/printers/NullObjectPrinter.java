@@ -21,7 +21,7 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
+    public void write(Object obj, BinaryOutput out) throws Exception {
         out.write(0);
     }
 }

@@ -6,6 +6,7 @@ import com.ulyp.core.printers.bytes.BinaryOutputForEnterTraceImpl;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.transport.TMethodEnterTraceDecoder;
 import com.ulyp.transport.TMethodEnterTraceEncoder;
+import org.agrona.LangUtil;
 
 // Flexible SBE wrapper
 public class MethodEnterTraceList extends AbstractSbeRecordList<TMethodEnterTraceEncoder, TMethodEnterTraceDecoder> {
@@ -33,7 +34,11 @@ public class MethodEnterTraceList extends AbstractSbeRecordList<TMethodEnterTrac
                 argumentsEncoder.classId(argsClassIds[i]);
                 argumentsEncoder.printerId(printer.getId());
                 binaryOutput.wrap(encoder);
-                printer.write(args[i], binaryOutput);
+                try {
+                    printer.write(args[i], binaryOutput);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

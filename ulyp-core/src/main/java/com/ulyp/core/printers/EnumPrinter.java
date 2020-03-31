@@ -14,11 +14,7 @@ public class EnumPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) {
-        if (obj == null) {
-            out.write("null");
-        } else {
-            out.write(((Enum<?>) obj).name());
-        }
+    public void write(Object obj, BinaryOutput out) throws Exception {
+        out.write(((Enum<?>) obj).name());
     }
 }

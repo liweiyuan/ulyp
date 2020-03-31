@@ -31,7 +31,11 @@ public class MethodExitTraceList extends AbstractSbeRecordList<TMethodExitTraceE
 
             encoder.returnPrinterId(printer.getId());
             binaryOutput.wrap(encoder);
-            printer.write(returnValue, binaryOutput);
+            try {
+                printer.write(returnValue, binaryOutput);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }
