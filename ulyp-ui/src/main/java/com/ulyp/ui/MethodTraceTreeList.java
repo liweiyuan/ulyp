@@ -30,10 +30,10 @@ public class MethodTraceTreeList {
         this.onDestroy = onDestroy;
     }
 
-    public void add(MethodTraceTreeNode tree, Duration lifetime) {
+    public void add(MethodTraceTreeNode tree, RenderSettings renderSettings, Duration lifetime) {
         long id = idGenerator++;
 
-        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, id, lifetime), id);
+        MethodTraceTreeTab tab = new MethodTraceTreeTab(tabFrom(tree, renderSettings, id, lifetime), id);
 
 //        if (tab.getSearchIndex().contains(textSearch)) {
         addToVisible(tab);
@@ -64,8 +64,8 @@ public class MethodTraceTreeList {
         );
     }
 
-    private Tab tabFrom(MethodTraceTreeNode node, long stamp, Duration lifetime) {
-        TreeView<Node> view = new TreeView<>(new MethodTraceTreeFxItem(node, node.getSubtreeNodeCount()));
+    private Tab tabFrom(MethodTraceTreeNode node, RenderSettings renderSettings, long stamp, Duration lifetime) {
+        TreeView<Node> view = new TreeView<>(new MethodTraceTreeFxItem(node, renderSettings, node.getSubtreeNodeCount()));
         view.prefHeightProperty().bind(stackTabs.heightProperty());
         view.prefWidthProperty().bind(stackTabs.widthProperty());
         ScrollPane scrollPane = new ScrollPane(view);

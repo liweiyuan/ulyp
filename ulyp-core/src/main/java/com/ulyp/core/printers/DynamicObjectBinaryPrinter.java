@@ -13,7 +13,7 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(Class<?> clazz) {
-        return clazz == Object.class;
+        return clazz.isInterface() || clazz == Object.class;
     }
 
     @Override

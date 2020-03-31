@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.sun.scenario.effect.impl.state.RenderState;
 import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.MethodEnterTraceList;
@@ -49,6 +50,8 @@ public class FXMLStackTraceViewController implements Initializable {
 
     public Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
+    private final RenderSettings renderSettings = new RenderSettings();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -82,7 +85,7 @@ public class FXMLStackTraceViewController implements Initializable {
 
     private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTreeNode node) {
         ProcessTab processTab = getOrCreateProcessTab(request.getMainClassName());
-        processTab.getTabList().add(node, Duration.ofMillis(request.getLifetimeMillis()));
+        processTab.getTabList().add(node, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void clearAll(Event event) {

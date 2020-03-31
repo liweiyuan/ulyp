@@ -8,12 +8,11 @@ import java.util.function.Consumer;
 
 class ProcessTab {
     private final Tab tab;
-    private final TabPane tabPane;
     private final MethodTraceTreeList tabList;
 
     ProcessTab(TabPane processTabPane, String mainClassName, Consumer<Event> onClose) {
         this.tab = new Tab(mainClassName);
-        this.tabPane = new TabPane();
+        TabPane tabPane = new TabPane();
         this.tabList = new MethodTraceTreeList(tabPane, onClose);
         tab.setContent(tabPane);
         tabPane.prefHeightProperty().bind(processTabPane.heightProperty());

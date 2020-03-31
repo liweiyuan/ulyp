@@ -4,7 +4,7 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class StringPrinter extends ObjectBinaryPrinter {
 
-    private static final int MAX_LENGTH = 800;
+    private static final int MAX_LENGTH = 400;
 
     protected StringPrinter(int id) {
         super(id);

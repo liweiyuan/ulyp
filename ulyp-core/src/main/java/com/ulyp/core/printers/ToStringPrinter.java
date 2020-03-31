@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
     private static final int TO_STRING_CALL_SUCCESS = 1;
+    private static final int TO_STRING_CALL_NULL = 2;
     private static final int TO_STRING_CALL_FAIL = 0;
 
     protected ToStringPrinter(int id) {
@@ -30,7 +31,9 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     public String read(ClassDescription classDescription, BinaryInput binaryInput) {
         int result = binaryInput.readInt();
         if (result == TO_STRING_CALL_SUCCESS) {
-            return binaryInput.readString();
+            return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput);
+        } else if (result == TO_STRING_CALL_NULL) {
+            return "null";
         } else {
             return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(classDescription, binaryInput);
         }
@@ -39,15 +42,18 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, BinaryOutput out) throws Exception {
         try {
-            String s = obj.toString();
-            if (s != null && s.length() > 400) {
-                s = s.substring(0, 400) + "...";
+            String printed = obj.toString();
+            if (printed != null) {
+                try (BinaryOutputAppender appender = out.appender()) {
+                    appender.append(TO_STRING_CALL_SUCCESS);
+                    ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().write(printed, appender);
+                }
+            } else {
+                try (BinaryOutputAppender appender = out.appender()) {
+                    appender.append(TO_STRING_CALL_NULL);
+                }
             }
-            try (BinaryOutputAppender appender = out.appender()) {
-                appender.append(TO_STRING_CALL_SUCCESS);
-                appender.append(s);
-            }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             try (BinaryOutputAppender appender = out.appender()) {
                 appender.append(TO_STRING_CALL_FAIL);
                 ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, appender);
