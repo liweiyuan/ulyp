@@ -1,6 +1,5 @@
 package com.ulyp.ui;
 
-import com.ulyp.storage.MethodTraceTreeNode;
 import javafx.scene.control.Tab;
 
 public class MethodTraceTreeTab {

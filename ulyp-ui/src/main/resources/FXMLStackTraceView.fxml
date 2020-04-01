@@ -31,6 +31,6 @@
       <Label text="Search" />
       <TextField fx:id="searchField" onKeyReleased="#onKeyReleased" prefWidth="200.0"/>
     </HBox>-->
-    <TabPane fx:id="processTabPane" VBox.vgrow="ALWAYS" onKeyReleased="#tabPaneKeyPressed" />
+    <TabPane fx:id="processTabPane" VBox.vgrow="ALWAYS" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" />
   </children>
 </VBox>
