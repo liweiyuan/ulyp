@@ -18,14 +18,21 @@ public class BinaryInputImpl implements BinaryInput {
         return val;
     }
 
+    public char readChar() {
+        char val = buffer.getChar(bytePos);
+        bytePos += Character.BYTES;
+        return val;
+    }
+
     @Override
     public String readString() {
         int length = readInt();
-        if (length > 0) {
-            byte[] bytes = new byte[length];
-            buffer.getBytes(bytePos, bytes);
-            bytePos += length;
-            return new String(bytes);
+        if (length >= 0) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                builder.append(readChar());
+            }
+            return builder.toString();
         } else {
             return null;
         }
