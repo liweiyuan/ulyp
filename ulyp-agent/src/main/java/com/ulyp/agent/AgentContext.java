@@ -5,6 +5,7 @@ import com.ulyp.agent.util.Log;
 import com.ulyp.agent.util.NoopLog;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.agent.util.SysoutLog;
+import com.ulyp.core.MethodDescriptionDictionary;
 import com.ulyp.core.ProcessInfo;
 
 import java.util.concurrent.TimeUnit;
@@ -13,18 +14,18 @@ public class AgentContext {
 
     private final Settings settings;
     private final UploadingTransport transport;
-    private final MethodDescriptionDictionary methodCache;
+    private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final ProcessInfo processInfo;
     private final Log log;
 
     public AgentContext() {
-        this.settings = Settings.fromJavaProperties();
+        this.settings = Settings.getInstance();
         if (settings.loggingTurnedOn()) {
             this.log = new SysoutLog();
         } else {
             this.log = new NoopLog();
         }
-        this.methodCache = new MethodDescriptionDictionary(log);
+        this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
         this.transport = new UploadingTransport(settings.getUiAddress());
 
@@ -52,8 +53,8 @@ public class AgentContext {
         return settings;
     }
 
-    public MethodDescriptionDictionary getMethodCache() {
-        return methodCache;
+    public MethodDescriptionDictionary getMethodDescriptionDictionary() {
+        return methodDescriptionDictionary;
     }
 
     public Log getLog() {

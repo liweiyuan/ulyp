@@ -1,6 +1,8 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.util.ClassUtils;
+import com.ulyp.core.ClassDescription;
+import com.ulyp.core.printers.bytes.BinaryInput;
+import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class IdentityPrinter extends ObjectBinaryPrinter {
 
@@ -9,11 +11,17 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryStream out) {
-        if (obj == null) {
-            out.write("null");
-        } else {
-            out.write(ClassUtils.getSimpleName(obj.getClass()) + "@" + System.identityHashCode(obj));
-        }
+    boolean supports(Class<?> clazz) {
+        return true;
+    }
+
+    @Override
+    public String read(ClassDescription classDescription, BinaryInput binaryInput) {
+        return classDescription.getSimpleName() + "@" + binaryInput.readInt();
+    }
+
+    @Override
+    public void write(Object obj, BinaryOutput out) throws Exception {
+        out.write(System.identityHashCode(obj));
     }
 }

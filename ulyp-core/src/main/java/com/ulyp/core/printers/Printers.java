@@ -4,15 +4,36 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Printers {
 
-    public static final Printers instance = new Printers();
+    private static final Printers instance = new Printers();
     private static final ObjectBinaryPrinter[] empty = new ObjectBinaryPrinter[0];
+    private static final ObjectBinaryPrinter[] printers;
 
-    public ObjectBinaryPrinter[] paramPrinters(Executable method) {
+    static {
+        printers = new ObjectBinaryPrinter[ObjectBinaryPrinterType.values().length];
+
+        List<ObjectBinaryPrinterType> printerTypes = new ArrayList<>();
+        printerTypes.addAll(Arrays.asList(ObjectBinaryPrinterType.values()));
+        printerTypes.sort(Comparator.comparing(ObjectBinaryPrinterType::getOrder));
+
+        for (int i = 0; i < printerTypes.size(); i++) {
+            printers[i] = printerTypes.get(i).getPrinter();
+        }
+    }
+
+    public static Printers getInstance() {
+        return instance;
+    }
+
+    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(Executable method) {
         try {
             Parameter[] parameters;
             try {
@@ -26,7 +47,7 @@ public class Printers {
             }
             ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[parameters.length];
             for (int i = 0; i < convs.length; i++) {
-                convs[i] = printerForClass(parameters[i].getType());
+                convs[i] = determinePrinterForType(parameters[i].getType());
             }
             return convs;
         } catch (Exception e) {
@@ -34,12 +55,12 @@ public class Printers {
         }
     }
 
-    public ObjectBinaryPrinter resultPrinter(Executable method) {
+    public ObjectBinaryPrinter determinePrinterForReturnType(Executable method) {
         try {
             if (method instanceof Constructor) {
-                return printerForClass(method.getDeclaringClass());
+                return determinePrinterForType(method.getDeclaringClass());
             } else {
-                return printerForClass(((Method)method).getReturnType());
+                return determinePrinterForType(((Method)method).getReturnType());
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare converters for method params " + method, e);
@@ -48,64 +69,16 @@ public class Printers {
 
     private static final ConcurrentMap<Class<?>, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
-    // TODO printers should tell if they are able to print a paramter, instead of if/else mess
-    private ObjectBinaryPrinter printerForClass(Class<?> type) {
-
+    public ObjectBinaryPrinter determinePrinterForType(Class<?> type) {
         return cache.computeIfAbsent(
                 type, t -> {
-                    if (t.isPrimitive()) {
-
-                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else if (t.getName().equals("java.lang.String")) {
-
-                        return ObjectBinaryPrinterType.STRING.getPrinter();
-                    } else if (t == Class.class) {
-
-                        return ObjectBinaryPrinterType.CLASS.getPrinter();
-                    } /*else if (isCollection(t)) {
-
-                        return ObjectBinaryPrinterType.COLLECTION.getPrinter();
-                    } */else if (t.getName().startsWith("java.util.concurrent.atomic")) {
-
-                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else if (isNumber(t) || isEnum(t) || isBoolean(t)) {
-
-                        return ObjectBinaryPrinterType.TO_STRING_PRINTER.getPrinter();
-                    } else {
-
-                        return ObjectBinaryPrinterType.IDENTITY.getPrinter();
+                    for (ObjectBinaryPrinter printer : printers) {
+                        if (printer.supports(t)) {
+                            return printer;
+                        }
                     }
+                    throw new RuntimeException("Could not find a suitable printer for type " + type);
                 }
         );
-    }
-
-    private boolean isCollection(Class<?> ctClass) {
-        for (Class<?> interfce : ctClass.getInterfaces()) {
-            if(interfce.getName().equals("java.util.Collection")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isNumber(Class<?> ctClass) {
-        if(ctClass == null || ctClass.getName().equals("java.lang.Object")) {
-            return false;
-        }
-
-        Class<?> ctSuperclass = ctClass.getSuperclass();
-        if(ctSuperclass != null && ctSuperclass.getName().equals("java.lang.Number")) {
-            return true;
-        } else {
-            return isNumber(ctSuperclass);
-        }
-    }
-
-    private boolean isEnum(Class<?> ctClass) {
-        return ctClass.isEnum();
-    }
-
-    private boolean isBoolean(Class<?> ctClass) {
-        return ctClass.getName().equals("java.lang.Boolean");
     }
 }

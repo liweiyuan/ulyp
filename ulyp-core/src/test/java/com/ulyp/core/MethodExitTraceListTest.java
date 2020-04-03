@@ -2,7 +2,7 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.SMethodExitTraceDecoder;
+import com.ulyp.transport.TMethodExitTraceDecoder;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -17,18 +17,19 @@ public class MethodExitTraceListTest {
 
         MethodExitTraceList list = new MethodExitTraceList();
 
-        list.add(1, 6, true, ObjectBinaryPrinterType.STRING.getPrinter(), "sdfsdfsdfsdf");
-        list.add(2321, 6545, false, ObjectBinaryPrinterType.IDENTITY.getPrinter(), obj);
+        list.add(1, 6, true, 54324, ObjectBinaryPrinterType.STRING_PRINTER.getPrinter(), "sdfsdfsdfsdf");
+        list.add(2321, 6545, false, 54324, ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter(), obj);
 
         assertEquals(2, list.size());
 
-        Iterator<SMethodExitTraceDecoder> it = list.iterator();
+        Iterator<TMethodExitTraceDecoder> it = list.iterator();
         assertTrue(it.hasNext());
 
-        SMethodExitTraceDecoder decoder = it.next();
+        TMethodExitTraceDecoder decoder = it.next();
 
         assertEquals(1, decoder.callId());
         assertEquals(6, decoder.methodId());
+        assertEquals(54324, decoder.returnClassId());
         assertEquals(BooleanType.T, decoder.thrown());
         assertEquals("'sdfsdfsdfsdf'", decoder.returnValue());
 

@@ -2,12 +2,16 @@ package com.ulyp.core;
 
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
+import com.ulyp.core.printers.ObjectBinaryPrinterType;
+import com.ulyp.core.printers.bytes.BinaryOutputForExitTraceImpl;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.SMethodExitTraceDecoder;
-import com.ulyp.transport.SMethodExitTraceEncoder;
+import com.ulyp.transport.TMethodExitTraceDecoder;
+import com.ulyp.transport.TMethodExitTraceEncoder;
 
 // Flexible SBE wrapper
-public class MethodExitTraceList extends AbstractSbeRecordList<SMethodExitTraceEncoder, SMethodExitTraceDecoder> {
+public class MethodExitTraceList extends AbstractSbeRecordList<TMethodExitTraceEncoder, TMethodExitTraceDecoder> {
+
+    private final BinaryOutputForExitTraceImpl binaryOutput = new BinaryOutputForExitTraceImpl();
 
     public MethodExitTraceList() {
     }
@@ -16,12 +20,22 @@ public class MethodExitTraceList extends AbstractSbeRecordList<SMethodExitTraceE
         super(bytes);
     }
 
-    public void add(long callId, long methodId, boolean thrown, ObjectBinaryPrinter printer, Object result) {
+    public void add(long callId, long methodId, boolean thrown, long returnValueClassId, ObjectBinaryPrinter returnValuePrinter, Object returnValue) {
         super.add(encoder -> {
             encoder.callId(callId);
             encoder.methodId(methodId);
             encoder.thrown(thrown ? BooleanType.T : BooleanType.F);
-            printer.write(result, encoder::returnValue);
+            encoder.returnClassId(returnValueClassId);
+
+            ObjectBinaryPrinter printer = returnValue != null ? returnValuePrinter : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
+
+            encoder.returnPrinterId(printer.getId());
+            binaryOutput.wrap(encoder);
+            try {
+                printer.write(returnValue, binaryOutput);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }

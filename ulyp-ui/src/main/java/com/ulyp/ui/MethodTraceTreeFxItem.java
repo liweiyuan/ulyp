@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.agent.transport.MethodTraceTreeNode;
+import com.ulyp.storage.MethodTraceTreeNode;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
@@ -10,20 +10,29 @@ import java.util.List;
 
 public class MethodTraceTreeFxItem extends TreeItem<Node> {
 
+    private final RenderSettings renderSettings;
     private final MethodTraceTreeNode node;
     private final int totalNodeCount;
 
-    private boolean rendered = false;
+    private boolean loaded = false;
 
-    public MethodTraceTreeFxItem(MethodTraceTreeNode node, int totalNodeCount) {
-        super(MethodTraceTreeRenderer.render(node, totalNodeCount));
+    public MethodTraceTreeFxItem(MethodTraceTreeNode node, RenderSettings renderSettings, int totalNodeCountInTree) {
+        super(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCountInTree));
         this.node = node;
-        this.totalNodeCount = totalNodeCount;
+        this.renderSettings = renderSettings;
+        this.totalNodeCount = totalNodeCountInTree;
+    }
+
+    public void refresh() {
+        setValue(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCount));
+        if (loaded) {
+            getChildren().forEach(node -> ((MethodTraceTreeFxItem) node).refresh());
+        }
     }
 
     @Override
     public ObservableList<TreeItem<Node>> getChildren() {
-        if (!rendered) {
+        if (!loaded) {
             loadChildren();
         }
         return super.getChildren();
@@ -31,17 +40,17 @@ public class MethodTraceTreeFxItem extends TreeItem<Node> {
 
     @Override
     public boolean isLeaf() {
-        if (!rendered) {
+        if (!loaded) {
             loadChildren();
         }
         return super.getChildren().isEmpty();
     }
 
     private void loadChildren() {
-        rendered = true;
+        loaded = true;
         List<MethodTraceTreeFxItem> children = new ArrayList<>();
         for (MethodTraceTreeNode child : node.getChildren()) {
-            children.add(new MethodTraceTreeFxItem(child, totalNodeCount));
+            children.add(new MethodTraceTreeFxItem(child, renderSettings, totalNodeCount));
         }
 
         super.getChildren().setAll(children);

@@ -1,55 +1,59 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.TestUtil.ForkAgentSettings;
-import com.ulyp.agent.tests.SeveralMethodsCases;
-import com.ulyp.agent.tests.SimpleCases;
-import com.ulyp.agent.transport.MethodTraceTree;
-import com.ulyp.agent.transport.MethodTraceTreeBuilder;
-import com.ulyp.agent.transport.MethodTraceTreeNode;
-import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import org.junit.Assert;
+import com.test.cases.EnumTestCases;
+import com.ulyp.agent.util.AgentSettings;
+import com.test.cases.SeveralMethodsTestCases;
+import com.test.cases.SimpleTestCases;
+import com.ulyp.agent.util.MethodTraceTree;
+import com.ulyp.agent.util.MethodTraceTreeNode;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class InstrumentationCodeTest extends InstrumentationTest {
+public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
-    public void shouldReturnValidMainClassName() {
-        TMethodTraceLogUploadRequest request = executeClass(SimpleCases.class, "com.ulyp.agent.tests", "SimpleCases.returnIntWithEmptyParams");
+    public void shouldTraceStaticMethodCall() {
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.staticMethod"
+        );
 
-        Assert.assertEquals(SimpleCases.class.getName(), request.getMainClassName());
+        MethodTraceTreeNode root = tree.getRoot();
+
+        assertThat(root.getMethodName(), is("staticMethod"));
+        assertThat(root.getArgs(), empty());
     }
 
     @Test
     public void shouldBeValidForStringReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SimpleCases.class,
-                "com.ulyp.agent.tests",
-                "SimpleCases.returnStringWithEmptyParams"
-        ));
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.returnStringWithEmptyParams"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("'asdvdsa2'"));
-        assertThat(root.getNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
+        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));
     }
 
     @Test
     public void shouldBeValidForNullReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SimpleCases.class,
-                "com.ulyp.agent.tests",
-                "SimpleCases.returnNullObjectWithEmptyParams"
-        ));
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.returnNullObjectWithEmptyParams"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -57,72 +61,72 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("null"));
         assertThat(root.getResult(), is("null"));
-        assertThat(root.getNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
+        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
     }
 
     @Test
     public void shouldBeValidForIntReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SimpleCases.class,
-                "com.ulyp.agent.tests",
-                "SimpleCases.returnIntWithEmptyParams"
-        ));
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.returnIntWithEmptyParams"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("124234232"));
-        assertThat(root.getNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
+        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnIntWithEmptyParams"));
     }
 
     @Test
     public void shouldBeValidForTestObjectReturningMethodWithEmptyArgs() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SimpleCases.class,
-                "com.ulyp.agent.tests",
-                "SimpleCases.returnTestObjectWithEmptyParams"
-        ));
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.returnTestObjectWithEmptyParams"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), matchesRegex("TestObject@\\d+"));
-        assertThat(root.getNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
+        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnTestObjectWithEmptyParams"));
     }
 
     @Test
     public void shouldBeValidIfMethodThrowsException() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SimpleCases.class,
-                "com.ulyp.agent.tests",
-                "SimpleCases.throwsRuntimeException"
-        ));
+        MethodTraceTree tree = executeClass(
+                SimpleTestCases.class,
+                "com.test.cases",
+                "SimpleTestCases.throwsRuntimeException"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("RuntimeException: exception message"));
-        assertThat(root.getNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SimpleCases"));
+        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
     }
 
     @Test
     public void shouldBeValidForTwoMethodCalls() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SeveralMethodsCases.class,
-                "com.ulyp.agent.tests",
-                "SeveralMethodsCases.callTwoMethods"
-        ));
+        MethodTraceTree tree = executeClass(
+                SeveralMethodsTestCases.class,
+                "com.test.cases",
+                "SeveralMethodsTestCases.callTwoMethods"
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -130,9 +134,9 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("null"));
         assertThat(root.getResult(), is("void"));
-        assertThat(root.getNodeCount(), is(3));
+        assertThat(root.getSubtreeNodeCount(), is(3));
         assertThat(root.getMethodName(), is("callTwoMethods"));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SeveralMethodsCases"));
+        assertThat(root.getClassName(), is("com.test.cases.SeveralMethodsTestCases"));
 
         MethodTraceTreeNode call1 = root.getChildren().get(0);
 
@@ -140,7 +144,7 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(call1.getArgs(), is(empty()));
         assertThat(call1.getReturnValue(), is("null"));
         assertThat(call1.getResult(), is("void"));
-        assertThat(call1.getNodeCount(), is(1));
+        assertThat(call1.getSubtreeNodeCount(), is(1));
         assertThat(call1.getMethodName(), is("method1"));
 
         MethodTraceTreeNode call2 = root.getChildren().get(1);
@@ -149,18 +153,18 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(call2.getArgs(), is(empty()));
         assertThat(call2.getReturnValue(), is("null"));
         assertThat(call2.getResult(), is("void"));
-        assertThat(call2.getNodeCount(), is(1));
+        assertThat(call2.getSubtreeNodeCount(), is(1));
         assertThat(call2.getMethodName(), is("method2"));
     }
 
     @Test
     public void shouldNotLogTracesIfMaxDepthExceeded() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SeveralMethodsCases.class)
-                .setPackages("com.ulyp.agent.tests")
-                .setStartMethod("SeveralMethodsCases.callTwoMethods")
+        MethodTraceTree tree = executeClass(
+                new AgentSettings().setMainClassName(SeveralMethodsTestCases.class)
+                .setPackages("com.test.cases")
+                .setStartMethod("SeveralMethodsTestCases.callTwoMethods")
                 .setMaxDepth(1)
-        ));
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -168,31 +172,18 @@ public class InstrumentationCodeTest extends InstrumentationTest {
         assertThat(root.getArgs(), is(empty()));
         assertThat(root.getReturnValue(), is("null"));
         assertThat(root.getResult(), is("void"));
-        assertThat(root.getNodeCount(), is(1));
+        assertThat(root.getSubtreeNodeCount(), is(1));
         assertThat(root.getMethodName(), is("callTwoMethods"));
-        assertThat(root.getClassName(), is("com.ulyp.agent.tests.SeveralMethodsCases"));
-    }
-
-    @Test
-    public void shouldBeValidForManyMethodCalls() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                SeveralMethodsCases.class,
-                "com.ulyp.agent.tests",
-                "SeveralMethodsCases.fibonacci"
-        ));
-
-        MethodTraceTreeNode root = tree.getRoot();
-
-        assertThat(root.getNodeCount(), is(177));
+        assertThat(root.getClassName(), is("com.test.cases.SeveralMethodsTestCases"));
     }
 
     @Test
     public void shouldBeValidForIntArgument() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SimpleCases.class)
-                        .setPackages("com.ulyp.agent.tests")
-                        .setStartMethod("SimpleCases.consumesInt")
-        ));
+        MethodTraceTree tree = executeClass(
+                new AgentSettings().setMainClassName(SimpleTestCases.class)
+                        .setPackages("com.test.cases")
+                        .setStartMethod("SimpleTestCases.consumesInt")
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 
@@ -203,11 +194,11 @@ public class InstrumentationCodeTest extends InstrumentationTest {
 
     @Test
     public void shouldBeValidForIntAndStringArgument() {
-        MethodTraceTree tree = MethodTraceTreeBuilder.from(executeClass(
-                new ForkAgentSettings().setMainClassName(SimpleCases.class)
-                        .setPackages("com.ulyp.agent.tests")
-                        .setStartMethod("SimpleCases.consumesMapAndEnums")
-        ));
+        MethodTraceTree tree = executeClass(
+                new AgentSettings().setMainClassName(EnumTestCases.class)
+                        .setPackages("com.test.cases")
+                        .setStartMethod("EnumTestCases.consumesMapAndEnums")
+        );
 
         MethodTraceTreeNode root = tree.getRoot();
 

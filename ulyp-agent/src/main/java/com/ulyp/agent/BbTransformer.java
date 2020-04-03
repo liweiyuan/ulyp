@@ -1,5 +1,7 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.log.AgentLogManager;
+import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.util.Log;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
@@ -9,6 +11,7 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Executable;
 
@@ -20,15 +23,21 @@ public class BbTransformer implements Transformer {
     @SuppressWarnings("unused")
     public static final Tracer tracer = new Tracer(context);
 
+    private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
+
     @Override
     public DynamicType.Builder<?> transform(
             final DynamicType.Builder<?> builder,
             final TypeDescription typeDescription,
             final ClassLoader classLoader,
-            final JavaModule module) {
-
+            final JavaModule module)
+    {
         if (typeDescription.isInterface()) {
             return builder;
+        }
+
+        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+            logger.trace("Scanning type {}", typeDescription);
         }
 
         final AsmVisitorWrapper methodsStartVisitor =
@@ -41,11 +50,11 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
-                                            boolean shouldStart = settings.shouldStartTracing(desc);
-                                            if (shouldStart) {
-                                                log.log(() -> "Should start tracing at " + typeDescription.getName() + "." + desc.getActualName());
+                                            boolean shouldStartTracing = settings.shouldStartTracing(desc);
+                                            if (shouldStartTracing) {
+                                                logger.debug("Should start tracing at {}.{}", typeDescription.getName(), desc.getActualName());
                                             }
-                                            return shouldStart;
+                                            return shouldStartTracing;
                                         }),
                                 Advice.to(StartTracingMethodAdvice.class));
 
@@ -58,10 +67,11 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
-                                            if (desc.isAbstract() || desc.isConstructor() || desc.isTypeInitializer()) {
-                                                return false;
+                                            boolean shouldTrace = !settings.shouldStartTracing(desc);
+                                            if (shouldTrace) {
+                                                logger.debug("Should trace at {}.{}", typeDescription.getName(), desc.getActualName());
                                             }
-                                            return !settings.shouldStartTracing(desc);
+                                            return shouldTrace;
                                         }),
                                 Advice.to(MethodAdvice.class));
 
@@ -76,7 +86,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.startOrContinueTracing(context.getMethodCache().get(executable), arguments);
+            tracer.startOrContinueTracing(context.getMethodDescriptionDictionary().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -84,7 +94,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
-            tracer.endTracingIfPossible(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.endTracingIfPossible(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
         }
     }
 
@@ -94,7 +104,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.onMethodEnter(context.getMethodCache().get(executable), arguments);
+            tracer.onMethodEnter(context.getMethodDescriptionDictionary().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -102,7 +112,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Thrown Throwable throwable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            tracer.onMethodExit(context.getMethodCache().get(executable), returnValue, throwable);
+            tracer.onMethodExit(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
         }
     }
 }

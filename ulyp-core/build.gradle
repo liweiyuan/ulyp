@@ -36,6 +36,9 @@ repositories {
     mavenCentral()
 }
 
+def protobufVersion = '3.11.0'
+def protocVersion = protobufVersion
+def grpcVersion = '1.27.0'
 
 dependencies {
     compileOnly "javax.annotation:javax.annotation-api:1.2"
