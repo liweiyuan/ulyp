@@ -29,13 +29,14 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     public String read(ClassDescription classDescription, BinaryInput binaryInput) {
-        return classDescription.getSimpleName() + binaryInput.readString();
+        return classDescription.getSimpleName() + "{" + binaryInput.readInt() + "}";
     }
 
     @Override
     public void write(Object obj, BinaryOutput out) throws Exception {
         Collection<?> collection = (Collection<?>) obj;
-        switch (collection.size()) {
+        out.write(collection.size());
+/*        switch (collection.size()) {
             case 0:
                 out.write("{}");
                 return;
@@ -49,6 +50,6 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 //                    return;
             default:
                 out.write("{ " + collection.size() +" }");
-        }
+        }*/
     }
 }

@@ -5,7 +5,7 @@ public class RenderSettings {
     private boolean showArgumentClassNames = false;
     private boolean showReturnValueClassName = false;
 
-    public boolean isShowArgumentClassNames() {
+    public boolean showsArgumentClassNames() {
         return showArgumentClassNames;
     }
 
@@ -14,7 +14,7 @@ public class RenderSettings {
         return this;
     }
 
-    public boolean isShowReturnValueClassName() {
+    public boolean showsReturnValueClassName() {
         return showReturnValueClassName;
     }
 

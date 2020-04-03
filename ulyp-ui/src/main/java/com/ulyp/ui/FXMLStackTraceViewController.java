@@ -60,7 +60,7 @@ public class FXMLStackTraceViewController implements Initializable {
 
     private void addTree(TMethodTraceLogUploadRequest request, MethodTraceTreeNode node) {
         ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getMainClassName());
-        processTab.addMttTree(node, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
+        processTab.addTree(node, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void clearAll(Event event) {
@@ -68,20 +68,24 @@ public class FXMLStackTraceViewController implements Initializable {
     }
 
     public void keyPressed(KeyEvent event) {
-
+        if (event.getCode() == KeyCode.SHIFT) {
+            MethodTraceTreeFxItem selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            if (selected != null) {
+                renderSettings.setShowReturnValueClassName(true);
+                renderSettings.setShowArgumentClassNames(true);
+                selected.refresh();
+            }
+        }
     }
 
     public void keyReleased(KeyEvent event) {
-
-    }
-
-    public void onKeyReleased(KeyEvent event) {
-        if (event.getCode() != KeyCode.ENTER) {
-            return;
+        if (event.getCode() == KeyCode.SHIFT) {
+            MethodTraceTreeFxItem selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            if (selected != null) {
+                renderSettings.setShowReturnValueClassName(false);
+                renderSettings.setShowArgumentClassNames(false);
+                selected.refresh();
+            }
         }
-
-//        processesByMainClass.values().forEach(
-//                processTab -> processTab.getTabList().applySearch(searchField.getText().trim())
-//        );
     }
 }

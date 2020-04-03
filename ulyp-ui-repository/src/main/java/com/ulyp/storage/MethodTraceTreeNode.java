@@ -12,16 +12,16 @@ public class MethodTraceTreeNode {
     private String className;
     private String methodName;
     private boolean isVoidMethod;
-    private List<String> args;
+    private List<ObjectValue> args;
     private List<String> parameterNames;
-    private String returnValue;
+    private ObjectValue returnValue;
     private boolean thrown;
     private List<MethodTraceTreeNode> children;
     private int subtreeNodeCount;
 
     public MethodTraceTreeNode(
-            List<String> args,
-            String returnValue,
+            List<ObjectValue> args,
+            ObjectValue returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
             List<MethodTraceTreeNode> children)
@@ -59,7 +59,7 @@ public class MethodTraceTreeNode {
         return methodName;
     }
 
-    public List<String> getArgs() {
+    public List<ObjectValue> getArgs() {
         return args;
     }
 
@@ -67,7 +67,7 @@ public class MethodTraceTreeNode {
         return parameterNames;
     }
 
-    public String getReturnValue() {
+    public ObjectValue getReturnValue() {
         return returnValue;
     }
 
@@ -84,51 +84,11 @@ public class MethodTraceTreeNode {
         return this;
     }
 
-    public MethodTraceTreeNode setClassName(String className) {
-        this.className = className;
-        return this;
-    }
-
-    public MethodTraceTreeNode setMethodName(String methodName) {
-        this.methodName = methodName;
-        return this;
-    }
-
-    public MethodTraceTreeNode setVoidMethod(boolean voidMethod) {
-        isVoidMethod = voidMethod;
-        return this;
-    }
-
-    public MethodTraceTreeNode setArgs(List<String> args) {
-        this.args = args;
-        return this;
-    }
-
-    public MethodTraceTreeNode setReturnValue(String returnValue) {
-        this.returnValue = returnValue;
-        return this;
-    }
-
-    public MethodTraceTreeNode setThrown(boolean thrown) {
-        this.thrown = thrown;
-        return this;
-    }
-
-    public MethodTraceTreeNode setChildren(List<MethodTraceTreeNode> children) {
-        this.children = children;
-        return this;
-    }
-
-    public MethodTraceTreeNode setSubtreeNodeCount(int subtreeNodeCount) {
-        this.subtreeNodeCount = subtreeNodeCount;
-        return this;
-    }
-
     /**
      * @return either printed return value, or printed throwable if something was thrown
      */
     public String getResult() {
-        return (isVoidMethod && !hasThrown()) ? "void" : returnValue;
+        return (isVoidMethod && !hasThrown()) ? "void" : returnValue.getPrintedText();
     }
 
     public String toString() {

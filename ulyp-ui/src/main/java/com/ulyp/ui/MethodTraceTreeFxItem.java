@@ -17,14 +17,14 @@ public class MethodTraceTreeFxItem extends TreeItem<Node> {
     private boolean loaded = false;
 
     public MethodTraceTreeFxItem(MethodTraceTreeNode node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(MethodTraceTreeRenderer.render(node, totalNodeCountInTree));
+        super(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCountInTree));
         this.node = node;
         this.renderSettings = renderSettings;
         this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(MethodTraceTreeRenderer.render(node, totalNodeCount));
+        setValue(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCount));
         if (loaded) {
             getChildren().forEach(node -> ((MethodTraceTreeFxItem) node).refresh());
         }

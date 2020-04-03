@@ -86,11 +86,11 @@ public class StoringService {
         private final NodeBuilder parent;
         private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
-        private final List<String> args;
+        private final List<ObjectValue> args;
         private final List<MethodTraceTreeNode> children = new ArrayList<>();
 
         private MethodTraceTreeNode persisted;
-        private String returnValue;
+        private ObjectValue returnValue;
         private boolean thrown;
 
         private NodeBuilder(NodeBuilder parent, TMethodDescriptionDecoder methodDescription, TMethodEnterTraceDecoder decoder) {
@@ -104,7 +104,10 @@ public class StoringService {
                 arguments = arguments.next();
                 UnsafeBuffer buffer = new UnsafeBuffer();
                 arguments.wrapValue(buffer);
-                args.add(ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(classIdMap.get(arguments.classId()), new BinaryInputImpl(buffer)));
+                args.add(new ObjectValue(
+                        ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(classIdMap.get(arguments.classId()), new BinaryInputImpl(buffer)),
+                        classIdMap.get(arguments.classId())
+                ));
             }
         }
 
@@ -112,7 +115,7 @@ public class StoringService {
             ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
             UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
             decoder.wrapReturnValue(returnValueBuffer);
-            this.returnValue = printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer));
+            this.returnValue = new ObjectValue(printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer)), classIdMap.get(decoder.returnClassId()));
             this.thrown = decoder.thrown() == BooleanType.T;
         }
 

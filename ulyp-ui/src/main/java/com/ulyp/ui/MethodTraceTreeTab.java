@@ -1,22 +1,33 @@
 package com.ulyp.ui;
 
+import com.ulyp.storage.MethodTraceTreeNode;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeView;
 
-public class MethodTraceTreeTab {
+import javax.annotation.Nullable;
+import java.time.Duration;
 
-    private final Tab tab;
-    private final long orderStamp;
+public class MethodTraceTreeTab extends Tab {
 
-    public MethodTraceTreeTab(Tab tab, long orderStamp) {
-        this.tab = tab;
-        this.orderStamp = orderStamp;
+    private final TreeView<Node> view;
+
+    @SuppressWarnings("unchecked")
+    public MethodTraceTreeTab(TabPane treesTabs, MethodTraceTreeNode node, RenderSettings renderSettings, long id, Duration lifetime) {
+        view = new TreeView<>(new MethodTraceTreeFxItem(node, renderSettings, node.getSubtreeNodeCount()));
+        view.prefHeightProperty().bind(treesTabs.heightProperty());
+        view.prefWidthProperty().bind(treesTabs.widthProperty());
+        ScrollPane scrollPane = new ScrollPane(view);
+        scrollPane.prefHeightProperty().bind(treesTabs.heightProperty());
+        scrollPane.prefWidthProperty().bind(treesTabs.widthProperty());
+        setText(node.getMethodName() + "(" + id + ", life=" + lifetime.toMillis() + "ms, nodes=" + node.getSubtreeNodeCount() + ")");
+        setContent(scrollPane);
     }
 
-    public Tab getJavaFxTab() {
-        return tab;
-    }
-
-    public long getOrderStamp() {
-        return orderStamp;
+    @Nullable
+    public MethodTraceTreeFxItem getSelected() {
+        return (MethodTraceTreeFxItem) view.getSelectionModel().getSelectedItem();
     }
 }
