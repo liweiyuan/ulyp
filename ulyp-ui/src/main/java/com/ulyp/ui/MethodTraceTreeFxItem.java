@@ -55,4 +55,8 @@ public class MethodTraceTreeFxItem extends TreeItem<Node> {
 
         super.getChildren().setAll(children);
     }
+
+    public MethodTraceTreeNode getNode() {
+        return node;
+    }
 }

@@ -19,4 +19,9 @@ public class ObjectValue {
     public ClassDescription getClassDescription() {
         return classDescription;
     }
+
+    @Override
+    public String toString() {
+        return printedText;
+    }
 }

@@ -26,11 +26,11 @@
         </Menu>-->
       </menus>
     </MenuBar>
-<!--    <HBox spacing="15">
+    <HBox spacing="15">
       <padding><Insets top="7" left="15" right="15" bottom="5"/></padding>
       <Label text="Search" />
-      <TextField fx:id="searchField" onKeyReleased="#onKeyReleased" prefWidth="200.0"/>
-    </HBox>-->
+      <TextField fx:id="searchField" onKeyReleased="#onSearchActivated" prefWidth="200.0"/>
+    </HBox>
     <TabPane fx:id="processTabPane" VBox.vgrow="ALWAYS" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" />
   </children>
 </VBox>

@@ -67,6 +67,17 @@ public class FXMLStackTraceViewController implements Initializable {
         processTabs.clear();
     }
 
+    public void onSearchActivated(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            ProcessTab selectedTab = processTabs.getSelectedTab();
+            if (selectedTab != null) {
+                MethodTraceTreeTab selectedTreeTab = selectedTab.getSelectedTreeTab();
+                MethodTraceTreeFxItem root = selectedTreeTab.getRoot();
+                storage.searchSubtree(searchField.getText(), root.getNode());
+            }
+        }
+    }
+
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
             MethodTraceTreeFxItem selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();

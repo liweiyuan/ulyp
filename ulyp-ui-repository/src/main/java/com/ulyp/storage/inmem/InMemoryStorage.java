@@ -1,7 +1,9 @@
 package com.ulyp.storage.inmem;
 
 import com.ulyp.storage.MethodTraceTreeNode;
+import com.ulyp.storage.ObjectValue;
 import com.ulyp.storage.Storage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,5 +36,28 @@ public class InMemoryStorage implements Storage {
         long id = idGenerator.incrementAndGet();
         node.setId(id);
         nodes.put(id, node);
+    }
+
+    @Override
+    public void searchSubtree(String text, MethodTraceTreeNode node) {
+        if (matches(text, node)) {
+            System.out.println(node);
+        }
+        for (MethodTraceTreeNode child : getChildren(node.getId())) {
+            searchSubtree(text, child);
+        }
+    }
+
+    // TODO move to node
+    private boolean matches(String text, MethodTraceTreeNode node) {
+        if (StringUtils.containsIgnoreCase(node.getReturnValue().getPrintedText(), text)) {
+            return true;
+        }
+        for (ObjectValue arg: node.getArgs()) {
+            if (StringUtils.containsIgnoreCase(arg.getPrintedText(), text)) {
+                return true;
+            }
+        }
+        return StringUtils.containsIgnoreCase(node.getMethodName(), text) || StringUtils.containsIgnoreCase(node.getClassName(), text);
     }
 }

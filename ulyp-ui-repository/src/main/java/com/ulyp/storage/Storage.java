@@ -9,4 +9,6 @@ public interface Storage {
     List<MethodTraceTreeNode> getChildren(long id);
 
     void persist(MethodTraceTreeNode node);
+
+    void searchSubtree(String text, MethodTraceTreeNode node);
 }
