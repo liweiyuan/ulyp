@@ -62,11 +62,11 @@ public class MethodTraceLog {
             //log.log(() -> "Method exit, log id " + id + ", call id = " + callId + ", method id = " + methodId + ", enter traces cnt = " + enterTraces.size() + ", exit traces cnt = " + exitTraces.size());
 
             if (callId >= 0 && callIdsStack.size() < maxDepth) {
-                long returnValueClassId = returnValue != null ? methodDescriptionDictionary.get(returnValue.getClass()).getId() : -1;
-
                 if (thrown == null) {
+                    long returnValueClassId = returnValue != null ? methodDescriptionDictionary.get(returnValue.getClass()).getId() : -1;
                     exitTraces.add(callId, methodId, false, returnValueClassId, resultPrinter, returnValue);
                 } else {
+                    long returnValueClassId = methodDescriptionDictionary.get(thrown.getClass()).getId();
                     exitTraces.add(callId, methodId, true, returnValueClassId, ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
                 }
             }

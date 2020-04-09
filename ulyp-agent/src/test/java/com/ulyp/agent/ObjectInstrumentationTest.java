@@ -23,8 +23,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), matchesPattern("Object\\{ java\\.lang\\.Object@.+\\}"));
-        assertThat(root.getArgs().get(1), matchesPattern("Object\\{ java\\.lang\\.Object@.+\\}"));
+        assertThat(root.getArgs().get(0), matchesPattern("java\\.lang\\.Object@.+"));
     }
 
     @Test
@@ -43,7 +42,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void shouldChooseValidPrinterAtRuntimeForJavaClasses() {
+    public void shouldCallToStringIfPossible() {
         MethodTraceTree tree = executeClass(
                 ObjectTestCases.class,
                 "com.test.cases",
@@ -53,8 +52,8 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), matchesPattern("ObjectTestCases$X@.+"));
-        assertThat(root.getArgs().get(1), is("34"));
+        assertThat(root.getArgs().get(0), matchesPattern("com\\.test\\.cases\\.ObjectTestCases\\$X@.+"));
+        assertThat(root.getArgs().get(1), is("Y{}"));
     }
 
     @Test

@@ -29,7 +29,12 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     public String read(ClassDescription classDescription, BinaryInput binaryInput) {
-        return classDescription.getSimpleName() + "{" + binaryInput.readInt() + "}";
+        int size = binaryInput.readInt();
+        if (size == 0) {
+            return classDescription.getSimpleName() + "{}";
+        } else {
+            return classDescription.getSimpleName() + "{" + size + "}";
+        }
     }
 
     @Override
