@@ -2,7 +2,6 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.util.EnhancedThreadLocal;
-import com.ulyp.agent.util.Log;
 import com.ulyp.core.*;
 import com.ulyp.transport.TClassDescriptionList;
 import com.ulyp.transport.TMethodDescriptionList;

@@ -41,18 +41,16 @@ public class Settings {
             tracingStartMethods = Collections.emptyList();
         }
 
-        boolean loggingTurnedOn = System.getProperty(LOG_PROPERTY) != null;
         String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
-        return new Settings(new UiAddress(uiHost, uiPort), packages, tracingStartMethods, loggingTurnedOn, maxTreeDepth, minTraceCount);
+        return new Settings(new UiAddress(uiHost, uiPort), packages, tracingStartMethods, maxTreeDepth, minTraceCount);
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
     public static final String START_METHOD_PROPERTY = "ulyp.start-method";
-    public static final String LOG_PROPERTY = "ulyp.log";
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
@@ -61,7 +59,6 @@ public class Settings {
     private UiAddress uiAddress;
     private final List<String> packages;
     private final List<MethodMatcher> startTracingMethods;
-    private final boolean loggingTurnedOn;
     private final int maxTreeDepth;
     private final int minTraceCount;
 
@@ -69,24 +66,18 @@ public class Settings {
             UiAddress uiAddress,
             List<String> packages,
             List<MethodMatcher> startTracingMethods,
-            boolean loggingTurnedOn,
             int maxTreeDepth,
             int minTraceCount)
     {
         this.uiAddress = uiAddress;
         this.packages = packages;
         this.startTracingMethods = startTracingMethods;
-        this.loggingTurnedOn = loggingTurnedOn;
         this.maxTreeDepth = maxTreeDepth;
         this.minTraceCount = minTraceCount;
     }
 
     public UiAddress getUiAddress() {
         return uiAddress;
-    }
-
-    public boolean loggingTurnedOn() {
-        return loggingTurnedOn;
     }
 
     public boolean shouldStartTracing(MethodDescription description) {
