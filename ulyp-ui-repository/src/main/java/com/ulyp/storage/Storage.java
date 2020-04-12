@@ -1,5 +1,7 @@
 package com.ulyp.storage;
 
+import it.unimi.dsi.fastutil.longs.LongList;
+
 import java.util.List;
 
 public interface Storage {
@@ -10,5 +12,5 @@ public interface Storage {
 
     void persist(MethodTraceTreeNode node);
 
-    void searchSubtree(String text, MethodTraceTreeNode node);
+    LongList searchSubtree(String text, MethodTraceTreeNode node);
 }

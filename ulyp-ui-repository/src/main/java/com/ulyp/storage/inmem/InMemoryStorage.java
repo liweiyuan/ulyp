@@ -3,6 +3,8 @@ package com.ulyp.storage.inmem;
 import com.ulyp.storage.MethodTraceTreeNode;
 import com.ulyp.storage.ObjectValue;
 import com.ulyp.storage.Storage;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
@@ -39,12 +41,18 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public void searchSubtree(String text, MethodTraceTreeNode node) {
+    public LongList searchSubtree(String text, MethodTraceTreeNode node) {
+        LongList result = new LongArrayList();
+        searchSubtreeRecursive(result, text, node);
+        return result;
+    }
+
+    public void searchSubtreeRecursive(LongList resultList, String text, MethodTraceTreeNode node) {
         if (matches(text, node)) {
-            System.out.println(node);
+            resultList.add(node.getId());
         }
         for (MethodTraceTreeNode child : getChildren(node.getId())) {
-            searchSubtree(text, child);
+            searchSubtreeRecursive(resultList, text, child);
         }
     }
 
