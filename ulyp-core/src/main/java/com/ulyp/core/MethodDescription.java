@@ -16,6 +16,7 @@ public class MethodDescription {
     private final long id;
     private final ClassDescription classDescription;
     private final String methodName;
+    private final String toStringCached;
     private final boolean returnsSomething;
     private final List<String> parameterNames;
     private final ObjectBinaryPrinter[] paramPrinters;
@@ -25,6 +26,7 @@ public class MethodDescription {
         this.id = methodId;
         this.classDescription = classDescription;
         this.methodName = executable instanceof Constructor ? "<init>" : executable.getName();
+        this.toStringCached = classDescription.getSimpleName() + "." + methodName;
         this.returnsSomething = !(executable instanceof Method) || !((Method) executable).getReturnType().equals(Void.TYPE);
         this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(executable);
         this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(executable);
@@ -65,5 +67,10 @@ public class MethodDescription {
 
     public List<String> getParameterNames() {
         return parameterNames;
+    }
+
+    @Override
+    public String toString() {
+        return toStringCached;
     }
 }

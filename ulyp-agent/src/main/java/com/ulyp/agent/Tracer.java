@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
+import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import com.ulyp.transport.TClassDescriptionList;
@@ -19,18 +20,21 @@ public class Tracer {
 
     private final EnhancedThreadLocal<MethodTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
-    private final Log log;
 
     public Tracer(AgentContext context) {
         this.context = context;
-        this.log = context.getLog();
     }
 
     public void startOrContinueTracing(MethodDescription methodDescription, Object[] args) {
-        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> new MethodTraceLog(
-                context.getMethodDescriptionDictionary(),
-                context.getSettings().getMaxTreeDepth())
-        );
+        MethodTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> {
+            MethodTraceLog log = new MethodTraceLog(
+                    context.getMethodDescriptionDictionary(),
+                    context.getSettings().getMaxTreeDepth());
+            if (LoggingSettings.IS_TRACE_TURNED_ON) {
+                logger.trace("Create new {}, method {}, args {}", log, methodDescription, args);
+            }
+            return log;
+        });
         onMethodEnter(methodDescription, args);
     }
 
@@ -41,6 +45,9 @@ public class Tracer {
         if (traceLog.isComplete()) {
             threadLocalTraceLog.pop();
             if (traceLog.size() >= context.getSettings().getMinTraceCount()) {
+                if (LoggingSettings.IS_TRACE_TURNED_ON) {
+                    logger.trace("Will send trace log {}", traceLog);
+                }
                 enqueueToPrinter(traceLog);
             }
         }
@@ -51,6 +58,9 @@ public class Tracer {
         if (methodTracesLog == null) {
             return;
         }
+        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+            logger.trace("Method enter on {}, method {}, args {}", methodTracesLog, method, args);
+        }
         methodTracesLog.onMethodEnter(method.getId(), method.getParamPrinters(), args);
     }
 
@@ -58,6 +68,9 @@ public class Tracer {
         MethodTraceLog methodTracesLog = threadLocalTraceLog.get();
         if (methodTracesLog == null) return;
 
+        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+            logger.trace("Method exit {}, method {}, return value {}, thrown {}", methodTracesLog, method, result, thrown);
+        }
         methodTracesLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
     }
 

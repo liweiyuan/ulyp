@@ -19,7 +19,10 @@ public final class UploadingTransport {
     private final ManagedChannel channel;
     private final UploadingServiceGrpc.UploadingServiceFutureStub uploadingServiceFutureStub;
 
-    private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Response-processor", true));
+    private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(
+            3,
+            new NamedThreadFactory("GRPC-Response-processor", false)
+    );
     private final Set<Long> traceLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public UploadingTransport(UiAddress address) {

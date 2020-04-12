@@ -111,4 +111,12 @@ public class MethodTraceLog {
     public long getEpochMillisCreatedTime() {
         return epochMillisCreatedTime;
     }
+
+    @Override
+    public String toString() {
+        return "MethodTraceLog{" +
+                "id=" + id +
+                ", calls=" + callIdsStack.size() +
+                '}';
+    }
 }
