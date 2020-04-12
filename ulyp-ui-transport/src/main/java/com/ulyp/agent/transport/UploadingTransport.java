@@ -22,8 +22,6 @@ public final class UploadingTransport {
     private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Response-processor", true));
     private final Set<Long> traceLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private volatile boolean active = true;
-
     public UploadingTransport(UiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
                 .nameResolverFactory(new DnsNameResolverProvider())
@@ -35,10 +33,6 @@ public final class UploadingTransport {
     }
 
     public void upload(TMethodTraceLogUploadRequest request) {
-        if (!active) {
-            throw new RuntimeException("Can't send trace log as transport is shutting down");
-        }
-
         long id = request.getTraceLogId();
         traceLogsCurrentlyInSending.add(id);
         ListenableFuture<TMethodTraceLogUploadResponse> upload = uploadingServiceFutureStub.upload(request);
@@ -58,8 +52,6 @@ public final class UploadingTransport {
     }
 
     public void shutdownNowAndAwaitForTraceLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
-        active = false;
-
         long startWaitingAtEpochMillis = System.currentTimeMillis();
         long deadline = startWaitingAtEpochMillis + timeUnit.toMillis(time);
         while (System.currentTimeMillis() < deadline && !traceLogsCurrentlyInSending.isEmpty()) {

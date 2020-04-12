@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.agent.util.Log;
 import com.ulyp.core.*;
@@ -7,12 +8,15 @@ import com.ulyp.transport.TClassDescriptionList;
 import com.ulyp.transport.TMethodDescriptionList;
 import com.ulyp.transport.TMethodTraceLog;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
 
 @SuppressWarnings("unused")
 @ThreadSafe
 public class Tracer {
+
+    private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
 
     private final EnhancedThreadLocal<MethodTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
@@ -33,12 +37,13 @@ public class Tracer {
 
     public void endTracingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
         MethodTraceLog traceLog = threadLocalTraceLog.get();
-
-        log.log(() -> "May end tracing, trace log id = " + methodDescription.getId());
         onMethodExit(methodDescription, result, thrown);
 
         if (traceLog.isComplete()) {
-            enqueueToPrinter(threadLocalTraceLog.pop());
+            threadLocalTraceLog.pop();
+            if (traceLog.size() >= context.getSettings().getMinTraceCount()) {
+                enqueueToPrinter(traceLog);
+            }
         }
     }
 

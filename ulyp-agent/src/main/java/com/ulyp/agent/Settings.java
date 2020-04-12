@@ -7,6 +7,7 @@ import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,30 +21,33 @@ public class Settings {
 
     private static Settings loadFromSystemProperties() {
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
+        List<String> packages;
         if (packagesToInstrument == null) {
-            throw new RuntimeException("Please specify property " + PACKAGES_PROPERTY + " in the following format -D" + PACKAGES_PROPERTY + "=com.example,org.hibernate");
+            packages = Collections.emptyList();
+        } else {
+            packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
         }
-        List<String> packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
-        System.out.println("Packages: " + packages);
 
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY);
-        if (tracedMethods == null) {
-            throw new RuntimeException("Please specify property " + START_METHOD_PROPERTY);
-        }
+        List<MethodMatcher> tracingStartMethods;
 
-        // TODO validate matchers
-        List<MethodMatcher> matchers = Arrays.stream(tracedMethods.split(","))
-                .map(str -> new MethodMatcher(
-                        str.substring(0, str.indexOf('.')),
-                        str.substring(str.indexOf('.') + 1))
-                ).collect(Collectors.toList());
+        if (tracedMethods != null) {
+            tracingStartMethods = Arrays.stream(tracedMethods.split(","))
+                    .map(str -> new MethodMatcher(
+                            str.substring(0, str.indexOf('.')),
+                            str.substring(str.indexOf('.') + 1))
+                    ).collect(Collectors.toList());
+        } else {
+            tracingStartMethods = Collections.emptyList();
+        }
 
         boolean loggingTurnedOn = System.getProperty(LOG_PROPERTY) != null;
         String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
-        int maxTreeDepth = Integer.parseInt(System.getProperty("ulyp.max-depth", String.valueOf(Integer.MAX_VALUE)));
-        return new Settings(new UiAddress(uiHost, uiPort), packages, matchers, loggingTurnedOn, maxTreeDepth);
+        int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
+        int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
+        return new Settings(new UiAddress(uiHost, uiPort), packages, tracingStartMethods, loggingTurnedOn, maxTreeDepth, minTraceCount);
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
@@ -52,25 +56,29 @@ public class Settings {
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
+    public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
     private UiAddress uiAddress;
     private final List<String> packages;
     private final List<MethodMatcher> startTracingMethods;
     private final boolean loggingTurnedOn;
     private final int maxTreeDepth;
+    private final int minTraceCount;
 
     private Settings(
             UiAddress uiAddress,
             List<String> packages,
             List<MethodMatcher> startTracingMethods,
             boolean loggingTurnedOn,
-            int maxTreeDepth)
+            int maxTreeDepth,
+            int minTraceCount)
     {
         this.uiAddress = uiAddress;
         this.packages = packages;
         this.startTracingMethods = startTracingMethods;
         this.loggingTurnedOn = loggingTurnedOn;
         this.maxTreeDepth = maxTreeDepth;
+        this.minTraceCount = minTraceCount;
     }
 
     public UiAddress getUiAddress() {
@@ -82,7 +90,7 @@ public class Settings {
     }
 
     public boolean shouldStartTracing(MethodDescription description) {
-        return methodMatches(startTracingMethods, description);
+        return startTracingMethods.isEmpty() || methodMatches(startTracingMethods, description);
     }
 
     public boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
@@ -158,6 +166,10 @@ public class Settings {
 
     public int getMaxTreeDepth() {
         return maxTreeDepth;
+    }
+
+    public int getMinTraceCount() {
+        return minTraceCount;
     }
 
     public List<String> getPackages() {
