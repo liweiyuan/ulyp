@@ -9,6 +9,7 @@ import com.ulyp.storage.Storage;
 import com.ulyp.storage.StoringService;
 import com.ulyp.storage.inmem.InMemoryStorage;
 import com.ulyp.transport.TMethodTraceLogUploadRequest;
+import it.unimi.dsi.fastutil.longs.LongList;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -65,6 +66,20 @@ public class FXMLStackTraceViewController implements Initializable {
 
     public void clearAll(Event event) {
         processTabs.clear();
+    }
+
+    public void onSearchActivated(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            ProcessTab selectedTab = processTabs.getSelectedTab();
+            if (selectedTab != null) {
+                MethodTraceTreeTab selectedTreeTab = selectedTab.getSelectedTreeTab();
+                MethodTraceTreeFxItem root = selectedTreeTab.getRoot();
+                LongList result = storage.searchSubtree(searchField.getText(), root.getNode());
+                for (long id : result) {
+                    System.out.println(storage.find(id));
+                }
+            }
+        }
     }
 
     public void keyPressed(KeyEvent event) {

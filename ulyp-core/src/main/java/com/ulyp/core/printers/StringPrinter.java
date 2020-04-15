@@ -17,12 +17,12 @@ public class StringPrinter extends ObjectBinaryPrinter {
 
     @Override
     public void write(Object obj, BinaryOutput out) throws Exception {
-        String s = (String) obj;
+        String text = (String) obj;
         String printed;
-        if (s.length() > MAX_LENGTH) {
-            printed = "'" + s.substring(0, MAX_LENGTH) + "...'(" + s.length() + ")";
+        if (text.length() > MAX_LENGTH) {
+            printed = text.substring(0, MAX_LENGTH) + "...(" + text.length() + ")";
         } else {
-            printed = "'" + s + "'";
+            printed = text;
         }
         out.write(printed);
     }

@@ -7,7 +7,7 @@ public enum ObjectBinaryPrinterType {
     COLLECTION(new CollectionPrinter(3), 1),
     TO_STRING_PRINTER(new ToStringPrinter(4), 10),
     THROWABLE_PRINTER(new ThrowablePrinter(5), 20),
-    ENUM_PRINTER(new EnumPrinter(6), 20),
+    ENUM_PRINTER(new EnumPrinter(6), 5),
     DYNAMIC_OBJECT_PRINTER(new DynamicObjectBinaryPrinter(7), 100),
     NUMBER_PRINTER(new NumbersPrinter(8), 0),
     // null printer should come last and it support no type

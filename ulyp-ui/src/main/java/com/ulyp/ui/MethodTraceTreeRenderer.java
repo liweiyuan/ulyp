@@ -19,7 +19,6 @@ import java.util.List;
 public class MethodTraceTreeRenderer {
 
     public static Node render(MethodTraceTreeNode node, RenderSettings renderSettings, int totalNodeCountInTree) {
-
         List<Text> text = new ArrayList<>(
                 renderReturnValue(node, renderSettings)
         );
@@ -44,7 +43,7 @@ public class MethodTraceTreeRenderer {
             ObjectValue argValue = node.getArgs().get(i);
             if (renderSettings.showsArgumentClassNames()) {
                 Text typeName = new Text(argValue.getClassDescription().getSimpleName());
-                typeName.setFill(Color.GRAY);
+                typeName.setFill(Color.GREEN);
                 output.add(typeName);
                 output.add(new Text(": "));
             }
@@ -78,7 +77,7 @@ public class MethodTraceTreeRenderer {
 
         if (renderSettings.showsReturnValueClassName()) {
             Text text = new Text(node.getReturnValue().getClassDescription().getSimpleName());
-            text.setFill(Color.GRAY);
+            text.setFill(Color.GREEN);
             value.add(text);
             value.add(new Text(": "));
         }

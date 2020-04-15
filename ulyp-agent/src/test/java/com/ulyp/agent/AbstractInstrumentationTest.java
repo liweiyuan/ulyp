@@ -5,6 +5,7 @@ import com.ulyp.transport.TMethodTraceLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class AbstractInstrumentationTest {
@@ -12,11 +13,9 @@ public class AbstractInstrumentationTest {
     @NotNull
     protected MethodTraceTree executeClass(AgentSettings settings) {
         int port = TestUtil.pickEmptyPort();
-        UIServerStub stub = new UIServerStub(port);
+        try (UIServerStub stub = new UIServerStub(port)) {
+            TestUtil.runClassInSeparateJavaProcess(settings, port);
 
-        TestUtil.runClassInSeparateJavaProcess(settings, port);
-
-        try {
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
             return new MethodTraceTreeBuilder(request).build();
@@ -30,11 +29,8 @@ public class AbstractInstrumentationTest {
     @NotNull
     protected MethodTraceTree executeClass(Class<?> cl, String packages, String startMethod) {
         int port = TestUtil.pickEmptyPort();
-        UIServerStub stub = new UIServerStub(port);
-
-        TestUtil.runClassInSeparateJavaProcess(cl, packages, startMethod, port);
-
-        try {
+        try (UIServerStub stub = new UIServerStub(port)) {
+            TestUtil.runClassInSeparateJavaProcess(cl, packages, startMethod, port);
             TMethodTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
             Assert.assertNotNull(request);
             return new MethodTraceTreeBuilder(request).build();

@@ -41,7 +41,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgs(), is(empty()));
-        assertThat(root.getReturnValue(), is("'asdvdsa2'"));
+        assertThat(root.getReturnValue(), is("asdvdsa2"));
         assertThat(root.getSubtreeNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));

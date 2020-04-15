@@ -23,6 +23,11 @@ public class ClassDescriptionTest extends AbstractInstrumentationTest {
         MethodTraceTreeNode root = tree.getRoot();
 
         assertThat(root.getArgs(), is(Arrays.asList("-234", "23")));
-        assertThat(root.getArgTypes(), is(Arrays.asList("java.util.concurrent.atomic.AtomicInteger", "java.util.concurrent.atomic.AtomicInteger")));
+
+        assertThat(root.getArgTypes().get(0).getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgTypes().get(0).getName(), is("java.util.concurrent.atomic.AtomicInteger"));
+
+        assertThat(root.getArgTypes().get(1).getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgTypes().get(1).getName(), is("java.util.concurrent.atomic.AtomicInteger"));
     }
 }

@@ -28,7 +28,11 @@ public class Agent {
 
         ElementMatcher.Junction<TypeDescription> finalMatcher = ElementMatchers
                 .not(ElementMatchers.nameStartsWith("com.ulyp"))
-                .and(matcherUserDefinedPackages);
+                .and(ElementMatchers.not(ElementMatchers.nameStartsWith("shadowed")));
+
+        if (matcherUserDefinedPackages != null) {
+            finalMatcher = finalMatcher.and(matcherUserDefinedPackages);
+        }
 
         AgentLogManager.getLogger(Agent.class).trace("Matcher for scanning is {}", finalMatcher);
 

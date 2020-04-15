@@ -14,7 +14,7 @@ public class RenderSettings {
         return this;
     }
 
-    public boolean showsReturnValueClassName() {
+    public boolean  showsReturnValueClassName() {
         return showReturnValueClassName;
     }
 

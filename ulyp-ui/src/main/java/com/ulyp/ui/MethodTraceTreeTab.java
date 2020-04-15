@@ -30,4 +30,8 @@ public class MethodTraceTreeTab extends Tab {
     public MethodTraceTreeFxItem getSelected() {
         return (MethodTraceTreeFxItem) view.getSelectionModel().getSelectedItem();
     }
+
+    public MethodTraceTreeFxItem getRoot() {
+        return (MethodTraceTreeFxItem) view.getRoot();
+    }
 }

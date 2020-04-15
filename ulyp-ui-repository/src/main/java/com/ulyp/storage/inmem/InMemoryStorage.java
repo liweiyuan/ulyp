@@ -1,7 +1,11 @@
 package com.ulyp.storage.inmem;
 
 import com.ulyp.storage.MethodTraceTreeNode;
+import com.ulyp.storage.ObjectValue;
 import com.ulyp.storage.Storage;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,5 +38,34 @@ public class InMemoryStorage implements Storage {
         long id = idGenerator.incrementAndGet();
         node.setId(id);
         nodes.put(id, node);
+    }
+
+    @Override
+    public LongList searchSubtree(String text, MethodTraceTreeNode node) {
+        LongList result = new LongArrayList();
+        searchSubtreeRecursive(result, text, node);
+        return result;
+    }
+
+    public void searchSubtreeRecursive(LongList resultList, String text, MethodTraceTreeNode node) {
+        if (matches(text, node)) {
+            resultList.add(node.getId());
+        }
+        for (MethodTraceTreeNode child : getChildren(node.getId())) {
+            searchSubtreeRecursive(resultList, text, child);
+        }
+    }
+
+    // TODO move to node
+    private boolean matches(String text, MethodTraceTreeNode node) {
+        if (StringUtils.containsIgnoreCase(node.getReturnValue().getPrintedText(), text)) {
+            return true;
+        }
+        for (ObjectValue arg: node.getArgs()) {
+            if (StringUtils.containsIgnoreCase(arg.getPrintedText(), text)) {
+                return true;
+            }
+        }
+        return StringUtils.containsIgnoreCase(node.getMethodName(), text) || StringUtils.containsIgnoreCase(node.getClassName(), text);
     }
 }
