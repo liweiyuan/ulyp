@@ -1,8 +1,9 @@
 package com.ulyp.agent;
 
 import com.test.cases.ObjectTestCases;
-import com.ulyp.agent.util.MethodTraceTree;
-import com.ulyp.agent.util.MethodTraceTreeNode;
+import com.ulyp.agent.util.TestSettingsBuilder;
+import com.ulyp.core.CallTrace;
+import com.ulyp.core.CallTraceTree;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -14,60 +15,60 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintObjects() {
-        MethodTraceTree tree = executeClass(
-                ObjectTestCases.class,
-                "com.test.cases",
-                "ObjectTestCases.acceptsTwoObjects"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(ObjectTestCases.class)
+                        .setMethodToTrace("acceptsTwoObjects")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), matchesPattern("java\\.lang\\.Object@.+"));
+        assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("Object@.+"));
     }
 
     @Test
     public void shouldChooseValidPrinterForJavaLangObjectAtRuntime() {
-        MethodTraceTree tree = executeClass(
-                ObjectTestCases.class,
-                "com.test.cases",
-                "ObjectTestCases.acceptsTwoObjects2"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(ObjectTestCases.class)
+                        .setMethodToTrace("acceptsTwoObjects2")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), is("asdasd"));
-        assertThat(root.getArgs().get(1), is("34"));
+        assertThat(root.getArgs().get(0).getPrintedText(), is("asdasd"));
+        assertThat(root.getArgs().get(1).getPrintedText(), is("34"));
     }
 
     @Test
     public void shouldCallToStringIfPossible() {
-        MethodTraceTree tree = executeClass(
-                ObjectTestCases.class,
-                "com.test.cases",
-                "ObjectTestCases.acceptsTwoObjects3"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(ObjectTestCases.class)
+                        .setMethodToTrace("acceptsTwoObjects3")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), matchesPattern("com\\.test\\.cases\\.ObjectTestCases\\$X@.+"));
-        assertThat(root.getArgs().get(1), is("Y{}"));
+        assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("X@.+"));
+        assertThat(root.getArgs().get(1).getPrintedText(), is("Y{}"));
     }
 
     @Test
     public void shouldPrintNullArguments() {
-        MethodTraceTree tree = executeClass(
-                ObjectTestCases.class,
-                "com.test.cases",
-                "ObjectTestCases.acceptsTwoNulls"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(ObjectTestCases.class)
+                        .setMethodToTrace("acceptsTwoNulls")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0), is("null"));
-        assertThat(root.getArgs().get(1), is("null"));
+        assertThat(root.getArgTexts().get(0), is("null"));
+        assertThat(root.getArgTexts().get(1), is("null"));
     }
 }

@@ -1,19 +1,19 @@
-package com.ulyp.storage;
+package com.ulyp.core;
 
-import com.ulyp.core.ClassDescription;
+import com.ulyp.core.printers.Printable;
 
 public class ObjectValue {
 
-    private final String printedText;
+    private final Printable printedText;
     private final ClassDescription classDescription;
 
-    public ObjectValue(String printedText, ClassDescription classDescription) {
+    public ObjectValue(Printable printedText, ClassDescription classDescription) {
         this.printedText = printedText;
         this.classDescription = classDescription != null ? classDescription : ClassDescription.UNKNOWN_CLASS_DESCRIPTION;
     }
 
     public String getPrintedText() {
-        return printedText;
+        return printedText.print();
     }
 
     public ClassDescription getClassDescription() {
@@ -22,6 +22,6 @@ public class ObjectValue {
 
     @Override
     public String toString() {
-        return printedText;
+        return printedText.toString();
     }
 }

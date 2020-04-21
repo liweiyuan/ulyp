@@ -9,12 +9,18 @@ import java.util.concurrent.TimeUnit;
 
 public class AgentContext {
 
+    private static final AgentContext instance = new AgentContext();
+
+    public static AgentContext getInstance() {
+        return instance;
+    }
+
     private final Settings settings;
     private final UploadingTransport transport;
     private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final ProcessInfo processInfo;
 
-    public AgentContext() {
+    private AgentContext() {
         this.settings = Settings.getInstance();
         this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
@@ -23,7 +29,7 @@ public class AgentContext {
         Thread shutdown = new Thread(
                 () -> {
                     try {
-                        transport.shutdownNowAndAwaitForTraceLogsSending(5, TimeUnit.SECONDS);
+                        transport.shutdownNowAndAwaitForTraceLogsSending(30, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
                         // ignore
                     }

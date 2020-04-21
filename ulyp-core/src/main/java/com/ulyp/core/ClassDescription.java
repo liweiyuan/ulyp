@@ -10,8 +10,8 @@ public class ClassDescription {
 
     public ClassDescription(long id, String simpleName, String name) {
         this.id = id;
-        this.simpleName = simpleName;
-        this.name = name;
+        this.simpleName = simpleName.intern();
+        this.name = name.intern();
     }
 
     public long getId() {

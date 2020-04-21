@@ -9,4 +9,12 @@ public class UiAddress {
         this.hostName = hostName;
         this.port = port;
     }
+
+    @Override
+    public String toString() {
+        return "UiAddress{" +
+                "hostName='" + hostName + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

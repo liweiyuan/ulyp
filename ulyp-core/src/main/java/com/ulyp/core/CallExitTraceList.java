@@ -5,22 +5,30 @@ import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.core.printers.bytes.BinaryOutputForExitTraceImpl;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.TMethodExitTraceDecoder;
-import com.ulyp.transport.TMethodExitTraceEncoder;
+import com.ulyp.transport.TCallExitTraceDecoder;
+import com.ulyp.transport.TCallExitTraceEncoder;
 
 // Flexible SBE wrapper
-public class MethodExitTraceList extends AbstractSbeRecordList<TMethodExitTraceEncoder, TMethodExitTraceDecoder> {
+public class CallExitTraceList extends AbstractSbeRecordList<TCallExitTraceEncoder, TCallExitTraceDecoder> {
 
     private final BinaryOutputForExitTraceImpl binaryOutput = new BinaryOutputForExitTraceImpl();
 
-    public MethodExitTraceList() {
+    public CallExitTraceList() {
     }
 
-    public MethodExitTraceList(ByteString bytes) {
+    public CallExitTraceList(ByteString bytes) {
         super(bytes);
     }
 
-    public void add(long callId, long methodId, boolean thrown, long returnValueClassId, ObjectBinaryPrinter returnValuePrinter, Object returnValue) {
+    public void add(
+            long callId,
+            long methodId,
+            TracingContext tracingContext,
+            boolean thrown,
+            long returnValueClassId,
+            ObjectBinaryPrinter returnValuePrinter,
+            Object returnValue)
+    {
         super.add(encoder -> {
             encoder.callId(callId);
             encoder.methodId(methodId);
@@ -32,7 +40,7 @@ public class MethodExitTraceList extends AbstractSbeRecordList<TMethodExitTraceE
             encoder.returnPrinterId(printer.getId());
             binaryOutput.wrap(encoder);
             try {
-                printer.write(returnValue, binaryOutput);
+                printer.write(returnValue, binaryOutput, tracingContext);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

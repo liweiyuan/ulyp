@@ -1,7 +1,7 @@
 package com.ulyp.ui;
 
-import com.ulyp.storage.MethodTraceTreeNode;
-import com.ulyp.storage.ObjectValue;
+import com.ulyp.core.CallTrace;
+import com.ulyp.core.ObjectValue;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,9 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodTraceTreeRenderer {
+public class FxCallTraceTreeRenderer {
 
-    public static Node render(MethodTraceTreeNode node, RenderSettings renderSettings, int totalNodeCountInTree) {
+    public static Node render(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
         List<Text> text = new ArrayList<>(
                 renderReturnValue(node, renderSettings)
         );
@@ -34,11 +34,11 @@ public class MethodTraceTreeRenderer {
         return stack;
     }
 
-    private static List<Text> renderArguments(MethodTraceTreeNode node, RenderSettings renderSettings) {
+    private static List<Text> renderArguments(CallTrace node, RenderSettings renderSettings) {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
         List<Text> output = new ArrayList<>();
-        output.add(new Text("("));
+        output.add(new Text(" ("));
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectValue argValue = node.getArgs().get(i);
             if (renderSettings.showsArgumentClassNames()) {
@@ -61,18 +61,19 @@ public class MethodTraceTreeRenderer {
         }
 
         output.add(new Text(")"));
+        output.forEach(text -> text.setStyle("-fx-font-family: serif"));
         return output;
     }
 
     @NotNull
-    private static Text renderMethodName(MethodTraceTreeNode node) {
+    private static Text renderMethodName(CallTrace node) {
         Text methodNameText = new Text(StringUtils.toSimpleName(node.getClassName()) + "." + node.getMethodName());
-        methodNameText.setStyle("-fx-font-weight: bold");
+        methodNameText.setStyle("-fx-font-weight: bold; -fx-font-family: serif");
         return methodNameText;
     }
 
     @NotNull
-    private static List<Text> renderReturnValue(MethodTraceTreeNode node, RenderSettings renderSettings) {
+    private static List<Text> renderReturnValue(CallTrace node, RenderSettings renderSettings) {
         List<Text> value = new ArrayList<>();
 
         if (renderSettings.showsReturnValueClassName()) {
@@ -86,6 +87,7 @@ public class MethodTraceTreeRenderer {
             returnValueText.setFill(Color.RED);
         }
         value.add(returnValueText);
+        returnValueText.setStyle("-fx-font-family: serif");
         return value;
     }
 

@@ -12,17 +12,26 @@ import java.lang.instrument.Instrumentation;
 public class Agent {
 
     public static void premain(String args, Instrumentation instrumentation) {
-        System.out.println("Starting ULYP agent, logging level " + LoggingSettings.LOG_LEVEL.name());
 
+        String logLevel = LoggingSettings.LOG_LEVEL.name();
         Settings settings = BbTransformer.settings;
 
-        ElementMatcher.Junction<TypeDescription> matcherUserDefinedPackages = null;
+        System.out.println("Starting ULYP agent, logging level = " + logLevel + ", settings = " + settings);
+
+        ElementMatcher.Junction<TypeDescription> packageMatcher = null;
 
         for (int i = 0; i < settings.getPackages().size(); i++) {
-            if (matcherUserDefinedPackages == null) {
-                matcherUserDefinedPackages = ElementMatchers.nameStartsWith(settings.getPackages().get(i));
+            if (packageMatcher == null) {
+                packageMatcher = ElementMatchers.nameStartsWith(settings.getPackages().get(i));
             } else {
-                matcherUserDefinedPackages = matcherUserDefinedPackages.or(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+                packageMatcher = packageMatcher.or(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+            }
+        }
+        for (int i = 0; i < settings.getExcludePackages().size(); i++) {
+            if (packageMatcher == null) {
+                packageMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+            } else {
+                packageMatcher = packageMatcher.and(ElementMatchers.not(ElementMatchers.nameStartsWith(settings.getPackages().get(i))));
             }
         }
 
@@ -30,8 +39,8 @@ public class Agent {
                 .not(ElementMatchers.nameStartsWith("com.ulyp"))
                 .and(ElementMatchers.not(ElementMatchers.nameStartsWith("shadowed")));
 
-        if (matcherUserDefinedPackages != null) {
-            finalMatcher = finalMatcher.and(matcherUserDefinedPackages);
+        if (packageMatcher != null) {
+            finalMatcher = finalMatcher.and(packageMatcher);
         }
 
         AgentLogManager.getLogger(Agent.class).trace("Matcher for scanning is {}", finalMatcher);

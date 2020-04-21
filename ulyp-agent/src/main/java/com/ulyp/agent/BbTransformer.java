@@ -16,10 +16,10 @@ import java.lang.reflect.Executable;
 
 public class BbTransformer implements Transformer {
 
-    public static final AgentContext context = new AgentContext();
+    public static final AgentContext context = AgentContext.getInstance();
     public static final Settings settings = context.getSettings();
     @SuppressWarnings("unused")
-    public static final Tracer tracer = new Tracer(context);
+    public static final CallTracer callTracer = new CallTracer(context);
 
     private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
 
@@ -84,7 +84,7 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.startOrContinueTracing(context.getMethodDescriptionDictionary().get(executable), arguments);
+            callTracer.startOrContinueTracing(context.getMethodDescriptionDictionary().get(executable), arguments);
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -92,7 +92,7 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                 @Advice.Thrown Throwable throwable) {
-            tracer.endTracingIfPossible(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
+            callTracer.endTracingIfPossible(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
         }
     }
 
@@ -102,7 +102,9 @@ public class BbTransformer implements Transformer {
         static void enter(
                 @Advice.Origin Executable executable,
                 @Advice.AllArguments Object[] arguments) {
-            tracer.onMethodEnter(context.getMethodDescriptionDictionary().get(executable), arguments);
+            if (callTracer.tracingIsActiveInThisThread()) {
+                callTracer.onMethodEnter(context.getMethodDescriptionDictionary().get(executable), arguments);
+            }
         }
 
         @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -110,7 +112,9 @@ public class BbTransformer implements Transformer {
                 @Advice.Origin Executable executable,
                 @Advice.Thrown Throwable throwable,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
-            tracer.onMethodExit(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
+            if (callTracer.tracingIsActiveInThisThread()) {
+                callTracer.onMethodExit(context.getMethodDescriptionDictionary().get(executable), returnValue, throwable);
+            }
         }
     }
 }

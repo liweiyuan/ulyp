@@ -1,13 +1,13 @@
 package com.ulyp.core.printers.bytes;
 
-import com.ulyp.transport.TMethodEnterTraceEncoder;
+import com.ulyp.transport.TCallEnterTraceEncoder;
 import org.agrona.concurrent.UnsafeBuffer;
 
 public class BinaryOutputForEnterTraceImpl extends AbstractBinaryOutput {
 
-    private TMethodEnterTraceEncoder encoder;
+    private TCallEnterTraceEncoder encoder;
 
-    public void wrap(TMethodEnterTraceEncoder encoder) {
+    public void wrap(TCallEnterTraceEncoder encoder) {
         this.encoder = encoder;
     }
 

@@ -20,21 +20,25 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
         refCount = 1;
     }
 
-    public void append(int value) {
-        tmpBuffer.putInt(bytePos, value);
-        bytePos += Integer.BYTES;
+    public void append(boolean value) {
+        append(value ? 1 : 0);
     }
 
-    public void append(char c) {
-        tmpBuffer.putInt(bytePos, c);
-        bytePos += Character.BYTES;
+    public void append(long value) {
+        tmpBuffer.putLong(bytePos, value);
+        bytePos += Long.BYTES;
+    }
+
+    public void append(byte c) {
+        tmpBuffer.putByte(bytePos, c);
+        bytePos += Byte.BYTES;
     }
 
     public void append(String value) {
         if (value != null) {
             append(value.length());
             for (int i = 0; i < value.length(); i++) {
-                append(value.charAt(i));
+                append((byte) value.charAt(i));
             }
         } else {
             append(-1);
@@ -56,7 +60,12 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
     }
 
     @Override
-    public void write(int val) throws Exception {
+    public void write(boolean val) throws Exception {
+        append(val);
+    }
+
+    @Override
+    public void write(long val) throws Exception {
         append(val);
     }
 

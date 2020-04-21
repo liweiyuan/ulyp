@@ -1,7 +1,6 @@
 package com.ulyp.core.printers.bytes;
 
 import org.agrona.concurrent.UnsafeBuffer;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,9 +33,9 @@ public class BinaryInputOutputTest {
             appender.append(6);
         }
 
-        assertEquals(2, binaryInput.readInt());
+        assertEquals(2, binaryInput.readLong());
         assertNull(binaryInput.readString());
-        assertEquals(6, binaryInput.readInt());
+        assertEquals(6, binaryInput.readLong());
     }
 
     @Test
@@ -47,10 +46,12 @@ public class BinaryInputOutputTest {
                 appender2.append("asdas");
             }
             appender.append(6);
+            appender.append(null);
         }
 
-        assertEquals(2, binaryInput.readInt());
-        assertEquals("asdas", binaryInput.readString());
-        assertEquals(6, binaryInput.readInt());
+        assertEquals(2, binaryInput.readLong());
+        assertEquals("asdas", binaryInput.readString().toString());
+        assertEquals(6, binaryInput.readLong());
+        assertNull(binaryInput.readString());
     }
 }
