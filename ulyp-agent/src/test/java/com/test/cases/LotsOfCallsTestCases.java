@@ -38,8 +38,15 @@ public class LotsOfCallsTestCases {
         return 2;
     }
 
+    public void make1000CallsSep() {
+        for (int i = 0; i < calls; i++) {
+            value = subCall();
+        }
+    }
+
     public static void main(String[] args) {
         SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsLevel0());
         SafeCaller.call(() -> new LotsOfCallsTestCases().level0());
+        SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsSep());
     }
 }

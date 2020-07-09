@@ -142,7 +142,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(call1.getChildren(), is(empty()));
         assertThat(call1.getArgs(), is(empty()));
-        assertThat(call1.getReturnValue(), is("null"));
+        assertThat(call1.getReturnValue().getPrintedText(), is("null"));
         assertThat(call1.getResult(), is("void"));
         assertThat(call1.getSubtreeNodeCount(), is(1));
         assertThat(call1.getMethodName(), is("method1"));
@@ -151,7 +151,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(call2.getChildren(), is(empty()));
         assertThat(call2.getArgs(), is(empty()));
-        assertThat(call2.getReturnValue(), is("null"));
+        assertThat(call2.getReturnValue().getPrintedText(), is("null"));
         assertThat(call2.getResult(), is("void"));
         assertThat(call2.getSubtreeNodeCount(), is(1));
         assertThat(call2.getMethodName(), is("method2"));

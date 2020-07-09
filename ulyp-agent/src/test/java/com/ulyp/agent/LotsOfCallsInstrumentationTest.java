@@ -16,7 +16,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
         CallTraceTree tree = executeClass(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToTrace("make1000Calls")
+                        .setMethodToTrace("make1000CallsSep")
         );
 
         CallTrace root = tree.getRoot();
