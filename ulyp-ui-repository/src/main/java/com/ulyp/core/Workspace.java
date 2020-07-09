@@ -1,4 +1,4 @@
-package com.ulyp.storage;
+package com.ulyp.core;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

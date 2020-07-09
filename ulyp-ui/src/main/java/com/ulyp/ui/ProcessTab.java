@@ -1,95 +1,86 @@
 package com.ulyp.ui;
 
-import com.ulyp.storage.MethodTraceTreeNode;
-import javafx.event.Event;
+import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallGraphDatabase;
+import it.unimi.dsi.fastutil.longs.LongList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class ProcessTab extends Tab {
 
-    private final TabPane treesTabs;
-    private final Consumer<Event> onDestroy;
-    private final List<MethodTraceTreeTab> invisibleTabs;
+    private final CallGraphDatabase database;
+    private final TabPane callTreeTabs;
 
-    private String textSearch = "";
+    private String lastAppliedSearchText = "";
+
     private long idGenerator = 0;
 
-    ProcessTab(TabPane processTabPane, String mainClassName, Consumer<Event> onClose) {
+    ProcessTab(CallGraphDatabase database, TabPane processTabPane, String mainClassName) {
         super(mainClassName);
 
+        this.database = database;
+
         TabPane tabPane = new TabPane();
-        this.invisibleTabs = new ArrayList<>();
-        this.treesTabs = tabPane;
-        this.onDestroy = onClose;
+        this.callTreeTabs = tabPane;
         setContent(tabPane);
         tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
     }
 
-    public void add(MethodTraceTreeNode tree, RenderSettings renderSettings, Duration lifetime) {
+    public void add(CallTraceTree tree, RenderSettings renderSettings, Duration lifetime) {
         long id = idGenerator++;
-
-        MethodTraceTreeTab tab = new MethodTraceTreeTab(treesTabs, tree, renderSettings, id, lifetime);
-
-//        if (tab.getSearchIndex().contains(textSearch)) {
-        addToVisible(tab);
-//        } else {
-//            addToInvisible(tab);
-//        }
+        FxCallTraceTreeTab tab = new FxCallTraceTreeTab(callTreeTabs, tree, renderSettings, id, lifetime);
+        callTreeTabs.getTabs().add(tab);
     }
 
-    public MethodTraceTreeTab getSelectedTreeTab() {
-        return (MethodTraceTreeTab) treesTabs.getSelectionModel().getSelectedItem();
+    public FxCallTraceTreeTab getSelectedTreeTab() {
+        return (FxCallTraceTreeTab) callTreeTabs.getSelectionModel().getSelectedItem();
     }
 
-    public void addTree(MethodTraceTreeNode tree, RenderSettings renderSettings, Duration lifetime) {
+    public void addTree(CallTraceTree tree, RenderSettings renderSettings, Duration lifetime) {
         add(tree, renderSettings, lifetime);
     }
 
-    private void addToVisible(MethodTraceTreeTab treeTab) {
-        treesTabs.getTabs().add(treeTab);
-        treeTab.setOnClosed(
-                event -> {
-                    if (treesTabs.getTabs().isEmpty() && invisibleTabs.isEmpty()) {
-                        onDestroy.accept(event);
-                    }
-                }
-        );
+    private void clearSearch() {
+        for (Tab tab : callTreeTabs.getTabs()) {
+            FxCallTraceTreeTab fxCallTraceTreeTab = (FxCallTraceTreeTab) tab;
+            fxCallTraceTreeTab.clearSearchMark();
+        }
     }
 
-    private void addToInvisible(MethodTraceTreeTab treeTab) {
-        invisibleTabs.add(treeTab);
-        treeTab.setOnClosed(
-                event -> {
-                    if (treesTabs.getTabs().isEmpty() && invisibleTabs.isEmpty()) {
-                        onDestroy.accept(event);
-                    }
-                }
-        );
+    public void dispose() {
+        for (Tab tab : callTreeTabs.getTabs()) {
+            FxCallTraceTreeTab fxCallTraceTreeTab = (FxCallTraceTreeTab) tab;
+            fxCallTraceTreeTab.dispose();
+        }
     }
 
-    public void applySearch(String strToSearch) {
-        this.textSearch = strToSearch;
+    public void applySearch(String searchText) {
+        this.lastAppliedSearchText = searchText;
 
-//        List<MethodTraceTreeTab> tabs = new ArrayList<>(visibleTabs.getTabs());
-//        tabs.addAll(invisibleTabs.getTabs());
-//        tabs.sort(Comparator.comparing(MethodTraceTreeTab::getOrderStamp));
-//
-//        visibleTabs.clear();
-//        invisibleTabs.clear();
-//
-//        for (int i = 0; i < tabs.size(); i++) {
-//            SearchIndex index = tabs.get(i).getSearchIndex();
-//            if (index.contains(strToSearch)) {
-//                addToVisible(tabs.get(i));
-//            } else {
-//                addToInvisible(tabs.get(i));
-//            }
-//        }
+        if (searchText.trim().isEmpty()) {
+            clearSearch();
+            return;
+        }
+
+        for (Tab tab : callTreeTabs.getTabs()) {
+            applySearchForTab((FxCallTraceTreeTab) tab, searchText);
+        }
+    }
+
+    // TODO move into tab
+    private void applySearchForTab(FxCallTraceTreeTab fxTab, String searchText) {
+        FxCallTrace root = fxTab.getRoot();
+        LongList result = database.searchSubtree(searchText, root.getNode());
+
+        if (!result.isEmpty()) {
+            fxTab.markHasSearchResults();
+        }
+
+        for (long id : result) {
+            System.out.println(database.find(id));
+        }
     }
 }

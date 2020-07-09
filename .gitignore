@@ -4,4 +4,4 @@
 /build
 /.idea
 */.iml
-/ulyp-ui-repository/src/main/java/com/ulyp/storage/Workspace.java
+/ulyp-ui-repository/src/main/java/com/ulyp/database/Workspace.java

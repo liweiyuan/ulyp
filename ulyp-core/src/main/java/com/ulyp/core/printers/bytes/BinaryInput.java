@@ -2,7 +2,9 @@ package com.ulyp.core.printers.bytes;
 
 public interface BinaryInput {
 
-    int readInt();
+    boolean readBoolean();
 
-    String readString();
+    long readLong();
+
+    StringView readString();
 }

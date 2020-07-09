@@ -6,26 +6,30 @@ import org.junit.Assert;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TestUtil {
 
-    public static void runClassInSeparateJavaProcess(AgentSettings settings, int uiPort) {
+    public static void runClassInSeparateJavaProcess(TestSettingsBuilder settingsBuilder) {
         File agentJar = findAgentJar();
-        String cp = System.getProperty("java.class.path");
+        String classPath = System.getProperty("java.class.path");
 
         try {
-            ProcessBuilder ps = new ProcessBuilder(
-                    "java",
-                    "-javaagent:" + agentJar.getAbsolutePath(),
-                    "-D" + Settings.PACKAGES_PROPERTY + "=" + settings.getPackages(),
-                    "-D" + Settings.START_METHOD_PROPERTY + "=" + settings.getStartMethod(),
-                    "-D" + Settings.UI_PORT_PROPERTY + "=" + uiPort,
-                    "-D" + Settings.MAX_DEPTH_PROPERTY + "=" + settings.getMaxDepth(),
-                    "-cp",
-                    cp,
-                    settings.getMainClassName().getName()
-            );
+
+            Settings settings = settingsBuilder.build();
+
+            List<String> procCmdLine = new ArrayList<>();
+            // TODO call very same java as this process
+            procCmdLine.add("java");
+            procCmdLine.add("-javaagent:" + agentJar.getAbsolutePath());
+            procCmdLine.addAll(settings.toCmdJavaProps());
+            procCmdLine.add("-cp");
+            procCmdLine.add(classPath);
+            procCmdLine.add(settingsBuilder.getMainClassName().getName());
+
+            ProcessBuilder ps = new ProcessBuilder(procCmdLine.toArray(new String[]{}));
 
             ps.redirectErrorStream(true);
 

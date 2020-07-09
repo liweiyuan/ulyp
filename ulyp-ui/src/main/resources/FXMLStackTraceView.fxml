@@ -11,7 +11,7 @@
 <?import javafx.geometry.Insets?>
 <VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
-            fx:controller="com.ulyp.ui.FXMLStackTraceViewController">
+            fx:controller="com.ulyp.ui.FxController">
   <children>
     <MenuBar>
       <menus>
@@ -30,6 +30,9 @@
       <padding><Insets top="7" left="15" right="15" bottom="5"/></padding>
       <Label text="Search" />
       <TextField fx:id="searchField" onKeyReleased="#onSearchActivated" prefWidth="200.0"/>
+      <Button fx:id="traceSwitchButton" onAction="#onTraceSwitchClicked" prefWidth="100" />
+      <Button fx:id="traceIdentityHashCodeButton" onAction="#onTraceIdentityHashCodeClicked" prefWidth="100" />
+      <Button fx:id="traceCollectionsButton" onAction="#onTraceCollectionsClicked" prefWidth="100" />
     </HBox>
     <TabPane fx:id="processTabPane" VBox.vgrow="ALWAYS" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" />
   </children>

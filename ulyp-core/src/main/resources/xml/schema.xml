@@ -36,12 +36,12 @@
         </enum>
     </types>
 
-    <sbe:message name="TMethodEnterTrace" id="3">
+    <sbe:message name="TCallEnterTrace" id="3">
         <field name="methodId" id="1" type="int64"/>
         <field name="callId" id="2" type="int64"/>
         <group name="arguments" id="10" dimensionType="groupSizeEncoding">
             <field name="classId" id="11" type="int64"/>
-            <field name="printerId" id="13" type="int32"/>
+            <field name="printerId" id="13" type="int64"/>
             <data name="value" id="12" type="varStringEncoding"/>
         </group>
     </sbe:message>
@@ -63,12 +63,12 @@
         <data name="className" id="3" type="varStringEncoding"/>
     </sbe:message>
 
-    <sbe:message name="TMethodExitTrace" id="4">
+    <sbe:message name="TCallExitTrace" id="4">
         <field name="methodId" id="1" type="int64"/>
         <field name="callId" id="2" type="int64"/>
         <field name="thrown" id="3" type="BooleanType"/>
         <field name="returnClassId" id="11" type="int64"/>
-        <field name="returnPrinterId" id="13" type="int32"/>
+        <field name="returnPrinterId" id="13" type="int64"/>
         <data name="returnValue" id="12" type="varStringEncoding"/>
     </sbe:message>
 </sbe:messageSchema>

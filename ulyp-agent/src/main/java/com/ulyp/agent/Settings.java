@@ -4,6 +4,7 @@ import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UploadingTransport;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,13 @@ public class Settings {
         } else {
             packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
         }
+        String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY);
+        List<String> excludedPackages;
+        if (excludedPackagesStr != null) {
+            excludedPackages = new ArrayList<>(Arrays.asList(excludedPackagesStr.split(",")));
+        } else {
+            excludedPackages = Collections.emptyList();
+        }
 
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY);
         List<MethodMatcher> tracingStartMethods;
@@ -45,34 +53,43 @@ public class Settings {
         int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
 
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
+        int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
-        return new Settings(new UiAddress(uiHost, uiPort), packages, tracingStartMethods, maxTreeDepth, minTraceCount);
+        return new Settings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
+    public static final String EXCLUDE_PACKAGES_PROPERTY = "ulyp.exclude-packages";
     public static final String START_METHOD_PROPERTY = "ulyp.start-method";
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
+    public static final String MAX_CALL_PER_METHOD = "ulyp.max-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
     private UiAddress uiAddress;
     private final List<String> packages;
+    private final List<String> excludePackages;
     private final List<MethodMatcher> startTracingMethods;
     private final int maxTreeDepth;
+    private final int maxCallsPerMethod;
     private final int minTraceCount;
 
-    private Settings(
+    public Settings(
             UiAddress uiAddress,
             List<String> packages,
+            List<String> excludePackages,
             List<MethodMatcher> startTracingMethods,
             int maxTreeDepth,
+            int maxCallsPerMethod,
             int minTraceCount)
     {
         this.uiAddress = uiAddress;
         this.packages = packages;
+        this.excludePackages = excludePackages;
         this.startTracingMethods = startTracingMethods;
         this.maxTreeDepth = maxTreeDepth;
+        this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
     }
 
@@ -124,37 +141,6 @@ public class Settings {
                 hasSuperclassThatMatches(methodsToMatch, clazzType.getSuperClass(), methodName);
     }
 
-    private static class MethodMatcher {
-        private final String classSimpleName;
-        private final String methodSimpleName;
-        private final boolean isWildcard;
-
-        private MethodMatcher(String classSimpleName, String methodSimpleName) {
-            this.classSimpleName = classSimpleName;
-            this.methodSimpleName = methodSimpleName;
-            this.isWildcard = methodSimpleName.equals("*");
-        }
-
-        public boolean matchesExact(TypeDescription.Generic clazzType, String methodName) {
-            return getSimpleName(clazzType.getActualName()).equals(classSimpleName) &&
-                    (isWildcard || methodName.equals(methodSimpleName));
-        }
-
-        private String getSimpleName(String name) {
-            int lastDot = name.lastIndexOf('.');
-            if (lastDot > 0) {
-                return name.substring(lastDot + 1);
-            } else {
-                return name;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "MethodMatcher{classSimpleName='" + classSimpleName + '\'' + ", methodSimpleName='" + methodSimpleName + '\'' + '}';
-        }
-    }
-
     public int getMaxTreeDepth() {
         return maxTreeDepth;
     }
@@ -163,8 +149,16 @@ public class Settings {
         return minTraceCount;
     }
 
+    public int getMaxCallsPerMethod() {
+        return maxCallsPerMethod;
+    }
+
     public List<String> getPackages() {
         return packages;
+    }
+
+    public List<String> getExcludePackages() {
+        return excludePackages;
     }
 
     private boolean classMatches(
@@ -178,5 +172,35 @@ public class Settings {
             }
         }
         return false;
+    }
+
+    public List<String> toCmdJavaProps() {
+        List<String> params = new ArrayList<>();
+
+        params.add("-D" + Settings.PACKAGES_PROPERTY + "=" + String.join(",", packages));
+        if (excludePackages.isEmpty()) {
+            params.add("-D" + Settings.EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludePackages));
+        }
+
+        params.add("-D" + Settings.START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
+        params.add("-D" + Settings.UI_PORT_PROPERTY + "=" + uiAddress.port);
+        params.add("-D" + Settings.MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
+        params.add("-D" + Settings.MIN_TRACE_COUNT + "=" + minTraceCount);
+        params.add("-D" + Settings.MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
+
+        return params;
+    }
+
+    @Override
+    public String toString() {
+        return "Settings{" +
+                "uiAddress=" + uiAddress +
+                ", packages=" + packages +
+                ", excludePackages=" + excludePackages +
+                ", startTracingMethods=" + startTracingMethods +
+                ", maxTreeDepth=" + maxTreeDepth +
+                ", maxCallsPerMethod=" + maxCallsPerMethod +
+                ", minTraceCount=" + minTraceCount +
+                '}';
     }
 }

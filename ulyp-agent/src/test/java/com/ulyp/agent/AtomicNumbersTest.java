@@ -1,8 +1,9 @@
 package com.ulyp.agent;
 
 import com.test.cases.AtomicNumbersTestCases;
-import com.ulyp.agent.util.MethodTraceTree;
-import com.ulyp.agent.util.MethodTraceTreeNode;
+import com.ulyp.agent.util.TestSettingsBuilder;
+import com.ulyp.core.CallTrace;
+import com.ulyp.core.CallTraceTree;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -14,29 +15,30 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testAtomicIntegerSum() {
-        MethodTraceTree tree = executeClass(
-                AtomicNumbersTestCases.class,
-                "com.test.cases",
-                "AtomicNumbersTestCases.intSum"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(AtomicNumbersTestCases.class)
+                        .setMethodToTrace("intSum")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
-        assertThat(root.getArgs(), is(Arrays.asList("-234", "23")));
-        assertThat(root.getReturnValue(), is("-211"));
+        assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
+        assertThat(root.getReturnValue().getPrintedText(), is("-211"));
     }
 
     @Test
     public void testBoxedDoubleSum() {
-        MethodTraceTree tree = executeClass(
-                AtomicNumbersTestCases.class,
-                "com.test.cases",
-                "AtomicNumbersTestCases.longSum"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(AtomicNumbersTestCases.class)
+                        .setMethodToTrace("longSum")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
 
-        assertThat(root.getArgs(), is(Arrays.asList("-234", "23")));
-        assertThat(root.getReturnValue(), is("-211"));
+        CallTrace root = tree.getRoot();
+
+        assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
+        assertThat(root.getReturnValue().getPrintedText(), is("-211"));
     }
 }

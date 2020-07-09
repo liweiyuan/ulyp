@@ -6,9 +6,21 @@ option java_outer_classname = "HelloWorldProto";
 
 package ulyp;
 
-service UploadingService {
+service UIConnector {
 
-  rpc Upload (TMethodTraceLogUploadRequest) returns (TMethodTraceLogUploadResponse) {}
+    rpc RequestSettings(SettingsRequest) returns (SettingsResponse) {}
+
+    rpc UploadCallGraph (TCallTraceLogUploadRequest) returns (TCallTraceLogUploadResponse) {}
+}
+
+message SettingsResponse {
+    bool mayStartTracing = 1;
+    bool shouldTraceIdentityHashCode = 2;
+    bool traceCollections = 3;
+}
+
+message SettingsRequest {
+
 }
 
 message TMethodInfo {
@@ -18,7 +30,7 @@ message TMethodInfo {
     bool returnsSomething = 4;
 }
 
-message TMethodTraceLog {
+message TCallTraceLog {
     bytes enterTraces = 2;
     bytes exitTraces = 3;
 }
@@ -31,8 +43,8 @@ message TClassDescriptionList {
     bytes data = 1;
 }
 
-message TMethodTraceLogUploadRequest {
-    TMethodTraceLog traceLog = 1;
+message TCallTraceLogUploadRequest {
+    TCallTraceLog traceLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
     TClassDescriptionList classDescriptionList = 7;
     string mainClassName = 3;
@@ -41,6 +53,6 @@ message TMethodTraceLogUploadRequest {
     int64 traceLogId = 6;
 }
 
-message TMethodTraceLogUploadResponse {
+message TCallTraceLogUploadResponse {
 
 }

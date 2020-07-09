@@ -1,5 +1,6 @@
 package com.ulyp.core.printers.bytes;
 
+import com.ulyp.core.printers.Printable;
 import org.agrona.DirectBuffer;
 
 public class BinaryInputImpl implements BinaryInput {
@@ -12,27 +13,26 @@ public class BinaryInputImpl implements BinaryInput {
     }
 
     @Override
-    public int readInt() {
-        int val = buffer.getInt(bytePos);
-        bytePos += Integer.BYTES;
-        return val;
+    public boolean readBoolean() {
+        long val = readLong();
+        return val == 1;
     }
 
-    public char readChar() {
-        char val = buffer.getChar(bytePos);
-        bytePos += Character.BYTES;
+    @Override
+    public long readLong() {
+        long val = buffer.getLong(bytePos);
+        bytePos += Long.BYTES;
         return val;
     }
 
     @Override
-    public String readString() {
-        int length = readInt();
+    public StringView readString() {
+        long length = readLong();
         if (length >= 0) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < length; i++) {
-                builder.append(readChar());
-            }
-            return builder.toString();
+            StringView view = new StringView();
+            view.wrap(buffer, bytePos, (int) length);
+            bytePos += length;
+            return view;
         } else {
             return null;
         }

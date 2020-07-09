@@ -1,5 +1,6 @@
 package com.ulyp.core.printers;
 
+import com.ulyp.core.TracingContext;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class EnumPrinter extends ObjectBinaryPrinter {
@@ -14,7 +15,7 @@ public class EnumPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out) throws Exception {
+    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
         out.write(((Enum<?>) obj).name());
     }
 }

@@ -1,8 +1,6 @@
 package com.ulyp.agent.util;
 
-import com.ulyp.transport.TMethodTraceLogUploadRequest;
-import com.ulyp.transport.TMethodTraceLogUploadResponse;
-import com.ulyp.transport.UploadingServiceGrpc;
+import com.ulyp.transport.*;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -12,17 +10,28 @@ import java.util.concurrent.*;
 
 public class UIServerStub implements AutoCloseable {
 
-    private final CompletableFuture<TMethodTraceLogUploadRequest> reference = new CompletableFuture<>();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private final CompletableFuture<TCallTraceLogUploadRequest> future = new CompletableFuture<>();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     private final Server server;
 
-    public UIServerStub(int port) {
+    public UIServerStub(TestSettingsBuilder settings, int port) {
         try {
             server = ServerBuilder.forPort(port)
-                    .addService(new UploadingServiceGrpc.UploadingServiceImplBase() {
+                    .addService(new UIConnectorGrpc.UIConnectorImplBase() {
                         @Override
-                        public void upload(TMethodTraceLogUploadRequest request, StreamObserver<TMethodTraceLogUploadResponse> responseObserver) {
-                            reference.complete(request);
+                        public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
+                            responseObserver.onNext(SettingsResponse
+                                    .newBuilder()
+                                    .setMayStartTracing(true)
+                                    .setShouldTraceIdentityHashCode(false)
+                                    .setTraceCollections(settings.getTraceCollections())
+                                    .build());
+                            responseObserver.onCompleted();
+                        }
+
+                        @Override
+                        public void uploadCallGraph(TCallTraceLogUploadRequest request, StreamObserver<TCallTraceLogUploadResponse> responseObserver) {
+                            future.complete(request);
                             responseObserver.onCompleted();
                         }
                     })
@@ -34,8 +43,8 @@ public class UIServerStub implements AutoCloseable {
         }
     }
 
-    public TMethodTraceLogUploadRequest get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
-        return reference.get(timeout, unit);
+    public TCallTraceLogUploadRequest get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
+        return future.get(timeout, unit);
     }
 
     @Override

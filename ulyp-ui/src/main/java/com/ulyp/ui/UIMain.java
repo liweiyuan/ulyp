@@ -1,7 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.agent.transport.UploadingTransport;
-import com.ulyp.ui.server.UploadingServiceImpl;
+import com.ulyp.ui.server.UIConnectorServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import javafx.application.Application;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UIMain extends Application {
 
-    private FXMLStackTraceViewController viewController;
+    private FxController viewController;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -50,7 +50,7 @@ public class UIMain extends Application {
     private void startGrpcServer() throws IOException {
         Server server = ServerBuilder.forPort(UploadingTransport.DEFAULT_ADDRESS.port)
                 .maxInboundMessageSize(1324 * 1024 * 1024)
-                .addService(new UploadingServiceImpl(r -> viewController.onMethodTraceTreeUploaded(r)))
+                .addService(new UIConnectorServiceImpl(viewController))
                 .build()
                 .start();
 

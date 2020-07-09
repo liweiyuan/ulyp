@@ -1,6 +1,5 @@
-package com.ulyp.storage;
+package com.ulyp.core;
 
-import com.ulyp.core.*;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
@@ -11,26 +10,28 @@ import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.*;
 
-public class StoringService {
+public class CallGraphDao {
 
-    private final MethodEnterTraceList enterTracesList;
-    private final MethodExitTraceList exitTracesList;
+    private final CallEnterTraceList enterTracesList;
+    private final CallExitTraceList exitTracesList;
     private final MethodDescriptionList methodDescriptionList;
     private final Long2ObjectMap<ClassDescription> classIdMap;
-    private final Storage storage;
+    private final DecodingContext decodingContext;
+    private final CallGraphDatabase database;
 
-    public StoringService(MethodEnterTraceList enterTracesList,
-                          MethodExitTraceList exitTracesList,
-                          MethodDescriptionList methodDescriptionList,
-                          ClassDescriptionList classDescriptionList,
-                          Storage storage)
+    public CallGraphDao(CallEnterTraceList enterTracesList,
+                        CallExitTraceList exitTracesList,
+                        MethodDescriptionList methodDescriptionList,
+                        ClassDescriptionList classDescriptionList,
+                        CallGraphDatabase database)
     {
-        this.storage = storage;
+        this.database = database;
         this.enterTracesList = enterTracesList;
         this.exitTracesList = exitTracesList;
         this.methodDescriptionList = methodDescriptionList;
 
         this.classIdMap = new Long2ObjectOpenHashMap<>();
+        this.decodingContext = new DecodingContext(classIdMap);
         for (TClassDescriptionDecoder classDescription : classDescriptionList) {
             this.classIdMap.put(
                     classDescription.id(),
@@ -39,8 +40,7 @@ public class StoringService {
         }
     }
 
-    public MethodTraceTreeNode store()
-    {
+    public CallTraceTree getCallTraceTree() {
         Long2ObjectMap<TMethodDescriptionDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
         Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
         while (iterator.hasNext()) {
@@ -48,20 +48,20 @@ public class StoringService {
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
-        Iterator<TMethodEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
-        Iterator<TMethodExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
+        Iterator<TCallEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
+        Iterator<TCallExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
 
-        TMethodEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
-        TMethodExitTraceDecoder currentExitTrace = exitTraceIt.next();
+        TCallEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
+        TCallExitTraceDecoder currentExitTrace = exitTraceIt.next();
 
-        NodeBuilder root = new NodeBuilder(null, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
+        CallBuilder root = new CallBuilder(null, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
         currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
 
-        Deque<NodeBuilder> rootPath = new ArrayDeque<>();
+        Deque<CallBuilder> rootPath = new ArrayDeque<>();
         rootPath.add(root);
 
         for (; currentEnterTrace != null || currentExitTrace != null; ) {
-            NodeBuilder currentNode = rootPath.getLast();
+            CallBuilder currentNode = rootPath.getLast();
 
             long currentCallId = currentNode.callId;
             if (currentExitTrace != null && currentExitTrace.callId() == currentCallId) {
@@ -70,7 +70,7 @@ public class StoringService {
                 currentNode.persist();
                 rootPath.removeLast();
             } else if (currentEnterTrace != null) {
-                NodeBuilder next = new NodeBuilder(currentNode, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
+                CallBuilder next = new CallBuilder(currentNode, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
                 currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
                 rootPath.add(next);
             } else {
@@ -78,56 +78,61 @@ public class StoringService {
             }
         }
 
-        return root.persisted;
+        return new CallTraceTree(root.persisted);
     }
 
-    private class NodeBuilder {
+    private class CallBuilder {
 
-        private final NodeBuilder parent;
+        private final CallBuilder parent;
         private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
         private final List<ObjectValue> args;
-        private final List<MethodTraceTreeNode> children = new ArrayList<>();
+        private final List<CallTrace> children = new ArrayList<>();
 
-        private MethodTraceTreeNode persisted;
+        private CallTrace persisted;
         private ObjectValue returnValue;
         private boolean thrown;
 
-        private NodeBuilder(NodeBuilder parent, TMethodDescriptionDecoder methodDescription, TMethodEnterTraceDecoder decoder) {
+        private CallBuilder(CallBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterTraceDecoder decoder) {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
 
             this.args = new ArrayList<>();
-            TMethodEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
+            TCallEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
             while (arguments.hasNext()) {
                 arguments = arguments.next();
                 UnsafeBuffer buffer = new UnsafeBuffer();
                 arguments.wrapValue(buffer);
                 args.add(new ObjectValue(
-                        ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(classIdMap.get(arguments.classId()), new BinaryInputImpl(buffer)),
+                        ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(
+                                classIdMap.get(arguments.classId()),
+                                new BinaryInputImpl(buffer),
+                                decodingContext),
                         classIdMap.get(arguments.classId())
                 ));
             }
         }
 
-        private void setExitTraceData(TMethodExitTraceDecoder decoder) {
+        private void setExitTraceData(TCallExitTraceDecoder decoder) {
             ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
             UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
             decoder.wrapReturnValue(returnValueBuffer);
-            this.returnValue = new ObjectValue(printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer)), classIdMap.get(decoder.returnClassId()));
+            this.returnValue = new ObjectValue(
+                    printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer), decodingContext),
+                    classIdMap.get(decoder.returnClassId()));
             this.thrown = decoder.thrown() == BooleanType.T;
         }
 
         public void persist() {
-            MethodTraceTreeNode node = new MethodTraceTreeNode(
+            CallTrace node = new CallTrace(
                     args,
                     returnValue,
                     thrown,
                     methodDescription,
                     children
             );
-            storage.persist(node);
+            database.persist(node);
             if (parent != null) {
                 parent.children.add(node);
             }

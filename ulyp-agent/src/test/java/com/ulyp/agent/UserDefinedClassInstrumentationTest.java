@@ -1,8 +1,9 @@
 package com.ulyp.agent;
 
 import com.test.cases.UserDefinedClassTestCases;
-import com.ulyp.agent.util.MethodTraceTree;
-import com.ulyp.agent.util.MethodTraceTreeNode;
+import com.ulyp.agent.util.TestSettingsBuilder;
+import com.ulyp.core.CallTrace;
+import com.ulyp.core.CallTraceTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -13,26 +14,26 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
     @Test
     public void shouldPrintEnumNames() {
-        MethodTraceTree tree = executeClass(
-                UserDefinedClassTestCases.class,
-                "com.test.cases",
-                "UserDefinedClassTestCases.returnInnerClass"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(UserDefinedClassTestCases.class)
+                        .setMethodToTrace("returnInnerClass")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getResult(), matchesPattern("TestClass@\\d+"));
     }
 
     @Test
     public void shouldNotFailIfToStringCallsTracedMethod() {
-        MethodTraceTree tree = executeClass(
-                UserDefinedClassTestCases.class,
-                "com.test.cases",
-                "UserDefinedClassTestCases.returnClassThatCallsSelfInToString"
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(UserDefinedClassTestCases.class)
+                        .setMethodToTrace("returnClassThatCallsSelfInToString")
         );
 
-        MethodTraceTreeNode root = tree.getRoot();
+        CallTrace root = tree.getRoot();
 
         assertThat(root.getResult(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
     }

@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.storage.MethodTraceTreeNode;
+import com.ulyp.core.CallTrace;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
@@ -8,25 +8,25 @@ import javafx.scene.control.TreeItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodTraceTreeFxItem extends TreeItem<Node> {
+public class FxCallTrace extends TreeItem<Node> {
 
     private final RenderSettings renderSettings;
-    private final MethodTraceTreeNode node;
+    private final CallTrace node;
     private final int totalNodeCount;
 
     private boolean loaded = false;
 
-    public MethodTraceTreeFxItem(MethodTraceTreeNode node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCountInTree));
+    public FxCallTrace(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
+        super(FxCallTraceTreeRenderer.render(node, renderSettings, totalNodeCountInTree));
         this.node = node;
         this.renderSettings = renderSettings;
         this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(MethodTraceTreeRenderer.render(node, renderSettings, totalNodeCount));
+        setValue(FxCallTraceTreeRenderer.render(node, renderSettings, totalNodeCount));
         if (loaded) {
-            getChildren().forEach(node -> ((MethodTraceTreeFxItem) node).refresh());
+            getChildren().forEach(node -> ((FxCallTrace) node).refresh());
         }
     }
 
@@ -48,15 +48,15 @@ public class MethodTraceTreeFxItem extends TreeItem<Node> {
 
     private void loadChildren() {
         loaded = true;
-        List<MethodTraceTreeFxItem> children = new ArrayList<>();
-        for (MethodTraceTreeNode child : node.getChildren()) {
-            children.add(new MethodTraceTreeFxItem(child, renderSettings, totalNodeCount));
+        List<FxCallTrace> children = new ArrayList<>();
+        for (CallTrace child : node.getChildren()) {
+            children.add(new FxCallTrace(child, renderSettings, totalNodeCount));
         }
 
         super.getChildren().setAll(children);
     }
 
-    public MethodTraceTreeNode getNode() {
+    public CallTrace getNode() {
         return node;
     }
 }

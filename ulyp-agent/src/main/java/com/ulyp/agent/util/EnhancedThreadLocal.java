@@ -10,12 +10,6 @@ public class EnhancedThreadLocal<T> {
         clear();
     }
 
-    public T pop() {
-        T tmp = tl.get();
-        clear();
-        return tmp;
-    }
-
     public void clear() {
         tl.set(null);
     }
