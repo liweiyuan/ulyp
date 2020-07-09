@@ -1,13 +1,19 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.agent.Settings;
+import org.buildobjects.process.ProcBuilder;
+import org.buildobjects.process.ProcResult;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TestUtil {
@@ -20,80 +26,33 @@ public class TestUtil {
 
             Settings settings = settingsBuilder.build();
 
-            List<String> procCmdLine = new ArrayList<>();
-            // TODO call very same java as this process
-            procCmdLine.add("java");
-            procCmdLine.add("-javaagent:" + agentJar.getAbsolutePath());
-            procCmdLine.addAll(settings.toCmdJavaProps());
-            procCmdLine.add("-cp");
-            procCmdLine.add(classPath);
-            procCmdLine.add(settingsBuilder.getMainClassName().getName());
+            String javaHome = System.getProperty("java.home");
+            String javaBinary = Paths.get(javaHome, "bin", "java").toString();
 
-            ProcessBuilder ps = new ProcessBuilder(procCmdLine.toArray(new String[]{}));
+            List<String> processArgs = new ArrayList<>();
+            processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
+            processArgs.addAll(settings.toCmdJavaProps());
+            processArgs.add("-cp");
+            processArgs.add(classPath);
+            processArgs.add(settingsBuilder.getMainClassName().getName());
 
-            ps.redirectErrorStream(true);
+            ProcResult run = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{})).run();
 
-            Process pr = ps.start();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-            int code = pr.waitFor();
-            Assert.assertEquals(0, code);
+            System.out.println(run.getOutputString());
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    public static void runClassInSeparateJavaProcess(Class<?> cl, String packages, String startMethod, int uiPort) {
-        File agentJar = findAgentJar();
-        String cp = System.getProperty("java.class.path");
-
-        try {
-            ProcessBuilder ps = new ProcessBuilder(
-                    "java",
-                    "-javaagent:" + agentJar.getAbsolutePath(),
-                    "-D" + Settings.PACKAGES_PROPERTY + "=" + packages,
-                    "-D" + Settings.START_METHOD_PROPERTY + "=" + startMethod,
-                    "-D" + Settings.UI_PORT_PROPERTY + "=" + uiPort,
-                    "-cp",
-                    cp,
-                    cl.getName()
-            );
-
-            ps.redirectErrorStream(true);
-
-            Process pr = ps.start();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-            int code = pr.waitFor();
-            Assert.assertEquals(0, code);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
+            throw new AssertionError("Process ended unsuccessfully", e);
         }
     }
 
     private static File findAgentJar() {
-        File userDir = new File(System.getProperty("user.dir"));
-        if (userDir.getName().equals("ulyp-agent")) {
-            // TODO remove version from here
-            File file = new File(userDir.getAbsoluteFile() + "/build/libs/ulyp-agent-0.2.jar");
-            if (!file.exists()) {
-                Assert.fail("Could not find ulyp-agent-0.2.jar");
-            }
-            return file;
-        } else {
-            Assert.fail("Expected current folder to be ulyp-agent, but instead was " + userDir.getName());
-            throw new RuntimeException("Test failed"); // Will not happen, but needed for compiler
-        }
+        Path libDir = Paths.get(".", "build", "libs");
+
+        return Arrays.stream(Objects.requireNonNull(libDir.toFile().listFiles()))
+                .filter(file -> file.getName().startsWith("ulyp-agent"))
+                .filter(file -> file.getName().endsWith(".jar"))
+                .findAny()
+                .orElseThrow(() -> new AssertionError("Could not find built ulyp agent jar"));
     }
 
     public static int pickEmptyPort() {
