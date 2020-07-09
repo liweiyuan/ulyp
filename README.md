@@ -17,10 +17,14 @@ Agent has the following props which are set as java system properties (via -Dkey
 		<th>Example</th>
 		<th>Description</th>
 </tr>
-<tr><td>ulyp.packages</td><td>Yes</td><td>-</td><td>org.hibernate,org.h2</td><td>Packages of classes that agent will instrument</td></tr>
-<tr><td>ulyp.start-method</td><td>Yes</td><td>-</td><td>UserDao.save</td><td>Method where tracing will start</td></tr>
+<tr><td>ulyp.packages</td><td>No</td><td>-</td><td>org.hibernate,org.h2</td><td>Packages of classes that agent will instrument. If not set, then all classes (except of those which are loaded by bootstrap classloader) are instrumented</td></tr>
+<tr><td>ulyp.start-method</td><td>No</td><td>-</td><td>UserDao.save</td><td>Method where tracing will start. If not set, then tracing starts immediately. Omitting this option may result in tracing of lots of method and it's not a recommended way to use the tool.</td></tr>
 <tr><td>ulyp.ui-host</td><td>No</td><td>localhost</td><td>localhost</td><td>Target host for UI connection</td></tr>
 <tr><td>ulyp.ui-port</td><td>No</td><td>13991</td><td>13991</td><td>Target port for UI connection</td></tr>
+
+<tr><td>ulyp.max-depth</td><td>No</td><td>Integer.MAX_VALUE</td><td>20</td><td>Max depth of call trace tree. May be useful for limiting instrumentation data</td></tr>
+<tr><td>ulyp.ui-port</td><td>No</td><td>13991</td><td>13991</td><td>Target port for UI connection</td></tr>
+
 <tr><td>ulyp.log</td><td>No</td><td>-</td><td>Used as -Dulyp.log</td><td>Turns on agent logging</td></tr>
 </table>
 
