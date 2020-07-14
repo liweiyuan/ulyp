@@ -17,14 +17,14 @@ public class FxCallTrace extends TreeItem<Node> {
     private boolean loaded = false;
 
     public FxCallTrace(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(FxCallTraceTreeRenderer.render(node, renderSettings, totalNodeCountInTree));
+        super(FxCttTreeViewRenderer.render(node, renderSettings, totalNodeCountInTree));
         this.node = node;
         this.renderSettings = renderSettings;
         this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(FxCallTraceTreeRenderer.render(node, renderSettings, totalNodeCount));
+        setValue(FxCttTreeViewRenderer.render(node, renderSettings, totalNodeCount));
         if (loaded) {
             getChildren().forEach(node -> ((FxCallTrace) node).refresh());
         }

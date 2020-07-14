@@ -6,27 +6,33 @@ import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class FxCallTraceTreeRenderer {
+public class FxCttTreeViewRenderer {
+
+    private static TextBuilder text() {
+        return new TextBuilder().style("ulyp-ctt");
+    }
 
     public static Node render(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
         List<Text> text = new ArrayList<>(
                 renderReturnValue(node, renderSettings)
         );
-        text.add(new Text(" : "));
-        text.add(renderMethodName(node));
+
+        text.add(text().text(" : ").style("ulyp-ctt-sep").build());
+        text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
-        Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20, Paint.valueOf("#efefef"));
+        Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20);
+        rect.getStyleClass().add("ulyp-asd");
+
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_LEFT);
         stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Text[0])));
@@ -38,38 +44,36 @@ public class FxCallTraceTreeRenderer {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
         List<Text> output = new ArrayList<>();
-        output.add(new Text(" ("));
+        output.add(text().text("(").style("ulyp-ctt-sep").build());
+
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectValue argValue = node.getArgs().get(i);
             if (renderSettings.showsArgumentClassNames()) {
-                Text typeName = new Text(argValue.getClassDescription().getSimpleName());
-                typeName.setFill(Color.GREEN);
-                output.add(typeName);
-                output.add(new Text(": "));
+                output.add(text().text(argValue.getClassDescription().getSimpleName()).style("ulyp-ctt-arg-value").build());
+                output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 
             if (hasParameterNames) {
-                output.add(new Text(node.getParameterNames().get(i)));
-                output.add(new Text(": "));
-                output.add(new Text(argValue.getPrintedText()));
-            } else {
-                output.add(new Text(argValue.getPrintedText()));
+                output.add(text().text(node.getParameterNames().get(i)).style("ulyp-ctt-arg-name").build());
+                output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
+            output.add(text().text(argValue.getPrintedText()).style("ulyp-ctt-arg-value").build());
             if (i < node.getArgs().size() - 1) {
-                output.add(new Text(", "));
+                output.add(text().text(", ").style("ulyp-ctt-sep").build());
             }
         }
 
-        output.add(new Text(")"));
-        output.forEach(text -> text.setStyle("-fx-font-family: serif"));
+        output.add(text().text(")").style("ulyp-ctt-sep").build());
         return output;
     }
 
     @NotNull
-    private static Text renderMethodName(CallTrace node) {
-        Text methodNameText = new Text(StringUtils.toSimpleName(node.getClassName()) + "." + node.getMethodName());
-        methodNameText.setStyle("-fx-font-weight: bold; -fx-font-family: serif");
-        return methodNameText;
+    private static List<Text> renderMethodName(CallTrace node) {
+        return Arrays.asList(
+                text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build(),
+                text().text(".").style("ulyp-ctt-method-name").build(),
+                text().text(node.getMethodName()).style("ulyp-ctt-method-name").build()
+        );
     }
 
     @NotNull
@@ -77,17 +81,17 @@ public class FxCallTraceTreeRenderer {
         List<Text> value = new ArrayList<>();
 
         if (renderSettings.showsReturnValueClassName()) {
-            Text text = new Text(node.getReturnValue().getClassDescription().getSimpleName());
-            text.setFill(Color.GREEN);
-            value.add(text);
-            value.add(new Text(": "));
+            value.add(text().text(node.getReturnValue().getClassDescription().getSimpleName()).style("ulyp-ctt-return-value-type").build());
+            value.add(text().text(": ").style("ulyp-ctt-sep").build());
         }
-        Text returnValueText = new Text(trimText(node.getResult()));
+
+        Text returnValueText;
         if (node.hasThrown()) {
-            returnValueText.setFill(Color.RED);
+            returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-thrown-value").build();
+        } else {
+            returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
         }
         value.add(returnValueText);
-        returnValueText.setStyle("-fx-font-family: serif");
         return value;
     }
 

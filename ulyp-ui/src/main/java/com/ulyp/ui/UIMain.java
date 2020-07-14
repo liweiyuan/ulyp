@@ -27,6 +27,7 @@ public class UIMain extends Application {
         this.viewController = loader.getController();
 
         Scene scene = new Scene(root);
+        scene.getStylesheets().add("modena.css");
 
         stage.setScene(scene);
         stage.setMaximized(true);

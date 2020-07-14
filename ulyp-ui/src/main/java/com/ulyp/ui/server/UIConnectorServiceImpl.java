@@ -23,10 +23,9 @@ public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase 
     @Override
     public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
         SettingsResponse.Builder response = SettingsResponse.newBuilder();
-        response.setMayStartTracing(viewController.getFxTracingSwitch().getValue());
-        // todo rename
-        response.setShouldTraceIdentityHashCode(viewController.getFxTraceIdentityHashCode().getValue());
-        response.setTraceCollections(viewController.getFxTraceCollectionsToogle().getValue());
+        response.setMayStartTracing(viewController.getFxTracingSwitch().isSelected());
+        response.setShouldTraceIdentityHashCode(viewController.getFxTraceIdentityHashCode().isSelected());
+        response.setTraceCollections(viewController.getFxTraceCollectionsToogle().isSelected());
 
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();

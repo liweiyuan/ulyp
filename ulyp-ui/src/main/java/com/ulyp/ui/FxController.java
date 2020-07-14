@@ -38,15 +38,11 @@ public class FxController implements Initializable {
     @FXML
     public TextField searchField;
     @FXML
-    public Button traceSwitchButton;
+    public RadioButton traceSwitchButton;
     @FXML
-    public Button traceIdentityHashCodeButton;
+    public RadioButton traceIdentityHashCodeButton;
     @FXML
-    public Button traceCollectionsButton;
-
-    private FxToogle fxTracingSwitch;
-    private FxToogle fxTraceIdentityHashCode;
-    private FxToogle fxTraceCollectionsToogle;
+    public RadioButton traceCollectionsButton;
 
     private ProcessTabs processTabs;
     private final CallGraphDatabase callGraphDatabase = new HeapCallGraphDatabase();
@@ -55,9 +51,6 @@ public class FxController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         processTabs = new ProcessTabs(callGraphDatabase, processTabPane);
-        fxTracingSwitch = new FxToogle("Trace", traceSwitchButton, true);
-        fxTraceIdentityHashCode = new FxToogle("Trace identity hash code", traceIdentityHashCodeButton, false);
-        fxTraceCollectionsToogle = new FxToogle("Trace collections", traceCollectionsButton, false);
     }
 
     public void onCallTraceTreeUploaded(TCallTraceLogUploadRequest request) {
@@ -87,18 +80,6 @@ public class FxController implements Initializable {
                 selectedProcessTab.applySearch(searchField.getText());
             }
         }
-    }
-
-    public void onTraceSwitchClicked(ActionEvent actionEvent) {
-        fxTracingSwitch.switchValue();
-    }
-
-    public void onTraceIdentityHashCodeClicked(ActionEvent actionEvent) {
-        fxTraceIdentityHashCode.switchValue();
-    }
-
-    public void onTraceCollectionsClicked(ActionEvent actionEvent) {
-        fxTraceCollectionsToogle.switchValue();
     }
 
     public void keyPressed(KeyEvent event) {
@@ -138,15 +119,15 @@ public class FxController implements Initializable {
         }
     }
 
-    public FxToogle getFxTracingSwitch() {
-        return fxTracingSwitch;
+    public RadioButton getFxTracingSwitch() {
+        return traceSwitchButton;
     }
 
-    public FxToogle getFxTraceIdentityHashCode() {
-        return fxTraceIdentityHashCode;
+    public RadioButton getFxTraceIdentityHashCode() {
+        return traceIdentityHashCodeButton;
     }
 
-    public FxToogle getFxTraceCollectionsToogle() {
-        return fxTraceCollectionsToogle;
+    public RadioButton getFxTraceCollectionsToogle() {
+        return traceCollectionsButton;
     }
 }
