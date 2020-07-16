@@ -1,0 +1,8 @@
+dist: xenial
+language: java
+
+script: ./gradlew ulyp-agent:check
+
+jdk:
+  - openjdk8
+  - openjdk11
