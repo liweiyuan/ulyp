@@ -1,7 +1,7 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.agent.MethodMatcher;
-import com.ulyp.agent.Settings;
+import com.ulyp.agent.settings.Settings;
 import com.ulyp.agent.transport.UiAddress;
 import org.apache.commons.lang3.StringUtils;
 

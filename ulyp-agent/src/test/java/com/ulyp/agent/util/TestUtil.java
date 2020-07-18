@@ -1,13 +1,10 @@
 package com.ulyp.agent.util;
 
-import com.ulyp.agent.Settings;
+import com.ulyp.agent.settings.Settings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
-import org.junit.Assert;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

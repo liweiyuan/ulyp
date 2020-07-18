@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.settings.Settings;
 import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.core.MethodDescriptionDictionary;
