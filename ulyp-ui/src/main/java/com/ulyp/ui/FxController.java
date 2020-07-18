@@ -38,11 +38,9 @@ public class FxController implements Initializable {
     @FXML
     public TextField searchField;
     @FXML
-    public RadioButton traceSwitchButton;
+    public ToggleButton traceSwitchButton;
     @FXML
-    public RadioButton traceIdentityHashCodeButton;
-    @FXML
-    public RadioButton traceCollectionsButton;
+    public Slider tracingPrecisionSlider;
 
     private ProcessTabs processTabs;
     private final CallGraphDatabase callGraphDatabase = new HeapCallGraphDatabase();
@@ -74,12 +72,7 @@ public class FxController implements Initializable {
     }
 
     public void onSearchActivated(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) {
-            ProcessTab selectedProcessTab = processTabs.getSelectedTab();
-            if (selectedProcessTab != null) {
-                selectedProcessTab.applySearch(searchField.getText());
-            }
-        }
+
     }
 
     public void keyPressed(KeyEvent event) {
@@ -119,15 +112,11 @@ public class FxController implements Initializable {
         }
     }
 
-    public RadioButton getFxTracingSwitch() {
+    public ToggleButton getFxTracingSwitch() {
         return traceSwitchButton;
     }
 
-    public RadioButton getFxTraceIdentityHashCode() {
-        return traceIdentityHashCodeButton;
-    }
-
-    public RadioButton getFxTraceCollectionsToogle() {
-        return traceCollectionsButton;
+    public Slider getTracingPrecisionSlider() {
+        return tracingPrecisionSlider;
     }
 }
