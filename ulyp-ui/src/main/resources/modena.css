@@ -58,8 +58,8 @@
 /* ULYP part */
 
 .ulyp-ctt {
-    -fx-font-family: monospace;
-    -fx-font-size: 16px;
+    -fx-font-family: consolas;
+    -fx-font-size: 14px;
 }
 
 .ulyp-ctt-return-value {
