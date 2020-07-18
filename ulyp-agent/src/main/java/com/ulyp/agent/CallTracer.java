@@ -2,6 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
+import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import com.ulyp.transport.*;
@@ -23,12 +24,15 @@ public class CallTracer {
 
     public CallTracer(AgentContext context) {
         this.context = context;
+
+        UiSettings uiSettings = context.getUiSettings();
+        uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartTracing = newValue);
     }
 
-    private void onSettings(SettingsResponse settings) {
-        mayStartTracing = settings.getMayStartTracing();
-        tracingParams.updateTraceCollections(settings.getTraceCollections());
-    }
+//    private void onSettings(SettingsResponse settings) {
+//        mayStartTracing = settings.getMayStartTracing();
+//        tracingParams.updateTraceCollections(settings.getTraceCollections());
+//    }
 
     public boolean tracingIsActiveInThisThread() {
         return threadLocalTraceLog.get() != null;

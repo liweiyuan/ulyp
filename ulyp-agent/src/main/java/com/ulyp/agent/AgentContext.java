@@ -47,6 +47,10 @@ public class AgentContext {
         return processInfo;
     }
 
+    public UiSettings getUiSettings() {
+        return uiSettings;
+    }
+
     public UploadingTransport getTransport() {
         return transport;
     }

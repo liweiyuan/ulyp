@@ -14,6 +14,8 @@ public class UiSettings {
             new NamedThreadFactory("Settings-Updater", true)
     );
 
+    private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
+
     public UiSettings(UploadingTransport uploadingTransport) {
         try {
             SettingsResponse settings = uploadingTransport.getSettingsBlocking(Duration.ofSeconds(3));
@@ -33,6 +35,10 @@ public class UiSettings {
     }
 
     private void onSettings(SettingsResponse settings) {
+        mayStartTracing.setValue(settings.getMayStartTracing());
+    }
 
+    public SettingsProperty<Boolean> mayStartTracing() {
+        return mayStartTracing;
     }
 }
