@@ -1,6 +1,7 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.agent.settings.AgentSettings;
+import com.ulyp.agent.settings.SystemPropertiesAgentSettings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
 
@@ -21,7 +22,7 @@ public class TestUtil {
 
         try {
 
-            AgentSettings settings = settingsBuilder.build();
+            SystemPropertiesAgentSettings settings = settingsBuilder.build();
 
             String javaHome = System.getProperty("java.home");
             String javaBinary = Paths.get(javaHome, "bin", "java").toString();

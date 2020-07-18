@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.AgentSettings;
+import com.ulyp.agent.settings.SystemPropertiesAgentSettings;
 import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.core.MethodDescriptionDictionary;
@@ -22,7 +23,7 @@ public class AgentContext {
     private final ProcessInfo processInfo;
 
     private AgentContext() {
-        this.settings = AgentSettings.getInstance();
+        this.settings = SystemPropertiesAgentSettings.loadFromSystemProperties();
         this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
         this.transport = new UploadingTransport(settings.getUiAddress());
