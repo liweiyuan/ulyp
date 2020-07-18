@@ -2,7 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
-import com.ulyp.agent.settings.Settings;
+import com.ulyp.agent.settings.AgentSettings;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -18,7 +18,7 @@ import java.lang.reflect.Executable;
 public class BbTransformer implements Transformer {
 
     public static final AgentContext context = AgentContext.getInstance();
-    public static final Settings settings = context.getSettings();
+    public static final AgentSettings settings = context.getSettings();
     @SuppressWarnings("unused")
     public static final CallTracer callTracer = new CallTracer(context);
 

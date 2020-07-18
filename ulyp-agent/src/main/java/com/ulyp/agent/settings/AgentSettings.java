@@ -12,15 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Settings {
+public class AgentSettings {
 
-    private static final Settings instance = loadFromSystemProperties();
+    private static final AgentSettings instance = loadFromSystemProperties();
 
-    public static Settings getInstance() {
+    public static AgentSettings getInstance() {
         return instance;
     }
 
-    private static Settings loadFromSystemProperties() {
+    private static AgentSettings loadFromSystemProperties() {
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         List<String> packages;
         if (packagesToInstrument == null) {
@@ -55,7 +55,7 @@ public class Settings {
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
         int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
-        return new Settings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
+        return new AgentSettings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
@@ -75,7 +75,7 @@ public class Settings {
     private final int maxCallsPerMethod;
     private final int minTraceCount;
 
-    public Settings(
+    public AgentSettings(
             UiAddress uiAddress,
             List<String> packages,
             List<String> excludePackages,
@@ -177,16 +177,16 @@ public class Settings {
     public List<String> toCmdJavaProps() {
         List<String> params = new ArrayList<>();
 
-        params.add("-D" + Settings.PACKAGES_PROPERTY + "=" + String.join(",", packages));
+        params.add("-D" + AgentSettings.PACKAGES_PROPERTY + "=" + String.join(",", packages));
         if (excludePackages.isEmpty()) {
-            params.add("-D" + Settings.EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludePackages));
+            params.add("-D" + AgentSettings.EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludePackages));
         }
 
-        params.add("-D" + Settings.START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
-        params.add("-D" + Settings.UI_PORT_PROPERTY + "=" + uiAddress.port);
-        params.add("-D" + Settings.MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
-        params.add("-D" + Settings.MIN_TRACE_COUNT + "=" + minTraceCount);
-        params.add("-D" + Settings.MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
+        params.add("-D" + AgentSettings.START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
+        params.add("-D" + AgentSettings.UI_PORT_PROPERTY + "=" + uiAddress.port);
+        params.add("-D" + AgentSettings.MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
+        params.add("-D" + AgentSettings.MIN_TRACE_COUNT + "=" + minTraceCount);
+        params.add("-D" + AgentSettings.MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
 
         return params;
     }

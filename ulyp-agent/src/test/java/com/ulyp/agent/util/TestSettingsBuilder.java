@@ -1,7 +1,7 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.agent.MethodMatcher;
-import com.ulyp.agent.settings.Settings;
+import com.ulyp.agent.settings.AgentSettings;
 import com.ulyp.agent.transport.UiAddress;
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,10 +77,10 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public Settings build() {
+    public AgentSettings build() {
         MethodMatcher methodMatcher = new MethodMatcher(mainClassName, methodToTrace);
 
-        return new Settings(
+        return new AgentSettings(
                 new UiAddress(hostName, port),
                 Arrays.asList(packages),
                 StringUtils.isEmpty(excludedPackages) ? Arrays.asList(excludedPackages) : Collections.emptyList(),
