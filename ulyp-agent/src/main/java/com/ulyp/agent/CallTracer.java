@@ -2,15 +2,12 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
-import com.ulyp.agent.transport.NamedThreadFactory;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import com.ulyp.transport.*;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.time.Duration;
-import java.util.concurrent.*;
 
 @SuppressWarnings("unused")
 @ThreadSafe
@@ -21,32 +18,11 @@ public class CallTracer {
     private final EnhancedThreadLocal<CallTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
 
-    private final ScheduledExecutorService settingsUpdatingService = Executors.newScheduledThreadPool(
-            1,
-            new NamedThreadFactory("Settings-Updater", true)
-    );
-
     private volatile boolean mayStartTracing = true;
     private final TracingParams tracingParams = new TracingParams(false, false, false);
 
     public CallTracer(AgentContext context) {
         this.context = context;
-
-        try {
-            SettingsResponse settings = context.getTransport().getSettingsBlocking(Duration.ofSeconds(3));
-            onSettings(settings);
-        } catch (Exception e) {
-            // NOP
-        }
-
-        settingsUpdatingService.scheduleAtFixedRate(() -> {
-            try {
-                SettingsResponse settings = context.getTransport().getSettingsBlocking(Duration.ofMillis(500));
-                onSettings(settings);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                // NOP
-            }
-        }, 1, 1, TimeUnit.SECONDS);
     }
 
     private void onSettings(SettingsResponse settings) {
@@ -66,8 +42,8 @@ public class CallTracer {
         CallTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> {
             CallTraceLog log = new CallTraceLog(
                     context.getMethodDescriptionDictionary(),
-                    context.getSettings().getMaxTreeDepth(),
-                    context.getSettings().getMaxCallsPerMethod());
+                    context.getSysPropsSettings().getMaxTreeDepth(),
+                    context.getSysPropsSettings().getMaxCallsPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
                 logger.trace("Create new {}, method {}, args {}", log, methodDescription, args);
             }
@@ -82,7 +58,7 @@ public class CallTracer {
 
         if (traceLog != null && traceLog.isComplete()) {
             threadLocalTraceLog.clear();
-            if (traceLog.size() >= context.getSettings().getMinTraceCount()) {
+            if (traceLog.size() >= context.getSysPropsSettings().getMinTraceCount()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", traceLog);
                 }

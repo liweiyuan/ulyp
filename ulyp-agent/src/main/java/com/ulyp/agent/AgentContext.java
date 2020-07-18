@@ -1,7 +1,8 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.AgentSettings;
-import com.ulyp.agent.settings.SystemPropertiesAgentSettings;
+import com.ulyp.agent.settings.SystemPropertiesSettings;
+import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.core.MethodDescriptionDictionary;
@@ -17,16 +18,18 @@ public class AgentContext {
         return instance;
     }
 
-    private final AgentSettings settings;
+    private final SystemPropertiesSettings sysPropsSettings;
     private final UploadingTransport transport;
+    private final UiSettings uiSettings;
     private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final ProcessInfo processInfo;
 
     private AgentContext() {
-        this.settings = SystemPropertiesAgentSettings.loadFromSystemProperties();
+        this.sysPropsSettings = SystemPropertiesSettings.loadFromSystemProperties();
         this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
-        this.transport = new UploadingTransport(settings.getUiAddress());
+        this.transport = new UploadingTransport(sysPropsSettings.getUiAddress());
+        this.uiSettings = new UiSettings(transport);
 
         Thread shutdown = new Thread(
                 () -> {
@@ -48,8 +51,8 @@ public class AgentContext {
         return transport;
     }
 
-    public AgentSettings getSettings() {
-        return settings;
+    public AgentSettings getSysPropsSettings() {
+        return sysPropsSettings;
     }
 
     public MethodDescriptionDictionary getMethodDescriptionDictionary() {

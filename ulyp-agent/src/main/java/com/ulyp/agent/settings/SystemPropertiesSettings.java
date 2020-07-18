@@ -12,9 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SystemPropertiesAgentSettings implements AgentSettings {
+public class SystemPropertiesSettings implements AgentSettings {
 
-    public static AgentSettings loadFromSystemProperties() {
+    public static SystemPropertiesSettings loadFromSystemProperties() {
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         List<String> packages;
         if (packagesToInstrument == null) {
@@ -49,7 +49,7 @@ public class SystemPropertiesAgentSettings implements AgentSettings {
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
         int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
-        return new SystemPropertiesAgentSettings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
+        return new SystemPropertiesSettings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
@@ -69,7 +69,7 @@ public class SystemPropertiesAgentSettings implements AgentSettings {
     private final int maxCallsPerMethod;
     private final int minTraceCount;
 
-    public SystemPropertiesAgentSettings(
+    public SystemPropertiesSettings(
             UiAddress uiAddress,
             List<String> packages,
             List<String> excludePackages,
@@ -96,7 +96,7 @@ public class SystemPropertiesAgentSettings implements AgentSettings {
         return startTracingMethods.isEmpty() || methodMatches(startTracingMethods, description);
     }
 
-    public boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
+    private boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
         try {
             boolean profileThis = classMatches(
                     methodsToMatch,

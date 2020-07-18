@@ -18,7 +18,7 @@ import java.lang.reflect.Executable;
 public class BbTransformer implements Transformer {
 
     public static final AgentContext context = AgentContext.getInstance();
-    public static final AgentSettings settings = context.getSettings();
+    public static final AgentSettings settings = context.getSysPropsSettings();
     @SuppressWarnings("unused")
     public static final CallTracer callTracer = new CallTracer(context);
 

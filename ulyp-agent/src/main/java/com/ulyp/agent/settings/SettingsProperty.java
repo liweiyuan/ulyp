@@ -3,7 +3,7 @@ package com.ulyp.agent.settings;
 public class SettingsProperty<T> {
 
     private final String name;
-    private volatile T value;
+    private T value;
 
     public SettingsProperty(String name) {
         this.name = name;
@@ -11,6 +11,10 @@ public class SettingsProperty<T> {
 
     public T getValue() {
         return value;
+    }
+
+    public boolean hasValue() {
+        return value != null;
     }
 
     @Override
