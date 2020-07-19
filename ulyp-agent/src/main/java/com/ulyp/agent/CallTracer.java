@@ -27,6 +27,7 @@ public class CallTracer {
 
         UiSettings uiSettings = context.getUiSettings();
         uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartTracing = newValue);
+        uiSettings.traceCollections().addListener((oldValue, newValue) -> this.tracingParams.updateTraceCollections(newValue));
     }
 
 //    private void onSettings(SettingsResponse settings) {

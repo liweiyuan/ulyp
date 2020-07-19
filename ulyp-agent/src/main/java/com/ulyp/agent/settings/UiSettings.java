@@ -15,6 +15,7 @@ public class UiSettings {
     );
 
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
+    private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
 
     public UiSettings(UploadingTransport uploadingTransport) {
         try {
@@ -36,9 +37,14 @@ public class UiSettings {
 
     private void onSettings(SettingsResponse settings) {
         mayStartTracing.setValue(settings.getMayStartTracing());
+        traceCollections.setValue(settings.getTraceCollections());
     }
 
     public SettingsProperty<Boolean> mayStartTracing() {
         return mayStartTracing;
+    }
+
+    public SettingsProperty<Boolean> traceCollections() {
+        return traceCollections;
     }
 }
