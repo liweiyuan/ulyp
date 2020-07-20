@@ -31,13 +31,12 @@ public class TracingStartMethodList {
     }
 
     public boolean shouldStartTracing(MethodDescription description) {
-        return methods.isEmpty() || methodMatches(methods, description);
+        return methods.isEmpty() || methodMatches(description);
     }
 
-    private boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
+    private boolean methodMatches(MethodDescription description) {
         try {
             boolean profileThis = classMatches(
-                    methodsToMatch,
                     description.getDeclaringType().asGenericType(),
                     description.getActualName());
             if (profileThis) {
@@ -45,13 +44,12 @@ public class TracingStartMethodList {
             }
 
             for (TypeDescription.Generic ctInterface : description.getDeclaringType().asGenericType().getInterfaces()) {
-                if (classMatches(methodsToMatch, ctInterface, description.getActualName())) {
+                if (classMatches(ctInterface, description.getActualName())) {
                     return true;
                 }
             }
 
             return hasSuperclassThatMatches(
-                    methodsToMatch,
                     description.getDeclaringType().getSuperClass(),
                     description.getActualName()
             );
@@ -61,12 +59,8 @@ public class TracingStartMethodList {
         }
     }
 
-    private boolean classMatches(
-            List<MethodMatcher> methodToStartProfiling,
-            TypeDescription.Generic clazzType,
-            String methodName)
-    {
-        for (MethodMatcher exec : methodToStartProfiling) {
+    private boolean classMatches(TypeDescription.Generic clazzType, String methodName) {
+        for (MethodMatcher exec : methods) {
             if (exec.matchesExact(clazzType, methodName)) {
                 return true;
             }
@@ -74,17 +68,13 @@ public class TracingStartMethodList {
         return false;
     }
 
-    private boolean hasSuperclassThatMatches(
-            List<MethodMatcher> methodsToMatch,
-            TypeDescription.Generic clazzType,
-            String methodName)
-    {
+    private boolean hasSuperclassThatMatches(TypeDescription.Generic clazzType, String methodName) {
         if(clazzType == null || clazzType.getTypeName().equals("java.lang.Object")) {
             return false;
         }
 
-        return classMatches(methodsToMatch, clazzType, methodName) ||
-                hasSuperclassThatMatches(methodsToMatch, clazzType.getSuperClass(), methodName);
+        return classMatches(clazzType, methodName) ||
+                hasSuperclassThatMatches(clazzType.getSuperClass(), methodName);
     }
 
     public Stream<MethodMatcher> stream() {
