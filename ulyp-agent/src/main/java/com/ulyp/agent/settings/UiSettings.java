@@ -5,6 +5,8 @@ import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class UiSettings {
@@ -14,6 +16,8 @@ public class UiSettings {
             new NamedThreadFactory("Settings-Updater", true)
     );
 
+    private final SettingsProperty<List<String>> tracePackages = new SettingsProperty<>("Trace packages list");
+    private final SettingsProperty<TracingStartMethodList> tracingStartMethod = new SettingsProperty<>("Tracing start methods list");
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
 
@@ -38,6 +42,19 @@ public class UiSettings {
     private void onSettings(SettingsResponse settings) {
         mayStartTracing.setValue(settings.getMayStartTracing());
         traceCollections.setValue(settings.getTraceCollections());
+
+        // TODO protobuf should probably have a list of strings
+        tracePackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
+        // TODO protobuf should probably have a list of strings
+        tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
+    }
+
+    public SettingsProperty<List<String>> getTracePackages() {
+        return tracePackages;
+    }
+
+    public SettingsProperty<TracingStartMethodList> getTracingStartMethod() {
+        return tracingStartMethod;
     }
 
     public SettingsProperty<Boolean> mayStartTracing() {

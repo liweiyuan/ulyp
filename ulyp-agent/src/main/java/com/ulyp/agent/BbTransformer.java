@@ -3,6 +3,8 @@ package com.ulyp.agent;
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.AgentSettings;
+import com.ulyp.agent.settings.TracingStartMethodList;
+import com.ulyp.agent.settings.UiSettings;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -17,12 +19,16 @@ import java.lang.reflect.Executable;
 
 public class BbTransformer implements Transformer {
 
+    // TODO why static?
     public static final AgentContext context = AgentContext.getInstance();
-    public static final AgentSettings settings = context.getSysPropsSettings();
     @SuppressWarnings("unused")
     public static final CallTracer callTracer = new CallTracer(context);
 
+    private static final UiSettings uiSettings = context.getUiSettings();
+    private static final TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
+
     private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
+
 
     @Override
     public DynamicType.Builder<?> transform(
@@ -49,7 +55,7 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
-                                            boolean shouldStartTracing = settings.shouldStartTracing(desc);
+                                            boolean shouldStartTracing = tracingStartMethodList.shouldStartTracing(desc);
                                             if (shouldStartTracing) {
                                                 logger.debug("Should start tracing at {}.{}", typeDescription.getName(), desc.getActualName());
                                             }
@@ -66,7 +72,7 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
-                                            boolean shouldTrace = !settings.shouldStartTracing(desc);
+                                            boolean shouldTrace = !tracingStartMethodList.shouldStartTracing(desc);
                                             if (shouldTrace) {
                                                 logger.debug("Should trace at {}.{}", typeDescription.getName(), desc.getActualName());
                                             }

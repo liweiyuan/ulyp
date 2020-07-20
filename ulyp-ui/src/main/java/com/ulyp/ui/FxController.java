@@ -36,7 +36,9 @@ public class FxController implements Initializable {
     @FXML
     public TabPane processTabPane;
     @FXML
-    public TextField searchField;
+    public TextField tracePackagesTextField;
+    @FXML
+    public TextField startMethodTextField;
     @FXML
     public ToggleButton traceSwitchButton;
     @FXML
@@ -110,6 +112,14 @@ public class FxController implements Initializable {
                 selected.refresh();
             }
         }
+    }
+
+    public TextField getTracePackagesTextField() {
+        return tracePackagesTextField;
+    }
+
+    public TextField getStartMethodTextField() {
+        return startMethodTextField;
     }
 
     public ToggleButton getFxTracingSwitch() {

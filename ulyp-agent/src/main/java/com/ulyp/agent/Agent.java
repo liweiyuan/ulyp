@@ -3,36 +3,45 @@ package com.ulyp.agent;
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.AgentSettings;
+import com.ulyp.agent.settings.SystemPropertiesSettings;
+import com.ulyp.agent.settings.UiSettings;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.instrument.Instrumentation;
+import java.util.List;
 
 public class Agent {
 
     public static void premain(String args, Instrumentation instrumentation) {
 
         String logLevel = LoggingSettings.LOG_LEVEL.name();
-        AgentSettings settings = BbTransformer.settings;
+        AgentContext instance = AgentContext.getInstance();
+        SystemPropertiesSettings systemPropSettings = SystemPropertiesSettings.loadFromSystemProperties();
+        UiSettings uiSettings = instance.getUiSettings();
+        List<String> tracePackages = uiSettings.getTracePackages().getValue();
 
-        System.out.println("Starting ULYP agent, logging level = " + logLevel + ", settings = " + settings);
+        // TODO show that connected to UI (if connected)
+        System.out.println("Starting ULYP agent, logging level = " + logLevel +
+                ", packages = " + uiSettings.getTracePackages() +
+                ", tracing start methods = " + uiSettings.getTracingStartMethod());
 
         ElementMatcher.Junction<TypeDescription> packageMatcher = null;
 
-        for (int i = 0; i < settings.getPackages().size(); i++) {
+        for (String tracePackage : tracePackages) {
             if (packageMatcher == null) {
-                packageMatcher = ElementMatchers.nameStartsWith(settings.getPackages().get(i));
+                packageMatcher = ElementMatchers.nameStartsWith(tracePackage);
             } else {
-                packageMatcher = packageMatcher.or(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+                packageMatcher = packageMatcher.or(ElementMatchers.nameStartsWith(tracePackage));
             }
         }
-        for (int i = 0; i < settings.getExcludePackages().size(); i++) {
+        for (int i = 0; i < systemPropSettings.getExcludePackages().size(); i++) {
             if (packageMatcher == null) {
-                packageMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(settings.getPackages().get(i)));
+                packageMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(systemPropSettings.getPackages().get(i)));
             } else {
-                packageMatcher = packageMatcher.and(ElementMatchers.not(ElementMatchers.nameStartsWith(settings.getPackages().get(i))));
+                packageMatcher = packageMatcher.and(ElementMatchers.not(ElementMatchers.nameStartsWith(systemPropSettings.getPackages().get(i))));
             }
         }
 

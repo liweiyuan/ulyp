@@ -26,6 +26,9 @@ public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase 
         SettingsResponse.Builder response = SettingsResponse.newBuilder();
         response.setMayStartTracing(viewController.getFxTracingSwitch().isSelected());
 
+        response.setTracePackages(viewController.getTracePackagesTextField().getText());
+        response.setTraceStartMethod(viewController.getStartMethodTextField().getText());
+
         // turned off now
         response.setShouldTraceIdentityHashCode(false);
 

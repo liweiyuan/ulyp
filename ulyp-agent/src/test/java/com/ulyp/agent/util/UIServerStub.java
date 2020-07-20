@@ -1,5 +1,6 @@
 package com.ulyp.agent.util;
 
+import com.ulyp.agent.MethodMatcher;
 import com.ulyp.transport.*;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -25,6 +26,8 @@ public class UIServerStub implements AutoCloseable {
                                     .setMayStartTracing(true)
                                     .setShouldTraceIdentityHashCode(false)
                                     .setTraceCollections(settings.getTraceCollections())
+                                    .setTraceStartMethod(new MethodMatcher(settings.getMainClassName(), settings.getMethodToTrace()).toString())
+                                    .setTracePackages(settings.getPackages())
                                     .build());
                             responseObserver.onCompleted();
                         }

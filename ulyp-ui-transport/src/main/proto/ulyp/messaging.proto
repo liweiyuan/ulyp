@@ -17,6 +17,8 @@ message SettingsResponse {
     bool mayStartTracing = 1;
     bool shouldTraceIdentityHashCode = 2;
     bool traceCollections = 3;
+    string tracePackages = 4;
+    string traceStartMethod = 5;
 }
 
 message SettingsRequest {

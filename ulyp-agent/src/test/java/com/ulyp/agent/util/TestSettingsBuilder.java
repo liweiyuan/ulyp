@@ -2,6 +2,7 @@ package com.ulyp.agent.util;
 
 import com.ulyp.agent.MethodMatcher;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
+import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.transport.UiAddress;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,6 +28,14 @@ public class TestSettingsBuilder {
 
     public boolean getTraceCollections() {
         return traceCollections;
+    }
+
+    public String getMethodToTrace() {
+        return methodToTrace;
+    }
+
+    public String getPackages() {
+        return packages;
     }
 
     public TestSettingsBuilder setTraceCollections(boolean traceCollections) {
@@ -78,13 +87,11 @@ public class TestSettingsBuilder {
     }
 
     public SystemPropertiesSettings build() {
-        MethodMatcher methodMatcher = new MethodMatcher(mainClassName, methodToTrace);
-
         return new SystemPropertiesSettings(
                 new UiAddress(hostName, port),
-                Arrays.asList(packages),
-                StringUtils.isEmpty(excludedPackages) ? Arrays.asList(excludedPackages) : Collections.emptyList(),
-                Arrays.asList(methodMatcher),
+                Collections.singletonList(packages),
+                StringUtils.isEmpty(excludedPackages) ? Collections.singletonList(excludedPackages) : Collections.emptyList(),
+                new TracingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
                 maxDepth,
                 maxCallsPerMethod,
                 minTraceCount

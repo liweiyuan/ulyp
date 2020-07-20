@@ -3,8 +3,6 @@ package com.ulyp.agent.settings;
 import com.ulyp.agent.MethodMatcher;
 import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UploadingTransport;
-import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +13,7 @@ import java.util.stream.Collectors;
 public class SystemPropertiesSettings implements AgentSettings {
 
     public static SystemPropertiesSettings loadFromSystemProperties() {
+
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         List<String> packages;
         if (packagesToInstrument == null) {
@@ -22,8 +21,11 @@ public class SystemPropertiesSettings implements AgentSettings {
         } else {
             packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
         }
+
         String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY);
         List<String> excludedPackages;
+
+        // TODO remove that if
         if (excludedPackagesStr != null) {
             excludedPackages = new ArrayList<>(Arrays.asList(excludedPackagesStr.split(",")));
         } else {
@@ -31,16 +33,13 @@ public class SystemPropertiesSettings implements AgentSettings {
         }
 
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY);
-        List<MethodMatcher> tracingStartMethods;
+        TracingStartMethodList tracingStartMethods;
 
+        // TODO remove that if
         if (tracedMethods != null) {
-            tracingStartMethods = Arrays.stream(tracedMethods.split(","))
-                    .map(str -> new MethodMatcher(
-                            str.substring(0, str.indexOf('.')),
-                            str.substring(str.indexOf('.') + 1))
-                    ).collect(Collectors.toList());
+            tracingStartMethods = new TracingStartMethodList(Arrays.stream(tracedMethods.split(",")).collect(Collectors.toList()));
         } else {
-            tracingStartMethods = Collections.emptyList();
+            tracingStartMethods = new TracingStartMethodList(Collections.emptyList());
         }
 
         String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
@@ -49,7 +48,15 @@ public class SystemPropertiesSettings implements AgentSettings {
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
         int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
-        return new SystemPropertiesSettings(new UiAddress(uiHost, uiPort), packages, excludedPackages, tracingStartMethods, maxTreeDepth, maxCallPerMethod, minTraceCount);
+        return new SystemPropertiesSettings(
+                new UiAddress(uiHost, uiPort),
+                packages,
+                excludedPackages,
+                tracingStartMethods,
+                maxTreeDepth,
+                maxCallPerMethod,
+                minTraceCount
+        );
     }
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
@@ -64,7 +71,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     private UiAddress uiAddress;
     private final List<String> packages;
     private final List<String> excludePackages;
-    private final List<MethodMatcher> startTracingMethods;
+    private final TracingStartMethodList startTracingMethods;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
     private final int minTraceCount;
@@ -73,7 +80,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             UiAddress uiAddress,
             List<String> packages,
             List<String> excludePackages,
-            List<MethodMatcher> startTracingMethods,
+            TracingStartMethodList tracingStartMethodList,
             int maxTreeDepth,
             int maxCallsPerMethod,
             int minTraceCount)
@@ -81,7 +88,7 @@ public class SystemPropertiesSettings implements AgentSettings {
         this.uiAddress = uiAddress;
         this.packages = packages;
         this.excludePackages = excludePackages;
-        this.startTracingMethods = startTracingMethods;
+        this.startTracingMethods = tracingStartMethodList;
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
@@ -90,50 +97,6 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public UiAddress getUiAddress() {
         return uiAddress;
-    }
-
-    public boolean shouldStartTracing(MethodDescription description) {
-        return startTracingMethods.isEmpty() || methodMatches(startTracingMethods, description);
-    }
-
-    private boolean methodMatches(List<MethodMatcher> methodsToMatch, MethodDescription description) {
-        try {
-            boolean profileThis = classMatches(
-                    methodsToMatch,
-                    description.getDeclaringType().asGenericType(),
-                    description.getActualName());
-            if (profileThis) {
-                return true;
-            }
-
-            for (TypeDescription.Generic ctInterface : description.getDeclaringType().asGenericType().getInterfaces()) {
-                if (classMatches(methodsToMatch, ctInterface, description.getActualName())) {
-                    return true;
-                }
-            }
-
-            return hasSuperclassThatMatches(
-                    methodsToMatch,
-                    description.getDeclaringType().getSuperClass(),
-                    description.getActualName()
-            );
-        } catch (Exception e) {
-            System.err.println("ERROR while checking if should start profiling: " + e.getMessage());
-            return false;
-        }
-    }
-
-    private boolean hasSuperclassThatMatches(
-            List<MethodMatcher> methodsToMatch,
-            TypeDescription.Generic clazzType,
-            String methodName)
-    {
-        if(clazzType == null || clazzType.getTypeName().equals("java.lang.Object")) {
-            return false;
-        }
-
-        return classMatches(methodsToMatch, clazzType, methodName) ||
-                hasSuperclassThatMatches(methodsToMatch, clazzType.getSuperClass(), methodName);
     }
 
     public int getMaxTreeDepth() {
@@ -154,19 +117,6 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public List<String> getExcludePackages() {
         return excludePackages;
-    }
-
-    private boolean classMatches(
-            List<MethodMatcher> methodToStartProfiling,
-            TypeDescription.Generic clazzType,
-            String methodName)
-    {
-        for (MethodMatcher exec : methodToStartProfiling) {
-            if (exec.matchesExact(clazzType, methodName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public List<String> toCmdJavaProps() {
