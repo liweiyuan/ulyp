@@ -2,7 +2,6 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
-import com.ulyp.agent.settings.AgentSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.UiSettings;
 import net.bytebuddy.agent.builder.AgentBuilder;
