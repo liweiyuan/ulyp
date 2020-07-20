@@ -21,9 +21,7 @@ public class BbTransformer implements Transformer {
 
     // Fields static because are referenced in nested advice classes
     public static final AgentContext context = AgentContext.getInstance();
-    @SuppressWarnings("unused")
     public static final CallTracer callTracer = new CallTracer(context);
-
     private static final UiSettings uiSettings = context.getUiSettings();
     private static final TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
