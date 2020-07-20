@@ -19,7 +19,7 @@ import java.lang.reflect.Executable;
 
 public class BbTransformer implements Transformer {
 
-    // TODO why static?
+    // Fields static because are referenced in nested advice classes
     public static final AgentContext context = AgentContext.getInstance();
     @SuppressWarnings("unused")
     public static final CallTracer callTracer = new CallTracer(context);
