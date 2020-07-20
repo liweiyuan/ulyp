@@ -8,11 +8,11 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?scenebuilder-stylesheet DarkTheme.css?>
 
-<?import javafx.scene.control.Tooltip?>
 <VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ulyp.ui.FxController">
     <children>
         <MenuBar>
@@ -35,20 +35,20 @@
                    <Insets left="20.0" />
                 </HBox.margin>
                 <tooltip>
-                    <Tooltip text="If this button is pressed, then any instrumented app connected to the UI can start tracing which is a default behavior. Deactivating tracing could be useful for large apps where tracing is unwanted during the long startup."/>
+                    <Tooltip text="If this button is pressed, then any instrumented app connected to the UI can start tracing which is a default behavior. Deactivating tracing could be useful for large apps where tracing is unwanted during the long startup." />
                 </tooltip>
             </ToggleButton>
-         <TextField fx:id="tracePackagesTextField" promptText="Trace packages...">
+         <TextField fx:id="tracePackagesTextField" minWidth="200.0" promptText="Trace packages...">
             <HBox.margin>
                <Insets />
             </HBox.margin>
              <tooltip>
-                 <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented."/>
+                 <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented." />
              </tooltip>
          </TextField>
-            <TextField fx:id="startMethodTextField" promptText="Start tracing at...">
+            <TextField fx:id="startMethodTextField" minWidth="200.0" promptText="Start tracing at...">
                 <tooltip>
-                    <Tooltip text="Comma separated list of method matchers where tracing should start. If you have a class a.b.c.D with method foo(), then specify list of packages as 'a' and tracing start methods as D.foo"/>
+                    <Tooltip text="Comma separated list of method matchers where tracing should start. If you have a class a.b.c.D with method foo(), then specify list of packages as 'a' and tracing start methods as D.foo" />
                 </tooltip>
             </TextField>
          <Slider fx:id="tracingPrecisionSlider" blockIncrement="1.0" majorTickUnit="1.0" max="2.0" minorTickCount="2">
@@ -59,7 +59,7 @@
                <Insets bottom="10.0" top="10.0" />
             </padding>
              <tooltip>
-                 <Tooltip text="Tracing precision slider. Move a slider to the right side in order to increase tracing precision, but performance and memory overhead will be higher in both instrumented process and UI"/>
+                 <Tooltip text="Tracing precision slider. Move a slider to the right side in order to increase tracing precision, but performance and memory overhead will be higher in both instrumented process and UI" />
              </tooltip>
          </Slider>
         </HBox>
