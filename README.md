@@ -55,9 +55,11 @@ Example of running java app with the agent:
 	    }
 	}
 
-In order to activate ulyp the test should be executed with the following additional VM keys: 
+In order to activate ulyp the test should be executed with the following additional VM key: 
 
-	-javaagent:C:\Work\ulyp\ulyp-agent\build\libs\ulyp-agent-0.1.jar -Dulyp.packages=com.example -Dulyp.start-method=FibbonaciTest.compute
+	-javaagent:C:\Work\ulyp\ulyp-agent\build\libs\ulyp-agent-0.2.jar
+	
+Specify "com" package to be instrumented and "FibbonaciTest.test" as tracing start method in UI and run the test: 
 
 ![Ulyp UI](https://github.com/0xaa4eb/ulyp/blob/master/images/fibbonaci.png)
 
