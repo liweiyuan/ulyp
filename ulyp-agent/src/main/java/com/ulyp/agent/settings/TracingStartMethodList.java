@@ -36,23 +36,11 @@ public class TracingStartMethodList {
 
     private boolean methodMatches(MethodDescription description) {
         try {
-            boolean profileThis = classMatches(
-                    description.getDeclaringType().asGenericType(),
-                    description.getActualName());
-            if (profileThis) {
+            if (classMatches(description.getDeclaringType().asGenericType(), description.getActualName())) {
                 return true;
             }
 
-            for (TypeDescription.Generic ctInterface : description.getDeclaringType().asGenericType().getInterfaces()) {
-                if (classMatches(ctInterface, description.getActualName())) {
-                    return true;
-                }
-            }
-
-            return hasSuperclassThatMatches(
-                    description.getDeclaringType().getSuperClass(),
-                    description.getActualName()
-            );
+            return hasSuperclassThatMatches(description.getDeclaringType().getSuperClass(), description.getActualName());
         } catch (Exception e) {
             System.err.println("ERROR while checking if should start profiling: " + e.getMessage());
             return false;
@@ -65,6 +53,12 @@ public class TracingStartMethodList {
                 return true;
             }
         }
+        for (TypeDescription.Generic ctInterface : clazzType.getInterfaces()) {
+            if (classMatches(ctInterface, methodName)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -73,8 +67,7 @@ public class TracingStartMethodList {
             return false;
         }
 
-        return classMatches(clazzType, methodName) ||
-                hasSuperclassThatMatches(clazzType.getSuperClass(), methodName);
+        return classMatches(clazzType, methodName) || hasSuperclassThatMatches(clazzType.getSuperClass(), methodName);
     }
 
     public Stream<MethodMatcher> stream() {
