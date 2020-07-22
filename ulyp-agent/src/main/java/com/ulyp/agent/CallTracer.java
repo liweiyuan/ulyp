@@ -3,7 +3,7 @@ package com.ulyp.agent;
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.UiSettings;
-import com.test.cases.util.EnhancedThreadLocal;
+import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import org.apache.logging.log4j.Logger;
 
