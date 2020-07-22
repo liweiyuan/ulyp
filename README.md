@@ -19,8 +19,6 @@ Agent has the following props which are set as java system properties (via `-Dke
 		<th>Example</th>
 		<th>Description</th>
 </tr>
-<tr><td>ulyp.packages</td><td>No</td><td>-</td><td>org.hibernate,org.h2</td><td>Packages of classes that agent will instrument. If not set, then all classes (except of those which are loaded by bootstrap classloader) are instrumented</td></tr>
-<tr><td>ulyp.start-method</td><td>No</td><td>-</td><td>UserDao.save</td><td>Method where tracing will start. If not set, then tracing starts immediately. Omitting this option may result in tracing of lots of method and it's not a recommended way to use the tool.</td></tr>
 <tr><td>ulyp.ui-host</td><td>No</td><td>localhost</td><td>localhost</td><td>Target host for UI connection</td></tr>
 <tr><td>ulyp.ui-port</td><td>No</td><td>13991</td><td>13991</td><td>Target port for UI connection</td></tr>
 
