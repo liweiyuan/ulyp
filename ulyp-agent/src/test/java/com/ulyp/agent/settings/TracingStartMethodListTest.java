@@ -30,7 +30,7 @@ public class TracingStartMethodListTest {
     @Test
     public void testNestedClass() throws NoSuchMethodException {
         tracingStartMethodList = new TracingStartMethodList(
-                new MethodMatcher("TracingStartMethodListTest$A", "run")
+                new MethodMatcher("A", "run")
         );
 
         assertStartTracingAt(A.class.getMethod("run"));
