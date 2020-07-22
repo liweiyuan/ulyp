@@ -1,4 +1,4 @@
-package com.ulyp.agent.util;
+package com.test.cases.util;
 
 import com.ulyp.agent.MethodMatcher;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
@@ -6,7 +6,6 @@ import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.transport.UiAddress;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class TestSettingsBuilder {

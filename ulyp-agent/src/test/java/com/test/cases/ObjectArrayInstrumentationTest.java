@@ -1,7 +1,6 @@
-package com.ulyp.agent;
+package com.test.cases;
 
-import com.test.cases.ObjectArrayTestCases;
-import com.ulyp.agent.util.TestSettingsBuilder;
+import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallTrace;
 import com.ulyp.core.CallTraceTree;
 import org.junit.Test;
@@ -10,6 +9,43 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest {
+
+    public static class ObjectArrayTestCases {
+
+        public void acceptEmptyObjectArray(Object[] array) {
+        }
+
+        private static class X {
+            private final String text;
+
+            private X(String text) {
+                this.text = text;
+            }
+
+            @Override
+            public String toString() {
+                return "X{" +
+                        "text='" + text + '\'' +
+                        '}';
+            }
+        }
+
+        public void acceptEmptyUserDefinedClassArray(X[] array) {
+        }
+
+        public void acceptUserDefinedClassArrayWith3Elements(X[] array) {
+        }
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new ObjectArrayTestCases().acceptEmptyObjectArray(new Object[]{}));
+            SafeCaller.call(() -> new ObjectArrayTestCases().acceptEmptyUserDefinedClassArray(new X[]{}));
+            SafeCaller.call(() -> new ObjectArrayTestCases().acceptUserDefinedClassArrayWith3Elements(
+                    new X[]{new X("a"), null, new X("b")}
+                    )
+            );
+        }
+    }
+
 
     @Test
     public void shouldProvideArgumentTypes() {

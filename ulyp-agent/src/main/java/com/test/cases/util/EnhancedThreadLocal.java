@@ -1,4 +1,4 @@
-package com.ulyp.agent.util;
+package com.test.cases.util;
 
 import java.util.function.Supplier;
 

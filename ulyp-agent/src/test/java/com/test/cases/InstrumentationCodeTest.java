@@ -1,8 +1,6 @@
-package com.ulyp.agent;
+package com.test.cases;
 
-import com.ulyp.agent.util.TestSettingsBuilder;
-import com.test.cases.SeveralMethodsTestCases;
-import com.test.cases.SimpleTestCases;
+import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallTrace;
 import com.ulyp.core.CallTraceTree;
 import org.junit.Test;
@@ -13,6 +11,51 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class InstrumentationCodeTest extends AbstractInstrumentationTest {
+
+    public static class SimpleTestCases {
+
+        public static class TestObject {}
+
+        public SimpleTestCases.TestObject returnTestObjectWithEmptyParams() {
+            return new SimpleTestCases.TestObject();
+        }
+
+        public String returnStringWithEmptyParams() {
+            return "asdvdsa2";
+        }
+
+        public String returnNullObjectWithEmptyParams() {
+            return null;
+        }
+
+        public int returnIntWithEmptyParams() {
+            return 124234232;
+        }
+
+        public int throwsRuntimeException() {
+            throw new RuntimeException("exception message");
+        }
+
+        public void consumesInt(int v) {
+        }
+
+        public void consumesIntAndString(int v, String s) {
+        }
+
+        public static void staticMethod() {}
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new SimpleTestCases().returnIntWithEmptyParams());
+            SafeCaller.call(() -> new SimpleTestCases().returnTestObjectWithEmptyParams());
+            SafeCaller.call(() -> new SimpleTestCases().returnStringWithEmptyParams());
+            SafeCaller.call(() -> new SimpleTestCases().returnNullObjectWithEmptyParams());
+            SafeCaller.call(() -> new SimpleTestCases().throwsRuntimeException());
+            SafeCaller.call(() -> new SimpleTestCases().consumesInt(45324));
+            SafeCaller.call(() -> new SimpleTestCases().consumesIntAndString(45324, "asdasd"));
+            staticMethod();
+        }
+    }
+
 
     @Test
     public void shouldTraceStaticMethodCall() {
@@ -118,6 +161,26 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getSubtreeNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
+    }
+
+    public static class SeveralMethodsTestCases {
+
+        public void callTwoMethods() {
+            method1();
+            method2();
+        }
+
+        public void method1() {
+            System.out.println("b");
+        }
+
+        public void method2() {
+            System.out.println("c");
+        }
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new SeveralMethodsTestCases().callTwoMethods());
+        }
     }
 
     @Test
