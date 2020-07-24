@@ -85,7 +85,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("asdvdsa2"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));
     }
 
@@ -104,7 +104,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getReturnValue().getPrintedText(), is("null"));
         assertThat(root.getResult(), is("null"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
     }
 
@@ -122,7 +122,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("124234232"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnIntWithEmptyParams"));
     }
 
@@ -141,7 +141,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), matchesRegex("TestObject@\\d+"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnTestObjectWithEmptyParams"));
     }
 
@@ -159,7 +159,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("RuntimeException: exception message"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
     }
 
@@ -199,7 +199,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getResult(), is("void"));
         assertThat(root.getSubtreeNodeCount(), is(3));
         assertThat(root.getMethodName(), is("callTwoMethods"));
-        assertThat(root.getClassName(), is("com.test.cases.SeveralMethodsTestCases"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SeveralMethodsTestCases"));
 
         CallTrace call1 = root.getChildren().get(0);
 

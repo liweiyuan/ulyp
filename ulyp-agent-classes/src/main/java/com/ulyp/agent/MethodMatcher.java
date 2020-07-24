@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
-import net.bytebuddy.description.type.TypeDescription;
+
+import com.ulyp.agent.settings.MethodRepresentation;
 
 public class MethodMatcher {
 
@@ -22,25 +23,10 @@ public class MethodMatcher {
         this.isWildcard = methodSimpleName.equals(WILDCARD);
     }
 
-    public boolean matchesExact(TypeDescription.Generic clazzType, String methodName) {
-        return (isWildcard || methodName.equals(methodSimpleName)) && getSimpleName(clazzType.getActualName()).equals(classSimpleName);
-    }
-
-    private String getSimpleName(String name) {
-        int sepPos = -1;
-        for (int i = name.length() - 1; i >= 0; i--) {
-            char c = name.charAt(i);
-            if (c == '.' || c == '$') {
-                sepPos = i;
-                break;
-            }
-        }
-
-        if (sepPos > 0) {
-            return name.substring(sepPos + 1);
-        } else {
-            return name;
-        }
+    public boolean matches(MethodRepresentation methodRepresentation) {
+        return (isWildcard || methodRepresentation.getMethodName().equals(methodSimpleName)) &&
+                (methodRepresentation.getInterfacesSimpleClassNames().contains(classSimpleName) ||
+                        methodRepresentation.getSuperClassesSimpleNames().contains(classSimpleName));
     }
 
     @Override

@@ -1,7 +1,7 @@
 dist: xenial
 language: java
 
-script: ./gradlew ulyp-agent:check
+script: ./gradlew ulyp-agent-classes:check
 
 jdk:
   - openjdk8

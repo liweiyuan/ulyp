@@ -13,7 +13,13 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public class CallTracer {
 
-    private static final Logger logger = AgentLogManager.getLogger(BbTransformer.class);
+    private static final Logger logger = AgentLogManager.getLogger(CallTracer.class);
+
+    private static final CallTracer instance = new CallTracer(AgentContext.getInstance());
+
+    public static CallTracer getInstance() {
+        return instance;
+    }
 
     private final EnhancedThreadLocal<CallTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
@@ -28,11 +34,6 @@ public class CallTracer {
         uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartTracing = newValue);
         uiSettings.traceCollections().addListener((oldValue, newValue) -> this.tracingParams.updateTraceCollections(newValue));
     }
-
-//    private void onSettings(SettingsResponse settings) {
-//        mayStartTracing = settings.getMayStartTracing();
-//        tracingParams.updateTraceCollections(settings.getTraceCollections());
-//    }
 
     public boolean tracingIsActiveInThisThread() {
         return threadLocalTraceLog.get() != null;

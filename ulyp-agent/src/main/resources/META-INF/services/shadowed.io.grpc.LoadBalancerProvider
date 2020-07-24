@@ -1,0 +1,2 @@
+shadowed.io.grpc.internal.PickFirstLoadBalancerProvider
+shadowed.io.grpc.util.SecretRoundRobinLoadBalancerProvider$Provider

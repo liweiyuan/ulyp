@@ -43,7 +43,7 @@ public class TestUtil {
     }
 
     private static File findAgentJar() {
-        Path libDir = Paths.get(".", "build", "libs");
+        Path libDir = Paths.get("..", "ulyp-agent", "build", "libs");
 
         return Arrays.stream(Objects.requireNonNull(libDir.toFile().listFiles()))
                 .filter(file -> file.getName().startsWith("ulyp-agent"))

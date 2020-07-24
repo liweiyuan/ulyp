@@ -16,11 +16,29 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    compileOnly project(':ulyp-agent-classes')
-    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.8'
+def grpcVersion = '1.27.0'
+def protobufVersion = '3.11.0'
+def protocVersion = protobufVersion
 
-    testCompile project(':ulyp-agent-classes')
+dependencies {
+    compile project(':ulyp-core')
+    compile project(':ulyp-ui-transport')
+    compile project(':ulyp-ui-repository')
+
+    compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.2.1'
+    compile group: 'org.agrona', name: 'agrona', version: '0.9.22'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.2'
+
+    compile group: 'org.jetbrains', name: 'annotations', version: '18.0.0'
+
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    compileOnly "javax.annotation:javax.annotation-api:1.2"
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    runtimeOnly "io.grpc:grpc-netty:${grpcVersion}"
+
     testCompile group: 'org.buildobjects', name: 'jproc', version: '2.3.0'
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
@@ -30,14 +48,8 @@ repositories {
     mavenCentral()
 }
 
-task copyAgentClasses(type: Copy) {
-    from file("$projectDir/../ulyp-agent-classes/build/lib/ulyp-agent-classes-0.2.jar")
-    into file("$buildDir/resources/main/ulyp-agent-classes-0.2.jarr")
-}
-
 sourceSets {
     main.java.srcDirs = ['src/main/java', '../src/main/java']
-//    main.resources.includes = [ '../ulyp-agent-classes/build/lib/*.jar' ]
 }
 
 compileJava {
@@ -51,8 +63,6 @@ jar {
 }
 
 shadowJar {
-    dependsOn(':ulyp-agent-classes:shadowJar')
-
     relocate 'org.agrona', 'shadowed.org.agrona'
     relocate 'it.unimi', 'shadowed.it.unimi'
     relocate 'io', 'shadowed.io'
@@ -61,18 +71,12 @@ shadowJar {
     relocate 'net.bytebuddy', 'shadowed.net.bytebuddy'
 //    relocate 'org.apache', 'shadowed.org.apache'
 
-    archiveName = "${rootProject.name}-agent-${rootProject.version}.jar"
+    archiveName = "${rootProject.name}-agent-classes-${rootProject.version}.jar"
 
     mergeServiceFiles()
 
     manifest {
         attributes(
-                'Main-Class': 'com.ulyp.agent.Main',
-                'Premain-Class': 'com.ulyp.agent.AgentBootstrap',
-                'Agent-Class': 'com.ulyp.agent.AgentBootstrap',
-                'Can-Redefine-Classes': 'true',
-                'Can-Retransform-Classes': 'true',
-                'Can-Set-Native-Method-Prefix': 'true',
                 'Implementation-Title': "UlypAgent",
                 'Implementation-Version': rootProject.version,
                 'Built-By': 0xaa4eb,
@@ -87,5 +91,5 @@ assemble {
 }
 
 test {
-    dependsOn('shadowJar')
+    dependsOn(':ulyp-agent:shadowJar')
 }
