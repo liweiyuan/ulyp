@@ -38,6 +38,8 @@ public class FxController implements Initializable {
     @FXML
     public TextField tracePackagesTextField;
     @FXML
+    public TextField excludeTracePackagesTextField;
+    @FXML
     public TextField startMethodTextField;
     @FXML
     public ToggleButton traceSwitchButton;
@@ -112,6 +114,10 @@ public class FxController implements Initializable {
                 selected.refresh();
             }
         }
+    }
+
+    public TextField getExcludeTracePackagesTextField() {
+        return excludeTracePackagesTextField;
     }
 
     public TextField getTracePackagesTextField() {

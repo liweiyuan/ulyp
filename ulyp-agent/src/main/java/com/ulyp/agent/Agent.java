@@ -18,9 +18,9 @@ public class Agent {
 
         String logLevel = LoggingSettings.LOG_LEVEL.name();
         AgentContext instance = AgentContext.getInstance();
-        SystemPropertiesSettings systemPropSettings = SystemPropertiesSettings.loadFromSystemProperties();
         UiSettings uiSettings = instance.getUiSettings();
         List<String> tracePackages = uiSettings.getTracePackages().getValue();
+        List<String> excludedPackages = uiSettings.getExcludeFromTracePackages().getValue();
         TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)
@@ -38,11 +38,11 @@ public class Agent {
             }
         }
 
-        for (int i = 0; i < systemPropSettings.getExcludePackages().size(); i++) {
+        for (String excludedPackage : excludedPackages) {
             if (tracingMatcher == null) {
-                tracingMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(systemPropSettings.getPackages().get(i)));
+                tracingMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(excludedPackage));
             } else {
-                tracingMatcher = tracingMatcher.and(ElementMatchers.not(ElementMatchers.nameStartsWith(systemPropSettings.getPackages().get(i))));
+                tracingMatcher = tracingMatcher.and(ElementMatchers.not(ElementMatchers.nameStartsWith(excludedPackage)));
             }
         }
 

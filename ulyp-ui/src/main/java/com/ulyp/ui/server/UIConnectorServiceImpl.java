@@ -27,6 +27,7 @@ public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase 
         response.setMayStartTracing(viewController.getFxTracingSwitch().isSelected());
 
         response.setTracePackages(viewController.getTracePackagesTextField().getText());
+        response.setExcludedFromTracePackages(viewController.getExcludeTracePackagesTextField().getText());
         response.setTraceStartMethod(viewController.getStartMethodTextField().getText());
 
         // turned off now

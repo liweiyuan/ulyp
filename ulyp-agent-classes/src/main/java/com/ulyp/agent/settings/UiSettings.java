@@ -17,6 +17,7 @@ public class UiSettings {
     );
 
     private final SettingsProperty<List<String>> tracePackages = new SettingsProperty<>("Trace packages list");
+    private final SettingsProperty<List<String>> excludeFromTracePackages = new SettingsProperty<>("Exclude from trace packages list");
     private final SettingsProperty<TracingStartMethodList> tracingStartMethod = new SettingsProperty<>("Tracing start methods list");
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
@@ -44,9 +45,15 @@ public class UiSettings {
         traceCollections.setValue(settings.getTraceCollections());
 
         // TODO protobuf should probably have a list of strings
+        excludeFromTracePackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
+        // TODO protobuf should probably have a list of strings
         tracePackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
         // TODO protobuf should probably have a list of strings
         tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
+    }
+
+    public SettingsProperty<List<String>> getExcludeFromTracePackages() {
+        return excludeFromTracePackages;
     }
 
     public SettingsProperty<List<String>> getTracePackages() {

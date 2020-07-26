@@ -38,7 +38,7 @@
                     <Tooltip text="If this button is pressed, then any instrumented app connected to the UI can start tracing which is a default behavior. Deactivating tracing could be useful for large apps where tracing is unwanted during the long startup." />
                 </tooltip>
             </ToggleButton>
-         <TextField fx:id="tracePackagesTextField" minWidth="200.0" promptText="Trace packages...">
+         <TextField fx:id="tracePackagesTextField" prefWidth="200.0" promptText="Trace packages...">
             <HBox.margin>
                <Insets />
             </HBox.margin>
@@ -46,7 +46,12 @@
                  <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented." />
              </tooltip>
          </TextField>
-            <TextField fx:id="startMethodTextField" minWidth="200.0" promptText="Start tracing at...">
+         <TextField fx:id="excludeTracePackagesTextField" prefWidth="200.0" promptText="Exclude from trace packages...">
+            <tooltip>
+               <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented." />
+            </tooltip>
+         </TextField>
+            <TextField fx:id="startMethodTextField" minWidth="200.0" prefWidth="200.0" promptText="Start tracing at...">
                 <tooltip>
                     <Tooltip text="Comma separated list of method matchers where tracing should start. If you have a class a.b.c.D with method foo(), then specify list of packages as 'a' and tracing start methods as D.foo" />
                 </tooltip>
@@ -63,6 +68,6 @@
              </tooltip>
          </Slider>
         </HBox>
-        <TabPane fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" VBox.vgrow="ALWAYS" />
+        <TabPane fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="502.0" prefWidth="900.0" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>
