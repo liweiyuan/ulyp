@@ -1,9 +1,7 @@
-/*
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.MethodMatcher;
 import net.bytebuddy.description.method.MethodDescription;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -18,13 +16,13 @@ public class TracingStartMethodListTest {
 
     private void assertStartTracingAt(Method method) {
         assertTrue(tracingStartMethodList.shouldStartTracing(
-                new MethodDescription.ForLoadedMethod(method)
+                MethodRepresentationBuilder.build(new MethodDescription.ForLoadedMethod(method))
         ));
     }
 
     private void assertDoesNotStartTracingAt(Method method) {
         assertFalse(tracingStartMethodList.shouldStartTracing(
-                new MethodDescription.ForLoadedMethod(method)
+                MethodRepresentationBuilder.build(new MethodDescription.ForLoadedMethod(method))
         ));
     }
 
@@ -92,4 +90,4 @@ public class TracingStartMethodListTest {
 
         assertStartTracingAt(TestClass.class.getMethod("a", String.class));
     }
-}*/
+}
