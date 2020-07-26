@@ -58,7 +58,7 @@ public class Agent {
 
         new AgentBuilder.Default()
                 .type(finalMatcher)
-                .transform(new BbTransformer(StartTracingMethodAdvice.class, MethodAdvice.class, tracingStartMethodList))
+                .transform(new BbTransformer(StartTracingMethodAdvice.class, ContinueTracingMethodAdvice.class, tracingStartMethodList))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
                 .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
                 .installOn(instrumentation);

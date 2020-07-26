@@ -5,8 +5,7 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 import java.lang.reflect.Executable;
 
-// TODO rename
-public class MethodAdvice {
+public class ContinueTracingMethodAdvice {
 
     @Advice.OnMethodEnter
     static void enter(
