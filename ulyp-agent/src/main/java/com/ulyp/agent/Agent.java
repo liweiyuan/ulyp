@@ -60,7 +60,7 @@ public class Agent {
                 .type(finalMatcher)
                 .transform(new BbTransformer(StartTracingMethodAdvice.class, ContinueTracingMethodAdvice.class, tracingStartMethodList))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-                .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
+//                .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
                 .installOn(instrumentation);
     }
 }
