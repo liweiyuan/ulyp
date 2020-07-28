@@ -39,6 +39,10 @@ public class Agent {
             }
         }
 
+        excludedPackages.add("java");
+        excludedPackages.add("javax");
+        excludedPackages.add("jdk");
+
         for (String excludedPackage : excludedPackages) {
             if (tracingMatcher == null) {
                 tracingMatcher = ElementMatchers.not(ElementMatchers.nameStartsWith(excludedPackage));
