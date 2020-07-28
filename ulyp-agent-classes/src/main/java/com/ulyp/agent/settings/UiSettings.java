@@ -6,6 +6,7 @@ import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -45,9 +46,19 @@ public class UiSettings {
         traceCollections.setValue(settings.getTraceCollections());
 
         // TODO protobuf should probably have a list of strings
-        excludeFromTracePackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
+        // TODO PackagesList class?
+        if (settings.getExcludedFromTracePackages().isEmpty()) {
+            excludeFromTracePackages.setValue(Collections.emptyList());
+        } else {
+            excludeFromTracePackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
+        }
+
         // TODO protobuf should probably have a list of strings
-        tracePackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
+        if (settings.getTracePackages().isEmpty()) {
+            tracePackages.setValue(Collections.emptyList());
+        } else {
+            tracePackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
+        }
         // TODO protobuf should probably have a list of strings
         tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
     }
