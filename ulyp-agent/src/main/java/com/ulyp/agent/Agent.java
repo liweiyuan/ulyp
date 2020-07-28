@@ -11,6 +11,7 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.logging.log4j.Level;
 
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Agent {
@@ -21,7 +22,7 @@ public class Agent {
         AgentContext instance = AgentContext.getInstance();
         UiSettings uiSettings = instance.getUiSettings();
         List<String> tracePackages = uiSettings.getTracePackages().getValue();
-        List<String> excludedPackages = uiSettings.getExcludeFromTracePackages().getValue();
+        List<String> excludedPackages = new ArrayList<>(uiSettings.getExcludeFromTracePackages().getValue());
         TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)
