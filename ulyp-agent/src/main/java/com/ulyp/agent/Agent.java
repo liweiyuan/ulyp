@@ -8,6 +8,7 @@ import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.apache.logging.log4j.Level;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
@@ -56,11 +57,14 @@ public class Agent {
 
 //        AgentLogManager.getLogger(Agent.class).trace("Matcher for scanning is {}", finalMatcher);
 
-        new AgentBuilder.Default()
+        AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
                 .transform(new BbTransformer(StartTracingMethodAdvice.class, ContinueTracingMethodAdvice.class, tracingStartMethodList))
-                .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-//                .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
-                .installOn(instrumentation);
+                .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
+
+        if (LoggingSettings.LOG_LEVEL == Level.TRACE) {
+            agentBuilder = agentBuilder.with(AgentBuilder.Listener.StreamWriting.toSystemOut());
+        }
+        agentBuilder.installOn(instrumentation);
     }
 }
