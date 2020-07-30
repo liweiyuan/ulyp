@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.5.0"
+        classpath group: 'commons-codec', name: 'commons-codec', version: '1.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id "me.champeau.gradle.jmh" version "0.5.0"
+}
+
+apply plugin: "me.champeau.gradle.jmh"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.h2database', name: 'h2', version: '1.4.200'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main.java.srcDirs = ['src/main/java', '../src/main/java']
+}
+
+compileJava {
+    options.debug = true
+}
+
+jmhJar {
+    dependsOn(':ulyp-agent:shadowJar')
+}
+
+jmh {
+
+}
