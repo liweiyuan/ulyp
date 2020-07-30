@@ -1,6 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.log.LoggingSettings;
+import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.settings.UiSettings;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -20,8 +21,13 @@ public class Agent {
         String logLevel = LoggingSettings.LOG_LEVEL.name();
         AgentContext instance = AgentContext.getInstance();
         UiSettings uiSettings = instance.getUiSettings();
+        SystemPropertiesSettings systemPropertiesSettings = SystemPropertiesSettings.load();
+
         List<String> tracePackages = uiSettings.getTracePackages().getValue();
-        List<String> excludedPackages = new ArrayList<>(uiSettings.getExcludeFromTracePackages().getValue());
+        // TODO handle properly this shit
+        List<String> excludedPackages = uiSettings.getExcludeFromTracePackages().getValue() != null ?
+                new ArrayList<>(uiSettings.getExcludeFromTracePackages().getValue())
+                : new ArrayList<>();
         TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)

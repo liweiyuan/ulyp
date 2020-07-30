@@ -3,6 +3,7 @@ package com.test.cases.util;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
+import org.junit.Assert;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -20,22 +21,28 @@ public class TestUtil {
         String classPath = System.getProperty("java.class.path");
 
         try {
-
-            SystemPropertiesSettings settings = settingsBuilder.build();
-
             String javaHome = System.getProperty("java.home");
             String javaBinary = Paths.get(javaHome, "bin", "java").toString();
 
             List<String> processArgs = new ArrayList<>();
             processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
-            processArgs.addAll(settings.toCmdJavaProps());
             processArgs.add("-cp");
             processArgs.add(classPath);
+            processArgs.add("-D" + SystemPropertiesSettings.UI_HOST_PROPERTY + "=localhost");
+            processArgs.add("-D" + SystemPropertiesSettings.UI_PORT_PROPERTY + "=" + settingsBuilder.port);
             processArgs.add(settingsBuilder.getMainClassName().getName());
 
-            ProcResult run = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{})).run();
+            ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))
+                    .ignoreExitStatus()
+                    .run();
 
-            System.out.println(run.getOutputString());
+            System.out.println("Proc output:\n" + result.getOutputString());
+            System.out.println("Proc err:\n" + result.getErrorString());
+            System.out.println("Proc run time: " + result.getExecutionTime() + " ms");
+
+            if (result.getExitValue() != 0) {
+                Assert.fail("Process exit code is not 0, proc string " + result.getProcString());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new AssertionError("Process ended unsuccessfully", e);
