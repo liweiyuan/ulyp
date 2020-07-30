@@ -14,7 +14,11 @@ public class MethodRepresentation {
     private final Set<String> interfacesSimpleClassNames;
     private final String methodName;
 
-    public MethodRepresentation(Set<String> superClassesSimpleNames, Set<String> interfacesSimpleClassNames, String methodName) {
+    public MethodRepresentation(
+            Set<String> superClassesSimpleNames,
+            Set<String> interfacesSimpleClassNames,
+            String methodName)
+    {
         this.superClassesSimpleNames = superClassesSimpleNames.stream().map(ClassUtils::getSimpleNameFromName).collect(Collectors.toSet());
         this.interfacesSimpleClassNames = interfacesSimpleClassNames.stream().map(ClassUtils::getSimpleNameFromName).collect(Collectors.toSet());
         this.methodName = methodName;

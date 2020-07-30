@@ -10,6 +10,7 @@ public class ContinueTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(
             @Advice.Origin Executable executable,
+            @InstrumentationId long instrumentationId,
             @Advice.AllArguments Object[] arguments) {
         if (CallTracer.getInstance().tracingIsActiveInThisThread()) {
             CallTracer.getInstance().onMethodEnter(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), arguments);

@@ -10,7 +10,9 @@ public class StartTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(
             @Advice.Origin Executable executable,
+            @InstrumentationId long instrumentationId,
             @Advice.AllArguments Object[] arguments) {
+        System.out.println(instrumentationId);
         CallTracer.getInstance().startOrContinueTracing(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), arguments);
     }
 

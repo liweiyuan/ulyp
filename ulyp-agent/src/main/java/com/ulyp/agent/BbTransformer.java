@@ -2,6 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.util.MethodRepresentationBuilder;
+import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -15,6 +16,7 @@ public class BbTransformer implements Transformer {
     private final Class<?> startTracingAdvice;
     private final Class<?> continueOnlyTracingAdvice;
     private final TracingStartMethodList tracingStartMethodList;
+//    private final MethodDescriptionDictionary methodDescriptionDictionary = AgentContext.getInstance().getMethodDescriptionDictionary();
 
     public BbTransformer(
             Class<?> startTracingAdvice,
@@ -36,10 +38,6 @@ public class BbTransformer implements Transformer {
             return builder;
         }
 
-//        if (LoggingSettings.IS_TRACE_TURNED_ON) {
-//            logger.trace("Scanning type {}", typeDescription);
-//        }
-
         final AsmVisitorWrapper methodsStartVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
                         .method(
@@ -57,7 +55,8 @@ public class BbTransformer implements Transformer {
 //                                            }
                                             return shouldStartTracing;
                                         }),
-                                Advice.to(startTracingAdvice));
+
+                                Advice.withCustomMapping().bind(new InstrumentationIdFactory()).to(startTracingAdvice));
 
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
@@ -76,7 +75,7 @@ public class BbTransformer implements Transformer {
 //                                            }
                                             return shouldTrace;
                                         }),
-                                Advice.to(continueOnlyTracingAdvice));
+                                Advice.withCustomMapping().bind(new InstrumentationIdFactory()).to(continueOnlyTracingAdvice));
 
         return builder
                 .visit(methodsStartVisitor)
