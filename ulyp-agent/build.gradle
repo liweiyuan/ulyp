@@ -30,14 +30,8 @@ repositories {
     mavenCentral()
 }
 
-task copyAgentClasses(type: Copy) {
-    from file("$projectDir/../ulyp-agent-classes/build/lib/ulyp-agent-classes-0.2.jar")
-    into file("$buildDir/resources/main/ulyp-agent-classes-0.2.jarr")
-}
-
 sourceSets {
     main.java.srcDirs = ['src/main/java', '../src/main/java']
-//    main.resources.includes = [ '../ulyp-agent-classes/build/lib/*.jar' ]
 }
 
 compileJava {
