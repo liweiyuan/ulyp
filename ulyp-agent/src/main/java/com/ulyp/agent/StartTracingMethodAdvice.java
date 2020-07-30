@@ -10,15 +10,17 @@ public class StartTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(
             @Advice.Origin Executable executable,
+            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
             @InstrumentationId long instrumentationId,
             @Advice.AllArguments Object[] arguments) {
-        System.out.println(instrumentationId);
+        instrumentationIdStore = instrumentationId;
         CallTracer.getInstance().startOrContinueTracing(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), arguments);
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     static void exit(
             @Advice.Origin Executable executable,
+            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
             @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
             @Advice.Thrown Throwable throwable) {
         CallTracer.getInstance().endTracingIfPossible(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), returnValue, throwable);

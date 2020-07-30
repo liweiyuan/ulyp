@@ -10,9 +10,11 @@ public class ContinueTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(
             @Advice.Origin Executable executable,
+            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
             @InstrumentationId long instrumentationId,
             @Advice.AllArguments Object[] arguments) {
         if (CallTracer.getInstance().tracingIsActiveInThisThread()) {
+            instrumentationIdStore = instrumentationId;
             CallTracer.getInstance().onMethodEnter(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), arguments);
         }
     }
@@ -20,6 +22,7 @@ public class ContinueTracingMethodAdvice {
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     static void exit(
             @Advice.Origin Executable executable,
+            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
             @Advice.Thrown Throwable throwable,
             @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
         if (CallTracer.getInstance().tracingIsActiveInThisThread()) {

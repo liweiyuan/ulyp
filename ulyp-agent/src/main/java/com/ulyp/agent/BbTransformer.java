@@ -2,7 +2,6 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.util.MethodRepresentationBuilder;
-import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.asm.AsmVisitorWrapper;
