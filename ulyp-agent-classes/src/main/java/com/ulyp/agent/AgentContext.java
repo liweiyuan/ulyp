@@ -25,7 +25,7 @@ public class AgentContext {
     private final ProcessInfo processInfo;
 
     private AgentContext() {
-        this.sysPropsSettings = SystemPropertiesSettings.loadFromSystemProperties();
+        this.sysPropsSettings = SystemPropertiesSettings.load();
         this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
         this.transport = new UploadingTransport(sysPropsSettings.getUiAddress());

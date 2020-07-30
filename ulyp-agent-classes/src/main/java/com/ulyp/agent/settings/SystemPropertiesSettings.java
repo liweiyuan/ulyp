@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class SystemPropertiesSettings implements AgentSettings {
 
-    public static SystemPropertiesSettings loadFromSystemProperties() {
+    public static SystemPropertiesSettings load() {
 
         String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
         List<String> packages;
