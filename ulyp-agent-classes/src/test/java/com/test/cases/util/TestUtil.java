@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class TestUtil {
 
@@ -33,6 +34,7 @@ public class TestUtil {
             processArgs.add(settingsBuilder.getMainClassName().getName());
 
             ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))
+                    .withTimeoutMillis(TimeUnit.MINUTES.toMillis(3))
                     .ignoreExitStatus()
                     .run();
 
