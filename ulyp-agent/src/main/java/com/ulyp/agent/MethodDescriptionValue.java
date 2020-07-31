@@ -8,6 +8,5 @@ import java.lang.annotation.RetentionPolicy;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.PARAMETER)
-public @interface InstrumentationId {
-
+public @interface MethodDescriptionValue {
 }

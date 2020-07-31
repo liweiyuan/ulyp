@@ -16,7 +16,7 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
+    boolean supports(Type type) {
         return false;
     }
 

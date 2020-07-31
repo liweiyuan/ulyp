@@ -16,13 +16,13 @@ public class TracingStartMethodListTest {
 
     private void assertStartTracingAt(Method method) {
         assertTrue(tracingStartMethodList.shouldStartTracing(
-                MethodRepresentationBuilder.build(new MethodDescription.ForLoadedMethod(method))
+                MethodRepresentationBuilder.buildAs(new MethodDescription.ForLoadedMethod(method))
         ));
     }
 
     private void assertDoesNotStartTracingAt(Method method) {
         assertFalse(tracingStartMethodList.shouldStartTracing(
-                MethodRepresentationBuilder.build(new MethodDescription.ForLoadedMethod(method))
+                MethodRepresentationBuilder.buildAs(new MethodDescription.ForLoadedMethod(method))
         ));
     }
 

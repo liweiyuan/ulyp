@@ -10,8 +10,8 @@ public class EnumPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return clazz.isEnum();
+    boolean supports(Type type) {
+        return type.isEnum();
     }
 
     @Override

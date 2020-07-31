@@ -14,7 +14,8 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
+    boolean supports(Type type) {
+        // TODO maybe implement
         return false;
     }
 

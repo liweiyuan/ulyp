@@ -13,7 +13,7 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
+    boolean supports(Type type) {
         return true;
     }
 

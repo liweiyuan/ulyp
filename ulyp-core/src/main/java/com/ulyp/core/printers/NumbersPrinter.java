@@ -10,26 +10,12 @@ public class NumbersPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return clazz.isPrimitive() || isBoxedNumber(clazz);
+    boolean supports(Type type) {
+        return type.isPrimitive() || type.isBoxedNumber();
     }
 
     @Override
     public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
         out.write(obj.toString());
     }
-
-    private boolean isBoxedNumber(Class<?> clazz) {
-        if(clazz == null || clazz.getName().equals("java.lang.Object")) {
-            return false;
-        }
-
-        Class<?> superClazz = clazz.getSuperclass();
-        if(superClazz != null && superClazz.getName().equals("java.lang.Number")) {
-            return true;
-        } else {
-            return isBoxedNumber(superClazz);
-        }
-    }
-
 }

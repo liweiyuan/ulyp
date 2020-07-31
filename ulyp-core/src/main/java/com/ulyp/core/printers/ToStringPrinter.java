@@ -23,17 +23,12 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        if (clazz == Object.class) {
+    boolean supports(Type type) {
+        if (type.isExactlyJavaLangObject()) {
             return false;
         }
 
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals("toString") && method.getReturnType() == String.class && method.getParameterCount() == 0) {
-                return true;
-            }
-        }
-        return false;
+        return type.hasToStringMethod();
     }
 
     @Override

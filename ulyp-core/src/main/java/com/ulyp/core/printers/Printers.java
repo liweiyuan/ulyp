@@ -33,43 +33,36 @@ public class Printers {
         return instance;
     }
 
-    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(Executable method) {
+    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(List<Type> paramsTypes) {
         try {
-            Parameter[] parameters;
-            try {
-                parameters = method.getParameters();
-            } catch(Exception e) {
+            if (paramsTypes.isEmpty()) {
                 return empty;
             }
-
-            if (parameters.length == 0) {
-                return empty;
-            }
-            ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[parameters.length];
+            ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[paramsTypes.size()];
             for (int i = 0; i < convs.length; i++) {
-                convs[i] = determinePrinterForType(parameters[i].getType());
+                convs[i] = determinePrinterForType(paramsTypes.get(i));
             }
             return convs;
         } catch (Exception e) {
-            throw new RuntimeException("Could not prepare converters for method params " + method, e);
+            throw new RuntimeException("Could not prepare converters for method params " + paramsTypes, e);
         }
     }
 
-    public ObjectBinaryPrinter determinePrinterForReturnType(Executable method) {
+    public ObjectBinaryPrinter determinePrinterForReturnType(Type returnType) {
         try {
-            if (method instanceof Constructor) {
-                return determinePrinterForType(method.getDeclaringClass());
-            } else {
-                return determinePrinterForType(((Method)method).getReturnType());
-            }
+//            if (method instanceof Constructor) {
+//                return determinePrinterForType(method.getDeclaringClass());
+//            } else {
+                return determinePrinterForType(returnType);
+//            }
         } catch (Exception e) {
-            throw new RuntimeException("Could not prepare converters for method params " + method, e);
+            throw new RuntimeException("Could not prepare converters for method params " + returnType, e);
         }
     }
 
-    private static final ConcurrentMap<Class<?>, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
+    private static final ConcurrentMap<Type, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
-    public ObjectBinaryPrinter determinePrinterForType(Class<?> type) {
+    public ObjectBinaryPrinter determinePrinterForType(Type type) {
         return cache.computeIfAbsent(
                 type, t -> {
                     for (ObjectBinaryPrinter printer : printers) {

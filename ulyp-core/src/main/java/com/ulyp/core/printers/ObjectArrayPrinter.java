@@ -19,8 +19,8 @@ public class ObjectArrayPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return clazz.isArray() && !clazz.getComponentType().isPrimitive();
+    boolean supports(Type type) {
+        return type.isNonPrimitveArray();
     }
 
     @Override

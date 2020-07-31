@@ -12,8 +12,8 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return clazz == String.class;
+    boolean supports(Type type) {
+        return type.isExactlyJavaLangString();
     }
 
     @Override

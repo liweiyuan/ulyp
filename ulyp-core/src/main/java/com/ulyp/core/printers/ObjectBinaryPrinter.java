@@ -23,7 +23,7 @@ public abstract class ObjectBinaryPrinter {
         return binaryInput.readString();
     }
 
-    abstract boolean supports(Class<?> clazz);
+    abstract boolean supports(Type type);
 
     /**
      * @param obj object to print

@@ -1,6 +1,7 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.MethodMatcher;
+import com.ulyp.core.MethodDescription;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TracingStartMethodList {
         }
     }
 
-    public boolean shouldStartTracing(MethodRepresentation description) {
+    public boolean shouldStartTracing(MethodDescription description) {
         return methods.isEmpty() || methods.stream().anyMatch(matcher -> matcher.matches(description));
     }
 

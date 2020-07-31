@@ -13,8 +13,8 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return clazz == Class.class;
+    boolean supports(Type type) {
+        return type.isClassObject();
     }
 
     @Override

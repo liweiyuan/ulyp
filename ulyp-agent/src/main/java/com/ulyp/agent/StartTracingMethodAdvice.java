@@ -3,26 +3,24 @@ package com.ulyp.agent;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-import java.lang.reflect.Executable;
-
 public class StartTracingMethodAdvice {
 
     @Advice.OnMethodEnter
-    static void enter(
-            @Advice.Origin Executable executable,
-            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
-            @InstrumentationId long instrumentationId,
-            @Advice.AllArguments Object[] arguments) {
-        instrumentationIdStore = instrumentationId;
-        CallTracer.getInstance().startOrContinueTracing(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), arguments);
+    static void enter(@MethodDescriptionValue long methodDescriptionId, @Advice.AllArguments Object[] arguments) {
+        CallTracer.getInstance().startOrContinueTracing(
+                AgentContext.getInstance().getMethodDescriptionDictionary().get(methodDescriptionId),
+                arguments
+        );
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
-    static void exit(
-            @Advice.Origin Executable executable,
-            @Advice.Local(value = "instrumentationIdStore") long instrumentationIdStore,
-            @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
-            @Advice.Thrown Throwable throwable) {
-        CallTracer.getInstance().endTracingIfPossible(AgentContext.getInstance().getMethodDescriptionDictionary().get(executable), returnValue, throwable);
+    static void exit(@MethodDescriptionValue long methodDescriptionId,
+                     @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
+                     @Advice.Thrown Throwable throwable) {
+        CallTracer.getInstance().endTracingIfPossible(
+                AgentContext.getInstance().getMethodDescriptionDictionary().get(methodDescriptionId),
+                returnValue,
+                throwable
+        );
     }
 }

@@ -21,17 +21,8 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
-        return isCollection(clazz);
-    }
-
-    private boolean isCollection(Class<?> clazz) {
-        for (Class<?> interfce : clazz.getInterfaces()) {
-            if(interfce == Collection.class) {
-                return true;
-            }
-        }
-        return false;
+    boolean supports(Type type) {
+        return type.isCollection();
     }
 
     @Override

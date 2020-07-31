@@ -1,12 +1,9 @@
 package com.ulyp.agent.util;
 
-import com.ulyp.agent.settings.MethodRepresentation;
 import net.bytebuddy.description.method.MethodDescription;
 import org.junit.Test;
 
 import java.util.HashSet;
-
-import static org.junit.Assert.*;
 
 public class MethodRepresentationBuilderTest {
 

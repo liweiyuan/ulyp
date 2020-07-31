@@ -20,7 +20,7 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(Class<?> clazz) {
+    boolean supports(Type type) {
         // used manually
         return false;
     }

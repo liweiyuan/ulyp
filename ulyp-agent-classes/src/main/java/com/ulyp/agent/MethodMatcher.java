@@ -1,7 +1,7 @@
 package com.ulyp.agent;
 
 
-import com.ulyp.agent.settings.MethodRepresentation;
+import com.ulyp.core.MethodDescription;
 
 public class MethodMatcher {
 
@@ -23,7 +23,7 @@ public class MethodMatcher {
         this.isWildcard = methodSimpleName.equals(WILDCARD);
     }
 
-    public boolean matches(MethodRepresentation methodRepresentation) {
+    public boolean matches(MethodDescription methodRepresentation) {
         return (isWildcard || methodRepresentation.getMethodName().equals(methodSimpleName)) &&
                 (methodRepresentation.getInterfacesSimpleClassNames().contains(classSimpleName) ||
                         methodRepresentation.getSuperClassesSimpleNames().contains(classSimpleName));

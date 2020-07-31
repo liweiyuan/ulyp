@@ -15,7 +15,6 @@ public class BbTransformer implements Transformer {
     private final Class<?> startTracingAdvice;
     private final Class<?> continueOnlyTracingAdvice;
     private final TracingStartMethodList tracingStartMethodList;
-//    private final MethodDescriptionDictionary methodDescriptionDictionary = AgentContext.getInstance().getMethodDescriptionDictionary();
 
     public BbTransformer(
             Class<?> startTracingAdvice,
@@ -48,14 +47,16 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
                                             boolean shouldStartTracing = tracingStartMethodList.shouldStartTracing(
-                                                    MethodRepresentationBuilder.build(desc));
+                                                    MethodRepresentationBuilder.newMethodDescription(desc));
 //                                            if (shouldStartTracing) {
 //                                                logger.debug("Should start tracing at {}.{}", typeDescription.getName(), desc.getActualName());
 //                                            }
                                             return shouldStartTracing;
                                         }),
 
-                                Advice.withCustomMapping().bind(new InstrumentationIdFactory()).to(startTracingAdvice));
+                                Advice.withCustomMapping()
+                                        .bind(new MethodDescriptionFactory())
+                                        .to(startTracingAdvice));
 
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
@@ -67,18 +68,19 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isToString()))
                                         .and(desc -> {
                                             boolean shouldTrace = !tracingStartMethodList.shouldStartTracing(
-                                                    MethodRepresentationBuilder.build(desc)
+                                                    MethodRepresentationBuilder.newMethodDescription(desc)
                                             );
 //                                            if (shouldTrace) {
 //                                                logger.debug("Should trace at {}.{}", typeDescription.getName(), desc.getActualName());
 //                                            }
                                             return shouldTrace;
                                         }),
-                                Advice.withCustomMapping().bind(new InstrumentationIdFactory()).to(continueOnlyTracingAdvice));
+                                Advice.withCustomMapping()
+                                        .bind(new MethodDescriptionFactory())
+                                        .to(continueOnlyTracingAdvice));
 
         return builder
                 .visit(methodsStartVisitor)
                 .visit(methodsVisitor);
     }
-
 }
