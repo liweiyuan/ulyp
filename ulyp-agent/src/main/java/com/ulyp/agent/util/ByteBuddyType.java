@@ -6,7 +6,6 @@ import net.bytebuddy.description.type.TypeDescription;
 import java.util.HashSet;
 import java.util.Set;
 
-// TODO tests for this?
 public class ByteBuddyType implements Type {
 
     private final TypeDescription.Generic type;
@@ -16,7 +15,7 @@ public class ByteBuddyType implements Type {
     public ByteBuddyType(TypeDescription.Generic type) {
         this.type = type;
 
-        while (type != null && !type.getActualName().equals("java.lang.Object")) {
+        while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
             superClassesNames.add(type.getActualName());
 
             for (TypeDescription.Generic interfface : type.getInterfaces()) {
@@ -93,7 +92,7 @@ public class ByteBuddyType implements Type {
     @Override
     public boolean hasToStringMethod() {
         return type.getDeclaredMethods().stream().anyMatch(
-                method -> method.getActualName().equals("toString") && method.getReturnType() == TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class)
+                method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
         );
     }
 }
