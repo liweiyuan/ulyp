@@ -1,9 +1,5 @@
 package com.ulyp.core.printers;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -50,11 +46,7 @@ public class Printers {
 
     public ObjectBinaryPrinter determinePrinterForReturnType(Type returnType) {
         try {
-//            if (method instanceof Constructor) {
-//                return determinePrinterForType(method.getDeclaringClass());
-//            } else {
-                return determinePrinterForType(returnType);
-//            }
+            return determinePrinterForType(returnType);
         } catch (Exception e) {
             throw new RuntimeException("Could not prepare converters for method params " + returnType, e);
         }
@@ -63,15 +55,21 @@ public class Printers {
     private static final ConcurrentMap<Type, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
     public ObjectBinaryPrinter determinePrinterForType(Type type) {
-        return cache.computeIfAbsent(
-                type, t -> {
-                    for (ObjectBinaryPrinter printer : printers) {
-                        if (printer.supports(t)) {
-                            return printer;
-                        }
-                    }
-                    throw new RuntimeException("Could not find a suitable printer for type " + type);
-                }
-        );
+//        return cache.computeIfAbsent(
+//                type, t -> {
+//                    for (ObjectBinaryPrinter printer : printers) {
+//                        if (printer.supports(t)) {
+//                            return printer;
+//                        }
+//                    }
+//                    throw new RuntimeException("Could not find a suitable printer for type " + type);
+//                }
+//        );
+        for (ObjectBinaryPrinter printer : printers) {
+            if (printer.supports(type)) {
+                return printer;
+            }
+        }
+        throw new RuntimeException("Could not find a suitable printer for type " + type);
     }
 }
