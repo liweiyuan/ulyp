@@ -26,6 +26,6 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
         Class<?> clazz = (Class<?>) obj;
-        out.write(tracingContext.get(clazz).getId());
+        out.write(tracingContext.getClassId(clazz));
     }
 }

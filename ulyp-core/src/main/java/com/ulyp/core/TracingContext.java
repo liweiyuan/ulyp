@@ -11,8 +11,4 @@ public class TracingContext {
     public long getClassId(Object o) {
         return o != null ? methodDescriptionDictionary.get(o.getClass()).getId() : -1;
     }
-
-    public ClassDescription get(Class<?> clazz) {
-        return methodDescriptionDictionary.get(clazz);
-    }
 }
