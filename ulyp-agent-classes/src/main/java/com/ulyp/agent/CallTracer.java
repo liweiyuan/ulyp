@@ -39,14 +39,14 @@ public class CallTracer {
         return threadLocalTraceLog.get() != null;
     }
 
-    public void startOrContinueTracing(TracingContext tracingContext, MethodDescription methodDescription, Object[] args) {
+    public void startOrContinueTracing(AgentRuntime agentRuntime, MethodDescription methodDescription, Object[] args) {
         if (!tracingIsActiveInThisThread() && !mayStartTracing) {
             return;
         }
 
         CallTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> {
             CallTraceLog log = new CallTraceLog(
-                    tracingContext,
+                    agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {

@@ -2,7 +2,7 @@ package com.ulyp.core.printers;
 
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 
@@ -24,7 +24,7 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
+    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         out.write(System.identityHashCode(obj));
     }
 }

@@ -2,13 +2,11 @@ package com.ulyp.core.printers;
 
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 import com.ulyp.core.printers.bytes.StringView;
-
-import java.lang.reflect.Method;
 
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
@@ -44,13 +42,13 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
+    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         try {
             String printed = obj.toString();
             if (printed != null) {
                 try (BinaryOutputAppender appender = out.appender()) {
                     appender.append(TO_STRING_CALL_SUCCESS);
-                    ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().write(printed, appender, tracingContext);
+                    ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().write(printed, appender, agentRuntime);
                 }
             } else {
                 try (BinaryOutputAppender appender = out.appender()) {
@@ -60,7 +58,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
         } catch (Throwable e) {
             try (BinaryOutputAppender appender = out.appender()) {
                 appender.append(TO_STRING_CALL_FAIL);
-                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, appender, tracingContext);
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, appender, agentRuntime);
             }
         }
     }

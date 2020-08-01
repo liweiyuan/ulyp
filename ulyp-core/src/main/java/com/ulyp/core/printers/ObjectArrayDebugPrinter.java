@@ -2,7 +2,7 @@ package com.ulyp.core.printers;
 
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.BinaryOutputAppender;
@@ -40,7 +40,7 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
+    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         try (BinaryOutputAppender appender = out.appender()) {
             Object[] array = (Object[]) obj;
             int length = array.length;
@@ -49,10 +49,10 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
             appender.append(elementsToWrite);
             for (int i = 0; i < elementsToWrite; i++) {
                 Object element = array[i];
-                appender.append(tracingContext.getClassId(element));
+                appender.append(agentRuntime.getClassId(element));
                 ObjectBinaryPrinter printer = element != null ? ObjectBinaryPrinterType.DYNAMIC_OBJECT_PRINTER.getPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
                 appender.append(printer.getId());
-                printer.write(element, appender, tracingContext);
+                printer.write(element, appender, agentRuntime);
             }
         }
     }

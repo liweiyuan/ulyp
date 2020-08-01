@@ -22,7 +22,7 @@ public class CallEnterTraceList extends AbstractSbeRecordList<TCallEnterTraceEnc
     public void add(
             long callId,
             long methodId,
-            TracingContext tracingContext,
+            AgentRuntime agentRuntime,
             ObjectBinaryPrinter[] printers,
             Object[] args)
     {
@@ -36,11 +36,11 @@ public class CallEnterTraceList extends AbstractSbeRecordList<TCallEnterTraceEnc
                 ObjectBinaryPrinter printer = args[i] != null ? printers[i] : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
 
                 argumentsEncoder = argumentsEncoder.next();
-                argumentsEncoder.classId(tracingContext.getClassId(args[i]));
+                argumentsEncoder.classId(agentRuntime.getClassId(args[i]));
                 argumentsEncoder.printerId(printer.getId());
                 binaryOutput.wrap(encoder);
                 try {
-                    printer.write(args[i], binaryOutput, tracingContext);
+                    printer.write(args[i], binaryOutput, agentRuntime);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

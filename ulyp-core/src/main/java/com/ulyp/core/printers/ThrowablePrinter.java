@@ -2,7 +2,7 @@ package com.ulyp.core.printers;
 
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.StringView;
@@ -26,7 +26,7 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
+    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         Throwable t = (Throwable) obj;
         out.write(t.getMessage());
     }

@@ -1,17 +1,17 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.core.MethodDescriptionDictionary;
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.Type;
 import net.bytebuddy.description.type.TypeDescription;
 
-public class ByteBuddyTracingContext implements TracingContext {
+public class ByteBuddyAgentRuntime implements AgentRuntime {
 
     private static class InstanceHolder {
-        private static final ByteBuddyTracingContext context = new ByteBuddyTracingContext();
+        private static final ByteBuddyAgentRuntime context = new ByteBuddyAgentRuntime();
     }
 
-    public static TracingContext getInstance() {
+    public static AgentRuntime getInstance() {
         return InstanceHolder.context;
     }
 

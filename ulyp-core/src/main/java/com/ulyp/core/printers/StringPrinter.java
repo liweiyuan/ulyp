@@ -1,6 +1,6 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.TracingContext;
+import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class StringPrinter extends ObjectBinaryPrinter {
@@ -17,7 +17,7 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
+    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         String text = (String) obj;
         String printed;
         if (text.length() > MAX_LENGTH) {

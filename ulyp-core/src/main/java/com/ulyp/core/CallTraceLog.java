@@ -12,7 +12,7 @@ public class CallTraceLog {
 
     private final long id = idGenerator.incrementAndGet();
 
-    private final TracingContext tracingContext;
+    private final AgentRuntime agentRuntime;
     private final CallEnterTraceList enterTraces = new CallEnterTraceList();
     private final CallExitTraceList exitTraces = new CallExitTraceList();
     private final IntArrayList callIdsStack = new IntArrayList();
@@ -26,11 +26,11 @@ public class CallTraceLog {
     private boolean inProcessOfTracing = true;
     private int callIdCounter = 0;
 
-    public CallTraceLog(TracingContext tracingContext, int maxDepth, int maxCallsPerDepth) {
+    public CallTraceLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsPerDepth) {
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
         this.maxCallsPerDepth = maxCallsPerDepth;
-        this.tracingContext = tracingContext;
+        this.agentRuntime = agentRuntime;
         callCountStack.addInt(0);
     }
 
@@ -48,7 +48,7 @@ public class CallTraceLog {
             pushCurrentMethodCallId(callId, canTrace);
 
             if (canTrace) {
-                enterTraces.add(callId, methodId, tracingContext, printers, args);
+                enterTraces.add(callId, methodId, agentRuntime, printers, args);
                 callCountStack.setInt(callCountStack.size() - 2, callsMadeInCurrentMethod + 1);
             }
         } finally {
@@ -68,9 +68,9 @@ public class CallTraceLog {
 
             if (traced && callId >= 0) {
                 if (thrown == null) {
-                    exitTraces.add(callId, methodId, tracingContext, false, tracingContext.getClassId(returnValue), resultPrinter, returnValue);
+                    exitTraces.add(callId, methodId, agentRuntime, false, agentRuntime.getClassId(returnValue), resultPrinter, returnValue);
                 } else {
-                    exitTraces.add(callId, methodId, tracingContext, true, tracingContext.getClassId(thrown), ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
+                    exitTraces.add(callId, methodId, agentRuntime, true, agentRuntime.getClassId(thrown), ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
                 }
             }
         } finally {

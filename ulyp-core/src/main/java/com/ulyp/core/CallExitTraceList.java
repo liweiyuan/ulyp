@@ -23,7 +23,7 @@ public class CallExitTraceList extends AbstractSbeRecordList<TCallExitTraceEncod
     public void add(
             long callId,
             long methodId,
-            TracingContext tracingContext,
+            AgentRuntime agentRuntime,
             boolean thrown,
             long returnValueClassId,
             ObjectBinaryPrinter returnValuePrinter,
@@ -40,7 +40,7 @@ public class CallExitTraceList extends AbstractSbeRecordList<TCallExitTraceEncod
             encoder.returnPrinterId(printer.getId());
             binaryOutput.wrap(encoder);
             try {
-                printer.write(returnValue, binaryOutput, tracingContext);
+                printer.write(returnValue, binaryOutput, agentRuntime);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
