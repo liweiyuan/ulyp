@@ -80,7 +80,7 @@ public class CallTracer {
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
             logger.trace("Method enter on {}, method {}, args {}", callTraces, method, args);
         }
-        callTraces.onMethodEnter(method.getId(), tracingParams, method.getParamPrinters(), args);
+        callTraces.onMethodEnter(method.getId(), method.getParamPrinters(), args);
     }
 
     public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
@@ -90,6 +90,6 @@ public class CallTracer {
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
             logger.trace("Method exit {}, method {}, return value {}, thrown {}", callTracesLog, method, result, thrown);
         }
-        callTracesLog.onMethodExit(method.getId(), tracingParams, method.getResultPrinter(), result, thrown);
+        callTracesLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
     }
 }

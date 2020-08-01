@@ -3,7 +3,6 @@ package com.ulyp.core;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.agrona.collections.IntArrayList;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -35,7 +34,7 @@ public class CallTraceLog {
         callCountStack.addInt(0);
     }
 
-    public void onMethodEnter(long methodId, TracingParams tracingParams, ObjectBinaryPrinter[] printers, Object[] args) {
+    public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object[] args) {
         if (!inProcessOfTracing) {
             return;
         }
@@ -57,7 +56,7 @@ public class CallTraceLog {
         }
     }
 
-    public void onMethodExit(long methodId, TracingParams tracingParams, ObjectBinaryPrinter resultPrinter, Object returnValue, Throwable thrown) {
+    public void onMethodExit(long methodId, ObjectBinaryPrinter resultPrinter, Object returnValue, Throwable thrown) {
         if (!inProcessOfTracing) {
             return;
         }
