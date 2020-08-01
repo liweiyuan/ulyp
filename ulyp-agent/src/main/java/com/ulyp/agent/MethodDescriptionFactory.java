@@ -36,7 +36,7 @@ public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<Me
                               Advice.ArgumentHandler argumentHandler,
                               Sort sort) {
             long id = counter.incrementAndGet();
-            methodDescriptionDictionary.initialize(id, MethodRepresentationBuilder.newMethodDescription(instrumentedMethod));
+            methodDescriptionDictionary.put(id, MethodRepresentationBuilder.newMethodDescription(instrumentedMethod));
             return Target.ForStackManipulation.of(id);
         }
     }

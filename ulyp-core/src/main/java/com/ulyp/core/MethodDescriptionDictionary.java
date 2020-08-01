@@ -35,7 +35,7 @@ public class MethodDescriptionDictionary {
         return classDescriptionMap.values();
     }
 
-    public void initialize(long id, MethodDescription buildAs) {
+    public void put(long id, MethodDescription buildAs) {
         methodMap.put(id, buildAs);
     }
 }
