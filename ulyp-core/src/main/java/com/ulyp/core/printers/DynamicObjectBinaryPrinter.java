@@ -27,11 +27,10 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, BinaryOutput out, TracingContext tracingContext) throws Exception {
         Class<?> type = obj.getClass();
-//        ObjectBinaryPrinter printer = (type != Object.class)
-//                ? Printers.getInstance().determinePrinterForType(obj.getClass()) :
-//                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter();
+        ObjectBinaryPrinter printer = (type != Object.class)
+                ? Printers.getInstance().determinePrinterForType(tracingContext.toType(obj.getClass())) :
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter();
 
-        ObjectBinaryPrinter printer = ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter();
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(printer.getId());
             printer.write(obj, appender, tracingContext);

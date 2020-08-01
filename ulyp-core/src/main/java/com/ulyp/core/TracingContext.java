@@ -1,14 +1,10 @@
 package com.ulyp.core;
 
-public class TracingContext {
+import com.ulyp.core.printers.Type;
 
-    private final MethodDescriptionDictionary methodDescriptionDictionary;
+public interface TracingContext {
 
-    public TracingContext(MethodDescriptionDictionary methodDescriptionDictionary) {
-        this.methodDescriptionDictionary = methodDescriptionDictionary;
-    }
+    long getClassId(Object o);
 
-    public long getClassId(Object o) {
-        return o != null ? methodDescriptionDictionary.get(o.getClass()).getId() : -1;
-    }
+    Type toType(Class<?> clazz);
 }

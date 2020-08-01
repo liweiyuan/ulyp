@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.agent.util.ByteBuddyTracingContext;
 import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
@@ -9,6 +10,7 @@ public class StartTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(@MethodDescriptionValue long methodDescriptionId, @Advice.AllArguments Object[] arguments) {
         CallTracer.getInstance().startOrContinueTracing(
+                ByteBuddyTracingContext.getInstance(),
                 MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
                 arguments
         );

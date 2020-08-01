@@ -27,11 +27,11 @@ public class CallTraceLog {
     private boolean inProcessOfTracing = true;
     private int callIdCounter = 0;
 
-    public CallTraceLog(MethodDescriptionDictionary methodDescriptionDictionary, int maxDepth, int maxCallsPerDepth) {
+    public CallTraceLog(TracingContext tracingContext, int maxDepth, int maxCallsPerDepth) {
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
         this.maxCallsPerDepth = maxCallsPerDepth;
-        this.tracingContext = new TracingContext(methodDescriptionDictionary);
+        this.tracingContext = tracingContext;
         callCountStack.addInt(0);
     }
 
