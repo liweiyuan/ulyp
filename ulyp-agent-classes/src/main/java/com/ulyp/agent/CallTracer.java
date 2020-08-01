@@ -46,7 +46,7 @@ public class CallTracer {
 
         CallTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> {
             CallTraceLog log = new CallTraceLog(
-                    context.getMethodDescriptionDictionary(),
+                    MethodDescriptionDictionary.getInstance(),
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
@@ -67,7 +67,7 @@ public class CallTracer {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", traceLog);
                 }
-                context.getTransport().uploadAsync(traceLog, context.getMethodDescriptionDictionary(), context.getProcessInfo());
+                context.getTransport().uploadAsync(traceLog, MethodDescriptionDictionary.getInstance(), context.getProcessInfo());
             }
         }
     }

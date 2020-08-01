@@ -9,11 +9,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodDescriptionDictionary {
 
+    private static final MethodDescriptionDictionary INSTANCE = new MethodDescriptionDictionary();
+
+    public static MethodDescriptionDictionary getInstance() {
+        return INSTANCE;
+    }
+
     private final AtomicLong idGenerator = new AtomicLong(0);
     private final Map<Long, MethodDescription> methodMap = new ConcurrentHashMap<>();
     private final Map<Class<?>, ClassDescription> classDescriptionMap = new ConcurrentHashMap<>();
 
-    public MethodDescriptionDictionary() {
+    private MethodDescriptionDictionary() {
     }
 
     public MethodDescription get(long id) {

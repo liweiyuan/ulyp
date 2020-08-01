@@ -1,5 +1,6 @@
 package com.ulyp.agent;
 
+import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
@@ -8,7 +9,7 @@ public class StartTracingMethodAdvice {
     @Advice.OnMethodEnter
     static void enter(@MethodDescriptionValue long methodDescriptionId, @Advice.AllArguments Object[] arguments) {
         CallTracer.getInstance().startOrContinueTracing(
-                AgentContext.getInstance().getMethodDescriptionDictionary().get(methodDescriptionId),
+                MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
                 arguments
         );
     }
@@ -18,7 +19,7 @@ public class StartTracingMethodAdvice {
                      @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue,
                      @Advice.Thrown Throwable throwable) {
         CallTracer.getInstance().endTracingIfPossible(
-                AgentContext.getInstance().getMethodDescriptionDictionary().get(methodDescriptionId),
+                MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
                 returnValue,
                 throwable
         );

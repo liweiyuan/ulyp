@@ -9,11 +9,12 @@ import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<MethodDescriptionValue> {
 
-    static final MethodDescriptionDictionary methodDescriptionDictionary = AgentContext.getInstance().getMethodDescriptionDictionary();
+    static final MethodDescriptionDictionary methodDescriptionDictionary = MethodDescriptionDictionary.getInstance();
     private static final AtomicLong counter = new AtomicLong();
 
     @Override

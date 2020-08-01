@@ -21,12 +21,10 @@ public class AgentContext {
     private final SystemPropertiesSettings sysPropsSettings;
     private final UploadingTransport transport;
     private final UiSettings uiSettings;
-    private final MethodDescriptionDictionary methodDescriptionDictionary;
     private final ProcessInfo processInfo;
 
     private AgentContext() {
         this.sysPropsSettings = SystemPropertiesSettings.load();
-        this.methodDescriptionDictionary = new MethodDescriptionDictionary();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
         this.transport = new UploadingTransport(sysPropsSettings.getUiAddress());
         this.uiSettings = new UiSettings(transport);
@@ -57,9 +55,5 @@ public class AgentContext {
 
     public AgentSettings getSysPropsSettings() {
         return sysPropsSettings;
-    }
-
-    public MethodDescriptionDictionary getMethodDescriptionDictionary() {
-        return methodDescriptionDictionary;
     }
 }
