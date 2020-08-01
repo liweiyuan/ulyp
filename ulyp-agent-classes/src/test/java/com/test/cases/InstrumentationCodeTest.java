@@ -12,6 +12,33 @@ import static org.junit.Assert.assertThat;
 
 public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
+    public static class MainMethodCase {
+
+        public static void a() {
+
+        }
+
+        public static void main(String[] args) {
+            a();
+        }
+    }
+
+    @Test
+    public void shouldTraceMainMethod() {
+        CallTraceTree tree = executeClass(
+                new TestSettingsBuilder()
+                        .setMainClassName(MainMethodCase.class)
+                        .setMethodToTrace("main")
+        );
+
+        CallTrace root = tree.getRoot();
+
+        assertThat(root.getMethodName(), is("main"));
+        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$MainMethodCase"));
+        assertThat(root.getChildren(), hasSize(1));
+    }
+
+
     public static class SimpleTestCases {
 
         public static class TestObject {}
