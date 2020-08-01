@@ -1,4 +1,4 @@
-package com.ulyp.core;
+package com.ulyp.core.util;
 
 public class ProcessInfo {
 

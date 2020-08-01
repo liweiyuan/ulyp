@@ -5,8 +5,7 @@ import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.agent.util.ProcessUtils;
-import com.ulyp.core.MethodDescriptionDictionary;
-import com.ulyp.core.ProcessInfo;
+import com.ulyp.core.util.ProcessInfo;
 
 import java.util.concurrent.TimeUnit;
 

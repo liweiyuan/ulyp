@@ -1,10 +1,17 @@
 package com.perf.agent.benchmarks;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 
-public class H2MemDatabaseBenchmark {
+public class H2MemDatabaseBenchmark implements Benchmark {
 
     private Connection connection;
+
+    @Override
+    public List<String> getPackagesToTrace() {
+        return Arrays.asList("com", "org");
+    }
 
     public void setUp() throws SQLException {
         try {
@@ -31,7 +38,7 @@ public class H2MemDatabaseBenchmark {
 
     public void run() throws Exception {
 
-        for (int id = 0; id < 10; id++) {
+        for (int id = 0; id < 100; id++) {
             new Inserter(connection).insert(id);
         }
     }
