@@ -57,6 +57,10 @@ public class TestSettingsBuilder {
         return this;
     }
 
+    public int getMaxCallsPerMethod() {
+        return maxCallsPerMethod;
+    }
+
     public TestSettingsBuilder setMaxCallsPerMethod(int maxCallsPerMethod) {
         this.maxCallsPerMethod = maxCallsPerMethod;
         return this;
