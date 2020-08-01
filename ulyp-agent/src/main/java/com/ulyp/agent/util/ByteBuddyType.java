@@ -1,12 +1,10 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.core.printers.Type;
-import com.ulyp.core.util.ClassUtils;
 import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 // TODO tests for this?
 public class ByteBuddyType implements Type {
@@ -29,6 +27,11 @@ public class ByteBuddyType implements Type {
         }
     }
 
+    @Override
+    public String getName() {
+        return type.getActualName();
+    }
+
     public Set<String> getSuperClassesNames() {
         return superClassesNames;
     }
@@ -37,22 +40,14 @@ public class ByteBuddyType implements Type {
         return interfacesClassesNames;
     }
 
-    public Set<String> getSuperClassesSimpleNames() {
-        return superClassesNames.stream().map(ClassUtils::getSimpleNameFromName).collect(Collectors.toSet());
-    }
-
-    public Set<String> getInterfacesSimpleClassNames() {
-        return interfacesClassesNames.stream().map(ClassUtils::getSimpleNameFromName).collect(Collectors.toSet());
-    }
-
     @Override
     public boolean isExactlyJavaLangObject() {
-        return type == TypeDescription.Generic.OBJECT;
+        return type.equals(TypeDescription.Generic.OBJECT);
     }
 
     @Override
     public boolean isExactlyJavaLangString() {
-        return type == TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class);
+        return type.equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class));
     }
 
     @Override
@@ -72,7 +67,7 @@ public class ByteBuddyType implements Type {
 
     @Override
     public boolean isBoxedNumber() {
-        return interfaceClassSimpleNames.contains("java.lang.Number");
+        return getSuperClassesNames().contains("java.lang.Number");
     }
 
     @Override
@@ -87,12 +82,12 @@ public class ByteBuddyType implements Type {
 
     @Override
     public boolean isCollection() {
-        return interfaceClassSimpleNames.contains("java.util.Collection");
+        return getInterfacesClassesNames().contains("java.util.Collection");
     }
 
     @Override
     public boolean isClassObject() {
-        return type == TypeDescription.Generic.CLASS;
+        return type.equals(TypeDescription.Generic.CLASS);
     }
 
     @Override

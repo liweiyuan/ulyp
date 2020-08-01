@@ -1,3 +1,4 @@
+/*
 package com.ulyp.agent.settings;
 
 import com.ulyp.core.ClassDescription;
@@ -51,8 +52,8 @@ public class MethodRepresentationBuilder {
                 superClassesNames,
                 interfacesClassNames,
                 parameters,
-                returnType,
-                classDescription
+                returnType
         );
     }
 }
+*/

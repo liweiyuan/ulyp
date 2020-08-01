@@ -1,9 +1,8 @@
 package com.ulyp.agent.util;
 
 import net.bytebuddy.description.method.MethodDescription;
+import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashSet;
 
 public class MethodRepresentationBuilderTest {
 
@@ -28,29 +27,25 @@ public class MethodRepresentationBuilderTest {
         public void run() {
 
         }
+
+        public Void runAndReturnVoid() {
+            return null;
+        }
     }
 
     @Test
     public void testForSomeClass() throws NoSuchMethodException {
-        MethodRepresentation representation = MethodRepresentationBuilder.build(
-                new MethodDescription.ForLoadedMethod(TestClass.class.getDeclaredMethod("run"))
-        );
 
-        assertEquals(
-                new HashSet<String>() {{
-                    add("TestClass");
-                    add("BaseClass");
-                }},
-                representation.getSuperClassesSimpleNames()
-        );
+        com.ulyp.core.MethodDescription methodDescription = MethodRepresentationBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
+                TestClass.class.getDeclaredMethod("run")
+        ));
 
-        assertEquals(
-                new HashSet<String>() {{
-                    add("Interface1");
-                    add("Interface2");
-                    add("Interface3");
-                }},
-                representation.getInterfacesSimpleClassNames()
-        );
+        Assert.assertFalse(methodDescription.returnsSomething());
+
+        methodDescription = MethodRepresentationBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
+                TestClass.class.getDeclaredMethod("runAndReturnVoid")
+        ));
+
+        Assert.assertTrue(methodDescription.returnsSomething());
     }
 }

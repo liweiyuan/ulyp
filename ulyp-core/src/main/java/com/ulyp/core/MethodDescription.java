@@ -3,21 +3,15 @@ package com.ulyp.core;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.Printers;
 import com.ulyp.core.printers.Type;
-import com.ulyp.core.util.ClassUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MethodDescription {
 
     private final long id;
-    private final Set<String> superClassesNames;
-    private final Set<String> interfacesClassesNames;
-    private final ClassDescription classDescription;
     private final String methodName;
-    private final String toStringCached;
+    private final Type declaringType;
     private final boolean returnsSomething;
     private final List<String> parameterNames;
     private final ObjectBinaryPrinter[] paramPrinters;
@@ -27,19 +21,14 @@ public class MethodDescription {
             long methodId,
             String methodName,
             boolean returnsSomething,
-            Set<String> superClassesNames,
-            Set<String> interfacesClassNames,
             List<Type> paramsTypes,
             Type returnType,
-            ClassDescription classDescription)
+            Type declaringType)
     {
         this.id = methodId;
-        this.classDescription = classDescription;
         this.methodName = methodName;
-        this.toStringCached = classDescription.getSimpleName() + "." + methodName;
-        this.superClassesNames = superClassesNames;
-        this.interfacesClassesNames = interfacesClassNames;
         this.returnsSomething = returnsSomething;
+        this.declaringType = declaringType;
 
         this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypes);
         this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnType);
@@ -66,8 +55,8 @@ public class MethodDescription {
         return resultPrinter;
     }
 
-    public ClassDescription getClassDescription() {
-        return classDescription;
+    public Type getDeclaringType() {
+        return declaringType;
     }
 
     public String getMethodName() {
@@ -80,10 +69,5 @@ public class MethodDescription {
 
     public List<String> getParameterNames() {
         return parameterNames;
-    }
-
-    @Override
-    public String toString() {
-        return toStringCached;
     }
 }

@@ -21,7 +21,6 @@ public class MethodDescriptionList extends AbstractSbeRecordList<TMethodDescript
         super.add(encoder -> {
             encoder.id(methodDescription.getId());
             encoder.returnsSomething(methodDescription.returnsSomething() ? BooleanType.T : BooleanType.F);
-            encoder.classId(methodDescription.getClassDescription().getId());
 
             List<String> argumentNames = methodDescription.getParameterNames();
             TMethodDescriptionEncoder.ParameterNamesEncoder paramNamesEncoder = encoder.parameterNamesCount(argumentNames.size());
@@ -30,7 +29,7 @@ public class MethodDescriptionList extends AbstractSbeRecordList<TMethodDescript
                 paramNamesEncoder.value(argumentName);
             }
 
-            encoder.className(methodDescription.getClassDescription().getName());
+            encoder.className(methodDescription.getDeclaringType().getName());
             encoder.methodName(methodDescription.getMethodName());
         });
     }
