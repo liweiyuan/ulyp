@@ -1,5 +1,6 @@
 package com.perf.agent.benchmarks.proc;
 
+import com.google.common.base.Strings;
 import com.perf.agent.benchmarks.BenchmarkSettings;
 import com.ulyp.transport.*;
 import io.grpc.Server;
@@ -27,8 +28,11 @@ public class UIServerStub implements AutoCloseable {
                                     .setMayStartTracing(true)
                                     .setShouldTraceIdentityHashCode(false)
                                     .setTraceCollections(settings.traceCollections())
-                                    .setTraceStartMethod(settings.getMethodToTrace())
                                     .setTracePackages(String.join(",", settings.getTracedPackages()));
+
+                            if (!Strings.isNullOrEmpty(settings.getMethodToTrace()) && settings.getClassToTrace() != null) {
+                                builder = builder.setTraceStartMethod(settings.getClassToTrace().getSimpleName() + "." + settings.getMethodToTrace());
+                            }
 
                             responseObserver.onNext(builder.build());
                             responseObserver.onCompleted();

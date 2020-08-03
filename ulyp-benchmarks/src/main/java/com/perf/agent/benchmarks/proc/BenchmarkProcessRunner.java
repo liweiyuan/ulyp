@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 public class BenchmarkProcessRunner {
 
+    private static final boolean VERBOSE = false;
+
     public static void runClassInSeparateJavaProcess(BenchmarkSettings settings) {
         File agentJar = findAgentJar();
         String classPath = System.getProperty("java.class.path");
@@ -38,9 +40,11 @@ public class BenchmarkProcessRunner {
                     .ignoreExitStatus()
                     .run();
 
-            System.out.println("Proc output:\n" + result.getOutputString());
-            System.out.println("Proc err:\n" + result.getErrorString());
-            System.out.println("Proc run time: " + result.getExecutionTime() + " ms");
+            if (VERBOSE) {
+                System.out.println("Proc output:\n" + result.getOutputString());
+                System.out.println("Proc err:\n" + result.getErrorString());
+                System.out.println("Proc run time: " + result.getExecutionTime() + " ms");
+            }
 
             if (result.getExitValue() != 0) {
                 throw new RuntimeException("Process exit code is not 0, proc string " + result.getProcString());
