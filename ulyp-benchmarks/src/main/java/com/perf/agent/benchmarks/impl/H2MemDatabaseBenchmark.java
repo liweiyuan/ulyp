@@ -1,4 +1,6 @@
-package com.perf.agent.benchmarks;
+package com.perf.agent.benchmarks.impl;
+
+import com.perf.agent.benchmarks.Benchmark;
 
 import java.sql.*;
 import java.util.Arrays;
