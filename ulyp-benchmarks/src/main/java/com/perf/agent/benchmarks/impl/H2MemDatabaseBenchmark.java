@@ -1,9 +1,11 @@
 package com.perf.agent.benchmarks.impl;
 
 import com.perf.agent.benchmarks.Benchmark;
+import com.perf.agent.benchmarks.BenchmarkProfile;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class H2MemDatabaseBenchmark implements Benchmark {
@@ -11,8 +13,14 @@ public class H2MemDatabaseBenchmark implements Benchmark {
     private Connection connection;
 
     @Override
-    public List<String> getPackagesToTrace() {
-        return Arrays.asList("com", "org");
+    public List<BenchmarkProfile> getProfiles() {
+        return Arrays.asList(
+                // TODO use builder
+                new BenchmarkProfile(H2MemDatabaseBenchmark.class, "main", Arrays.asList("com", "org")),
+                new BenchmarkProfile(null, null, Arrays.asList("com", "org")),
+                // TODO use named static var
+                new BenchmarkProfile(null, null, Collections.emptyList())
+        );
     }
 
     public void setUp() throws SQLException {

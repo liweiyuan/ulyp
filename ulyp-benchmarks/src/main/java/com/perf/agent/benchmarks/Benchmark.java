@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Benchmark {
 
-    List<String> getPackagesToTrace();
+    List<BenchmarkProfile> getProfiles();
 
     void setUp() throws Exception;
 

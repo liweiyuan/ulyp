@@ -20,7 +20,6 @@ public class UIServerStub implements AutoCloseable {
         try {
             server = ServerBuilder.forPort(settings.getUiListenPort())
                     .addService(new UIConnectorGrpc.UIConnectorImplBase() {
-                        @Override
                         public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
 
                             SettingsResponse.Builder builder = SettingsResponse
@@ -38,12 +37,12 @@ public class UIServerStub implements AutoCloseable {
                             responseObserver.onCompleted();
                         }
 
-                        @Override
                         public void uploadCallGraph(TCallTraceLogUploadRequest request, StreamObserver<TCallTraceLogUploadResponse> responseObserver) {
                             future.complete(request);
                             responseObserver.onCompleted();
                         }
                     })
+                    .maxInboundMessageSize(1324 * 1024 * 1024)
                     .executor(executorService)
                     .build()
                     .start();

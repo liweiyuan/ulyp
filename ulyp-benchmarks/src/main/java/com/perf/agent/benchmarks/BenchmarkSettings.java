@@ -4,11 +4,21 @@ import java.util.List;
 
 public class BenchmarkSettings {
 
+    private Class<?> mainClass;
     private Class<?> classToTrace;
     private String methodToTrace;
     private List<String> tracedPackages;
     private boolean traceCollections = false;
     private int uiListenPort;
+
+    public Class<?> getMainClass() {
+        return mainClass;
+    }
+
+    public BenchmarkSettings setMainClass(Class<?> mainClass) {
+        this.mainClass = mainClass;
+        return this;
+    }
 
     public List<String> getTracedPackages() {
         return tracedPackages;

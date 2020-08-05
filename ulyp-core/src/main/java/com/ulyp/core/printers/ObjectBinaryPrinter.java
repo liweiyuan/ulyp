@@ -8,7 +8,6 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public abstract class ObjectBinaryPrinter {
 
-    // todo change to long
     private final long id;
 
     protected ObjectBinaryPrinter(int id) {

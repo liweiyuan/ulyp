@@ -40,6 +40,7 @@ public class UIServerStub implements AutoCloseable {
                             responseObserver.onCompleted();
                         }
                     })
+                    .maxInboundMessageSize(1324 * 1024 * 1024)
                     .executor(executorService)
                     .build()
                     .start();

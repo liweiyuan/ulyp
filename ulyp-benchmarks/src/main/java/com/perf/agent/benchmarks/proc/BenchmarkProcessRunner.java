@@ -28,12 +28,16 @@ public class BenchmarkProcessRunner {
             String javaBinary = Paths.get(javaHome, "bin", "java").toString();
 
             List<String> processArgs = new ArrayList<>();
-            processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
+            if (!settings.getTracedPackages().isEmpty()) {
+                processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
+            }
             processArgs.add("-cp");
             processArgs.add(classPath);
-            processArgs.add("-Dulyp.ui-host=localhost");
-            processArgs.add("-Dulyp.ui-port=" + settings.getUiListenPort());
-            processArgs.add(settings.getClassToTrace().getName());
+            if (!settings.getTracedPackages().isEmpty()) {
+                processArgs.add("-Dulyp.ui-host=localhost");
+                processArgs.add("-Dulyp.ui-port=" + settings.getUiListenPort());
+            }
+            processArgs.add(settings.getMainClass().getName());
 
             ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))
                     .withTimeoutMillis(TimeUnit.MINUTES.toMillis(3))

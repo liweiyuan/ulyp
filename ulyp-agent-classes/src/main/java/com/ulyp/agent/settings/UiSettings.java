@@ -17,8 +17,8 @@ public class UiSettings {
             new NamedThreadFactory("Settings-Updater", true)
     );
 
-    private final SettingsProperty<List<String>> tracePackages = new SettingsProperty<>("Trace packages list");
-    private final SettingsProperty<List<String>> excludeFromTracePackages = new SettingsProperty<>("Exclude from trace packages list");
+    private final SettingsProperty<List<String>> instrumentedPackages = new SettingsProperty<>("Instrumented packages");
+    private final SettingsProperty<List<String>> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from trace packages list");
     private final SettingsProperty<TracingStartMethodList> tracingStartMethod = new SettingsProperty<>("Tracing start methods list");
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
@@ -48,27 +48,27 @@ public class UiSettings {
         // TODO protobuf should probably have a list of strings
         // TODO PackagesList class?
         if (settings.getExcludedFromTracePackages().isEmpty()) {
-            excludeFromTracePackages.setValue(Collections.emptyList());
+            excludeFromInstrumentationPackages.setValue(Collections.emptyList());
         } else {
-            excludeFromTracePackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
+            excludeFromInstrumentationPackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
         }
 
         // TODO protobuf should probably have a list of strings
         if (settings.getTracePackages().isEmpty()) {
-            tracePackages.setValue(Collections.emptyList());
+            instrumentedPackages.setValue(Collections.emptyList());
         } else {
-            tracePackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
+            instrumentedPackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
         }
         // TODO protobuf should probably have a list of strings
         tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
     }
 
-    public SettingsProperty<List<String>> getExcludeFromTracePackages() {
-        return excludeFromTracePackages;
+    public SettingsProperty<List<String>> getExcludeFromInstrumentationPackages() {
+        return excludeFromInstrumentationPackages;
     }
 
-    public SettingsProperty<List<String>> getTracePackages() {
-        return tracePackages;
+    public SettingsProperty<List<String>> getInstrumentedPackages() {
+        return instrumentedPackages;
     }
 
     public SettingsProperty<TracingStartMethodList> getTracingStartMethod() {

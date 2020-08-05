@@ -48,6 +48,8 @@ public final class UploadingTransport {
 
     public void uploadAsync(CallTraceLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
 
+        long endLifetimeEpochMillis = System.currentTimeMillis();
+
         uploadExecutor.submit(
                 () -> {
                     TCallTraceLog log = TCallTraceLog.newBuilder()
@@ -73,7 +75,7 @@ public final class UploadingTransport {
                             .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
                             .setMainClassName(processInfo.getMainClassName())
                             .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
-                            .setLifetimeMillis(System.currentTimeMillis() - traceLog.getEpochMillisCreatedTime());
+                            .setLifetimeMillis(endLifetimeEpochMillis - traceLog.getEpochMillisCreatedTime());
 
                     long id = traceLog.getId();
                     ListenableFuture<TCallTraceLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());

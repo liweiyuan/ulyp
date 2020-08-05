@@ -2,37 +2,47 @@ package com.perf.agent.benchmarks;
 
 import org.HdrHistogram.Histogram;
 
-import java.util.concurrent.TimeUnit;
-
 public class RunResult {
 
     private final Class<?> benchmarkClazz;
-    private final String profileName;
-    private final double mean;
-    private final double stdDev;
-    private final TimeUnit timeUnit;
+    private final BenchmarkProfile profile;
+    private final Histogram procTimeHistogram;
+    private final Histogram traceTimeHistogram;
+    private final Histogram traceCountHistogram;
 
-    public RunResult(Class<?> benchmarkClazz, String profileName, Histogram histogram, TimeUnit timeUnit) {
+    public RunResult(
+            Class<?> benchmarkClazz,
+            BenchmarkProfile profile,
+            Histogram procTimeHistogram,
+            Histogram traceTimeHistogram,
+            Histogram traceCountHistogram) {
         this.benchmarkClazz = benchmarkClazz;
-        this.profileName = profileName;
-        this.mean = histogram.getMean();
-        this.stdDev = histogram.getStdDeviation();
-        this.timeUnit = timeUnit;
+        this.profile = profile;
+        this.procTimeHistogram = procTimeHistogram;
+        this.traceTimeHistogram = traceTimeHistogram;
+        this.traceCountHistogram = traceCountHistogram;
     }
 
     public void print() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(benchmarkClazz);
+        builder.append(benchmarkClazz.getSimpleName());
         builder.append(": ");
-        builder.append(profileName);
-        padTo(builder, 90);
+        padTo(builder, 30);
+        builder.append(profile);
+        padTo(builder, 70);
 
-        builder.append(String.format("%.0f", mean))
+        builder.append(String.format("%.2f", procTimeHistogram.getMean() / 1000.0))
                 .append(" ± ")
-                .append(String.format("%.0f", stdDev))
+                .append(String.format("%.3f", procTimeHistogram.getStdDeviation() / 1000.0))
                 .append("   ")
-                .append(timeUnit);
+                .append(String.format("%.2f", traceTimeHistogram.getMean() / 1000.0))
+                .append(" ± ")
+                .append(String.format("%.3f", traceTimeHistogram.getStdDeviation() / 1000.0))
+                .append("   ")
+                .append("sec")
+                .append(" ")
+                .append(traceCountHistogram.getMean());
 
         System.out.println(builder);
     }

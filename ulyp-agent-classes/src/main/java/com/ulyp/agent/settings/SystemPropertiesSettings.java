@@ -64,6 +64,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String START_METHOD_PROPERTY = "ulyp.start-method";
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
+    public static final String UI_TURN_OFF = "ulyp.ui-off";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
     public static final String MAX_CALL_PER_METHOD = "ulyp.max-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";

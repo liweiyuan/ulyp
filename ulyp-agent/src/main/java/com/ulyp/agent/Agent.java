@@ -23,21 +23,21 @@ public class Agent {
         UiSettings uiSettings = instance.getUiSettings();
         SystemPropertiesSettings systemPropertiesSettings = SystemPropertiesSettings.load();
 
-        List<String> tracePackages = uiSettings.getTracePackages().getValue();
+        List<String> instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
         // TODO handle properly this shit
-        List<String> excludedPackages = uiSettings.getExcludeFromTracePackages().getValue() != null ?
-                new ArrayList<>(uiSettings.getExcludeFromTracePackages().getValue())
+        List<String> excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue() != null ?
+                new ArrayList<>(uiSettings.getExcludeFromInstrumentationPackages().getValue())
                 : new ArrayList<>();
         TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)
         System.out.println("Starting ULYP agent, logging level = " + logLevel +
-                ", packages = " + uiSettings.getTracePackages() +
+                ", packages = " + uiSettings.getInstrumentedPackages() +
                 ", tracing start methods = " + uiSettings.getTracingStartMethod());
 //
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
-        for (String tracePackage : tracePackages) {
+        for (String tracePackage : instrumentedPackages) {
             if (tracingMatcher == null) {
                 tracingMatcher = ElementMatchers.nameStartsWith(tracePackage);
             } else {
