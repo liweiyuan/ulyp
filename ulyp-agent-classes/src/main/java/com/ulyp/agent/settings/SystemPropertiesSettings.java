@@ -13,14 +13,13 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public static SystemPropertiesSettings load() {
 
-        // TODO maybe validate a bit
-        List<String> packages = new ArrayList<>(Arrays.asList(System.getProperty(PACKAGES_PROPERTY, "").split(",")));
+        List<String> packages = new ArrayList<>(CommaSeparatedList.parse(System.getProperty(PACKAGES_PROPERTY, "")));
 
         String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "");
-        List<String> excludedPackages = new ArrayList<>(Arrays.asList(excludedPackagesStr.split(",")));
+        List<String> excludedPackages = CommaSeparatedList.parse(excludedPackagesStr);
 
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY, "");
-        TracingStartMethodList tracingStartMethods = new TracingStartMethodList(Arrays.stream(tracedMethods.split(",")).collect(Collectors.toList()));;
+        TracingStartMethodList tracingStartMethods = new TracingStartMethodList(CommaSeparatedList.parse(tracedMethods));
 
         String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
