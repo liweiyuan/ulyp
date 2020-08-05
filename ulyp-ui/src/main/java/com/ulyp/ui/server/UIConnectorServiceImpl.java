@@ -5,6 +5,8 @@ import com.ulyp.ui.FxController;
 import io.grpc.stub.StreamObserver;
 import javafx.scene.control.Slider;
 
+import java.util.Arrays;
+
 public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase {
 
     private final FxController viewController;
@@ -26,8 +28,12 @@ public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase 
         SettingsResponse.Builder response = SettingsResponse.newBuilder();
         response.setMayStartTracing(viewController.getFxTracingSwitch().isSelected());
 
-        response.setTracePackages(viewController.getTracePackagesTextField().getText());
-        response.setExcludedFromTracePackages(viewController.getExcludeTracePackagesTextField().getText());
+        response.addAllInstrumentedPackages(
+                Arrays.asList(viewController.getInstrumentedPackagesTextField().getText().split(","))
+        );
+        response.addAllExcludedFromInstrumentationPackages(
+                Arrays.asList(viewController.getExcludedFromInstrumentationPackagesTextField().getText().split(","))
+        );
         response.setTraceStartMethod(viewController.getStartMethodTextField().getText());
 
         // turned off now

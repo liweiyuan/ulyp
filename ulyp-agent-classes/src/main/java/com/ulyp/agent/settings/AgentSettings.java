@@ -13,7 +13,7 @@ public interface AgentSettings {
 
     int getMaxCallsPerMethod();
 
-    List<String> getPackages();
+    List<String> getInstrumentatedPackages();
 
-    List<String> getExcludePackages();
+    List<String> getExcludedFromInstrumentationPackages();
 }

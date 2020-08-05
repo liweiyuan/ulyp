@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Arrays;
 
 public class H2Test extends AbstractInstrumentationTest {
 
@@ -40,7 +41,7 @@ public class H2Test extends AbstractInstrumentationTest {
     public void testAtomicIntegerSum() {
 
         CallTraceTree tree = executeClass(new TestSettingsBuilder()
-                .setPackages("com.test,org.h2")
+                .setInstrumentedPackages(Arrays.asList("com.test", "org.h2"))
                 .setMainClassName(H2TestRun.class)
                 .setMethodToTrace("main"));
 

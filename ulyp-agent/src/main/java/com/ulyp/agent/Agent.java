@@ -37,11 +37,11 @@ public class Agent {
 //
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
-        for (String tracePackage : instrumentedPackages) {
+        for (String packageToInstrument : instrumentedPackages) {
             if (tracingMatcher == null) {
-                tracingMatcher = ElementMatchers.nameStartsWith(tracePackage);
+                tracingMatcher = ElementMatchers.nameStartsWith(packageToInstrument);
             } else {
-                tracingMatcher = tracingMatcher.or(ElementMatchers.nameStartsWith(tracePackage));
+                tracingMatcher = tracingMatcher.or(ElementMatchers.nameStartsWith(packageToInstrument));
             }
         }
 

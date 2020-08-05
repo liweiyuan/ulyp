@@ -45,20 +45,8 @@ public class UiSettings {
         mayStartTracing.setValue(settings.getMayStartTracing());
         traceCollections.setValue(settings.getTraceCollections());
 
-        // TODO protobuf should probably have a list of strings
-        // TODO PackagesList class?
-        if (settings.getExcludedFromTracePackages().isEmpty()) {
-            excludeFromInstrumentationPackages.setValue(Collections.emptyList());
-        } else {
-            excludeFromInstrumentationPackages.setValue(Arrays.asList(settings.getExcludedFromTracePackages().split(",")));
-        }
-
-        // TODO protobuf should probably have a list of strings
-        if (settings.getTracePackages().isEmpty()) {
-            instrumentedPackages.setValue(Collections.emptyList());
-        } else {
-            instrumentedPackages.setValue(Arrays.asList(settings.getTracePackages().split(",")));
-        }
+        excludeFromInstrumentationPackages.setValue(settings.getExcludedFromInstrumentationPackagesList());
+        instrumentedPackages.setValue(settings.getInstrumentedPackagesList());
         // TODO protobuf should probably have a list of strings
         tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
     }

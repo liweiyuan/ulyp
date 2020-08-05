@@ -11,7 +11,6 @@ import com.ulyp.core.CallGraphDao;
 import com.ulyp.core.heap.HeapCallGraphDatabase;
 import com.ulyp.transport.TCallTraceLogUploadRequest;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,9 +35,9 @@ public class FxController implements Initializable {
     @FXML
     public TabPane processTabPane;
     @FXML
-    public TextField tracePackagesTextField;
+    public TextField instrumentedPackagesTextField;
     @FXML
-    public TextField excludeTracePackagesTextField;
+    public TextField excludedFromInstrumentationPackagesTextField;
     @FXML
     public TextField startMethodTextField;
     @FXML
@@ -116,12 +115,12 @@ public class FxController implements Initializable {
         }
     }
 
-    public TextField getExcludeTracePackagesTextField() {
-        return excludeTracePackagesTextField;
+    public TextField getExcludedFromInstrumentationPackagesTextField() {
+        return excludedFromInstrumentationPackagesTextField;
     }
 
-    public TextField getTracePackagesTextField() {
-        return tracePackagesTextField;
+    public TextField getInstrumentedPackagesTextField() {
+        return instrumentedPackagesTextField;
     }
 
     public TextField getStartMethodTextField() {

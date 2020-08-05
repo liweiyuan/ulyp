@@ -6,14 +6,17 @@ import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.transport.UiAddress;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class TestSettingsBuilder {
     private Class<?> mainClassName;
     private String methodToTrace;
     public String hostName;
     public int port;
-    private String packages;
+    private List<String> instrumentedPackages = new ArrayList<>();
     private String excludedPackages;
     private int minTraceCount = 1;
     private int maxDepth = Integer.MAX_VALUE;
@@ -33,8 +36,8 @@ public class TestSettingsBuilder {
         return methodToTrace;
     }
 
-    public String getPackages() {
-        return packages;
+    public List<String> getInstrumentedPackages() {
+        return instrumentedPackages;
     }
 
     public TestSettingsBuilder setTraceCollections(boolean traceCollections) {
@@ -42,8 +45,8 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public TestSettingsBuilder setPackages(String packages) {
-        this.packages = packages;
+    public TestSettingsBuilder setInstrumentedPackages(List<String> instrumentedPackages) {
+        this.instrumentedPackages = instrumentedPackages;
         return this;
     }
 
@@ -68,8 +71,8 @@ public class TestSettingsBuilder {
 
     public TestSettingsBuilder setMainClassName(Class<?> mainClassName) {
         this.mainClassName = mainClassName;
-        if (packages == null) {
-            packages = mainClassName.getPackage().getName();
+        if (instrumentedPackages.isEmpty()) {
+            instrumentedPackages = Collections.singletonList(mainClassName.getPackage().getName());
         }
         return this;
     }
@@ -92,7 +95,7 @@ public class TestSettingsBuilder {
     public SystemPropertiesSettings build() {
         return new SystemPropertiesSettings(
                 new UiAddress(hostName, port),
-                Collections.singletonList(packages),
+                instrumentedPackages,
                 StringUtils.isEmpty(excludedPackages) ? Collections.singletonList(excludedPackages) : Collections.emptyList(),
                 new TracingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
                 maxDepth,

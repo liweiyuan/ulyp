@@ -38,7 +38,7 @@
                     <Tooltip text="If this button is pressed, then any instrumented app connected to the UI can start tracing which is a default behavior. Deactivating tracing could be useful for large apps where tracing is unwanted during the long startup." />
                 </tooltip>
             </ToggleButton>
-         <TextField fx:id="tracePackagesTextField" prefWidth="200.0" promptText="Trace packages...">
+         <TextField fx:id="instrumentedPackagesTextField" prefWidth="200.0" promptText="Packages to instrument...">
             <HBox.margin>
                <Insets />
             </HBox.margin>
@@ -46,7 +46,7 @@
                  <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented." />
              </tooltip>
          </TextField>
-         <TextField fx:id="excludeTracePackagesTextField" prefWidth="200.0" promptText="Exclude from trace packages...">
+         <TextField fx:id="excludedFromInstrumentationPackagesTextField" prefWidth="200.0" promptText="Exclude from instrumentation packages...">
             <tooltip>
                <Tooltip text="Comma separated list of packages which should be both instrumented and traced. Leaving this empty will allow for all available classes to be instrumented." />
             </tooltip>

@@ -6,7 +6,6 @@ import com.ulyp.agent.transport.UploadingTransport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,33 +13,14 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public static SystemPropertiesSettings load() {
 
-        String packagesToInstrument = System.getProperty(PACKAGES_PROPERTY);
-        List<String> packages;
-        if (packagesToInstrument == null) {
-            packages = Collections.emptyList();
-        } else {
-            packages = new ArrayList<>(Arrays.asList(packagesToInstrument.split(",")));
-        }
+        // TODO maybe validate a bit
+        List<String> packages = new ArrayList<>(Arrays.asList(System.getProperty(PACKAGES_PROPERTY, "").split(",")));
 
-        String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY);
-        List<String> excludedPackages;
+        String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "");
+        List<String> excludedPackages = new ArrayList<>(Arrays.asList(excludedPackagesStr.split(",")));
 
-        // TODO remove that if
-        if (excludedPackagesStr != null) {
-            excludedPackages = new ArrayList<>(Arrays.asList(excludedPackagesStr.split(",")));
-        } else {
-            excludedPackages = Collections.emptyList();
-        }
-
-        String tracedMethods = System.getProperty(START_METHOD_PROPERTY);
-        TracingStartMethodList tracingStartMethods;
-
-        // TODO remove that if
-        if (tracedMethods != null) {
-            tracingStartMethods = new TracingStartMethodList(Arrays.stream(tracedMethods.split(",")).collect(Collectors.toList()));
-        } else {
-            tracingStartMethods = new TracingStartMethodList(Collections.emptyList());
-        }
+        String tracedMethods = System.getProperty(START_METHOD_PROPERTY, "");
+        TracingStartMethodList tracingStartMethods = new TracingStartMethodList(Arrays.stream(tracedMethods.split(",")).collect(Collectors.toList()));;
 
         String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
         int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
@@ -70,8 +50,8 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
     private UiAddress uiAddress;
-    private final List<String> packages;
-    private final List<String> excludePackages;
+    private final List<String> instrumentatedPackages;
+    private final List<String> excludedFromInstrumentationPackages;
     private final TracingStartMethodList startTracingMethods;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
@@ -79,22 +59,21 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public SystemPropertiesSettings(
             UiAddress uiAddress,
-            List<String> packages,
-            List<String> excludePackages,
+            List<String> instrumentedPackages,
+            List<String> excludedFromInstrumentationPackages,
             TracingStartMethodList tracingStartMethodList,
             int maxTreeDepth,
             int maxCallsPerMethod,
             int minTraceCount)
     {
         this.uiAddress = uiAddress;
-        this.packages = packages;
-        this.excludePackages = excludePackages;
+        this.instrumentatedPackages = instrumentedPackages;
+        this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
         this.startTracingMethods = tracingStartMethodList;
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
     }
-
 
     public UiAddress getUiAddress() {
         return uiAddress;
@@ -112,20 +91,20 @@ public class SystemPropertiesSettings implements AgentSettings {
         return maxCallsPerMethod;
     }
 
-    public List<String> getPackages() {
-        return packages;
+    public List<String> getInstrumentatedPackages() {
+        return instrumentatedPackages;
     }
 
-    public List<String> getExcludePackages() {
-        return excludePackages;
+    public List<String> getExcludedFromInstrumentationPackages() {
+        return excludedFromInstrumentationPackages;
     }
 
     public List<String> toCmdJavaProps() {
         List<String> params = new ArrayList<>();
 
-        params.add("-D" + PACKAGES_PROPERTY + "=" + String.join(",", packages));
-        if (excludePackages.isEmpty()) {
-            params.add("-D" + EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludePackages));
+        params.add("-D" + PACKAGES_PROPERTY + "=" + String.join(",", instrumentatedPackages));
+        if (excludedFromInstrumentationPackages.isEmpty()) {
+            params.add("-D" + EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludedFromInstrumentationPackages));
         }
 
         params.add("-D" + START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
@@ -141,8 +120,8 @@ public class SystemPropertiesSettings implements AgentSettings {
     public String toString() {
         return "Settings{" +
                 "uiAddress=" + uiAddress +
-                ", packages=" + packages +
-                ", excludePackages=" + excludePackages +
+                ", packages=" + instrumentatedPackages +
+                ", excludePackages=" + excludedFromInstrumentationPackages +
                 ", startTracingMethods=" + startTracingMethods +
                 ", maxTreeDepth=" + maxTreeDepth +
                 ", maxCallsPerMethod=" + maxCallsPerMethod +
