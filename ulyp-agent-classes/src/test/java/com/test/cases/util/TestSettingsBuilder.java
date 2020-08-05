@@ -12,12 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class TestSettingsBuilder {
+    public TestSettingsBuilder set;
     private Class<?> mainClassName;
     private String methodToTrace;
     public String hostName;
     public int port;
     private List<String> instrumentedPackages = new ArrayList<>();
-    private String excludedPackages;
+    private List<String> excludedFromInstrumentationPackages = new ArrayList<>();
     private int minTraceCount = 1;
     private int maxDepth = Integer.MAX_VALUE;
     private int maxCallsPerMethod = Integer.MAX_VALUE;
@@ -92,11 +93,20 @@ public class TestSettingsBuilder {
         return this;
     }
 
+    public List<String> getExcludedFromInstrumentationPackages() {
+        return excludedFromInstrumentationPackages;
+    }
+
+    public TestSettingsBuilder setExcludedFromInstrumentationPackages(List<String> excludedFromInstrumentationPackages) {
+        this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
+        return this;
+    }
+
     public SystemPropertiesSettings build() {
         return new SystemPropertiesSettings(
                 new UiAddress(hostName, port),
                 instrumentedPackages,
-                StringUtils.isEmpty(excludedPackages) ? Collections.singletonList(excludedPackages) : Collections.emptyList(),
+                excludedFromInstrumentationPackages,
                 new TracingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
                 maxDepth,
                 maxCallsPerMethod,
