@@ -19,7 +19,7 @@ message SettingsResponse {
     bool traceCollections = 3;
     repeated string instrumentedPackages = 4;
     repeated string excludedFromInstrumentationPackages = 6;
-    string traceStartMethod = 5;
+    repeated string traceStartMethods = 5;
 }
 
 message SettingsRequest {

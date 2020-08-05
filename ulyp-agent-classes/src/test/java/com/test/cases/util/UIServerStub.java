@@ -26,7 +26,7 @@ public class UIServerStub implements AutoCloseable {
                                     .setMayStartTracing(true)
                                     .setShouldTraceIdentityHashCode(false)
                                     .setTraceCollections(settings.getTraceCollections())
-                                    .setTraceStartMethod(new MethodMatcher(settings.getMainClassName().getSimpleName(), settings.getMethodToTrace()).toString())
+                                    .addTraceStartMethods(new MethodMatcher(settings.getMainClassName().getSimpleName(), settings.getMethodToTrace()).toString())
                                     .addAllInstrumentedPackages(settings.getInstrumentedPackages())
                                     .build());
                             responseObserver.onCompleted();

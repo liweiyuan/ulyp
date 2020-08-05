@@ -47,8 +47,7 @@ public class UiSettings {
 
         excludeFromInstrumentationPackages.setValue(settings.getExcludedFromInstrumentationPackagesList());
         instrumentedPackages.setValue(settings.getInstrumentedPackagesList());
-        // TODO protobuf should probably have a list of strings
-        tracingStartMethod.setValue(new TracingStartMethodList(Arrays.asList(settings.getTraceStartMethod().split(","))));
+        tracingStartMethod.setValue(new TracingStartMethodList(settings.getTraceStartMethodsList()));
     }
 
     public SettingsProperty<List<String>> getExcludeFromInstrumentationPackages() {

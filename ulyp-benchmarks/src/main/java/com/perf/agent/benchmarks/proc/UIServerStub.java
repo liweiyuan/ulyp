@@ -30,7 +30,7 @@ public class UIServerStub implements AutoCloseable {
                                     .addAllInstrumentedPackages(settings.getTracedPackages());
 
                             if (!Strings.isNullOrEmpty(settings.getMethodToTrace()) && settings.getClassToTrace() != null) {
-                                builder = builder.setTraceStartMethod(settings.getClassToTrace().getSimpleName() + "." + settings.getMethodToTrace());
+                                builder = builder.addTraceStartMethods(settings.getClassToTrace().getSimpleName() + "." + settings.getMethodToTrace());
                             }
 
                             responseObserver.onNext(builder.build());

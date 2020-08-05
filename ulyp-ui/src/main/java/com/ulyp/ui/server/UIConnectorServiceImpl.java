@@ -1,5 +1,6 @@
 package com.ulyp.ui.server;
 
+import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.transport.*;
 import com.ulyp.ui.FxController;
 import io.grpc.stub.StreamObserver;
@@ -34,7 +35,7 @@ public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase 
         response.addAllExcludedFromInstrumentationPackages(
                 Arrays.asList(viewController.getExcludedFromInstrumentationPackagesTextField().getText().split(","))
         );
-        response.setTraceStartMethod(viewController.getStartMethodTextField().getText());
+        response.addAllTraceStartMethods(CommaSeparatedList.parse(viewController.getStartMethodTextField().getText()));
 
         // turned off now
         response.setShouldTraceIdentityHashCode(false);
