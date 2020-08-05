@@ -33,42 +33,6 @@ public class TracingStartMethodList {
         return methods.isEmpty() || methods.stream().anyMatch(matcher -> matcher.matches(description));
     }
 
-//    private boolean methodMatches(MethodRepresentation description) {
-//        try {
-//            if (classMatches(description.getDeclaringType().asGenericType(), description.getActualName())) {
-//                return true;
-//            }
-//
-//            return hasSuperclassThatMatches(description.getDeclaringType().getSuperClass(), description.getActualName());
-//        } catch (Exception e) {
-//            System.err.println("ERROR while checking if should start profiling: " + e.getMessage());
-//            return false;
-//        }
-//    }
-//
-//    private boolean classMatches(TypeDescription.Generic clazzType, String methodName) {
-//        for (MethodMatcher exec : methods) {
-//            if (exec.matches(clazzType, methodName)) {
-//                return true;
-//            }
-//        }
-//        for (TypeDescription.Generic ctInterface : clazzType.getInterfaces()) {
-//            if (classMatches(ctInterface, methodName)) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
-//
-//    private boolean hasSuperclassThatMatches(TypeDescription.Generic clazzType, String methodName) {
-//        if(clazzType == null || clazzType.getTypeName().equals("java.lang.Object")) {
-//            return false;
-//        }
-//
-//        return classMatches(clazzType, methodName) || hasSuperclassThatMatches(clazzType.getSuperClass(), methodName);
-//    }
-
     public Stream<MethodMatcher> stream() {
         return methods.stream();
     }
