@@ -1,10 +1,14 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.MethodMatcher;
+import com.ulyp.agent.transport.DisconnectedTransport;
+import com.ulyp.agent.transport.GrpcUploadingTransport;
 import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UploadingTransport;
 import com.ulyp.core.util.CommaSeparatedList;
+import com.ulyp.transport.SettingsResponse;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,14 +25,22 @@ public class SystemPropertiesSettings implements AgentSettings {
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY, "");
         TracingStartMethodList tracingStartMethods = new TracingStartMethodList(CommaSeparatedList.parse(tracedMethods));
 
-        String uiHost = System.getProperty(UI_HOST_PROPERTY, UploadingTransport.DEFAULT_ADDRESS.hostName);
-        int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(UploadingTransport.DEFAULT_ADDRESS.port)));
+        UiAddress uiAddress;
+        boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
+        if (uiEnabled) {
+            // TODO this looks stupid
+            String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUploadingTransport.DEFAULT_ADDRESS.hostName);
+            int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUploadingTransport.DEFAULT_ADDRESS.port)));
+            uiAddress = new UiAddress(uiHost, uiPort);
+        } else {
+            uiAddress = null;
+        }
 
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
         int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
         return new SystemPropertiesSettings(
-                new UiAddress(uiHost, uiPort),
+                uiAddress,
                 packages,
                 excludedPackages,
                 tracingStartMethods,
@@ -43,12 +55,13 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String START_METHOD_PROPERTY = "ulyp.start-method";
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
-    public static final String UI_TURN_OFF = "ulyp.ui-off";
+    public static final String UI_ENABLED = "ulyp.ui-enabled";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
     public static final String MAX_CALL_PER_METHOD = "ulyp.max-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
-    private UiAddress uiAddress;
+    @Nullable
+    private final UiAddress uiAddress;
     private final List<String> instrumentatedPackages;
     private final List<String> excludedFromInstrumentationPackages;
     private final TracingStartMethodList startTracingMethods;
@@ -57,7 +70,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     private final int minTraceCount;
 
     public SystemPropertiesSettings(
-            UiAddress uiAddress,
+            @Nullable UiAddress uiAddress,
             List<String> instrumentedPackages,
             List<String> excludedFromInstrumentationPackages,
             TracingStartMethodList tracingStartMethodList,
@@ -72,10 +85,6 @@ public class SystemPropertiesSettings implements AgentSettings {
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
-    }
-
-    public UiAddress getUiAddress() {
-        return uiAddress;
     }
 
     public int getMaxTreeDepth() {
@@ -107,12 +116,32 @@ public class SystemPropertiesSettings implements AgentSettings {
         }
 
         params.add("-D" + START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
-        params.add("-D" + UI_PORT_PROPERTY + "=" + uiAddress.port);
+        if (uiAddress != null) {
+
+        } else {
+            params.add("-D" + UI_PORT_PROPERTY + "=" + uiAddress.port);
+        }
         params.add("-D" + MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
         params.add("-D" + MIN_TRACE_COUNT + "=" + minTraceCount);
         params.add("-D" + MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
 
         return params;
+    }
+
+    public UploadingTransport buildUiTransport() {
+        if (uiAddress != null) {
+            return new GrpcUploadingTransport(uiAddress);
+        } else {
+            return new DisconnectedTransport(
+                    SettingsResponse.newBuilder()
+                            .addAllInstrumentedPackages(instrumentatedPackages)
+                            .addAllExcludedFromInstrumentationPackages(excludedFromInstrumentationPackages)
+                            .addAllTraceStartMethods(startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
+                            .setMayStartTracing(true)
+                            .setTraceCollections(false)
+                            .build()
+            );
+        }
     }
 
     @Override

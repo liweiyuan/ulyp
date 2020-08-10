@@ -25,7 +25,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldTraceMainMethod() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(MainMethodCase.class)
                         .setMethodToTrace("main")
@@ -86,7 +86,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldTraceStaticMethodCall() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("staticMethod")
@@ -100,7 +100,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForStringReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnStringWithEmptyParams")
@@ -118,7 +118,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForNullReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnNullObjectWithEmptyParams")
@@ -137,7 +137,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnIntWithEmptyParams")
@@ -155,7 +155,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTestObjectReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnTestObjectWithEmptyParams")
@@ -174,7 +174,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidIfMethodThrowsException() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("throwsRuntimeException")
@@ -212,7 +212,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTwoMethodCalls() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SeveralMethodsTestCases.class)
                         .setMethodToTrace("callTwoMethods")
@@ -249,7 +249,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntArgument() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("consumesInt")

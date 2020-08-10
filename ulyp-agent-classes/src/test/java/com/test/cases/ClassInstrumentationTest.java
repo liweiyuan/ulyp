@@ -28,7 +28,7 @@ public class ClassInstrumentationTest extends AbstractInstrumentationTest {
     @Test
     public void testClassTypePassing() {
 
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(PassClazz.class)
                         .setMethodToTrace("pass")

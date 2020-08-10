@@ -26,7 +26,7 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void testFibonacciMethodCall() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(RecursionTestCases.class)
                         .setMethodToTrace("fibonacci")

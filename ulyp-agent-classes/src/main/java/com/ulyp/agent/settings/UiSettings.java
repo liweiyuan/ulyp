@@ -48,6 +48,7 @@ public class UiSettings {
         excludeFromInstrumentationPackages.setValue(settings.getExcludedFromInstrumentationPackagesList());
         instrumentedPackages.setValue(settings.getInstrumentedPackagesList());
         tracingStartMethod.setValue(new TracingStartMethodList(settings.getTraceStartMethodsList()));
+
     }
 
     public SettingsProperty<List<String>> getExcludeFromInstrumentationPackages() {

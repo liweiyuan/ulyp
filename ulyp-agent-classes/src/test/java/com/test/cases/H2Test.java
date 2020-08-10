@@ -40,7 +40,7 @@ public class H2Test extends AbstractInstrumentationTest {
     @Test
     public void testAtomicIntegerSum() {
 
-        CallTraceTree tree = executeClass(new TestSettingsBuilder()
+        CallTraceTree tree = runSubprocessWithUi(new TestSettingsBuilder()
                 .setInstrumentedPackages(Arrays.asList("com.test", "org.h2"))
                 .setMainClassName(H2TestRun.class)
                 .setMethodToTrace("main"));

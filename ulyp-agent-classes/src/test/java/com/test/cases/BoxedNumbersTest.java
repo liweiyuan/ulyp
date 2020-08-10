@@ -41,7 +41,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testPrimitiveIntSum() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                 .setMethodToTrace("primitiveIntSum")
         );
@@ -54,7 +54,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testBoxedIntSum() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("boxedIntSum")
         );
@@ -67,7 +67,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testPrimitiveDoubleSum() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("primitiveDoubleSum")
         );
@@ -80,7 +80,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testBoxedDoubleSum() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("boxedDoubleSum")
         );

@@ -63,7 +63,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
     @Test
     public void shouldPrintEnumNames() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassTestCases.class)
                         .setMethodToTrace("returnInnerClass")
@@ -76,7 +76,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
     @Test
     public void shouldNotFailIfToStringCallsTracedMethod() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassTestCases.class)
                         .setMethodToTrace("returnClassThatCallsSelfInToString")

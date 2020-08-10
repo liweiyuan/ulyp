@@ -14,11 +14,32 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class AbstractInstrumentationTest {
 
+    protected void runSubprocessAndExpectNotConnected(TestSettingsBuilder settings) {
+        settings.setUiEnabled(false);
+
+        int port = TestUtil.pickEmptyPort();
+        try (UIServerStub stub = new UIServerStub(settings, port)) {
+            TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));
+
+            try {
+                stub.get(5, TimeUnit.SECONDS);
+
+                Assert.fail("Got trace but expected that subprocess will not connect");
+            } catch (TimeoutException te) {
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("Could not capture trace log: " + e.getMessage());
+        }
+    }
+
     @NotNull
-    protected CallTraceTree executeClass(TestSettingsBuilder settings) {
+    protected CallTraceTree runSubprocessWithUi(TestSettingsBuilder settings) {
         int port = TestUtil.pickEmptyPort();
         try (UIServerStub stub = new UIServerStub(settings, port)) {
             TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));

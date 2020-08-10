@@ -30,8 +30,12 @@ public class TestUtil {
             processArgs.add("-cp");
             processArgs.add(classPath);
             processArgs.add("-D" + SystemPropertiesSettings.MAX_CALL_PER_METHOD + "=" + settingsBuilder.getMaxCallsPerMethod());
-            processArgs.add("-D" + SystemPropertiesSettings.UI_HOST_PROPERTY + "=localhost");
-            processArgs.add("-D" + SystemPropertiesSettings.UI_PORT_PROPERTY + "=" + settingsBuilder.port);
+            if (settingsBuilder.isUiEnabled()) {
+                processArgs.add("-D" + SystemPropertiesSettings.UI_HOST_PROPERTY + "=localhost");
+                processArgs.add("-D" + SystemPropertiesSettings.UI_PORT_PROPERTY + "=" + settingsBuilder.port);
+            } else {
+                processArgs.add("-D" + SystemPropertiesSettings.UI_ENABLED + "=false");
+            }
             processArgs.add(settingsBuilder.getMainClassName().getName());
 
             ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))

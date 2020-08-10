@@ -47,7 +47,7 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintEnumNames() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(EnumTestCases.class)
                         .setMethodToTrace("consumesMapAndEnums")

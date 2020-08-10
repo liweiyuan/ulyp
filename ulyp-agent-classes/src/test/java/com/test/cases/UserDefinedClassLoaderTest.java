@@ -52,7 +52,7 @@ public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
     @Test
     public void testUserDefinedClassLoader() {
 
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassLoaderTestCase.class)
                         .setMethodToTrace("runInOwnClassLoader")

@@ -18,7 +18,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldInstrumentAndTraceAllClasses() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
@@ -34,7 +34,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldExcludeInstrumentationPackage() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
@@ -56,7 +56,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldExcludeTwoPackages() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))

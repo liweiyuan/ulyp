@@ -63,7 +63,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldMake1000Calls() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("make1000CallsSep")
@@ -76,7 +76,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("make1000CallsLevel0")
@@ -91,7 +91,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty2() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("level0")

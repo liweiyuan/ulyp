@@ -57,7 +57,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintObjects() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects")
@@ -71,7 +71,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldChooseValidPrinterForJavaLangObjectAtRuntime() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects2")
@@ -86,7 +86,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldCallToStringIfPossible() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects3")
@@ -101,7 +101,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintNullArguments() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoNulls")

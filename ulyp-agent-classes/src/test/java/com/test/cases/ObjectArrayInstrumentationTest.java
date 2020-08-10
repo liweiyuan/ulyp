@@ -49,7 +49,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldProvideArgumentTypes() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptEmptyObjectArray")
@@ -62,7 +62,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void testUserDefinedEmptyArray() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptEmptyUserDefinedClassArray")
@@ -75,7 +75,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void testUserDefinedClassArrayWith3Elements() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptUserDefinedClassArrayWith3Elements")
@@ -88,7 +88,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void testUserDefinedClassArrayWith3ElementsWithArrayTrace() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setTraceCollections(true)
                         .setMainClassName(ObjectArrayTestCases.class)

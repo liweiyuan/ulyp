@@ -16,6 +16,7 @@ public class TestSettingsBuilder {
     private Class<?> mainClassName;
     private String methodToTrace;
     public String hostName;
+    private boolean uiEnabled = true;
     public int port;
     private List<String> instrumentedPackages = new ArrayList<>();
     private List<String> excludedFromInstrumentationPackages = new ArrayList<>();
@@ -24,6 +25,14 @@ public class TestSettingsBuilder {
     private int maxCallsPerMethod = Integer.MAX_VALUE;
 
     private boolean traceCollections = false;
+
+    public boolean isUiEnabled() {
+        return uiEnabled;
+    }
+
+    public void setUiEnabled(boolean uiEnabled) {
+        this.uiEnabled = uiEnabled;
+    }
 
     public Class<?> getMainClassName() {
         return mainClassName;

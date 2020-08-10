@@ -25,7 +25,7 @@ public class AgentContext {
     private AgentContext() {
         this.sysPropsSettings = SystemPropertiesSettings.load();
         this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
-        this.transport = new UploadingTransport(sysPropsSettings.getUiAddress());
+        this.transport = sysPropsSettings.buildUiTransport();
         this.uiSettings = new UiSettings(transport);
 
         Thread shutdown = new Thread(

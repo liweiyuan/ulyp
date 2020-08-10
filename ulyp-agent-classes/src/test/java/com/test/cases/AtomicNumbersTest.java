@@ -27,7 +27,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     @Test
     public void testAtomicIntegerSum() {
 
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicIntegerSum.class)
                         .setMethodToTrace("intSum")
@@ -53,7 +53,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     @Test
     public void testAtomicLongSum() {
 
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicLongSum.class)
                         .setMethodToTrace("longSum")

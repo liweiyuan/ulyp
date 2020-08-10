@@ -32,7 +32,7 @@ public class ClassDescriptionTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldProvideArgumentTypes() {
-        CallTraceTree tree = executeClass(
+        CallTraceTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(AtomicNumbersTestCases.class)
                         .setMethodToTrace("intSum")
         );
