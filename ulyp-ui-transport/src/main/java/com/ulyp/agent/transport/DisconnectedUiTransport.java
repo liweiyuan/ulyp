@@ -8,11 +8,11 @@ import com.ulyp.transport.SettingsResponse;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-public class DisconnectedTransport implements UiTransport {
+public class DisconnectedUiTransport implements UiTransport {
 
     private final SettingsResponse settings;
 
-    public DisconnectedTransport(SettingsResponse settings) {
+    public DisconnectedUiTransport(SettingsResponse settings) {
         this.settings = settings;
     }
 

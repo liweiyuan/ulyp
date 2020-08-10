@@ -1,7 +1,7 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.MethodMatcher;
-import com.ulyp.agent.transport.DisconnectedTransport;
+import com.ulyp.agent.transport.DisconnectedUiTransport;
 import com.ulyp.agent.transport.GrpcUiTransport;
 import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UiTransport;
@@ -132,7 +132,7 @@ public class SystemPropertiesSettings implements AgentSettings {
         if (uiAddress != null) {
             return new GrpcUiTransport(uiAddress);
         } else {
-            return new DisconnectedTransport(
+            return new DisconnectedUiTransport(
                     SettingsResponse.newBuilder()
                             .addAllInstrumentedPackages(instrumentatedPackages)
                             .addAllExcludedFromInstrumentationPackages(excludedFromInstrumentationPackages)
