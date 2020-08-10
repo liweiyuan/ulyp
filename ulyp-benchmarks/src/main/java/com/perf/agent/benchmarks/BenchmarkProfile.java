@@ -1,6 +1,5 @@
 package com.perf.agent.benchmarks;
 
-import com.google.common.base.Strings;
 import com.perf.agent.benchmarks.proc.BenchmarkEnv;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
@@ -8,7 +7,9 @@ import com.ulyp.transport.SettingsResponse;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class BenchmarkProfile {
 
@@ -39,7 +40,7 @@ public class BenchmarkProfile {
     }
 
     /**
-     * Only will be called if this has {@link BenchmarkProfile#uiEnabled} is set to true
+     * Only will be called if this has {@link BenchmarkProfile#uiEnabled} set to true
      * @return settings to send to subprocess back as a response to settings request
      */
     public SettingsResponse getSettingsFromUi() {
