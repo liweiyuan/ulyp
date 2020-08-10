@@ -3,11 +3,13 @@ package com.perf.agent.benchmarks;
 import com.perf.agent.benchmarks.proc.BenchmarkEnv;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
+import org.jetbrains.annotations.NotNull;
 
 public class BenchmarkProfileBuilder {
 
     private MethodMatcher tracedMethod;
-    private PackageList instrumentedPackages;
+    @NotNull
+    private PackageList instrumentedPackages = new PackageList();
     private boolean uiEnabled = true;
     private final int uiPort = BenchmarkEnv.pickFreePort();
 
@@ -16,7 +18,7 @@ public class BenchmarkProfileBuilder {
         return this;
     }
 
-    public BenchmarkProfileBuilder withInstrumentedPackages(PackageList instrumentedPackages) {
+    public BenchmarkProfileBuilder withInstrumentedPackages(@NotNull PackageList instrumentedPackages) {
         this.instrumentedPackages = instrumentedPackages;
         return this;
     }
