@@ -15,7 +15,7 @@ public class CommaSeparatedList {
         if (split.length == 1 && split[0].trim().isEmpty()) {
             return Collections.emptyList();
         } else {
-            return Arrays.asList(split).stream().map(String::trim).collect(Collectors.toList());
+            return Arrays.stream(split).map(String::trim).collect(Collectors.toList());
         }
     }
 }
