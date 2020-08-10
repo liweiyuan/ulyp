@@ -2,9 +2,9 @@ package com.ulyp.agent.settings;
 
 import com.ulyp.agent.MethodMatcher;
 import com.ulyp.agent.transport.DisconnectedTransport;
-import com.ulyp.agent.transport.GrpcUploadingTransport;
+import com.ulyp.agent.transport.GrpcUiTransport;
 import com.ulyp.agent.transport.UiAddress;
-import com.ulyp.agent.transport.UploadingTransport;
+import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.transport.SettingsResponse;
 
@@ -29,8 +29,8 @@ public class SystemPropertiesSettings implements AgentSettings {
         boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
         if (uiEnabled) {
             // TODO this looks stupid
-            String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUploadingTransport.DEFAULT_ADDRESS.hostName);
-            int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUploadingTransport.DEFAULT_ADDRESS.port)));
+            String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUiTransport.DEFAULT_ADDRESS.hostName);
+            int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUiTransport.DEFAULT_ADDRESS.port)));
             uiAddress = new UiAddress(uiHost, uiPort);
         } else {
             uiAddress = null;
@@ -128,9 +128,9 @@ public class SystemPropertiesSettings implements AgentSettings {
         return params;
     }
 
-    public UploadingTransport buildUiTransport() {
+    public UiTransport buildUiTransport() {
         if (uiAddress != null) {
-            return new GrpcUploadingTransport(uiAddress);
+            return new GrpcUiTransport(uiAddress);
         } else {
             return new DisconnectedTransport(
                     SettingsResponse.newBuilder()

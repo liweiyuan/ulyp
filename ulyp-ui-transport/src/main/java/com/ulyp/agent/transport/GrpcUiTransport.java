@@ -15,12 +15,12 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.*;
 
-public class GrpcUploadingTransport implements UploadingTransport {
+public class GrpcUiTransport implements UiTransport {
 
     public static final UiAddress DEFAULT_ADDRESS = new UiAddress("localhost", 13991);
 
     private final ManagedChannel channel;
-    private final UIConnectorGrpc.UIConnectorFutureStub uploadingServiceFutureStub;
+    private final UiTransportGrpc.UiTransportFutureStub uploadingServiceFutureStub;
 
     private final ExecutorService uploadExecutor = Executors.newFixedThreadPool(
             5,
@@ -32,12 +32,12 @@ public class GrpcUploadingTransport implements UploadingTransport {
     );
     private final Set<Long> traceLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    public GrpcUploadingTransport(UiAddress address) {
+    public GrpcUiTransport(UiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
                 .nameResolverFactory(new DnsNameResolverProvider())
                 .usePlaintext()
                 .build();
-        uploadingServiceFutureStub = UIConnectorGrpc
+        uploadingServiceFutureStub = UiTransportGrpc
                 .newFutureStub(channel)
                 .withExecutor(Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Connector", true)));
     }

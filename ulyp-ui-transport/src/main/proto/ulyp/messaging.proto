@@ -6,7 +6,7 @@ option java_outer_classname = "HelloWorldProto";
 
 package ulyp;
 
-service UIConnector {
+service UiTransport {
 
     rpc RequestSettings(SettingsRequest) returns (SettingsResponse) {}
 

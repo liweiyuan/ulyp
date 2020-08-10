@@ -8,7 +8,7 @@ import com.ulyp.transport.SettingsResponse;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-public class DisconnectedTransport implements UploadingTransport {
+public class DisconnectedTransport implements UiTransport {
 
     private final SettingsResponse settings;
 

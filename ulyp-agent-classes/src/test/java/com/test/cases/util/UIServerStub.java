@@ -18,7 +18,7 @@ public class UIServerStub implements AutoCloseable {
     public UIServerStub(TestSettingsBuilder settings, int port) {
         try {
             server = ServerBuilder.forPort(port)
-                    .addService(new UIConnectorGrpc.UIConnectorImplBase() {
+                    .addService(new UiTransportGrpc.UiTransportImplBase() {
                         @Override
                         public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
                             responseObserver.onNext(SettingsResponse

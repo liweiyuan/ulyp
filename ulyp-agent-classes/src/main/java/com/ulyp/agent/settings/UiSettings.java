@@ -1,12 +1,10 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.transport.NamedThreadFactory;
-import com.ulyp.agent.transport.UploadingTransport;
+import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -23,9 +21,9 @@ public class UiSettings {
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
 
-    public UiSettings(UploadingTransport uploadingTransport) {
+    public UiSettings(UiTransport uiTransport) {
         try {
-            SettingsResponse settings = uploadingTransport.getSettingsBlocking(Duration.ofSeconds(3));
+            SettingsResponse settings = uiTransport.getSettingsBlocking(Duration.ofSeconds(3));
             onSettings(settings);
         } catch (Exception e) {
             // NOP
@@ -33,7 +31,7 @@ public class UiSettings {
 
         settingsUpdatingService.scheduleAtFixedRate(() -> {
             try {
-                SettingsResponse settings = uploadingTransport.getSettingsBlocking(Duration.ofMillis(500));
+                SettingsResponse settings = uiTransport.getSettingsBlocking(Duration.ofMillis(500));
                 onSettings(settings);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 // NOP

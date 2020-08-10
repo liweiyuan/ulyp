@@ -3,7 +3,7 @@ package com.ulyp.agent;
 import com.ulyp.agent.settings.AgentSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.UiSettings;
-import com.ulyp.agent.transport.UploadingTransport;
+import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.core.util.ProcessInfo;
 
@@ -18,7 +18,7 @@ public class AgentContext {
     }
 
     private final SystemPropertiesSettings sysPropsSettings;
-    private final UploadingTransport transport;
+    private final UiTransport transport;
     private final UiSettings uiSettings;
     private final ProcessInfo processInfo;
 
@@ -48,7 +48,7 @@ public class AgentContext {
         return uiSettings;
     }
 
-    public UploadingTransport getTransport() {
+    public UiTransport getTransport() {
         return transport;
     }
 
