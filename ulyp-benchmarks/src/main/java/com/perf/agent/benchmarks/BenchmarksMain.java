@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 public class BenchmarksMain {
 
+    private static final int ITERATIONS_PER_PROFILE = 5;
+
     public static void main(String[] args) throws Exception {
 
         List<RunResult> runResults = new ArrayList<>();
@@ -36,7 +38,7 @@ public class BenchmarksMain {
             Histogram traceTimeHistogram = emptyHistogram();
             Histogram traceCountHistogram = emptyHistogram();
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < ITERATIONS_PER_PROFILE; i++) {
                 int tracesCount = run(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram);
                 traceCountHistogram.recordValue(tracesCount);
             }
