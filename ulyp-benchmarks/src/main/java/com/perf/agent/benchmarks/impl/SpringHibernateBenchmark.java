@@ -2,9 +2,12 @@ package com.perf.agent.benchmarks.impl;
 
 import com.perf.agent.benchmarks.Benchmark;
 import com.perf.agent.benchmarks.BenchmarkProfile;
+import com.perf.agent.benchmarks.BenchmarkProfileBuilder;
 import com.perf.agent.benchmarks.impl.spring.ApplicationConfiguration;
 import com.perf.agent.benchmarks.impl.spring.User;
 import com.perf.agent.benchmarks.impl.spring.UserService;
+import com.ulyp.core.util.MethodMatcher;
+import com.ulyp.core.util.PackageList;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -14,15 +17,21 @@ import java.util.List;
 
 public class SpringHibernateBenchmark implements Benchmark {
 
-    private static final int USER_TO_SAVE = 1;
-
     @Override
     public List<BenchmarkProfile> getProfiles() {
         return Arrays.asList(
-                new BenchmarkProfile(SpringHibernateBenchmark.class, "main", Arrays.asList("com", "org")),
-                new BenchmarkProfile(UserService.class, "save", Arrays.asList("com", "org")),
-                new BenchmarkProfile(null, null, Arrays.asList("com", "org")),
-                new BenchmarkProfile(null, null, Collections.emptyList())
+                new BenchmarkProfileBuilder()
+                        .withTracedMethod(new MethodMatcher(SpringHibernateBenchmark.class, "main"))
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build(),
+                new BenchmarkProfileBuilder()
+                        .withTracedMethod(new MethodMatcher(UserService.class, "save"))
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build(),
+                new BenchmarkProfileBuilder()
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build(),
+                new BenchmarkProfileBuilder().build()
         );
     }
 

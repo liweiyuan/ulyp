@@ -1,39 +1,83 @@
 package com.perf.agent.benchmarks;
 
+import com.google.common.base.Strings;
+import com.perf.agent.benchmarks.proc.BenchmarkEnv;
+import com.ulyp.core.util.MethodMatcher;
+import com.ulyp.core.util.PackageList;
+import com.ulyp.transport.SettingsResponse;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.*;
 
 public class BenchmarkProfile {
 
-    // TODO unite as MethodMatcher
-    @Nullable private final Class<?> tracedClass;
-    @Nullable private final String tracedMethod;
-    private final List<String> instrumentedPackages;
+    @Nullable
+    private final MethodMatcher tracedMethod;
+    @NotNull
+    private final PackageList instrumentedPackages;
+    private final boolean uiEnabled;
+    private final int uiListenPort;
 
-    public BenchmarkProfile(Class<?> tracedClass, String tracedMethod, List<String> instrumentedPackages) {
-        this.tracedClass = tracedClass;
+    public BenchmarkProfile(
+            @Nullable MethodMatcher tracedMethod,
+            @NotNull PackageList instrumentedPackages,
+            boolean uiEnabled,
+            int uiListenPort) {
         this.tracedMethod = tracedMethod;
         this.instrumentedPackages = instrumentedPackages;
+        this.uiEnabled = uiEnabled;
+        this.uiListenPort = uiListenPort;
     }
 
-    @Nullable
-    public Class<?> getTracedClass() {
-        return tracedClass;
+    public boolean shouldSendSomethingToUi() {
+        return uiEnabled && !instrumentedPackages.isEmpty() && tracedMethod != null;
     }
 
-    @Nullable
-    public String getTracedMethod() {
-        return tracedMethod;
+    public int getUiListenPort() {
+        return uiListenPort;
     }
 
-    public List<String> getInstrumentedPackages() {
-        return instrumentedPackages;
+    /**
+     * Only will be called if this has {@link BenchmarkProfile#uiEnabled} is set to true
+     * @return settings to send to subprocess back as a response to settings request
+     */
+    public SettingsResponse getSettingsFromUi() {
+        SettingsResponse.Builder builder = SettingsResponse
+                .newBuilder()
+                .setMayStartTracing(true)
+                .setShouldTraceIdentityHashCode(false)
+                .setTraceCollections(false)
+                .addAllInstrumentedPackages(instrumentedPackages);
+
+        if (tracedMethod != null) {
+            builder = builder.addTraceStartMethods(tracedMethod.toString());
+        }
+
+        return builder.build();
+    }
+
+    public List<String> getSubprocessCmdArgs() {
+        List<String> args = new ArrayList<>();
+        if (!instrumentedPackages.isEmpty()) {
+            args.add("-javaagent:" + BenchmarkEnv.findBuiltAgentJar());
+        }
+        if (uiEnabled) {
+            args.add("-Dulyp.ui-host=localhost");
+            args.add("-Dulyp.ui-port=" + uiListenPort);
+        } else {
+            args.add("-Dulyp.ui-enabled=false");
+            args.add("-Dulyp.start-method=" + Objects.requireNonNull(this.tracedMethod));
+            args.add("-Dulyp.packages=" + this.instrumentedPackages);
+        }
+
+        return args;
     }
 
     @Override
     public String toString() {
         if (!instrumentedPackages.isEmpty()) {
-            return String.join(",", instrumentedPackages) + "/" + (tracedClass != null ? (tracedClass.getSimpleName() + "." + tracedMethod) : "no tracing");
+            return instrumentedPackages + "/" + (tracedMethod != null ? tracedMethod : "no tracing");
         } else {
             return "no agent";
         }

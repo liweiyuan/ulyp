@@ -7,20 +7,12 @@ import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterTraceList;
 import com.ulyp.transport.TCallTraceLogUploadRequest;
 import org.HdrHistogram.Histogram;
-import org.h2.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class BenchmarksMain {
-
-    public static int pickEmptyPort() {
-        // TODO implement
-        return 10000 + ThreadLocalRandom.current().nextInt(1000);
-    }
 
     public static void main(String[] args) throws Exception {
 
@@ -39,30 +31,13 @@ public class BenchmarksMain {
 
         Benchmark benchmark = benchmarkClazz.newInstance();
 
-        BenchmarkSettings settings = new BenchmarkSettings();
-        settings.setClassToTrace(benchmarkClazz);
-        settings.setMethodToTrace("main");
-        settings.setUiListenPort(pickEmptyPort());
-        settings.setMainClass(benchmarkClazz);
-
-        settings.setTracedPackages(Collections.emptyList());
-
-        // 'warmup' ui stubs
-        for (int i = 0; i < 2; i++) {
-            run(settings, emptyHistogram(), emptyHistogram());
-        }
-
         for (BenchmarkProfile profile : benchmark.getProfiles()) {
             Histogram procTimeHistogram = emptyHistogram();
             Histogram traceTimeHistogram = emptyHistogram();
             Histogram traceCountHistogram = emptyHistogram();
 
-            settings.setClassToTrace(profile.getTracedClass());
-            settings.setMethodToTrace(profile.getTracedMethod());
-            settings.setTracedPackages(profile.getInstrumentedPackages());
-
             for (int i = 0; i < 10; i++) {
-                int tracesCount = run(settings, procTimeHistogram, traceTimeHistogram);
+                int tracesCount = run(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram);
                 traceCountHistogram.recordValue(tracesCount);
             }
 
@@ -72,13 +47,15 @@ public class BenchmarksMain {
         return runResults;
     }
 
-    private static int run(BenchmarkSettings settings, Histogram procTimeHistogram, Histogram traceTimeHistogram) {
+    private static int run(Class<?> benchmarkClazz, BenchmarkProfile profile, Histogram procTimeHistogram, Histogram traceTimeHistogram) {
 
         try (MillisMeasured measured = new MillisMeasured(procTimeHistogram)) {
-            try (UIServerStub uiServerStub = new UIServerStub(settings)) {
-                BenchmarkProcessRunner.runClassInSeparateJavaProcess(settings);
+            try (UIServerStub uiServerStub = new UIServerStub(profile)) {
 
-                if (!settings.getTracedPackages().isEmpty() && !StringUtils.isNullOrEmpty(settings.getMethodToTrace())) {
+                BenchmarkProcessRunner.runClassInSeparateJavaProcess(benchmarkClazz, profile);
+
+                if (profile.shouldSendSomethingToUi()) {
+
                     TCallTraceLogUploadRequest tCallTraceLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
                     traceTimeHistogram.recordValue(tCallTraceLogUploadRequest.getLifetimeMillis());
 

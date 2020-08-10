@@ -2,10 +2,12 @@ package com.perf.agent.benchmarks.impl;
 
 import com.perf.agent.benchmarks.Benchmark;
 import com.perf.agent.benchmarks.BenchmarkProfile;
+import com.perf.agent.benchmarks.BenchmarkProfileBuilder;
+import com.ulyp.core.util.MethodMatcher;
+import com.ulyp.core.util.PackageList;
 
 import java.sql.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class H2MemDatabaseBenchmark implements Benchmark {
@@ -15,11 +17,21 @@ public class H2MemDatabaseBenchmark implements Benchmark {
     @Override
     public List<BenchmarkProfile> getProfiles() {
         return Arrays.asList(
-                // TODO use builder
-                new BenchmarkProfile(H2MemDatabaseBenchmark.class, "main", Arrays.asList("com", "org")),
-                new BenchmarkProfile(null, null, Arrays.asList("com", "org")),
-                // TODO use named static var
-                new BenchmarkProfile(null, null, Collections.emptyList())
+                new BenchmarkProfileBuilder()
+                        .withTracedMethod(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build(),
+                new BenchmarkProfileBuilder()
+                        .withTracedMethod(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .withUiDisabled()
+                        .build(),
+                new BenchmarkProfileBuilder()
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build(),
+                new BenchmarkProfileBuilder()
+                        .withInstrumentedPackages(new PackageList("com", "org"))
+                        .build()
         );
     }
 

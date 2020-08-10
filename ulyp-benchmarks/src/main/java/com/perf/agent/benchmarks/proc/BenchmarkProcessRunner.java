@@ -1,5 +1,6 @@
 package com.perf.agent.benchmarks.proc;
 
+import com.perf.agent.benchmarks.BenchmarkProfile;
 import com.perf.agent.benchmarks.BenchmarkSettings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
@@ -19,8 +20,7 @@ public class BenchmarkProcessRunner {
 
     private static final boolean VERBOSE = false;
 
-    public static void runClassInSeparateJavaProcess(BenchmarkSettings settings) {
-        File agentJar = findAgentJar();
+    public static void runClassInSeparateJavaProcess(Class<?> benchmarkClazz, BenchmarkProfile profile) {
         String classPath = System.getProperty("java.class.path");
 
         try {
@@ -28,16 +28,13 @@ public class BenchmarkProcessRunner {
             String javaBinary = Paths.get(javaHome, "bin", "java").toString();
 
             List<String> processArgs = new ArrayList<>();
-            if (!settings.getTracedPackages().isEmpty()) {
-                processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
-            }
+
             processArgs.add("-cp");
             processArgs.add(classPath);
-            if (!settings.getTracedPackages().isEmpty()) {
-                processArgs.add("-Dulyp.ui-host=localhost");
-                processArgs.add("-Dulyp.ui-port=" + settings.getUiListenPort());
-            }
-            processArgs.add(settings.getMainClass().getName());
+            processArgs.addAll(profile.getSubprocessCmdArgs());
+
+
+            processArgs.add(benchmarkClazz.getName());
 
             ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))
                     .withTimeoutMillis(TimeUnit.MINUTES.toMillis(3))
@@ -56,21 +53,5 @@ public class BenchmarkProcessRunner {
         } catch (Exception e) {
             throw new RuntimeException("Process ended unsuccessfully", e);
         }
-    }
-
-    private static File findAgentJar() {
-        Path libDir;
-        if (Files.exists(Paths.get("..", "ulyp-agent"))) {
-            libDir = Paths.get("..", "ulyp-agent", "build", "libs");
-        } else {
-            libDir = Paths.get("ulyp-agent", "build", "libs");
-        }
-
-
-        return Arrays.stream(Objects.requireNonNull(libDir.toFile().listFiles()))
-                .filter(file -> file.getName().startsWith("ulyp-agent"))
-                .filter(file -> file.getName().endsWith(".jar"))
-                .findAny()
-                .orElseThrow(() -> new AssertionError("Could not find built ulyp agent jar"));
     }
 }

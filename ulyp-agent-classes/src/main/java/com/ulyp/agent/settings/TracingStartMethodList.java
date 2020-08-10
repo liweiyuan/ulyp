@@ -1,6 +1,6 @@
 package com.ulyp.agent.settings;
 
-import com.ulyp.agent.MethodMatcher;
+import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.MethodDescription;
 
 import java.util.Collections;

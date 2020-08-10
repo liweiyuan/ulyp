@@ -1,6 +1,7 @@
 package com.perf.agent.benchmarks.proc;
 
 import com.google.common.base.Strings;
+import com.perf.agent.benchmarks.BenchmarkProfile;
 import com.perf.agent.benchmarks.BenchmarkSettings;
 import com.ulyp.transport.*;
 import io.grpc.Server;
@@ -16,24 +17,12 @@ public class UIServerStub implements AutoCloseable {
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     private final Server server;
 
-    public UIServerStub(BenchmarkSettings settings) {
+    public UIServerStub(BenchmarkProfile benchmarkProfile) {
         try {
-            server = ServerBuilder.forPort(settings.getUiListenPort())
+            server = ServerBuilder.forPort(benchmarkProfile.getUiListenPort())
                     .addService(new UiTransportGrpc.UiTransportImplBase() {
                         public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
-
-                            SettingsResponse.Builder builder = SettingsResponse
-                                    .newBuilder()
-                                    .setMayStartTracing(true)
-                                    .setShouldTraceIdentityHashCode(false)
-                                    .setTraceCollections(settings.traceCollections())
-                                    .addAllInstrumentedPackages(settings.getTracedPackages());
-
-                            if (!Strings.isNullOrEmpty(settings.getMethodToTrace()) && settings.getClassToTrace() != null) {
-                                builder = builder.addTraceStartMethods(settings.getClassToTrace().getSimpleName() + "." + settings.getMethodToTrace());
-                            }
-
-                            responseObserver.onNext(builder.build());
+                            responseObserver.onNext(benchmarkProfile.getSettingsFromUi());
                             responseObserver.onCompleted();
                         }
 
