@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.ulyp.agent.transport.GrpcUiTransport;
 import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.ui.server.UIConnectorServiceImpl;
 import io.grpc.Server;
@@ -49,7 +50,7 @@ public class UIMain extends Application {
     }
 
     private void startGrpcServer() throws IOException {
-        Server server = ServerBuilder.forPort(UiTransport.DEFAULT_ADDRESS.port)
+        Server server = ServerBuilder.forPort(GrpcUiTransport.DEFAULT_ADDRESS.port)
                 .maxInboundMessageSize(1324 * 1024 * 1024)
                 .addService(new UIConnectorServiceImpl(viewController))
                 .build()

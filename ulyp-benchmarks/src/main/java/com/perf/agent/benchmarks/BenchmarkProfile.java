@@ -17,16 +17,19 @@ public class BenchmarkProfile {
     private final MethodMatcher tracedMethod;
     @NotNull
     private final PackageList instrumentedPackages;
+    private final List<String> additionalProcessArgs;
     private final boolean uiEnabled;
     private final int uiListenPort;
 
     public BenchmarkProfile(
             @Nullable MethodMatcher tracedMethod,
             @NotNull PackageList instrumentedPackages,
+            List<String> additionalProcessArgs,
             boolean uiEnabled,
             int uiListenPort) {
         this.tracedMethod = tracedMethod;
         this.instrumentedPackages = instrumentedPackages;
+        this.additionalProcessArgs = additionalProcessArgs;
         this.uiEnabled = uiEnabled;
         this.uiListenPort = uiListenPort;
     }
@@ -71,6 +74,7 @@ public class BenchmarkProfile {
             args.add("-Dulyp.start-method=" + Objects.requireNonNull(this.tracedMethod));
             args.add("-Dulyp.packages=" + this.instrumentedPackages);
         }
+        args.addAll(additionalProcessArgs);
 
         return args;
     }

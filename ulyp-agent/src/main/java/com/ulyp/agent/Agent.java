@@ -69,7 +69,7 @@ public class Agent {
 
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
-                .transform(new BbTransformer(StartTracingMethodAdvice.class, ContinueTracingMethodAdvice.class, tracingStartMethodList))
+                .transform(new BbTransformer(ContinueTracingMethodAdvice.class, tracingStartMethodList))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
 
         if (LoggingSettings.LOG_LEVEL == Level.TRACE) {

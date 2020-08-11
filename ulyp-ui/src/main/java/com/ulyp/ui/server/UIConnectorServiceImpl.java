@@ -8,7 +8,7 @@ import javafx.scene.control.Slider;
 
 import java.util.Arrays;
 
-public class UIConnectorServiceImpl extends UIConnectorGrpc.UIConnectorImplBase {
+public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase {
 
     private final FxController viewController;
 
