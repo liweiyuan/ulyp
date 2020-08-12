@@ -5,7 +5,7 @@ import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class ContinueTracingMethodAdvice {
+public class MethodAdvice {
 
     @Advice.OnMethodEnter
     static void enter(
