@@ -2,6 +2,10 @@ package com.ulyp.ui;
 
 import com.ulyp.core.CallTrace;
 import com.ulyp.core.ObjectValue;
+import com.ulyp.core.printers.IdentityObjectRepresentation;
+import com.ulyp.core.printers.Printable;
+import com.ulyp.core.printers.StringRepresentation;
+import com.ulyp.ui.renderers.StringRenderer;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -57,7 +61,11 @@ public class FxCttTreeViewRenderer {
                 output.add(text().text(node.getParameterNames().get(i)).style("ulyp-ctt-arg-name").build());
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
-            output.add(text().text(argValue.getPrintedText()).style("ulyp-ctt-arg-value").build());
+
+            output.addAll(withStyle(render(argValue), "ulyp-ctt-arg-value"));
+
+//            output.add(text().text(argValue.getPrintedText()).style("ulyp-ctt-arg-value").build());
+
             if (i < node.getArgs().size() - 1) {
                 output.add(text().text(", ").style("ulyp-ctt-sep").build());
             }
@@ -65,6 +73,20 @@ public class FxCttTreeViewRenderer {
 
         output.add(text().text(")").style("ulyp-ctt-sep").build());
         return output;
+    }
+
+    private static List<Text> withStyle(List<Text> texts, String style) {
+        texts.forEach(text -> text.getStyleClass().add(style));
+        return texts;
+    }
+
+    private static List<Text> render(ObjectValue value) {
+        Printable printable = value.asPrintable();
+        if (printable instanceof StringRepresentation) {
+            return new StringRenderer().render((StringRepresentation) printable);
+        } else {
+            return Arrays.asList(new Text(printable.print()));
+        }
     }
 
     @NotNull
@@ -89,7 +111,13 @@ public class FxCttTreeViewRenderer {
         if (node.hasThrown()) {
             returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-thrown-value").build();
         } else {
-            returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
+            if (node.getReturnValue().asPrintable() instanceof IdentityObjectRepresentation) {
+
+
+                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
+            } else {
+                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
+            }
         }
         value.add(returnValueText);
         return value;
