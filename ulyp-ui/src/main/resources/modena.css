@@ -62,6 +62,14 @@
     -fx-font-size: 14px;
 }
 
+.ulyp-ctt.ulyp-ctt-string {
+    -fx-fill: rgb(0, 100, 0);
+}
+
+.ulyp-ctt-string {
+    -fx-fill: rgb(0, 100, 0);
+}
+
 .ulyp-ctt-return-value {
     -fx-fill: rgb(169, 183, 198);
 }

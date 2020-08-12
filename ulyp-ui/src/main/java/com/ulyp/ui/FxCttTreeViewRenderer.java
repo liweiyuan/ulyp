@@ -62,7 +62,7 @@ public class FxCttTreeViewRenderer {
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 
-            output.addAll(withStyle(render(argValue), "ulyp-ctt-arg-value"));
+            output.addAll(withStyle(render(argValue), "ulyp-ctt"));
 
 //            output.add(text().text(argValue.getPrintedText()).style("ulyp-ctt-arg-value").build());
 
@@ -85,7 +85,9 @@ public class FxCttTreeViewRenderer {
         if (printable instanceof StringRepresentation) {
             return new StringRenderer().render((StringRepresentation) printable);
         } else {
-            return Arrays.asList(new Text(printable.print()));
+            Text text = new Text(printable.print());
+            text.getStyleClass().add("ulyp-ctt-arg-value");
+            return Arrays.asList(text);
         }
     }
 

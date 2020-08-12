@@ -16,7 +16,7 @@ public class StringRenderer implements Renderer {
     @Override
     public List<Text> render(ObjectRepresentation representation) {
         Text text = new Text(representation.print());
-        text.getStyleClass().add(\);
+        text.getStyleClass().add("ulyp-ctt-string");
         return Arrays.asList(text);
     }
 }
