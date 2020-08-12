@@ -1,7 +1,6 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.TracingStartMethodList;
-import com.ulyp.agent.util.MethodRepresentationBuilder;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -12,13 +11,13 @@ import net.bytebuddy.utility.JavaModule;
 
 public class BbTransformer implements Transformer {
 
-    private final Class<?> continueOnlyTracingAdvice;
+    private final Class<?> adviceClass;
     private final TracingStartMethodList tracingStartMethodList;
 
     public BbTransformer(
-            Class<?> continueOnlyTracingAdvice,
+            Class<?> adviceClass,
             TracingStartMethodList tracingStartMethodList) {
-        this.continueOnlyTracingAdvice = continueOnlyTracingAdvice;
+        this.adviceClass = adviceClass;
         this.tracingStartMethodList = tracingStartMethodList;
     }
 
@@ -43,10 +42,8 @@ public class BbTransformer implements Transformer {
                                         .and(ElementMatchers.not(ElementMatchers.isToString())),
                                 Advice.withCustomMapping()
                                         .bind(new MethodDescriptionFactory(tracingStartMethodList))
-                                        .to(continueOnlyTracingAdvice));
+                                        .to(adviceClass));
 
-        return builder
-//                .visit(methodsStartVisitor)
-                .visit(methodsVisitor);
+        return builder.visit(methodsVisitor);
     }
 }
