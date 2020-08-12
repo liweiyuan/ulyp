@@ -26,7 +26,7 @@ public class FxCttTreeViewRenderer {
     }
 
     public static Node render(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        List<Text> text = new ArrayList<>(
+        List<Node> text = new ArrayList<>(
                 renderReturnValue(node, renderSettings)
         );
 
@@ -39,15 +39,15 @@ public class FxCttTreeViewRenderer {
 
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_LEFT);
-        stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Text[0])));
+        stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Node[0])));
 
         return stack;
     }
 
-    private static List<Text> renderArguments(CallTrace node, RenderSettings renderSettings) {
+    private static List<Node> renderArguments(CallTrace node, RenderSettings renderSettings) {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
-        List<Text> output = new ArrayList<>();
+        List<Node> output = new ArrayList<>();
         output.add(text().text("(").style("ulyp-ctt-sep").build());
 
         for (int i = 0; i < node.getArgs().size(); i++) {
@@ -62,9 +62,14 @@ public class FxCttTreeViewRenderer {
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 
-            output.addAll(withStyle(render(argValue), "ulyp-ctt"));
+            TextFlow arg = new TextFlow(withStyle(render(argValue), "ulyp-ctt").toArray(new Text[0]));
+            arg.setOnMouseClicked(
+                    event -> {
+                        System.out.println(argValue.getPrintedText());
+                    }
+            );
 
-//            output.add(text().text(argValue.getPrintedText()).style("ulyp-ctt-arg-value").build());
+            output.add(arg);
 
             if (i < node.getArgs().size() - 1) {
                 output.add(text().text(", ").style("ulyp-ctt-sep").build());
