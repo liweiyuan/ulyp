@@ -70,13 +70,12 @@
     -fx-fill: rgb(0, 100, 0);
 }
 
-.ulyp-ctt-return-value {
+.ulyp-ctt-object-value {
     -fx-fill: rgb(169, 183, 198);
 }
 
-.ulyp-asd {
-    -fx-background: rgb(20, 20, 20);
-    -fx-fill: rgb(20, 20, 20);
+.ulyp-ctt-return-value {
+    -fx-fill: rgb(169, 183, 198);
 }
 
 .ulyp-ctt-method-name {

@@ -9,7 +9,7 @@ public class FxSimpleObjectValue extends FxObjectValue {
 
     FxSimpleObjectValue(Printable printable, ClassDescription classDescription) {
         super(classDescription);
-        Text text = new Text(printable.print());
+        Text text = new TrimmedText(printable.print());
         super.getChildren().add(text);
     }
 }
