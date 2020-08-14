@@ -4,7 +4,6 @@ import com.ulyp.agent.settings.AgentSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.UiTransport;
-import com.ulyp.agent.util.ProcessUtils;
 import com.ulyp.core.util.ProcessInfo;
 
 import java.util.concurrent.TimeUnit;
@@ -24,7 +23,7 @@ public class AgentContext {
 
     private AgentContext() {
         this.sysPropsSettings = SystemPropertiesSettings.load();
-        this.processInfo = new ProcessInfo(ProcessUtils.getMainClassName());
+        this.processInfo = new ProcessInfo();
         this.transport = sysPropsSettings.buildUiTransport();
         this.uiSettings = new UiSettings(transport);
 
