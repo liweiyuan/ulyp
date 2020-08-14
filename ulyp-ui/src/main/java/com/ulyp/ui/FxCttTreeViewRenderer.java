@@ -2,7 +2,6 @@ package com.ulyp.ui;
 
 import com.ulyp.core.CallTrace;
 import com.ulyp.core.ObjectValue;
-import com.ulyp.core.printers.IdentityObjectRepresentation;
 import com.ulyp.ui.renderers.FxObjectValue;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
