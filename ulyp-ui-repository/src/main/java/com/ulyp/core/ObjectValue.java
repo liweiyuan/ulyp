@@ -16,6 +16,10 @@ public class ObjectValue {
         return printedText.print();
     }
 
+    public Printable asPrintable() {
+        return printedText;
+    }
+
     public ClassDescription getClassDescription() {
         return classDescription;
     }

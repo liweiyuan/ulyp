@@ -33,7 +33,9 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long result = binaryInput.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
-            return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
+            Printable printable = ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
+            // TODO return ToStringRepresentation
+            return printable::print;
         } else if (result == TO_STRING_CALL_NULL) {
             return NULL_STRING;
         } else {

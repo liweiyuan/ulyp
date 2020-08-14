@@ -5,6 +5,10 @@ import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class BenchmarkProfileBuilder {
 
     private MethodMatcher tracedMethod;
@@ -12,6 +16,12 @@ public class BenchmarkProfileBuilder {
     private PackageList instrumentedPackages = new PackageList();
     private boolean uiEnabled = true;
     private final int uiPort = BenchmarkEnv.pickFreePort();
+    private final List<String> additionalProcessArgs = new ArrayList<>();
+
+    public BenchmarkProfileBuilder withAdditionalArgs(String... args) {
+        additionalProcessArgs.addAll(Arrays.asList(args));
+        return this;
+    }
 
     public BenchmarkProfileBuilder withTracedMethod(MethodMatcher tracedMethod) {
         this.tracedMethod = tracedMethod;
@@ -33,6 +43,6 @@ public class BenchmarkProfileBuilder {
     }
 
     public BenchmarkProfile build() {
-        return new BenchmarkProfile(tracedMethod, instrumentedPackages, uiEnabled, uiPort);
+        return new BenchmarkProfile(tracedMethod, instrumentedPackages, additionalProcessArgs, uiEnabled, uiPort);
     }
 }
