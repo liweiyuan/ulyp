@@ -21,6 +21,7 @@ public class MethodDescriptionList extends AbstractSbeRecordList<TMethodDescript
         super.add(encoder -> {
             encoder.id(methodDescription.getId());
             encoder.returnsSomething(methodDescription.returnsSomething() ? BooleanType.T : BooleanType.F);
+            encoder.staticFlag(methodDescription.isStatic() ? BooleanType.T : BooleanType.F);
 
             List<String> argumentNames = methodDescription.getParameterNames();
             TMethodDescriptionEncoder.ParameterNamesEncoder paramNamesEncoder = encoder.parameterNamesCount(argumentNames.size());

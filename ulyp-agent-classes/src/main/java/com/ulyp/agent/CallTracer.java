@@ -39,7 +39,7 @@ public class CallTracer {
         return threadLocalTraceLog.get() != null;
     }
 
-    public void startOrContinueTracing(AgentRuntime agentRuntime, MethodDescription methodDescription, Object[] args) {
+    public void startOrContinueTracing(AgentRuntime agentRuntime, MethodDescription methodDescription, Object callee, Object[] args) {
         if (!tracingIsActiveInThisThread() && !mayStartTracing) {
             return;
         }
@@ -54,7 +54,7 @@ public class CallTracer {
             }
             return log;
         });
-        onMethodEnter(methodDescription, args);
+        onMethodEnter(methodDescription, callee, args);
     }
 
     public void endTracingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
@@ -72,7 +72,7 @@ public class CallTracer {
         }
     }
 
-    public void onMethodEnter(MethodDescription method, Object[] args) {
+    public void onMethodEnter(MethodDescription method, Object callee, Object[] args) {
         CallTraceLog callTraces = threadLocalTraceLog.get();
         if (callTraces == null) {
             return;
@@ -80,7 +80,7 @@ public class CallTracer {
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
             logger.trace("Method enter on {}, method {}, args {}", callTraces, method, args);
         }
-        callTraces.onMethodEnter(method.getId(), method.getParamPrinters(), args);
+        callTraces.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
     public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {

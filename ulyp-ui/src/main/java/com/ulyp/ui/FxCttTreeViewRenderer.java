@@ -28,7 +28,11 @@ public class FxCttTreeViewRenderer {
 
         text.add(FxObjectValue.of(node.getReturnValue()));
 
-        text.add(text().text(" : ").style("ulyp-ctt-sep").build());
+        text.add(text().text(" : (").style("ulyp-ctt-sep").build());
+
+        text.add(FxObjectValue.of(node.getCallee()));
+
+        text.add(text().text(") ").style("ulyp-ctt-sep").build());
 
         text.addAll(renderMethodName(node));
 

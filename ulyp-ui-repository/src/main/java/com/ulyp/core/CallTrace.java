@@ -10,24 +10,27 @@ import java.util.stream.Collectors;
 public class CallTrace {
 
     private long id;
-    private String className;
-    private String methodName;
-    private boolean isVoidMethod;
-    private List<ObjectValue> args;
-    private List<String> parameterNames;
-    private ObjectValue returnValue;
-    private boolean thrown;
-    private List<CallTrace> children;
-    private int subtreeNodeCount;
+    private final String className;
+    private final String methodName;
+    private final boolean isVoidMethod;
+    private final ObjectValue callee;
+    private final List<ObjectValue> args;
+    private final List<String> parameterNames;
+    private final ObjectValue returnValue;
+    private final boolean thrown;
+    private final List<CallTrace> children;
+    private final int subtreeNodeCount;
     private CallGraphDatabase database;
 
     public CallTrace(
+            ObjectValue callee,
             List<ObjectValue> args,
             ObjectValue returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
             List<CallTrace> children)
     {
+        this.callee = callee;
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.args = new ArrayList<>(args);
         this.returnValue = returnValue;
@@ -49,6 +52,10 @@ public class CallTrace {
 
     public CallGraphDatabase getDatabase() {
         return database;
+    }
+
+    public ObjectValue getCallee() {
+        return callee;
     }
 
     public long getId() {

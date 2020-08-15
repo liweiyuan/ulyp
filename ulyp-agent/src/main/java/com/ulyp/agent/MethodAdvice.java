@@ -10,17 +10,19 @@ public class MethodAdvice {
     @Advice.OnMethodEnter
     static void enter(
             @MethodDescriptionValue long methodDescriptionId,
+            @Advice.This(optional = true) Object callee,
             @Advice.AllArguments Object[] arguments) {
         if (methodDescriptionId < 0) {
 
             CallTracer.getInstance().startOrContinueTracing(
                     ByteBuddyAgentRuntime.getInstance(),
                     MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
+                    callee,
                     arguments
             );
         } else {
             if (CallTracer.getInstance().tracingIsActiveInThisThread()) {
-                CallTracer.getInstance().onMethodEnter(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), arguments);
+                CallTracer.getInstance().onMethodEnter(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), callee, arguments);
             }
         }
     }

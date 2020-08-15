@@ -21,6 +21,7 @@ public class MethodRepresentationBuilder {
         return new com.ulyp.core.MethodDescription(
                 counter.incrementAndGet(),
                 description.getActualName(),
+                description.isStatic(),
                 returns,
                 parameters,
                 returnType,

@@ -12,6 +12,7 @@ public class MethodDescription {
     private final long id;
     private final String methodName;
     private final Type declaringType;
+    private final boolean isStatic;
     private final boolean returnsSomething;
     private final List<String> parameterNames;
     private final ObjectBinaryPrinter[] paramPrinters;
@@ -20,6 +21,7 @@ public class MethodDescription {
     public MethodDescription(
             long methodId,
             String methodName,
+            boolean isStatic,
             boolean returnsSomething,
             List<Type> paramsTypes,
             Type returnType,
@@ -29,9 +31,11 @@ public class MethodDescription {
         this.methodName = methodName;
         this.returnsSomething = returnsSomething;
         this.declaringType = declaringType;
+        this.isStatic = isStatic;
 
         this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypes);
         this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnType);
+
 //        boolean hasParamNames = executable.getParameterCount() > 0 && executable.getParameters()[0].isNamePresent();
 //        if (hasParamNames) {
 //            this.parameterNames = new ArrayList<>(executable.getParameterCount());
@@ -45,6 +49,10 @@ public class MethodDescription {
 
     public long getId() {
         return id;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
     }
 
     public ObjectBinaryPrinter[] getParamPrinters() {

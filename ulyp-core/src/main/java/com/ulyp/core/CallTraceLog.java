@@ -34,7 +34,7 @@ public class CallTraceLog {
         callCountStack.addInt(0);
     }
 
-    public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object[] args) {
+    public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object callee, Object[] args) {
         if (!inProcessOfTracing) {
             return;
         }
@@ -48,7 +48,7 @@ public class CallTraceLog {
             pushCurrentMethodCallId(callId, canTrace);
 
             if (canTrace) {
-                enterTraces.add(callId, methodId, agentRuntime, printers, args);
+                enterTraces.add(callId, methodId, agentRuntime, printers, callee, args);
                 callCountStack.setInt(callCountStack.size() - 2, callsMadeInCurrentMethod + 1);
             }
         } finally {

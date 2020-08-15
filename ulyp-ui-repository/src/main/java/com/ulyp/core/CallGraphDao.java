@@ -86,6 +86,7 @@ public class CallGraphDao {
         private final CallBuilder parent;
         private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
+        private final ObjectValue callee;
         private final List<ObjectValue> args;
         private final List<CallTrace> children = new ArrayList<>();
 
@@ -112,6 +113,19 @@ public class CallGraphDao {
                         classIdMap.get(arguments.classId())
                 ));
             }
+
+            UnsafeBuffer buffer = new UnsafeBuffer();
+            decoder.wrapCallee(buffer);
+
+            ClassDescription calleeType = classIdMap.get(decoder.calleeClassId());
+
+            this.callee = new ObjectValue(
+                    ObjectBinaryPrinterType.printerForId(decoder.calleePrinterId()).read(
+                            calleeType,
+                            new BinaryInputImpl(buffer),
+                            decodingContext),
+                    calleeType
+            );
         }
 
         private void setExitTraceData(TCallExitTraceDecoder decoder) {
@@ -126,6 +140,7 @@ public class CallGraphDao {
 
         public void persist() {
             CallTrace node = new CallTrace(
+                    callee,
                     args,
                     returnValue,
                     thrown,
