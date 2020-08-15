@@ -1,7 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.TracingStartMethodList;
-import com.ulyp.agent.util.MethodRepresentationBuilder;
+import com.ulyp.agent.util.MethodDescriptionBuilder;
 import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -48,7 +48,7 @@ public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<Me
                               Advice.ArgumentHandler argumentHandler,
                               Sort sort) {
             long id;
-            com.ulyp.core.MethodDescription methodDescription = MethodRepresentationBuilder.newMethodDescription(instrumentedMethod);
+            com.ulyp.core.MethodDescription methodDescription = MethodDescriptionBuilder.newMethodDescription(instrumentedMethod);
             if (tracingStartMethodList.shouldStartTracing(methodDescription)) {
                 id = startTraceCounter.decrementAndGet();
             } else {

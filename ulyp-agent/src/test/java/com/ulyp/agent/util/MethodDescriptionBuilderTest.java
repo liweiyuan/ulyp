@@ -4,7 +4,7 @@ import net.bytebuddy.description.method.MethodDescription;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MethodRepresentationBuilderTest {
+public class MethodDescriptionBuilderTest {
 
     public interface Interface1 {
 
@@ -36,13 +36,13 @@ public class MethodRepresentationBuilderTest {
     @Test
     public void testForSomeClass() throws NoSuchMethodException {
 
-        com.ulyp.core.MethodDescription methodDescription = MethodRepresentationBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
+        com.ulyp.core.MethodDescription methodDescription = MethodDescriptionBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
                 TestClass.class.getDeclaredMethod("run")
         ));
 
         Assert.assertFalse(methodDescription.returnsSomething());
 
-        methodDescription = MethodRepresentationBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
+        methodDescription = MethodDescriptionBuilder.newMethodDescription(new MethodDescription.ForLoadedMethod(
                 TestClass.class.getDeclaredMethod("runAndReturnVoid")
         ));
 

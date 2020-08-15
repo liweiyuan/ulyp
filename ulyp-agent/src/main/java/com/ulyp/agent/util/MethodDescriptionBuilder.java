@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class MethodRepresentationBuilder {
+public class MethodDescriptionBuilder {
 
     private static final AtomicLong counter = new AtomicLong();
 
