@@ -26,13 +26,6 @@ message SettingsRequest {
 
 }
 
-message TMethodInfo {
-    int64 id = 1;
-    string className = 2;
-    string methodName = 3;
-    bool returnsSomething = 4;
-}
-
 message TCallTraceLog {
     bytes enterTraces = 2;
     bytes exitTraces = 3;
