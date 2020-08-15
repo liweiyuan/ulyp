@@ -40,21 +40,25 @@ public class AbstractInstrumentationTest {
 
     @NotNull
     protected CallTraceTree runSubprocessWithUi(TestSettingsBuilder settings) {
+        TCallTraceLogUploadRequest request = runSubprocessWithUiAndReturnTraceLogRaw(settings);
+
+        CallGraphDatabase database = new HeapCallGraphDatabase();
+        return new CallGraphDao(
+                new CallEnterTraceList(request.getTraceLog().getEnterTraces()),
+                new CallExitTraceList(request.getTraceLog().getExitTraces()),
+                new MethodDescriptionList(request.getMethodDescriptionList().getData()),
+                new ClassDescriptionList(request.getClassDescriptionList().getData()),
+                database
+        ).getCallTraceTree();
+    }
+
+    @NotNull
+    protected TCallTraceLogUploadRequest runSubprocessWithUiAndReturnTraceLogRaw(TestSettingsBuilder settings) {
         int port = TestUtil.pickEmptyPort();
         try (UIServerStub stub = new UIServerStub(settings, port)) {
             TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));
 
-            TCallTraceLogUploadRequest request = stub.get(1, TimeUnit.MINUTES);
-            Assert.assertNotNull(request);
-
-            CallGraphDatabase database = new HeapCallGraphDatabase();
-            return new CallGraphDao(
-                    new CallEnterTraceList(request.getTraceLog().getEnterTraces()),
-                    new CallExitTraceList(request.getTraceLog().getExitTraces()),
-                    new MethodDescriptionList(request.getMethodDescriptionList().getData()),
-                    new ClassDescriptionList(request.getClassDescriptionList().getData()),
-                    database
-            ).getCallTraceTree();
+            return stub.get(1, TimeUnit.MINUTES);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail("Could not capture trace log: " + e.getMessage());

@@ -1,15 +1,21 @@
-package com.ulyp.core.util;
+package com.ulyp.core.process;
 
 public class ProcessInfo {
 
     private final String mainClassName;
+    private final Classpath classpath;
 
     public ProcessInfo() {
         this.mainClassName = getMainClassNameFromProp();
+        this.classpath = new Classpath();
     }
 
     public String getMainClassName() {
         return mainClassName;
+    }
+
+    public Classpath getClasspath() {
+        return classpath;
     }
 
     /**

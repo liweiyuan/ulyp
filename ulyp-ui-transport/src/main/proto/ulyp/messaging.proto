@@ -39,11 +39,17 @@ message TClassDescriptionList {
     bytes data = 1;
 }
 
+message ProcessInfo {
+    string mainClassName = 1;
+    repeated string classpath = 2;
+    int64 pid = 3;
+}
+
 message TCallTraceLogUploadRequest {
     TCallTraceLog traceLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
     TClassDescriptionList classDescriptionList = 7;
-    string mainClassName = 3;
+    ProcessInfo processInfo = 3;
     int64 createEpochMillis = 4;
     int64 lifetimeMillis = 5;
     int64 traceLogId = 6;

@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ulyp.core.*;
-import com.ulyp.core.util.ProcessInfo;
+import com.ulyp.core.process.ProcessInfo;
 import com.ulyp.transport.*;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
@@ -73,7 +73,10 @@ public class GrpcUiTransport implements UiTransport {
                             .setTraceLog(log)
                             .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodDescriptionList.toByteString()).build())
                             .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
-                            .setMainClassName(processInfo.getMainClassName())
+                            .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
+                                    .setMainClassName(processInfo.getMainClassName())
+                                    .addAllClasspath(processInfo.getClasspath().toList())
+                                    .build())
                             .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
                             .setLifetimeMillis(endLifetimeEpochMillis - traceLog.getEpochMillisCreatedTime());
 

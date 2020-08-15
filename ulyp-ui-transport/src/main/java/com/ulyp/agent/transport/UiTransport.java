@@ -2,7 +2,7 @@ package com.ulyp.agent.transport;
 
 import com.ulyp.core.CallTraceLog;
 import com.ulyp.core.MethodDescriptionDictionary;
-import com.ulyp.core.util.ProcessInfo;
+import com.ulyp.core.process.ProcessInfo;
 import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
