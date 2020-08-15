@@ -30,7 +30,7 @@ public class AgentContext {
         Thread shutdown = new Thread(
                 () -> {
                     try {
-                        transport.shutdownNowAndAwaitForTraceLogsSending(30, TimeUnit.SECONDS);
+                        transport.shutdownNowAndAwaitForRecordsLogsSending(30, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
                         // ignore
                     }

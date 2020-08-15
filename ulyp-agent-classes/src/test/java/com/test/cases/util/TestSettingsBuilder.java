@@ -2,7 +2,7 @@ package com.test.cases.util;
 
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
-import com.ulyp.agent.settings.TracingStartMethodList;
+import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.transport.UiAddress;
 
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class TestSettingsBuilder {
                 new UiAddress(hostName, port),
                 instrumentedPackages,
                 excludedFromInstrumentationPackages,
-                new TracingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
+                new RecordingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
                 maxDepth,
                 maxCallsPerMethod,
                 minTraceCount

@@ -46,15 +46,15 @@ public class GrpcUiTransport implements UiTransport {
         return uploadingServiceFutureStub.requestSettings(SettingsRequest.newBuilder().build()).get(duration.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    public void uploadAsync(CallTraceLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
+    public void uploadAsync(CallRecordLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
 
         long endLifetimeEpochMillis = System.currentTimeMillis();
 
         uploadExecutor.submit(
                 () -> {
                     TCallTraceLog log = TCallTraceLog.newBuilder()
-                            .setEnterTraces(traceLog.getEnterTraces().toByteString())
-                            .setExitTraces(traceLog.getExitTraces().toByteString())
+                            .setEnterTraces(traceLog.getEnterRecords().toByteString())
+                            .setExitTraces(traceLog.getExitRecords().toByteString())
                             .build();
 
                     MethodDescriptionList methodDescriptionList = new MethodDescriptionList();
@@ -102,7 +102,7 @@ public class GrpcUiTransport implements UiTransport {
         traceLogsCurrentlyInSending.add(id);
     }
 
-    public void shutdownNowAndAwaitForTraceLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
+    public void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
         long startWaitingAtEpochMillis = System.currentTimeMillis();
         long deadline = startWaitingAtEpochMillis + timeUnit.toMillis(time);
         while (System.currentTimeMillis() < deadline && !traceLogsCurrentlyInSending.isEmpty()) {

@@ -1,6 +1,6 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.core.CallTraceLog;
+import com.ulyp.core.CallRecordLog;
 import com.ulyp.core.MethodDescriptionDictionary;
 import com.ulyp.core.process.ProcessInfo;
 import com.ulyp.transport.SettingsResponse;
@@ -14,7 +14,7 @@ public interface UiTransport {
 
     SettingsResponse getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException;
 
-    void uploadAsync(CallTraceLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo);
+    void uploadAsync(CallRecordLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo);
 
-    void shutdownNowAndAwaitForTraceLogsSending(long time, TimeUnit timeUnit) throws InterruptedException;
+    void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException;
 }

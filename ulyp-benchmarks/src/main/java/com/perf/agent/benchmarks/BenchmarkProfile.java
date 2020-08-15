@@ -49,9 +49,8 @@ public class BenchmarkProfile {
     public SettingsResponse getSettingsFromUi() {
         SettingsResponse.Builder builder = SettingsResponse
                 .newBuilder()
-                .setMayStartTracing(true)
-                .setShouldTraceIdentityHashCode(false)
-                .setTraceCollections(false)
+                .setMayStartRecording(true)
+                .setRecordCollectionsItems(false)
                 .addAllInstrumentedPackages(instrumentedPackages);
 
         if (tracedMethod != null) {

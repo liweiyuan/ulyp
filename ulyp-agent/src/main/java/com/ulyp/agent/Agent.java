@@ -2,7 +2,7 @@ package com.ulyp.agent;
 
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
-import com.ulyp.agent.settings.TracingStartMethodList;
+import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.core.util.PackageList;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -12,8 +12,6 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.logging.log4j.Level;
 
 import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Agent {
 
@@ -26,12 +24,12 @@ public class Agent {
 
         PackageList instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
         PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();
-        TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
+        RecordingStartMethodList recordingStartMethodList = uiSettings.getRecordingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)
         System.out.println("Starting ULYP agent, logging level = " + logLevel +
                 ", packages = " + uiSettings.getInstrumentedPackages() +
-                ", tracing start methods = " + uiSettings.getTracingStartMethod());
+                ", tracing start methods = " + uiSettings.getRecordingStartMethod());
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
@@ -67,7 +65,7 @@ public class Agent {
 
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
-                .transform(new BbTransformer(MethodAdvice.class, tracingStartMethodList))
+                .transform(new BbTransformer(MethodAdvice.class, recordingStartMethodList))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
 
         if (LoggingSettings.LOG_LEVEL == Level.TRACE) {

@@ -1,6 +1,6 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.settings.TracingStartMethodList;
+import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.util.MethodDescriptionBuilder;
 import com.ulyp.core.MethodDescriptionDictionary;
 import net.bytebuddy.asm.Advice;
@@ -15,13 +15,13 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<MethodDescriptionValue> {
 
     static final MethodDescriptionDictionary methodDescriptionDictionary = MethodDescriptionDictionary.getInstance();
-    private static final AtomicLong counter = new AtomicLong(0);
-    private static final AtomicLong startTraceCounter = new AtomicLong(0);
+    private static final AtomicLong continueRecordingCounter = new AtomicLong(0);
+    private static final AtomicLong startOrContinueRecordingCounter = new AtomicLong(0);
 
     private final ForMethodDescription instance;
 
-    public MethodDescriptionFactory(TracingStartMethodList tracingStartMethodList) {
-        this.instance = new ForMethodDescription(tracingStartMethodList);
+    public MethodDescriptionFactory(RecordingStartMethodList recordingStartMethodList) {
+        this.instance = new ForMethodDescription(recordingStartMethodList);
     }
 
     @Override
@@ -36,10 +36,10 @@ public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<Me
 
     static class ForMethodDescription implements Advice.OffsetMapping {
 
-        private final TracingStartMethodList tracingStartMethodList;
+        private final RecordingStartMethodList recordingStartMethodList;
 
-        ForMethodDescription(TracingStartMethodList tracingStartMethodList) {
-            this.tracingStartMethodList = tracingStartMethodList;
+        ForMethodDescription(RecordingStartMethodList recordingStartMethodList) {
+            this.recordingStartMethodList = recordingStartMethodList;
         }
 
         public Target resolve(TypeDescription instrumentedType,
@@ -49,10 +49,10 @@ public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<Me
                               Sort sort) {
             long id;
             com.ulyp.core.MethodDescription methodDescription = MethodDescriptionBuilder.newMethodDescription(instrumentedMethod);
-            if (tracingStartMethodList.shouldStartTracing(methodDescription)) {
-                id = startTraceCounter.decrementAndGet();
+            if (recordingStartMethodList.shouldStartTracing(methodDescription)) {
+                id = startOrContinueRecordingCounter.decrementAndGet();
             } else {
-                id = counter.incrementAndGet();
+                id = continueRecordingCounter.incrementAndGet();
             }
             methodDescriptionDictionary.put(id, methodDescription);
             return Target.ForStackManipulation.of(id);

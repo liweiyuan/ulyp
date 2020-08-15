@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TracingStartMethodList {
+public class RecordingStartMethodList {
 
     private final List<MethodMatcher> methods;
 
-    public TracingStartMethodList(MethodMatcher methodMatcher) {
+    public RecordingStartMethodList(MethodMatcher methodMatcher) {
         this.methods = Collections.singletonList(methodMatcher);
     }
 
-    public TracingStartMethodList(List<String> methods) {
+    public RecordingStartMethodList(List<String> methods) {
         if (methods != null) {
             // TODO method matcher to have a proper constuctor
             this.methods = methods.stream()

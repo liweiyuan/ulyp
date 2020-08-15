@@ -11,41 +11,41 @@ import javax.annotation.concurrent.ThreadSafe;
 
 @SuppressWarnings("unused")
 @ThreadSafe
-public class CallTracer {
+public class Recorder {
 
-    private static final Logger logger = AgentLogManager.getLogger(CallTracer.class);
+    private static final Logger logger = AgentLogManager.getLogger(Recorder.class);
 
-    private static final CallTracer instance = new CallTracer(AgentContext.getInstance());
+    private static final Recorder instance = new Recorder(AgentContext.getInstance());
 
-    public static CallTracer getInstance() {
+    public static Recorder getInstance() {
         return instance;
     }
 
-    private final EnhancedThreadLocal<CallTraceLog> threadLocalTraceLog = new EnhancedThreadLocal<>();
+    private final EnhancedThreadLocal<CallRecordLog> threadLocalRecordsLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
 
-    private volatile boolean mayStartTracing = true;
-    private final TracingParams tracingParams = new TracingParams(false, false, false);
+    private volatile boolean mayStartRecording = true;
+    private final RecordingParamsUpdater recordingParamsUpdater = new RecordingParamsUpdater();
 
-    public CallTracer(AgentContext context) {
+    public Recorder(AgentContext context) {
         this.context = context;
 
         UiSettings uiSettings = context.getUiSettings();
-        uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartTracing = newValue);
-        uiSettings.traceCollections().addListener((oldValue, newValue) -> this.tracingParams.updateTraceCollections(newValue));
+        uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartRecording = newValue);
+        uiSettings.traceCollections().addListener((oldValue, newValue) -> this.recordingParamsUpdater.updateRecordCollectionItems(newValue));
     }
 
-    public boolean tracingIsActiveInThisThread() {
-        return threadLocalTraceLog.get() != null;
+    public boolean recordingIsActiveInCurrentThread() {
+        return threadLocalRecordsLog.get() != null;
     }
 
-    public void startOrContinueTracing(AgentRuntime agentRuntime, MethodDescription methodDescription, Object callee, Object[] args) {
-        if (!tracingIsActiveInThisThread() && !mayStartTracing) {
+    public void startOrContinueRecording(AgentRuntime agentRuntime, MethodDescription methodDescription, Object callee, Object[] args) {
+        if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
             return;
         }
 
-        CallTraceLog traceLog = threadLocalTraceLog.getOrCreate(() -> {
-            CallTraceLog log = new CallTraceLog(
+        CallRecordLog traceLog = threadLocalRecordsLog.getOrCreate(() -> {
+            CallRecordLog log = new CallRecordLog(
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsPerMethod());
@@ -57,12 +57,12 @@ public class CallTracer {
         onMethodEnter(methodDescription, callee, args);
     }
 
-    public void endTracingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
-        CallTraceLog traceLog = threadLocalTraceLog.get();
+    public void endRecordingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
+        CallRecordLog traceLog = threadLocalRecordsLog.get();
         onMethodExit(methodDescription, result, thrown);
 
         if (traceLog != null && traceLog.isComplete()) {
-            threadLocalTraceLog.clear();
+            threadLocalRecordsLog.clear();
             if (traceLog.size() >= context.getSysPropsSettings().getMinTraceCount()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", traceLog);
@@ -73,7 +73,7 @@ public class CallTracer {
     }
 
     public void onMethodEnter(MethodDescription method, Object callee, Object[] args) {
-        CallTraceLog callTraces = threadLocalTraceLog.get();
+        CallRecordLog callTraces = threadLocalRecordsLog.get();
         if (callTraces == null) {
             return;
         }
@@ -84,7 +84,7 @@ public class CallTracer {
     }
 
     public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
-        CallTraceLog callTracesLog = threadLocalTraceLog.get();
+        CallRecordLog callTracesLog = threadLocalRecordsLog.get();
         if (callTracesLog == null) return;
 
         if (LoggingSettings.IS_TRACE_TURNED_ON) {

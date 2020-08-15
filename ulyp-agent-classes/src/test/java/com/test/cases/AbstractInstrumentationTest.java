@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.*;
-import com.ulyp.core.CallEnterTraceList;
-import com.ulyp.core.CallExitTraceList;
+import com.ulyp.core.CallEnterRecordList;
+import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.CallTraceTree;
@@ -44,8 +44,8 @@ public class AbstractInstrumentationTest {
 
         CallGraphDatabase database = new HeapCallGraphDatabase();
         return new CallGraphDao(
-                new CallEnterTraceList(request.getTraceLog().getEnterTraces()),
-                new CallExitTraceList(request.getTraceLog().getExitTraces()),
+                new CallEnterRecordList(request.getTraceLog().getEnterTraces()),
+                new CallExitRecordList(request.getTraceLog().getExitTraces()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 database

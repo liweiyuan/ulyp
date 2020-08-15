@@ -12,15 +12,15 @@ import java.util.*;
 
 public class CallGraphDao {
 
-    private final CallEnterTraceList enterTracesList;
-    private final CallExitTraceList exitTracesList;
+    private final CallEnterRecordList enterTracesList;
+    private final CallExitRecordList exitTracesList;
     private final MethodDescriptionList methodDescriptionList;
     private final Long2ObjectMap<ClassDescription> classIdMap;
     private final DecodingContext decodingContext;
     private final CallGraphDatabase database;
 
-    public CallGraphDao(CallEnterTraceList enterTracesList,
-                        CallExitTraceList exitTracesList,
+    public CallGraphDao(CallEnterRecordList enterTracesList,
+                        CallExitRecordList exitTracesList,
                         MethodDescriptionList methodDescriptionList,
                         ClassDescriptionList classDescriptionList,
                         CallGraphDatabase database)

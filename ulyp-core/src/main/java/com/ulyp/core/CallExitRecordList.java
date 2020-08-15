@@ -9,14 +9,14 @@ import com.ulyp.transport.TCallExitTraceDecoder;
 import com.ulyp.transport.TCallExitTraceEncoder;
 
 // Flexible SBE wrapper
-public class CallExitTraceList extends AbstractSbeRecordList<TCallExitTraceEncoder, TCallExitTraceDecoder> {
+public class CallExitRecordList extends AbstractSbeRecordList<TCallExitTraceEncoder, TCallExitTraceDecoder> {
 
     private final BinaryOutputForExitTraceImpl binaryOutput = new BinaryOutputForExitTraceImpl();
 
-    public CallExitTraceList() {
+    public CallExitRecordList() {
     }
 
-    public CallExitTraceList(ByteString bytes) {
+    public CallExitRecordList(ByteString bytes) {
         super(bytes);
     }
 

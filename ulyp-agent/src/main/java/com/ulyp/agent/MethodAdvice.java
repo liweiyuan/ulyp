@@ -14,15 +14,15 @@ public class MethodAdvice {
             @Advice.AllArguments Object[] arguments) {
         if (methodDescriptionId < 0) {
 
-            CallTracer.getInstance().startOrContinueTracing(
+            Recorder.getInstance().startOrContinueRecording(
                     ByteBuddyAgentRuntime.getInstance(),
                     MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
                     callee,
                     arguments
             );
         } else {
-            if (CallTracer.getInstance().tracingIsActiveInThisThread()) {
-                CallTracer.getInstance().onMethodEnter(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), callee, arguments);
+            if (Recorder.getInstance().recordingIsActiveInCurrentThread()) {
+                Recorder.getInstance().onMethodEnter(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), callee, arguments);
             }
         }
     }
@@ -33,14 +33,14 @@ public class MethodAdvice {
             @Advice.Thrown Throwable throwable,
             @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
         if (methodDescriptionId < 0) {
-            CallTracer.getInstance().endTracingIfPossible(
+            Recorder.getInstance().endRecordingIfPossible(
                     MethodDescriptionDictionary.getInstance().get(methodDescriptionId),
                     returnValue,
                     throwable
             );
         } else {
-            if (CallTracer.getInstance().tracingIsActiveInThisThread()) {
-                CallTracer.getInstance().onMethodExit(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), returnValue, throwable);
+            if (Recorder.getInstance().recordingIsActiveInCurrentThread()) {
+                Recorder.getInstance().onMethodExit(MethodDescriptionDictionary.getInstance().get(methodDescriptionId), returnValue, throwable);
             }
         }
     }

@@ -6,7 +6,6 @@ import com.ulyp.core.util.PackageList;
 import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.*;
 
 public class UiSettings {
@@ -17,10 +16,10 @@ public class UiSettings {
     );
 
     private final SettingsProperty<PackageList> instrumentedPackages = new SettingsProperty<>("Instrumented packages", new PackageList());
-    private final SettingsProperty<PackageList> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from trace packages list", new PackageList());
-    private final SettingsProperty<TracingStartMethodList> tracingStartMethod = new SettingsProperty<>("Tracing start methods list");
-    private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
-    private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
+    private final SettingsProperty<PackageList> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from instrumentation packages", new PackageList());
+    private final SettingsProperty<RecordingStartMethodList> recordingStartMethod = new SettingsProperty<>("Tracing start methods list");
+    private final SettingsProperty<Boolean> mayStartRecording = new SettingsProperty<>("May start tracing", true);
+    private final SettingsProperty<Boolean> recordCollectionItems = new SettingsProperty<>("Record collection items", true);
 
     public UiSettings(UiTransport uiTransport) {
         try {
@@ -41,12 +40,12 @@ public class UiSettings {
     }
 
     private void onSettings(SettingsResponse settings) {
-        mayStartTracing.setValue(settings.getMayStartTracing());
-        traceCollections.setValue(settings.getTraceCollections());
+        mayStartRecording.setValue(settings.getMayStartRecording());
+        recordCollectionItems.setValue(settings.getRecordCollectionsItems());
 
         excludeFromInstrumentationPackages.setValue(new PackageList(settings.getExcludedFromInstrumentationPackagesList()));
         instrumentedPackages.setValue(new PackageList(settings.getInstrumentedPackagesList()));
-        tracingStartMethod.setValue(new TracingStartMethodList(settings.getTraceStartMethodsList()));
+        recordingStartMethod.setValue(new RecordingStartMethodList(settings.getTraceStartMethodsList()));
 
     }
 
@@ -58,15 +57,15 @@ public class UiSettings {
         return instrumentedPackages;
     }
 
-    public SettingsProperty<TracingStartMethodList> getTracingStartMethod() {
-        return tracingStartMethod;
+    public SettingsProperty<RecordingStartMethodList> getRecordingStartMethod() {
+        return recordingStartMethod;
     }
 
     public SettingsProperty<Boolean> mayStartTracing() {
-        return mayStartTracing;
+        return mayStartRecording;
     }
 
     public SettingsProperty<Boolean> traceCollections() {
-        return traceCollections;
+        return recordCollectionItems;
     }
 }

@@ -27,7 +27,7 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
     @Override
     public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
         SettingsResponse.Builder response = SettingsResponse.newBuilder();
-        response.setMayStartTracing(viewController.getFxTracingSwitch().isSelected());
+        response.setMayStartRecording(viewController.getFxTracingSwitch().isSelected());
 
         response.addAllInstrumentedPackages(
                 Arrays.asList(viewController.getInstrumentedPackagesTextField().getText().split(","))
@@ -37,11 +37,8 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
         );
         response.addAllTraceStartMethods(CommaSeparatedList.parse(viewController.getStartMethodTextField().getText()));
 
-        // turned off now
-        response.setShouldTraceIdentityHashCode(false);
-
         Slider slider = viewController.getTracingPrecisionSlider();
-        response.setTraceCollections(Double.compare(viewController.getTracingPrecisionSlider().getValue(), slider.getMax()) == 0);
+        response.setRecordCollectionsItems(Double.compare(viewController.getTracingPrecisionSlider().getValue(), slider.getMax()) == 0);
 
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();

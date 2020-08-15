@@ -3,7 +3,7 @@ package com.perf.agent.benchmarks;
 import com.perf.agent.benchmarks.impl.SpringHibernateBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
 import com.perf.agent.benchmarks.proc.UIServerStub;
-import com.ulyp.core.CallEnterTraceList;
+import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.util.PackageList;
 import com.ulyp.transport.TCallTraceLogUploadRequest;
 import org.HdrHistogram.Histogram;
@@ -66,7 +66,7 @@ public class BenchmarksForSomeProfileMain {
                     TCallTraceLogUploadRequest tCallTraceLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
                     traceTimeHistogram.recordValue(tCallTraceLogUploadRequest.getLifetimeMillis());
 
-                    CallEnterTraceList tCallEnterTraceDecoders = new CallEnterTraceList(tCallTraceLogUploadRequest.getTraceLog().getEnterTraces());
+                    CallEnterRecordList tCallEnterTraceDecoders = new CallEnterRecordList(tCallTraceLogUploadRequest.getTraceLog().getEnterTraces());
                     return tCallEnterTraceDecoders.size();
                 }
 

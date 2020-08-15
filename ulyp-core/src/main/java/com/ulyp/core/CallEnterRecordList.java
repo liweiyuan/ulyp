@@ -8,14 +8,14 @@ import com.ulyp.transport.TCallEnterTraceDecoder;
 import com.ulyp.transport.TCallEnterTraceEncoder;
 
 // Flexible SBE wrapper
-public class CallEnterTraceList extends AbstractSbeRecordList<TCallEnterTraceEncoder, TCallEnterTraceDecoder> {
+public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterTraceEncoder, TCallEnterTraceDecoder> {
 
     private final BinaryOutputForEnterTraceImpl binaryOutput = new BinaryOutputForEnterTraceImpl();
 
-    public CallEnterTraceList() {
+    public CallEnterRecordList() {
     }
 
-    public CallEnterTraceList(ByteString bytes) {
+    public CallEnterRecordList(ByteString bytes) {
         super(bytes);
     }
 

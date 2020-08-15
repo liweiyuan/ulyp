@@ -23,7 +23,7 @@ public class SystemPropertiesSettings implements AgentSettings {
         List<String> excludedPackages = CommaSeparatedList.parse(excludedPackagesStr);
 
         String tracedMethods = System.getProperty(START_METHOD_PROPERTY, "");
-        TracingStartMethodList tracingStartMethods = new TracingStartMethodList(CommaSeparatedList.parse(tracedMethods));
+        RecordingStartMethodList tracingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(tracedMethods));
 
         UiAddress uiAddress;
         boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
@@ -62,9 +62,10 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     @Nullable
     private final UiAddress uiAddress;
+    // TODO use package list
     private final List<String> instrumentatedPackages;
     private final List<String> excludedFromInstrumentationPackages;
-    private final TracingStartMethodList startTracingMethods;
+    private final RecordingStartMethodList startTracingMethods;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
     private final int minTraceCount;
@@ -73,7 +74,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             @Nullable UiAddress uiAddress,
             List<String> instrumentedPackages,
             List<String> excludedFromInstrumentationPackages,
-            TracingStartMethodList tracingStartMethodList,
+            RecordingStartMethodList recordingStartMethodList,
             int maxTreeDepth,
             int maxCallsPerMethod,
             int minTraceCount)
@@ -81,7 +82,7 @@ public class SystemPropertiesSettings implements AgentSettings {
         this.uiAddress = uiAddress;
         this.instrumentatedPackages = instrumentedPackages;
         this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
-        this.startTracingMethods = tracingStartMethodList;
+        this.startTracingMethods = recordingStartMethodList;
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
@@ -134,11 +135,11 @@ public class SystemPropertiesSettings implements AgentSettings {
         } else {
             return new DisconnectedUiTransport(
                     SettingsResponse.newBuilder()
-                            .addAllInstrumentedPackages(instrumentatedPackages)
-                            .addAllExcludedFromInstrumentationPackages(excludedFromInstrumentationPackages)
+                            .addAllInstrumentedPackages(getInstrumentatedPackages())
+                            .addAllExcludedFromInstrumentationPackages(getExcludedFromInstrumentationPackages())
                             .addAllTraceStartMethods(startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
-                            .setMayStartTracing(true)
-                            .setTraceCollections(false)
+                            .setMayStartRecording(true)
+                            .setRecordCollectionsItems(false)
                             .build()
             );
         }

@@ -7,26 +7,27 @@ import org.agrona.collections.IntArrayList;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class CallTraceLog {
+public class CallRecordLog {
     public static final AtomicLong idGenerator = new AtomicLong(3000000000L);
 
     private final long id = idGenerator.incrementAndGet();
 
     private final AgentRuntime agentRuntime;
-    private final CallEnterTraceList enterTraces = new CallEnterTraceList();
-    private final CallExitTraceList exitTraces = new CallExitTraceList();
+    private final CallEnterRecordList enterRecords = new CallEnterRecordList();
+    private final CallExitRecordList exitRecords = new CallExitRecordList();
     private final IntArrayList callIdsStack = new IntArrayList();
-    private final BooleanArrayList traceFlagStack = new BooleanArrayList();
+    private final BooleanArrayList recordedStack = new BooleanArrayList();
     private final IntArrayList callCountStack = new IntArrayList();
 
     private final long epochMillisCreatedTime;
     private final int maxDepth;
+    // TODO name?
     private final int maxCallsPerDepth;
 
     private boolean inProcessOfTracing = true;
     private int callIdCounter = 0;
 
-    public CallTraceLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsPerDepth) {
+    public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsPerDepth) {
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
         this.maxCallsPerDepth = maxCallsPerDepth;
@@ -44,11 +45,11 @@ public class CallTraceLog {
             int callsMadeInCurrentMethod = callCountStack.getInt(callCountStack.size() - 1);
 
             int callId = callIdCounter++;
-            boolean canTrace = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsPerDepth;
-            pushCurrentMethodCallId(callId, canTrace);
+            boolean canRecord = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsPerDepth;
+            pushCurrentMethodCallId(callId, canRecord);
 
-            if (canTrace) {
-                enterTraces.add(callId, methodId, agentRuntime, printers, callee, args);
+            if (canRecord) {
+                enterRecords.add(callId, methodId, agentRuntime, printers, callee, args);
                 callCountStack.setInt(callCountStack.size() - 2, callsMadeInCurrentMethod + 1);
             }
         } finally {
@@ -63,14 +64,14 @@ public class CallTraceLog {
 
         inProcessOfTracing = false;
         try {
-            boolean traced = traceFlagStack.popBoolean();
+            boolean traced = recordedStack.popBoolean();
             long callId = popCurrentCallId();
 
             if (traced && callId >= 0) {
                 if (thrown == null) {
-                    exitTraces.add(callId, methodId, agentRuntime, false, agentRuntime.getClassId(returnValue), resultPrinter, returnValue);
+                    exitRecords.add(callId, methodId, agentRuntime, false, agentRuntime.getClassId(returnValue), resultPrinter, returnValue);
                 } else {
-                    exitTraces.add(callId, methodId, agentRuntime, true, agentRuntime.getClassId(thrown), ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
+                    exitRecords.add(callId, methodId, agentRuntime, true, agentRuntime.getClassId(thrown), ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
                 }
             }
         } finally {
@@ -83,7 +84,7 @@ public class CallTraceLog {
     }
 
     public long size() {
-        return enterTraces.size();
+        return enterRecords.size();
     }
 
     private void pushCurrentMethodCallId(int callId, boolean canTrace) {
@@ -93,7 +94,7 @@ public class CallTraceLog {
         * the tree will lose it's form. We prohibit it by setting number of calls already made to maximum.
         */
         callCountStack.pushInt(canTrace ? 0 : Integer.MAX_VALUE);
-        traceFlagStack.push(canTrace);
+        recordedStack.push(canTrace);
     }
 
     private long popCurrentCallId() {
@@ -106,12 +107,12 @@ public class CallTraceLog {
         }
     }
 
-    public CallEnterTraceList getEnterTraces() {
-        return enterTraces;
+    public CallEnterRecordList getEnterRecords() {
+        return enterRecords;
     }
 
-    public CallExitTraceList getExitTraces() {
-        return exitTraces;
+    public CallExitRecordList getExitRecords() {
+        return exitRecords;
     }
 
     public long getId() {

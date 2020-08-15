@@ -14,9 +14,8 @@ service UiTransport {
 }
 
 message SettingsResponse {
-    bool mayStartTracing = 1;
-    bool shouldTraceIdentityHashCode = 2;
-    bool traceCollections = 3;
+    bool mayStartRecording = 1;
+    bool recordCollectionsItems = 3;
     repeated string instrumentedPackages = 4;
     repeated string excludedFromInstrumentationPackages = 6;
     repeated string traceStartMethods = 5;
