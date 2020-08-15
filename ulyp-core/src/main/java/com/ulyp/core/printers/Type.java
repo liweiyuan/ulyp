@@ -5,6 +5,15 @@ import com.ulyp.core.util.ClassUtils;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Reflection is usually used for RTTI but it's not possible for the agent to use it. Type information
+ * must be able before class is loaded and instrumented. Bytebuddy provides method description but this
+ * module CAN NOT use byte buddy since this module is installed at bootstrap class loader search path (and
+ * it therefore is visible to any classloader in the instrumented app).
+ *
+ * As a consequence, this module uses this interface and implementation is provied by byte buddy in ulyp-agent
+ * module.
+ */
 public interface Type {
 
     String getName();
