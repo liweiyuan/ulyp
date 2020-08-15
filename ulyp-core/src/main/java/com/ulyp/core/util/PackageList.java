@@ -2,10 +2,8 @@ package com.ulyp.core.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Just a list of package matchers, no glob/regex yet
@@ -15,15 +13,19 @@ public class PackageList implements Iterable<String> {
     private final List<String> packages;
 
     public PackageList() {
-        this(Collections.emptyList());
+        this(new ArrayList<>());
     }
 
     public PackageList(String... packages) {
-        this.packages = Arrays.asList(packages);
+        this.packages = Arrays.stream(packages).collect(Collectors.toList());
     }
 
     public PackageList(List<String> packages) {
-        this.packages = packages;
+        this.packages = new ArrayList<>(packages);
+    }
+
+    public void add(String ppackage) {
+        this.packages.add(ppackage);
     }
 
     public boolean isEmpty() {

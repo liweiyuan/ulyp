@@ -2,6 +2,7 @@ package com.ulyp.agent.settings;
 
 import com.ulyp.agent.transport.NamedThreadFactory;
 import com.ulyp.agent.transport.UiTransport;
+import com.ulyp.core.util.PackageList;
 import com.ulyp.transport.SettingsResponse;
 
 import java.time.Duration;
@@ -15,8 +16,8 @@ public class UiSettings {
             new NamedThreadFactory("Settings-Updater", true)
     );
 
-    private final SettingsProperty<List<String>> instrumentedPackages = new SettingsProperty<>("Instrumented packages");
-    private final SettingsProperty<List<String>> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from trace packages list");
+    private final SettingsProperty<PackageList> instrumentedPackages = new SettingsProperty<>("Instrumented packages", new PackageList());
+    private final SettingsProperty<PackageList> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from trace packages list", new PackageList());
     private final SettingsProperty<TracingStartMethodList> tracingStartMethod = new SettingsProperty<>("Tracing start methods list");
     private final SettingsProperty<Boolean> mayStartTracing = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> traceCollections = new SettingsProperty<>("Trace collection", true);
@@ -43,17 +44,17 @@ public class UiSettings {
         mayStartTracing.setValue(settings.getMayStartTracing());
         traceCollections.setValue(settings.getTraceCollections());
 
-        excludeFromInstrumentationPackages.setValue(settings.getExcludedFromInstrumentationPackagesList());
-        instrumentedPackages.setValue(settings.getInstrumentedPackagesList());
+        excludeFromInstrumentationPackages.setValue(new PackageList(settings.getExcludedFromInstrumentationPackagesList()));
+        instrumentedPackages.setValue(new PackageList(settings.getInstrumentedPackagesList()));
         tracingStartMethod.setValue(new TracingStartMethodList(settings.getTraceStartMethodsList()));
 
     }
 
-    public SettingsProperty<List<String>> getExcludeFromInstrumentationPackages() {
+    public SettingsProperty<PackageList> getExcludeFromInstrumentationPackages() {
         return excludeFromInstrumentationPackages;
     }
 
-    public SettingsProperty<List<String>> getInstrumentedPackages() {
+    public SettingsProperty<PackageList> getInstrumentedPackages() {
         return instrumentedPackages;
     }
 

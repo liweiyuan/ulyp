@@ -4,6 +4,7 @@ import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.TracingStartMethodList;
 import com.ulyp.agent.settings.UiSettings;
+import com.ulyp.core.util.PackageList;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -23,18 +24,15 @@ public class Agent {
         UiSettings uiSettings = instance.getUiSettings();
         SystemPropertiesSettings systemPropertiesSettings = SystemPropertiesSettings.load();
 
-        List<String> instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
-        // TODO handle properly this shit
-        List<String> excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue() != null ?
-                new ArrayList<>(uiSettings.getExcludeFromInstrumentationPackages().getValue())
-                : new ArrayList<>();
+        PackageList instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
+        PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();
         TracingStartMethodList tracingStartMethodList = uiSettings.getTracingStartMethod().getValue();
 
         // TODO show that connected to UI (if connected)
         System.out.println("Starting ULYP agent, logging level = " + logLevel +
                 ", packages = " + uiSettings.getInstrumentedPackages() +
                 ", tracing start methods = " + uiSettings.getTracingStartMethod());
-//
+
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
         for (String packageToInstrument : instrumentedPackages) {

@@ -13,9 +13,9 @@ public class SettingsProperty<T> {
         this.name = name;
     }
 
-    public SettingsProperty(String name, T value) {
+    public SettingsProperty(String name, T defaultValue) {
         this.name = name;
-        this.value = value;
+        this.value = defaultValue;
     }
 
     public T getValue() {
