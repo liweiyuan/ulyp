@@ -53,8 +53,8 @@ public class GrpcUiTransport implements UiTransport {
         uploadExecutor.submit(
                 () -> {
                     TCallRecordLog log = TCallRecordLog.newBuilder()
-                            .setEnterTraces(recordLog.getEnterRecords().toByteString())
-                            .setExitTraces(recordLog.getExitRecords().toByteString())
+                            .setEnterRecords(recordLog.getEnterRecords().toByteString())
+                            .setExitRecords(recordLog.getExitRecords().toByteString())
                             .build();
 
                     MethodDescriptionList methodDescriptionList = new MethodDescriptionList();

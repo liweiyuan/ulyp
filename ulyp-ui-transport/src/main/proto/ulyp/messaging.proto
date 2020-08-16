@@ -26,8 +26,8 @@ message SettingsRequest {
 }
 
 message TCallRecordLog {
-    bytes enterTraces = 2;
-    bytes exitTraces = 3;
+    bytes enterRecords = 2;
+    bytes exitRecords = 3;
 }
 
 message TMethodDescriptionList {

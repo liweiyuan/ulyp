@@ -45,8 +45,8 @@ public class AbstractInstrumentationTest {
 
         CallGraphDatabase database = new HeapCallGraphDatabase();
         return new CallGraphDao(
-                new CallEnterRecordList(request.getRecordLog().getEnterTraces()),
-                new CallExitRecordList(request.getRecordLog().getExitTraces()),
+                new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
+                new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 database

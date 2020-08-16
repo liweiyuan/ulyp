@@ -3,7 +3,7 @@ package com.ulyp.core;
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
-import com.ulyp.core.printers.bytes.BinaryOutputForExitTraceImpl;
+import com.ulyp.core.printers.bytes.BinaryOutputForExitRecordImpl;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TCallExitRecordDecoder;
 import com.ulyp.transport.TCallExitRecordEncoder;
@@ -11,7 +11,7 @@ import com.ulyp.transport.TCallExitRecordEncoder;
 // Flexible SBE wrapper
 public class CallExitRecordList extends AbstractSbeRecordList<TCallExitRecordEncoder, TCallExitRecordDecoder> {
 
-    private final BinaryOutputForExitTraceImpl binaryOutput = new BinaryOutputForExitTraceImpl();
+    private final BinaryOutputForExitRecordImpl binaryOutput = new BinaryOutputForExitRecordImpl();
 
     public CallExitRecordList() {
     }

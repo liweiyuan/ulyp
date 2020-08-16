@@ -3,14 +3,14 @@ package com.ulyp.core;
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
-import com.ulyp.core.printers.bytes.BinaryOutputForEnterTraceImpl;
+import com.ulyp.core.printers.bytes.BinaryOutputForEnterRecordImpl;
 import com.ulyp.transport.TCallEnterRecordDecoder;
 import com.ulyp.transport.TCallEnterRecordEncoder;
 
 // Flexible SBE wrapper
 public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordEncoder, TCallEnterRecordDecoder> {
 
-    private final BinaryOutputForEnterTraceImpl binaryOutput = new BinaryOutputForEnterTraceImpl();
+    private final BinaryOutputForEnterRecordImpl binaryOutput = new BinaryOutputForEnterRecordImpl();
 
     public CallEnterRecordList() {
     }

@@ -12,22 +12,22 @@ import java.util.*;
 
 public class CallGraphDao {
 
-    private final CallEnterRecordList enterTracesList;
-    private final CallExitRecordList exitTracesList;
+    private final CallEnterRecordList enterRecordsList;
+    private final CallExitRecordList exitRecordsList;
     private final MethodDescriptionList methodDescriptionList;
     private final Long2ObjectMap<ClassDescription> classIdMap;
     private final DecodingContext decodingContext;
     private final CallGraphDatabase database;
 
-    public CallGraphDao(CallEnterRecordList enterTracesList,
-                        CallExitRecordList exitTracesList,
+    public CallGraphDao(CallEnterRecordList enterRecordsList,
+                        CallExitRecordList exitRecordsList,
                         MethodDescriptionList methodDescriptionList,
                         ClassDescriptionList classDescriptionList,
                         CallGraphDatabase database)
     {
         this.database = database;
-        this.enterTracesList = enterTracesList;
-        this.exitTracesList = exitTracesList;
+        this.enterRecordsList = enterRecordsList;
+        this.exitRecordsList = exitRecordsList;
         this.methodDescriptionList = methodDescriptionList;
 
         this.classIdMap = new Long2ObjectOpenHashMap<>();
@@ -48,8 +48,8 @@ public class CallGraphDao {
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
-        Iterator<TCallEnterRecordDecoder> enterTraceIt = enterTracesList.iterator();
-        Iterator<TCallExitRecordDecoder> exitTraceIt = exitTracesList.iterator();
+        Iterator<TCallEnterRecordDecoder> enterTraceIt = enterRecordsList.iterator();
+        Iterator<TCallExitRecordDecoder> exitTraceIt = exitRecordsList.iterator();
 
         TCallEnterRecordDecoder currentEnterTrace = enterTraceIt.next();
         TCallExitRecordDecoder currentExitTrace = exitTraceIt.next();

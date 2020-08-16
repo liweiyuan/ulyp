@@ -3,7 +3,7 @@ package com.ulyp.core.printers.bytes;
 import com.ulyp.transport.TCallEnterRecordEncoder;
 import org.agrona.concurrent.UnsafeBuffer;
 
-public class BinaryOutputForEnterTraceImpl extends AbstractBinaryOutput {
+public class BinaryOutputForEnterRecordImpl extends AbstractBinaryOutput {
 
     private TCallEnterRecordEncoder encoder;
 

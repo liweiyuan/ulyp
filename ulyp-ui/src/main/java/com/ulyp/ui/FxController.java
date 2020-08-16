@@ -56,8 +56,8 @@ public class FxController implements Initializable {
 
     public void onCallTraceTreeUploaded(TCallRecordLogUploadRequest request) {
         CallTraceTree tree = new CallGraphDao(
-                new CallEnterRecordList(request.getRecordLog().getEnterTraces()),
-                new CallExitRecordList(request.getRecordLog().getExitTraces()),
+                new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
+                new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 callGraphDatabase).getCallTraceTree();

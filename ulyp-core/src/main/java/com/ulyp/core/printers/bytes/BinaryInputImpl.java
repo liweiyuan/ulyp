@@ -1,6 +1,5 @@
 package com.ulyp.core.printers.bytes;
 
-import com.ulyp.core.printers.Printable;
 import org.agrona.DirectBuffer;
 
 public class BinaryInputImpl implements BinaryInput {
