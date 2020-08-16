@@ -51,7 +51,6 @@ message TCallRecordLogUploadRequest {
     ProcessInfo processInfo = 3;
     int64 createEpochMillis = 4;
     int64 lifetimeMillis = 5;
-    int64 traceLogId = 6;
 }
 
 message TCallRecordLogUploadResponse {

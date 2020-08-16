@@ -69,7 +69,6 @@ public class GrpcUiTransport implements UiTransport {
                     TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
 
                     requestBuilder
-                            .setTraceLogId(recordLog.getId())
                             .setRecordLog(log)
                             .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodDescriptionList.toByteString()).build())
                             .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
