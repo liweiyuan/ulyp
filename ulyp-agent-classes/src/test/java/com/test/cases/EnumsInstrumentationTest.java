@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -47,13 +47,13 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintEnumNames() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(EnumTestCases.class)
                         .setMethodToTrace("consumesMapAndEnums")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(3));
         assertThat(root.getArgTexts().get(1), is("T1"));

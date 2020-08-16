@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -52,18 +52,18 @@ public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
     @Test
     public void testUserDefinedClassLoader() {
 
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassLoaderTestCase.class)
                         .setMethodToTrace("runInOwnClassLoader")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("runInOwnClassLoader"));
         assertThat(root.getChildren(), hasSize(1));
 
-        CallTrace callTrace = root.getChildren().get(0);
-        assertThat(callTrace.getMethodName(), is("hello"));
+        CallRecord callRecord = root.getChildren().get(0);
+        assertThat(callRecord.getMethodName(), is("hello"));
     }
 }

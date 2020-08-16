@@ -30,7 +30,7 @@
             </Menu>-->
         </MenuBar>
         <HBox alignment="CENTER_LEFT" spacing="20.0">
-            <ToggleButton fx:id="traceSwitchButton" mnemonicParsing="false" selected="true" styleClass="" text="Activate tracing">
+            <ToggleButton fx:id="recordSwitchButton" mnemonicParsing="false" selected="true" styleClass="" text="Activate tracing">
                 <HBox.margin>
                    <Insets left="20.0" />
                 </HBox.margin>
@@ -56,7 +56,7 @@
                     <Tooltip text="Comma separated list of method matchers where tracing should start. If you have a class a.b.c.D with method foo(), then specify list of packages as 'a' and tracing start methods as D.foo" />
                 </tooltip>
             </TextField>
-         <Slider fx:id="tracingPrecisionSlider" blockIncrement="1.0" majorTickUnit="1.0" max="2.0" minorTickCount="2">
+         <Slider fx:id="recordPrecisionSlider" blockIncrement="1.0" majorTickUnit="1.0" max="2.0" minorTickCount="2">
             <HBox.margin>
                <Insets />
             </HBox.margin>

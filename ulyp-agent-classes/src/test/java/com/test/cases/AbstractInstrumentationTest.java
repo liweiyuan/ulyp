@@ -5,7 +5,7 @@ import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecordTree;
 import com.ulyp.core.CallGraphDatabase;
 import com.ulyp.core.CallGraphDao;
 import com.ulyp.core.heap.HeapCallGraphDatabase;
@@ -40,7 +40,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected CallTraceTree runSubprocessWithUi(TestSettingsBuilder settings) {
+    protected CallRecordTree runSubprocessWithUi(TestSettingsBuilder settings) {
         TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(settings);
 
         CallGraphDatabase database = new HeapCallGraphDatabase();
@@ -50,7 +50,7 @@ public class AbstractInstrumentationTest {
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 database
-        ).getCallTraceTree();
+        ).getCallRecordTree();
     }
 
     @NotNull

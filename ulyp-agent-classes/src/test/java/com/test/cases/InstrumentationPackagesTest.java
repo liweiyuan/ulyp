@@ -3,8 +3,8 @@ package com.test.cases;
 import com.test.cases.a.A;
 import com.test.cases.a.c.C;
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -18,14 +18,14 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldInstrumentAndTraceAllClasses() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
                         .setMethodToTrace("main")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("main"));
         assertThat(root.getClassName(), is(A.class.getName()));
@@ -34,7 +34,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldExcludeInstrumentationPackage() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
@@ -42,21 +42,21 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMethodToTrace("main")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("main"));
         assertThat(root.getClassName(), is("com.test.cases.a.A"));
         assertThat(root.getChildren(), Matchers.hasSize(1));
 
-        CallTrace callTrace = root.getChildren().get(0);
+        CallRecord callRecord = root.getChildren().get(0);
 
-        assertThat(callTrace.getClassName(), is(C.class.getName()));
-        assertThat(callTrace.getMethodName(), is("c"));
+        assertThat(callRecord.getClassName(), is(C.class.getName()));
+        assertThat(callRecord.getMethodName(), is("c"));
     }
 
     @Test
     public void shouldExcludeTwoPackages() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
@@ -64,7 +64,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMethodToTrace("main")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("main"));
         assertThat(root.getClassName(), is("com.test.cases.a.A"));

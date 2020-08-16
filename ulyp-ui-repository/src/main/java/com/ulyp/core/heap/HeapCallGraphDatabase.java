@@ -1,6 +1,6 @@
 package com.ulyp.core.heap;
 
-import com.ulyp.core.CallTrace;
+import com.ulyp.core.CallRecord;
 import com.ulyp.core.CallGraphDatabase;
 import com.ulyp.core.ObjectValue;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -16,25 +16,25 @@ import java.util.concurrent.atomic.AtomicLong;
 public class HeapCallGraphDatabase implements CallGraphDatabase {
 
     private final AtomicLong idGenerator = new AtomicLong();
-    private final Map<Long, CallTrace> nodes = new ConcurrentHashMap<>();
+    private final Map<Long, CallRecord> nodes = new ConcurrentHashMap<>();
 
     @Override
-    public CallTrace find(long id) {
+    public CallRecord find(long id) {
         return nodes.get(id);
     }
 
     @Override
     public void deleteSubtree(long id) {
-        CallTrace callTrace = nodes.get(id);
-        for (CallTrace child : callTrace.getChildren()) {
+        CallRecord callRecord = nodes.get(id);
+        for (CallRecord child : callRecord.getChildren()) {
             deleteSubtree(child.getId());
         }
         nodes.remove(id);
     }
 
     @Override
-    public List<CallTrace> getChildren(long id) {
-        CallTrace node = find(id);
+    public List<CallRecord> getChildren(long id) {
+        CallRecord node = find(id);
         if (node != null) {
             return node.getChildren();
         } else {
@@ -43,7 +43,7 @@ public class HeapCallGraphDatabase implements CallGraphDatabase {
     }
 
     @Override
-    public void persist(CallTrace node) {
+    public void persist(CallRecord node) {
         long id = idGenerator.incrementAndGet();
         node.setId(id);
         node.setDatabase(this);
@@ -51,23 +51,23 @@ public class HeapCallGraphDatabase implements CallGraphDatabase {
     }
 
     @Override
-    public LongList searchSubtree(String text, CallTrace node) {
+    public LongList searchSubtree(String text, CallRecord node) {
         LongList result = new LongArrayList();
         searchSubtreeRecursive(result, text, node);
         return result;
     }
 
-    public void searchSubtreeRecursive(LongList resultList, String text, CallTrace node) {
+    public void searchSubtreeRecursive(LongList resultList, String text, CallRecord node) {
         if (matches(text, node)) {
             resultList.add(node.getId());
         }
-        for (CallTrace child : getChildren(node.getId())) {
+        for (CallRecord child : getChildren(node.getId())) {
             searchSubtreeRecursive(resultList, text, child);
         }
     }
 
     // TODO move to node
-    private boolean matches(String text, CallTrace node) {
+    private boolean matches(String text, CallRecord node) {
         if (StringUtils.containsIgnoreCase(node.getReturnValue().getPrintedText(), text)) {
             return true;
         }

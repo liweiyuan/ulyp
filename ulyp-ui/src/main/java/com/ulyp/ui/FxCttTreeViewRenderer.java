@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallTrace;
+import com.ulyp.core.CallRecord;
 import com.ulyp.core.ObjectValue;
 import com.ulyp.ui.renderers.FxObjectValue;
 import com.ulyp.ui.util.StringUtils;
@@ -22,7 +22,7 @@ public class FxCttTreeViewRenderer {
         return new TextBuilder().style("ulyp-ctt");
     }
 
-    public static Node render(CallTrace node, RenderSettings renderSettings, int totalNodeCountInTree) {
+    public static Node render(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
         List<Node> text = new ArrayList<>();
 
 
@@ -48,7 +48,7 @@ public class FxCttTreeViewRenderer {
         return stack;
     }
 
-    private static List<Node> renderArguments(CallTrace node, RenderSettings renderSettings) {
+    private static List<Node> renderArguments(CallRecord node, RenderSettings renderSettings) {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
         List<Node> output = new ArrayList<>();
@@ -78,7 +78,7 @@ public class FxCttTreeViewRenderer {
     }
 
     @NotNull
-    private static List<Text> renderMethodName(CallTrace node) {
+    private static List<Text> renderMethodName(CallRecord node) {
         return Arrays.asList(
                 text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build(),
                 text().text(".").style("ulyp-ctt-method-name").build(),
@@ -87,7 +87,7 @@ public class FxCttTreeViewRenderer {
     }
 
 //    @NotNull
-//    private static TextFlow renderReturnValue(CallTrace node, RenderSettings renderSettings) {
+//    private static TextFlow renderReturnValue(CallRecord node, RenderSettings renderSettings) {
 //        List<Text> value = new ArrayList<>();
 
 //        if (renderSettings.showsReturnValueClassName()) {

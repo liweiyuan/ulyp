@@ -21,7 +21,7 @@ public class UIMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("FXMLStackTraceView.fxml"));
+        FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("PrimaryView.fxml"));
         Parent root = loader.load();
 
         this.viewController = loader.getController();

@@ -30,7 +30,7 @@ public class GrpcUiTransport implements UiTransport {
             3,
             new NamedThreadFactory("GRPC-Response-processor", true)
     );
-    private final Set<Long> traceLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Long> recordLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public GrpcUiTransport(UiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
@@ -85,31 +85,31 @@ public class GrpcUiTransport implements UiTransport {
                     Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
                         @Override
                         public void onSuccess(TCallRecordLogUploadResponse result) {
-                            traceLogsCurrentlyInSending.remove(id);
+                            recordLogsCurrentlyInSending.remove(id);
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
                             t.printStackTrace();
-                            traceLogsCurrentlyInSending.remove(id);
+                            recordLogsCurrentlyInSending.remove(id);
                         }
                     }, responseProcessingExecutor);
                 }
         );
 
         long id = recordLog.getId();
-        traceLogsCurrentlyInSending.add(id);
+        recordLogsCurrentlyInSending.add(id);
     }
 
     public void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
         long startWaitingAtEpochMillis = System.currentTimeMillis();
         long deadline = startWaitingAtEpochMillis + timeUnit.toMillis(time);
-        while (System.currentTimeMillis() < deadline && !traceLogsCurrentlyInSending.isEmpty()) {
+        while (System.currentTimeMillis() < deadline && !recordLogsCurrentlyInSending.isEmpty()) {
             Thread.sleep(100);
         }
-        if (!traceLogsCurrentlyInSending.isEmpty()) {
+        if (!recordLogsCurrentlyInSending.isEmpty()) {
             System.err.println(
-                    "Didn't send " + traceLogsCurrentlyInSending + " trace logs, but shutting " +
+                    "Didn't send " + recordLogsCurrentlyInSending + " record logs, but shutting " +
                     "down anyway as waited for " + time + " " + timeUnit
             );
         }

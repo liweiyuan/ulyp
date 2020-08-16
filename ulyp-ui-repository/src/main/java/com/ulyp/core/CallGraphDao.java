@@ -40,7 +40,7 @@ public class CallGraphDao {
         }
     }
 
-    public CallTraceTree getCallTraceTree() {
+    public CallRecordTree getCallRecordTree() {
         Long2ObjectMap<TMethodDescriptionDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
         Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
         while (iterator.hasNext()) {
@@ -48,37 +48,37 @@ public class CallGraphDao {
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
-        Iterator<TCallEnterRecordDecoder> enterTraceIt = enterRecordsList.iterator();
-        Iterator<TCallExitRecordDecoder> exitTraceIt = exitRecordsList.iterator();
+        Iterator<TCallEnterRecordDecoder> enterRecordIt = enterRecordsList.iterator();
+        Iterator<TCallExitRecordDecoder> exitRecordIt = exitRecordsList.iterator();
 
-        TCallEnterRecordDecoder currentEnterTrace = enterTraceIt.next();
-        TCallExitRecordDecoder currentExitTrace = exitTraceIt.next();
+        TCallEnterRecordDecoder currentEnterRecord = enterRecordIt.next();
+        TCallExitRecordDecoder currentExitRecord = exitRecordIt.next();
 
-        CallBuilder root = new CallBuilder(null, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
-        currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
+        CallBuilder root = new CallBuilder(null, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
+        currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
 
         Deque<CallBuilder> rootPath = new ArrayDeque<>();
         rootPath.add(root);
 
-        for (; currentEnterTrace != null || currentExitTrace != null; ) {
+        for (; currentEnterRecord != null || currentExitRecord != null; ) {
             CallBuilder currentNode = rootPath.getLast();
 
             long currentCallId = currentNode.callId;
-            if (currentExitTrace != null && currentExitTrace.callId() == currentCallId) {
-                currentNode.setExitTraceData(currentExitTrace);
-                currentExitTrace = exitTraceIt.hasNext() ? exitTraceIt.next() : null;
+            if (currentExitRecord != null && currentExitRecord.callId() == currentCallId) {
+                currentNode.setExitRecordData(currentExitRecord);
+                currentExitRecord = exitRecordIt.hasNext() ? exitRecordIt.next() : null;
                 currentNode.persist();
                 rootPath.removeLast();
-            } else if (currentEnterTrace != null) {
-                CallBuilder next = new CallBuilder(currentNode, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
-                currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
+            } else if (currentEnterRecord != null) {
+                CallBuilder next = new CallBuilder(currentNode, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
+                currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
                 rootPath.add(next);
             } else {
                 throw new RuntimeException("Inconsistent state");
             }
         }
 
-        return new CallTraceTree(root.persisted);
+        return new CallRecordTree(root.persisted);
     }
 
     private class CallBuilder {
@@ -88,9 +88,9 @@ public class CallGraphDao {
         private final long callId;
         private final ObjectValue callee;
         private final List<ObjectValue> args;
-        private final List<CallTrace> children = new ArrayList<>();
+        private final List<CallRecord> children = new ArrayList<>();
 
-        private CallTrace persisted;
+        private CallRecord persisted;
         private ObjectValue returnValue;
         private boolean thrown;
 
@@ -128,7 +128,7 @@ public class CallGraphDao {
             );
         }
 
-        private void setExitTraceData(TCallExitRecordDecoder decoder) {
+        private void setExitRecordData(TCallExitRecordDecoder decoder) {
             ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
             UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
             decoder.wrapReturnValue(returnValueBuffer);
@@ -139,7 +139,7 @@ public class CallGraphDao {
         }
 
         public void persist() {
-            CallTrace node = new CallTrace(
+            CallRecord node = new CallRecord(
                     callee,
                     args,
                     returnValue,

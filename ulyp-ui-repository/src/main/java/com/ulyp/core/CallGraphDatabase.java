@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface CallGraphDatabase {
 
-    CallTrace find(long id);
+    CallRecord find(long id);
 
     void deleteSubtree(long id);
 
-    List<CallTrace> getChildren(long id);
+    List<CallRecord> getChildren(long id);
 
-    void persist(CallTrace node);
+    void persist(CallRecord node);
 
-    LongList searchSubtree(String text, CallTrace node);
+    LongList searchSubtree(String text, CallRecord node);
 }

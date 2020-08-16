@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -63,27 +63,27 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldMake1000Calls() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("make1000CallsSep")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), hasSize(1000));
     }
 
     @Test
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("make1000CallsLevel0")
                         .setMaxCallsPerMethod(7)
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), hasSize(1));
         assertThat(root.getChildren().get(0).getChildren(), hasSize(7));
@@ -91,14 +91,14 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty2() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
                         .setMethodToTrace("level0")
                         .setMaxCallsPerMethod(5)
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), hasSize(5));
         assertThat(root.getChildren().get(0).getChildren(), hasSize(5));

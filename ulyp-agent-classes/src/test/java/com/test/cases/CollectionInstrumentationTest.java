@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -32,13 +32,13 @@ public class CollectionInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldProvideArgumentTypes() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(CollectionTestCases.class)
                         .setMethodToTrace("acceptsListOfStringsWithSize0")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("EmptyList{}")));
     }

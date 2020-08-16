@@ -18,7 +18,7 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
 
     @Override
     public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
-        viewController.onCallTraceTreeUploaded(request);
+        viewController.onCallRecordTreeUploaded(request);
 
         responseObserver.onNext(TCallRecordLogUploadResponse.newBuilder().build());
         responseObserver.onCompleted();
@@ -37,8 +37,8 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
         );
         response.addAllMethodsToRecord(CommaSeparatedList.parse(viewController.getStartMethodTextField().getText()));
 
-        Slider slider = viewController.getTracingPrecisionSlider();
-        response.setRecordCollectionsItems(Double.compare(viewController.getTracingPrecisionSlider().getValue(), slider.getMax()) == 0);
+        Slider slider = viewController.getRecordPrecisionSlider();
+        response.setRecordCollectionsItems(Double.compare(viewController.getRecordPrecisionSlider().getValue(), slider.getMax()) == 0);
 
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();

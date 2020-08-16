@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -26,13 +26,13 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void testFibonacciMethodCall() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(RecursionTestCases.class)
                         .setMethodToTrace("fibonacci")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getSubtreeNodeCount(), is(177));
     }

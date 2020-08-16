@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecordTree;
 import com.ulyp.core.CallGraphDatabase;
 import it.unimi.dsi.fastutil.longs.LongList;
 import javafx.scene.control.Tab;
@@ -29,31 +29,31 @@ public class ProcessTab extends Tab {
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
     }
 
-    public void add(CallTraceTree tree, RenderSettings renderSettings, Duration lifetime) {
+    public void add(CallRecordTree tree, RenderSettings renderSettings, Duration lifetime) {
         long id = idGenerator++;
-        FxCallTraceTreeTab tab = new FxCallTraceTreeTab(callTreeTabs, tree, renderSettings, id, lifetime);
+        FxCallRecordTreeTab tab = new FxCallRecordTreeTab(callTreeTabs, tree, renderSettings, id, lifetime);
         callTreeTabs.getTabs().add(tab);
     }
 
-    public FxCallTraceTreeTab getSelectedTreeTab() {
-        return (FxCallTraceTreeTab) callTreeTabs.getSelectionModel().getSelectedItem();
+    public FxCallRecordTreeTab getSelectedTreeTab() {
+        return (FxCallRecordTreeTab) callTreeTabs.getSelectionModel().getSelectedItem();
     }
 
-    public void addTree(CallTraceTree tree, RenderSettings renderSettings, Duration lifetime) {
+    public void addTree(CallRecordTree tree, RenderSettings renderSettings, Duration lifetime) {
         add(tree, renderSettings, lifetime);
     }
 
     private void clearSearch() {
         for (Tab tab : callTreeTabs.getTabs()) {
-            FxCallTraceTreeTab fxCallTraceTreeTab = (FxCallTraceTreeTab) tab;
-            fxCallTraceTreeTab.clearSearchMark();
+            FxCallRecordTreeTab fxCallRecordTreeTab = (FxCallRecordTreeTab) tab;
+            fxCallRecordTreeTab.clearSearchMark();
         }
     }
 
     public void dispose() {
         for (Tab tab : callTreeTabs.getTabs()) {
-            FxCallTraceTreeTab fxCallTraceTreeTab = (FxCallTraceTreeTab) tab;
-            fxCallTraceTreeTab.dispose();
+            FxCallRecordTreeTab fxCallRecordTreeTab = (FxCallRecordTreeTab) tab;
+            fxCallRecordTreeTab.dispose();
         }
     }
 
@@ -66,13 +66,13 @@ public class ProcessTab extends Tab {
         }
 
         for (Tab tab : callTreeTabs.getTabs()) {
-            applySearchForTab((FxCallTraceTreeTab) tab, searchText);
+            applySearchForTab((FxCallRecordTreeTab) tab, searchText);
         }
     }
 
     // TODO move into tab
-    private void applySearchForTab(FxCallTraceTreeTab fxTab, String searchText) {
-        FxCallTrace root = fxTab.getRoot();
+    private void applySearchForTab(FxCallRecordTreeTab fxTab, String searchText) {
+        FxCallRecord root = fxTab.getRoot();
         LongList result = database.searchSubtree(searchText, root.getNode());
 
         if (!result.isEmpty()) {

@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -28,13 +28,13 @@ public class ClassInstrumentationTest extends AbstractInstrumentationTest {
     @Test
     public void testClassTypePassing() {
 
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(PassClazz.class)
                         .setMethodToTrace("pass")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("class com.test.cases.ClassInstrumentationTest$X")));
     }

@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -57,13 +57,13 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintObjects() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
         assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("Object@.+"));
@@ -71,13 +71,13 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldChooseValidPrinterForJavaLangObjectAtRuntime() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects2")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
         assertThat(root.getArgs().get(0).getPrintedText(), is("asdasd"));
@@ -86,13 +86,13 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldCallToStringIfPossible() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoObjects3")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
         assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("X@.+"));
@@ -101,13 +101,13 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldPrintNullArguments() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
                         .setMethodToTrace("acceptsTwoNulls")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
         assertThat(root.getArgTexts().get(0), is("null"));

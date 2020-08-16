@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,12 +40,12 @@ public class H2Test extends AbstractInstrumentationTest {
     @Test
     public void testAtomicIntegerSum() {
 
-        CallTraceTree tree = runSubprocessWithUi(new TestSettingsBuilder()
+        CallRecordTree tree = runSubprocessWithUi(new TestSettingsBuilder()
                 .setInstrumentedPackages(Arrays.asList("com.test", "org.h2"))
                 .setMainClassName(H2TestRun.class)
                 .setMethodToTrace("main"));
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         Assert.assertTrue(root.getSubtreeNodeCount() > 4000);
     }

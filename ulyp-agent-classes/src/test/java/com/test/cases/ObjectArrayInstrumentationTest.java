@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -49,53 +49,53 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
 
     @Test
     public void shouldProvideArgumentTypes() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptEmptyObjectArray")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("Object[]"));
     }
 
     @Test
     public void testUserDefinedEmptyArray() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptEmptyUserDefinedClassArray")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("X[]"));
     }
 
     @Test
     public void testUserDefinedClassArrayWith3Elements() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptUserDefinedClassArrayWith3Elements")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("X[][3 items ]"));
     }
 
     @Test
     public void testUserDefinedClassArrayWith3ElementsWithArrayTrace() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setTraceCollections(true)
                         .setMainClassName(ObjectArrayTestCases.class)
                         .setMethodToTrace("acceptUserDefinedClassArrayWith3Elements")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("[X{text='a'}, null, X{text='b'}]"));
     }

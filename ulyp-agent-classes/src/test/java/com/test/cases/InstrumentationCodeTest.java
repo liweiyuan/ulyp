@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -25,13 +25,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldTraceMainMethod() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(MainMethodCase.class)
                         .setMethodToTrace("main")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("main"));
         assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$MainMethodCase"));
@@ -86,13 +86,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldTraceStaticMethodCall() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("staticMethod")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getMethodName(), is("staticMethod"));
         assertThat(root.getArgTexts(), empty());
@@ -100,13 +100,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForStringReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnStringWithEmptyParams")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
@@ -118,13 +118,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForNullReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnNullObjectWithEmptyParams")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
@@ -137,13 +137,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnIntWithEmptyParams")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
@@ -155,14 +155,14 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTestObjectReturningMethodWithEmptyArgs() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("returnTestObjectWithEmptyParams")
         );
 
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
@@ -174,13 +174,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidIfMethodThrowsException() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("throwsRuntimeException")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
@@ -212,13 +212,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForTwoMethodCalls() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SeveralMethodsTestCases.class)
                         .setMethodToTrace("callTwoMethods")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(hasSize(2)));
         assertThat(root.getArgTexts(), is(empty()));
@@ -228,7 +228,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getMethodName(), is("callTwoMethods"));
         assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SeveralMethodsTestCases"));
 
-        CallTrace call1 = root.getChildren().get(0);
+        CallRecord call1 = root.getChildren().get(0);
 
         assertThat(call1.getChildren(), is(empty()));
         assertThat(call1.getArgs(), is(empty()));
@@ -237,7 +237,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(call1.getSubtreeNodeCount(), is(1));
         assertThat(call1.getMethodName(), is("method1"));
 
-        CallTrace call2 = root.getChildren().get(1);
+        CallRecord call2 = root.getChildren().get(1);
 
         assertThat(call2.getChildren(), is(empty()));
         assertThat(call2.getArgs(), is(empty()));
@@ -249,13 +249,13 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldBeValidForIntArgument() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
                         .setMethodToTrace("consumesInt")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(Collections.singletonList("45324")));

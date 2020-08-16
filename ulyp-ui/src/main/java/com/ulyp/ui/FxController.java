@@ -4,8 +4,8 @@ import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import com.ulyp.core.CallGraphDatabase;
 import com.ulyp.core.CallGraphDao;
 import com.ulyp.core.heap.HeapCallGraphDatabase;
@@ -41,9 +41,9 @@ public class FxController implements Initializable {
     @FXML
     public TextField startMethodTextField;
     @FXML
-    public ToggleButton traceSwitchButton;
+    public ToggleButton recordSwitchButton;
     @FXML
-    public Slider tracingPrecisionSlider;
+    public Slider recordPrecisionSlider;
 
     private ProcessTabs processTabs;
     private final CallGraphDatabase callGraphDatabase = new HeapCallGraphDatabase();
@@ -54,18 +54,18 @@ public class FxController implements Initializable {
         processTabs = new ProcessTabs(callGraphDatabase, processTabPane);
     }
 
-    public void onCallTraceTreeUploaded(TCallRecordLogUploadRequest request) {
-        CallTraceTree tree = new CallGraphDao(
+    public void onCallRecordTreeUploaded(TCallRecordLogUploadRequest request) {
+        CallRecordTree tree = new CallGraphDao(
                 new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
-                callGraphDatabase).getCallTraceTree();
+                callGraphDatabase).getCallRecordTree();
 
         Platform.runLater(() -> addTree(request, tree));
     }
 
-    private void addTree(TCallRecordLogUploadRequest request, CallTraceTree tree) {
+    private void addTree(TCallRecordLogUploadRequest request, CallRecordTree tree) {
         ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
         processTab.addTree(tree, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
@@ -80,7 +80,7 @@ public class FxController implements Initializable {
 
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            FxCallTrace selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            FxCallRecord selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(true);
                 renderSettings.setShowArgumentClassNames(true);
@@ -91,12 +91,12 @@ public class FxController implements Initializable {
                 // COPY currently selected
                 ProcessTab selectedTab = processTabs.getSelectedTab();
                 if (selectedTab != null) {
-                    FxCallTrace selectedCallTrace = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
-                    if (selectedCallTrace != null) {
+                    FxCallRecord selectedCallRecord = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+                    if (selectedCallRecord != null) {
                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                         final ClipboardContent content = new ClipboardContent();
-                        CallTrace callTrace = selectedCallTrace.getNode();
-                        content.putString(callTrace.getClassName() + "." + callTrace.getMethodName());
+                        CallRecord callRecord = selectedCallRecord.getNode();
+                        content.putString(callRecord.getClassName() + "." + callRecord.getMethodName());
                         clipboard.setContent(content);
                     }
                 }
@@ -106,7 +106,7 @@ public class FxController implements Initializable {
 
     public void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            FxCallTrace selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            FxCallRecord selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(false);
                 renderSettings.setShowArgumentClassNames(false);
@@ -128,10 +128,10 @@ public class FxController implements Initializable {
     }
 
     public ToggleButton getFxTracingSwitch() {
-        return traceSwitchButton;
+        return recordSwitchButton;
     }
 
-    public Slider getTracingPrecisionSlider() {
-        return tracingPrecisionSlider;
+    public Slider getRecordPrecisionSlider() {
+        return recordPrecisionSlider;
     }
 }

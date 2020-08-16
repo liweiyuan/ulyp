@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -41,12 +41,12 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testPrimitiveIntSum() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                 .setMethodToTrace("primitiveIntSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
         assertThat(root.getReturnValue().getPrintedText(), is("-211"));
@@ -54,12 +54,12 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testBoxedIntSum() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("boxedIntSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
         assertThat(root.getReturnValue().getPrintedText(), is("-211"));
@@ -67,12 +67,12 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testPrimitiveDoubleSum() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("primitiveDoubleSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-5434.23", "321.2453")));
         assertThat(root.getReturnValue().getPrintedText(), is("-5112.9847"));
@@ -80,12 +80,12 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
 
     @Test
     public void testBoxedDoubleSum() {
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
                         .setMethodToTrace("boxedDoubleSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-5434.23", "321.2453")));
         assertThat(root.getReturnValue().getPrintedText(), is("-5112.9847"));

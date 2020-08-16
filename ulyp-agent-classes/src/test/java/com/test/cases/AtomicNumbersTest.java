@@ -1,8 +1,8 @@
 package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.CallTrace;
-import com.ulyp.core.CallTraceTree;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -27,13 +27,13 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     @Test
     public void testAtomicIntegerSum() {
 
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicIntegerSum.class)
                         .setMethodToTrace("intSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
         assertThat(root.getReturnValue().getPrintedText(), is("-211"));
@@ -53,13 +53,13 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
     @Test
     public void testAtomicLongSum() {
 
-        CallTraceTree tree = runSubprocessWithUi(
+        CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicLongSum.class)
                         .setMethodToTrace("longSum")
         );
 
-        CallTrace root = tree.getRoot();
+        CallRecord root = tree.getRoot();
 
         assertThat(root.getArgTexts(), is(Arrays.asList("-234", "23")));
         assertThat(root.getReturnValue().getPrintedText(), is("-211"));

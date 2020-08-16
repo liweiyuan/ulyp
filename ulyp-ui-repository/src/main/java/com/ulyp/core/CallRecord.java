@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CallTrace {
+public class CallRecord {
 
     private long id;
     private final String className;
@@ -18,17 +18,17 @@ public class CallTrace {
     private final List<String> parameterNames;
     private final ObjectValue returnValue;
     private final boolean thrown;
-    private final List<CallTrace> children;
+    private final List<CallRecord> children;
     private final int subtreeNodeCount;
     private CallGraphDatabase database;
 
-    public CallTrace(
+    public CallRecord(
             ObjectValue callee,
             List<ObjectValue> args,
             ObjectValue returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
-            List<CallTrace> children)
+            List<CallRecord> children)
     {
         this.callee = callee;
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
@@ -47,7 +47,7 @@ public class CallTrace {
         methodDescription.limit(originalLimit);
 
         this.children = new ArrayList<>(children);
-        this.subtreeNodeCount = children.stream().map(CallTrace::getSubtreeNodeCount).reduce(1, Integer::sum);
+        this.subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
     }
 
     public CallGraphDatabase getDatabase() {
@@ -94,11 +94,11 @@ public class CallTrace {
         return thrown;
     }
 
-    public List<CallTrace> getChildren() {
+    public List<CallRecord> getChildren() {
         return children;
     }
 
-    public CallTrace setId(long id) {
+    public CallRecord setId(long id) {
         this.id = id;
         return this;
     }
