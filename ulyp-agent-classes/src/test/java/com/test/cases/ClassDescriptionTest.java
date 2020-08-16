@@ -34,7 +34,7 @@ public class ClassDescriptionTest extends AbstractInstrumentationTest {
     public void shouldProvideArgumentTypes() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(AtomicNumbersTestCases.class)
-                        .setMethodToTrace("intSum")
+                        .setMethodToRecord("intSum")
         );
 
         CallRecord root = tree.getRoot();

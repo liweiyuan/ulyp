@@ -50,7 +50,7 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(EnumTestCases.class)
-                        .setMethodToTrace("consumesMapAndEnums")
+                        .setMethodToRecord("consumesMapAndEnums")
         );
 
         CallRecord root = tree.getRoot();

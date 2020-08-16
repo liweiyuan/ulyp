@@ -12,7 +12,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     private static final ObjectBinaryPrinter collectionSizeOnlyPrinter = new CollectionSizeOnlyPrinter(-1);
     private static final ObjectBinaryPrinter collectionDebugPrinter = new CollectionDebugPrinter(-1);
 
-    private volatile boolean fullTraceMode = false;
+    private volatile boolean shouldRecordItems = false;
 
     protected CollectionPrinter(int id) {
         super(id);
@@ -25,8 +25,8 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        boolean fullTrace = binaryInput.readBoolean();
-        if (fullTrace) {
+        boolean recordItems = binaryInput.readBoolean();
+        if (recordItems) {
             return collectionDebugPrinter.read(classDescription, binaryInput, decodingContext);
         } else {
             return collectionSizeOnlyPrinter.read(classDescription, binaryInput, decodingContext);
@@ -35,10 +35,10 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        boolean fullTrace = this.fullTraceMode;
+        boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
-            appender.append(fullTrace);
-            if (fullTrace) {
+            appender.append(recordItems);
+            if (recordItems) {
                 collectionDebugPrinter.write(obj, appender, agentRuntime);
             } else {
                 collectionSizeOnlyPrinter.write(obj, appender, agentRuntime);
@@ -46,7 +46,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
         }
     }
 
-    public void setFullTraceMode(boolean fullTraceOfCollections) {
-        this.fullTraceMode = fullTraceOfCollections;
+    public void setShouldRecordItems(boolean recordItems) {
+        this.shouldRecordItems = recordItems;
     }
 }

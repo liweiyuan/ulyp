@@ -52,7 +52,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
-                        .setMethodToTrace("acceptEmptyObjectArray")
+                        .setMethodToRecord("acceptEmptyObjectArray")
         );
 
         CallRecord root = tree.getRoot();
@@ -65,7 +65,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
-                        .setMethodToTrace("acceptEmptyUserDefinedClassArray")
+                        .setMethodToRecord("acceptEmptyUserDefinedClassArray")
         );
 
         CallRecord root = tree.getRoot();
@@ -78,7 +78,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectArrayTestCases.class)
-                        .setMethodToTrace("acceptUserDefinedClassArrayWith3Elements")
+                        .setMethodToRecord("acceptUserDefinedClassArrayWith3Elements")
         );
 
         CallRecord root = tree.getRoot();
@@ -90,9 +90,9 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
     public void testUserDefinedClassArrayWith3ElementsWithArrayTrace() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
-                        .setTraceCollections(true)
+                        .setRecordCollectionItems(true)
                         .setMainClassName(ObjectArrayTestCases.class)
-                        .setMethodToTrace("acceptUserDefinedClassArrayWith3Elements")
+                        .setMethodToRecord("acceptUserDefinedClassArrayWith3Elements")
         );
 
         CallRecord root = tree.getRoot();

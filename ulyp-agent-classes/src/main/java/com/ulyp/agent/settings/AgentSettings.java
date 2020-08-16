@@ -6,7 +6,7 @@ public interface AgentSettings {
 
     int getMaxTreeDepth();
 
-    int getMinTraceCount();
+    int getMinRecordsCountForLog();
 
     int getMaxCallsPerMethod();
 

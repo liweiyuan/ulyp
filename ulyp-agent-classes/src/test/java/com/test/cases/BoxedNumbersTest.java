@@ -43,7 +43,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testPrimitiveIntSum() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
-                .setMethodToTrace("primitiveIntSum")
+                .setMethodToRecord("primitiveIntSum")
         );
 
         CallRecord root = tree.getRoot();
@@ -56,7 +56,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testBoxedIntSum() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
-                        .setMethodToTrace("boxedIntSum")
+                        .setMethodToRecord("boxedIntSum")
         );
 
         CallRecord root = tree.getRoot();
@@ -69,7 +69,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testPrimitiveDoubleSum() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
-                        .setMethodToTrace("primitiveDoubleSum")
+                        .setMethodToRecord("primitiveDoubleSum")
         );
 
         CallRecord root = tree.getRoot();
@@ -82,7 +82,7 @@ public class BoxedNumbersTest extends AbstractInstrumentationTest {
     public void testBoxedDoubleSum() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder().setMainClassName(BoxedNumbersTestCases.class)
-                        .setMethodToTrace("boxedDoubleSum")
+                        .setMethodToRecord("boxedDoubleSum")
         );
 
         CallRecord root = tree.getRoot();

@@ -34,8 +34,7 @@ public class AbstractInstrumentationTest {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail("Could not capture record log: " + e.getMessage());
-            Assert.fail("Could not capture record log: " + e.getMessage());
+            Assert.fail("Could not record log: " + e.getMessage());
         }
     }
 

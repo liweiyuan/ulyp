@@ -16,7 +16,7 @@ public class CallRecordLog {
     private final CallEnterRecordList enterRecords = new CallEnterRecordList();
     private final CallExitRecordList exitRecords = new CallExitRecordList();
     private final IntArrayList callIdsStack = new IntArrayList();
-    private final BooleanArrayList recordedStack = new BooleanArrayList();
+    private final BooleanArrayList recordEnterCallStack = new BooleanArrayList();
     private final IntArrayList callCountStack = new IntArrayList();
 
     private final long epochMillisCreatedTime;
@@ -64,10 +64,10 @@ public class CallRecordLog {
 
         inProcessOfTracing = false;
         try {
-            boolean traced = recordedStack.popBoolean();
+            boolean recordedEnterCall = recordEnterCallStack.popBoolean();
             long callId = popCurrentCallId();
 
-            if (traced && callId >= 0) {
+            if (recordedEnterCall && callId >= 0) {
                 if (thrown == null) {
                     exitRecords.add(callId, methodId, agentRuntime, false, agentRuntime.getClassId(returnValue), resultPrinter, returnValue);
                 } else {
@@ -90,11 +90,11 @@ public class CallRecordLog {
     private void pushCurrentMethodCallId(int callId, boolean canRecord) {
         callIdsStack.pushInt(callId);
         /*
-        * If current method call is not traced, then children (i.e. calls within this method) should be traced as well, otherwise
+        * If current method call is not recorded, then children (i.e. calls within this method) should be recorded as well, otherwise
         * the tree will lose it's form. We prohibit it by setting number of calls already made to maximum.
         */
         callCountStack.pushInt(canRecord ? 0 : Integer.MAX_VALUE);
-        recordedStack.push(canRecord);
+        recordEnterCallStack.push(canRecord);
     }
 
     private long popCurrentCallId() {
@@ -125,7 +125,7 @@ public class CallRecordLog {
 
     @Override
     public String toString() {
-        return "CallTraceLog{" +
+        return "CallRecordLog{" +
                 "id=" + id +
                 ", calls=" + callIdsStack.size() +
                 '}';

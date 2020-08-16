@@ -24,7 +24,7 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
         TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnRecordLogRaw(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
 
         ProcessInfo processInfo = log.getProcessInfo();

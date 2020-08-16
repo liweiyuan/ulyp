@@ -31,7 +31,7 @@ public class ClassInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(PassClazz.class)
-                        .setMethodToTrace("pass")
+                        .setMethodToRecord("pass")
         );
 
         CallRecord root = tree.getRoot();

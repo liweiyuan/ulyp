@@ -30,7 +30,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicIntegerSum.class)
-                        .setMethodToTrace("intSum")
+                        .setMethodToRecord("intSum")
         );
 
         CallRecord root = tree.getRoot();
@@ -56,7 +56,7 @@ public class AtomicNumbersTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(AtomicLongSum.class)
-                        .setMethodToTrace("longSum")
+                        .setMethodToRecord("longSum")
         );
 
         CallRecord root = tree.getRoot();

@@ -43,7 +43,7 @@ public class H2Test extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(new TestSettingsBuilder()
                 .setInstrumentedPackages(Arrays.asList("com.test", "org.h2"))
                 .setMainClassName(H2TestRun.class)
-                .setMethodToTrace("main"));
+                .setMethodToRecord("main"));
 
         CallRecord root = tree.getRoot();
 

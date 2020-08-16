@@ -41,15 +41,15 @@ public class BenchmarksForSomeProfileMain {
 
 
         Histogram procTimeHistogram = emptyHistogram();
-        Histogram traceTimeHistogram = emptyHistogram();
+        Histogram recordingTimeHistogram = emptyHistogram();
         Histogram recordsCountHistogram = emptyHistogram();
 
         for (int i = 0; i < ITERATIONS_PER_PROFILE; i++) {
-            int recordsCount = run(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram);
+            int recordsCount = run(benchmarkClazz, profile, procTimeHistogram, recordingTimeHistogram);
             recordsCountHistogram.recordValue(recordsCount);
         }
 
-        runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram, recordsCountHistogram));
+        runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, recordingTimeHistogram, recordsCountHistogram));
 
         return runResults;
     }
@@ -66,8 +66,8 @@ public class BenchmarksForSomeProfileMain {
                     TCallRecordLogUploadRequest TCallRecordLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
                     traceTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
 
-                    CallEnterRecordList tCallEnterTraceDecoders = new CallEnterRecordList(TCallRecordLogUploadRequest.getTraceLog().getEnterTraces());
-                    return tCallEnterTraceDecoders.size();
+                    CallEnterRecordList enterRecords = new CallEnterRecordList(TCallRecordLogUploadRequest.getRecordLog().getEnterTraces());
+                    return enterRecords.size();
                 }
 
                 return 0;

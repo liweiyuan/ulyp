@@ -35,7 +35,7 @@ public class CollectionInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(CollectionTestCases.class)
-                        .setMethodToTrace("acceptsListOfStringsWithSize0")
+                        .setMethodToRecord("acceptsListOfStringsWithSize0")
         );
 
         CallRecord root = tree.getRoot();

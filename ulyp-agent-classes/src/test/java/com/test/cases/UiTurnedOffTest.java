@@ -22,7 +22,7 @@ public class UiTurnedOffTest extends AbstractInstrumentationTest {
         runSubprocessAndExpectNotConnected(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
     }
 }

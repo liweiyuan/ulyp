@@ -66,7 +66,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassTestCases.class)
-                        .setMethodToTrace("returnInnerClass")
+                        .setMethodToRecord("returnInnerClass")
         );
 
         CallRecord root = tree.getRoot();
@@ -79,7 +79,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassTestCases.class)
-                        .setMethodToTrace("returnClassThatCallsSelfInToString")
+                        .setMethodToRecord("returnClassThatCallsSelfInToString")
         );
 
         CallRecord root = tree.getRoot();

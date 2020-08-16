@@ -29,7 +29,7 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(RecursionTestCases.class)
-                        .setMethodToTrace("fibonacci")
+                        .setMethodToRecord("fibonacci")
         );
 
         CallRecord root = tree.getRoot();

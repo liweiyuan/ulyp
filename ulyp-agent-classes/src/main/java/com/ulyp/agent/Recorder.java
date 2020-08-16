@@ -63,7 +63,7 @@ public class Recorder {
 
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
-            if (recordLog.size() >= context.getSysPropsSettings().getMinTraceCount()) {
+            if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", recordLog);
                 }

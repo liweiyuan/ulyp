@@ -66,7 +66,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToTrace("make1000CallsSep")
+                        .setMethodToRecord("make1000CallsSep")
         );
 
         CallRecord root = tree.getRoot();
@@ -79,7 +79,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToTrace("make1000CallsLevel0")
+                        .setMethodToRecord("make1000CallsLevel0")
                         .setMaxCallsPerMethod(7)
         );
 
@@ -94,7 +94,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToTrace("level0")
+                        .setMethodToRecord("level0")
                         .setMaxCallsPerMethod(5)
         );
 

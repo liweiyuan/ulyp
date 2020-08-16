@@ -10,19 +10,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class TestSettingsBuilder {
-    public TestSettingsBuilder set;
+
+    // TODO matcher
     private Class<?> mainClassName;
-    private String methodToTrace;
+    private String methodToRecord;
+
     public String hostName;
     private boolean uiEnabled = true;
     public int port;
     private List<String> instrumentedPackages = new ArrayList<>();
     private List<String> excludedFromInstrumentationPackages = new ArrayList<>();
-    private int minTraceCount = 1;
+    private int minRecordsForLog = 1;
     private int maxDepth = Integer.MAX_VALUE;
     private int maxCallsPerMethod = Integer.MAX_VALUE;
 
-    private boolean traceCollections = false;
+    private boolean recordCollectionItems = false;
 
     public boolean isUiEnabled() {
         return uiEnabled;
@@ -36,20 +38,20 @@ public class TestSettingsBuilder {
         return mainClassName;
     }
 
-    public boolean getTraceCollections() {
-        return traceCollections;
+    public boolean getRecordCollectionItems() {
+        return recordCollectionItems;
     }
 
-    public String getMethodToTrace() {
-        return methodToTrace;
+    public String getMethodToRecord() {
+        return methodToRecord;
     }
 
     public List<String> getInstrumentedPackages() {
         return instrumentedPackages;
     }
 
-    public TestSettingsBuilder setTraceCollections(boolean traceCollections) {
-        this.traceCollections = traceCollections;
+    public TestSettingsBuilder setRecordCollectionItems(boolean recordCollectionItems) {
+        this.recordCollectionItems = recordCollectionItems;
         return this;
     }
 
@@ -58,8 +60,8 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public TestSettingsBuilder setMethodToTrace(String startMethod) {
-        this.methodToTrace = startMethod;
+    public TestSettingsBuilder setMethodToRecord(String startMethod) {
+        this.methodToRecord = startMethod;
         return this;
     }
 
@@ -95,8 +97,8 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public TestSettingsBuilder setMinTraceCount(int minTraceCount) {
-        this.minTraceCount = minTraceCount;
+    public TestSettingsBuilder setMinRecordsForLog(int minRecordsForLog) {
+        this.minRecordsForLog = minRecordsForLog;
         return this;
     }
 
@@ -114,10 +116,10 @@ public class TestSettingsBuilder {
                 new UiAddress(hostName, port),
                 instrumentedPackages,
                 excludedFromInstrumentationPackages,
-                new RecordingStartMethodList(new MethodMatcher(mainClassName, methodToTrace)),
+                new RecordingStartMethodList(new MethodMatcher(mainClassName, methodToRecord)),
                 maxDepth,
                 maxCallsPerMethod,
-                minTraceCount
+                minRecordsForLog
         );
     }
 }

@@ -55,7 +55,7 @@ public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(UserDefinedClassLoaderTestCase.class)
-                        .setMethodToTrace("runInOwnClassLoader")
+                        .setMethodToRecord("runInOwnClassLoader")
         );
 
         CallRecord root = tree.getRoot();

@@ -61,8 +61,7 @@ public class BenchmarksMain {
                     TCallRecordLogUploadRequest TCallRecordLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
                     recordsTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
 
-                    CallEnterRecordList enterRecords = new CallEnterRecordList(TCallRecordLogUploadRequest.getRecordLog().getEnterTraces());
-                    return enterRecords.size();
+                    return new CallEnterRecordList(TCallRecordLogUploadRequest.getRecordLog().getEnterRecords()).size();
                 }
 
                 return 0;

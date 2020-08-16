@@ -22,7 +22,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
 
         CallRecord root = tree.getRoot();
@@ -39,7 +39,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
                         .setExcludedFromInstrumentationPackages(Collections.singletonList("com.test.cases.a.b"))
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
 
         CallRecord root = tree.getRoot();
@@ -61,7 +61,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMainClassName(A.class)
                         .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
                         .setExcludedFromInstrumentationPackages(Arrays.asList("com.test.cases.a.b", "com.test.cases.a.c"))
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
 
         CallRecord root = tree.getRoot();

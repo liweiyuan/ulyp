@@ -60,7 +60,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
-                        .setMethodToTrace("acceptsTwoObjects")
+                        .setMethodToRecord("acceptsTwoObjects")
         );
 
         CallRecord root = tree.getRoot();
@@ -74,7 +74,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
-                        .setMethodToTrace("acceptsTwoObjects2")
+                        .setMethodToRecord("acceptsTwoObjects2")
         );
 
         CallRecord root = tree.getRoot();
@@ -89,7 +89,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
-                        .setMethodToTrace("acceptsTwoObjects3")
+                        .setMethodToRecord("acceptsTwoObjects3")
         );
 
         CallRecord root = tree.getRoot();
@@ -104,7 +104,7 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(ObjectTestCases.class)
-                        .setMethodToTrace("acceptsTwoNulls")
+                        .setMethodToRecord("acceptsTwoNulls")
         );
 
         CallRecord root = tree.getRoot();

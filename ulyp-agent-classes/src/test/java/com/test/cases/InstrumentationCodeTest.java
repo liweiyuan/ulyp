@@ -24,11 +24,11 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void shouldTraceMainMethod() {
+    public void shouldRecordMainMethod() {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(MainMethodCase.class)
-                        .setMethodToTrace("main")
+                        .setMethodToRecord("main")
         );
 
         CallRecord root = tree.getRoot();
@@ -89,7 +89,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("staticMethod")
+                        .setMethodToRecord("staticMethod")
         );
 
         CallRecord root = tree.getRoot();
@@ -103,7 +103,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("returnStringWithEmptyParams")
+                        .setMethodToRecord("returnStringWithEmptyParams")
         );
 
         CallRecord root = tree.getRoot();
@@ -121,7 +121,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("returnNullObjectWithEmptyParams")
+                        .setMethodToRecord("returnNullObjectWithEmptyParams")
         );
 
         CallRecord root = tree.getRoot();
@@ -140,7 +140,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("returnIntWithEmptyParams")
+                        .setMethodToRecord("returnIntWithEmptyParams")
         );
 
         CallRecord root = tree.getRoot();
@@ -158,7 +158,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("returnTestObjectWithEmptyParams")
+                        .setMethodToRecord("returnTestObjectWithEmptyParams")
         );
 
 
@@ -177,7 +177,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("throwsRuntimeException")
+                        .setMethodToRecord("throwsRuntimeException")
         );
 
         CallRecord root = tree.getRoot();
@@ -215,7 +215,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SeveralMethodsTestCases.class)
-                        .setMethodToTrace("callTwoMethods")
+                        .setMethodToRecord("callTwoMethods")
         );
 
         CallRecord root = tree.getRoot();
@@ -252,7 +252,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(SimpleTestCases.class)
-                        .setMethodToTrace("consumesInt")
+                        .setMethodToRecord("consumesInt")
         );
 
         CallRecord root = tree.getRoot();

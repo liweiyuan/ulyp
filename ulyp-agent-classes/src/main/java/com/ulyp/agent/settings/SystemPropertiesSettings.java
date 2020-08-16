@@ -22,8 +22,8 @@ public class SystemPropertiesSettings implements AgentSettings {
         String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "");
         List<String> excludedPackages = CommaSeparatedList.parse(excludedPackagesStr);
 
-        String tracedMethods = System.getProperty(START_METHOD_PROPERTY, "");
-        RecordingStartMethodList tracingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(tracedMethods));
+        String methodsToRecord = System.getProperty(START_METHOD_PROPERTY, "");
+        RecordingStartMethodList tracingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(methodsToRecord));
 
         UiAddress uiAddress;
         boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
@@ -68,7 +68,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     private final RecordingStartMethodList methodsToRecord;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
-    private final int minTraceCount;
+    private final int minRecordsCountForLog;
 
     public SystemPropertiesSettings(
             @Nullable UiAddress uiAddress,
@@ -77,7 +77,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             RecordingStartMethodList methodsToRecord,
             int maxTreeDepth,
             int maxCallsPerMethod,
-            int minTraceCount)
+            int minRecordsCountForLog)
     {
         this.uiAddress = uiAddress;
         this.instrumentatedPackages = instrumentedPackages;
@@ -85,15 +85,15 @@ public class SystemPropertiesSettings implements AgentSettings {
         this.methodsToRecord = methodsToRecord;
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
-        this.minTraceCount = minTraceCount;
+        this.minRecordsCountForLog = minRecordsCountForLog;
     }
 
     public int getMaxTreeDepth() {
         return maxTreeDepth;
     }
 
-    public int getMinTraceCount() {
-        return minTraceCount;
+    public int getMinRecordsCountForLog() {
+        return minRecordsCountForLog;
     }
 
     public int getMaxCallsPerMethod() {
@@ -123,7 +123,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             params.add("-D" + UI_PORT_PROPERTY + "=" + uiAddress.port);
         }
         params.add("-D" + MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
-        params.add("-D" + MIN_TRACE_COUNT + "=" + minTraceCount);
+        params.add("-D" + MIN_TRACE_COUNT + "=" + minRecordsCountForLog);
         params.add("-D" + MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
 
         return params;
@@ -154,7 +154,7 @@ public class SystemPropertiesSettings implements AgentSettings {
                 ", startTracingMethods=" + methodsToRecord +
                 ", maxTreeDepth=" + maxTreeDepth +
                 ", maxCallsPerMethod=" + maxCallsPerMethod +
-                ", minTraceCount=" + minTraceCount +
+                ", minTraceCount=" + minRecordsCountForLog +
                 '}';
     }
 }
