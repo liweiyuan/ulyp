@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?scenebuilder-stylesheet DarkTheme.css?>
 
-<VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ulyp.ui.FxController">
+<VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ulyp.ui.PrimaryViewController">
     <children>
         <MenuBar>
             <menus>

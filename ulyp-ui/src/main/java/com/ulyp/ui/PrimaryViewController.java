@@ -25,9 +25,9 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.ResourceBundle;
 
-public class FxController implements Initializable {
+public class PrimaryViewController implements Initializable {
 
-    public FxController() {
+    public PrimaryViewController() {
     }
 
     @FXML

@@ -2,7 +2,7 @@ package com.ulyp.ui.server;
 
 import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.transport.*;
-import com.ulyp.ui.FxController;
+import com.ulyp.ui.PrimaryViewController;
 import io.grpc.stub.StreamObserver;
 import javafx.scene.control.Slider;
 
@@ -10,9 +10,9 @@ import java.util.Arrays;
 
 public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase {
 
-    private final FxController viewController;
+    private final PrimaryViewController viewController;
 
-    public UIConnectorServiceImpl(FxController viewController) {
+    public UIConnectorServiceImpl(PrimaryViewController viewController) {
         this.viewController = viewController;
     }
 

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UIMain extends Application {
 
-    private FxController viewController;
+    private PrimaryViewController viewController;
 
     @Override
     public void start(Stage stage) throws Exception {
