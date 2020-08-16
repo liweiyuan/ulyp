@@ -65,7 +65,6 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
     @NotNull private final UiAddress uiAddress;
-    // TODO use package list
     private final PackageList instrumentatedPackages;
     private final PackageList excludedFromInstrumentationPackages;
     @NotNull private final RecordingStartMethodList methodsToRecord;
