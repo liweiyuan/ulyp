@@ -7,20 +7,20 @@ public class RunResult {
     private final Class<?> benchmarkClazz;
     private final BenchmarkProfile profile;
     private final Histogram procTimeHistogram;
-    private final Histogram traceTimeHistogram;
-    private final Histogram traceCountHistogram;
+    private final Histogram recordTimeHistogram;
+    private final Histogram recordsCountHistogram;
 
     public RunResult(
             Class<?> benchmarkClazz,
             BenchmarkProfile profile,
             Histogram procTimeHistogram,
-            Histogram traceTimeHistogram,
-            Histogram traceCountHistogram) {
+            Histogram recordTimeHistogram,
+            Histogram recordsCountHistogram) {
         this.benchmarkClazz = benchmarkClazz;
         this.profile = profile;
         this.procTimeHistogram = procTimeHistogram;
-        this.traceTimeHistogram = traceTimeHistogram;
-        this.traceCountHistogram = traceCountHistogram;
+        this.recordTimeHistogram = recordTimeHistogram;
+        this.recordsCountHistogram = recordsCountHistogram;
     }
 
     public void print() {
@@ -36,13 +36,13 @@ public class RunResult {
                 .append(" ± ")
                 .append(String.format("%.3f", procTimeHistogram.getStdDeviation() / 1000.0))
                 .append("   ")
-                .append(String.format("%.2f", traceTimeHistogram.getMean() / 1000.0))
+                .append(String.format("%.2f", recordTimeHistogram.getMean() / 1000.0))
                 .append(" ± ")
-                .append(String.format("%.3f", traceTimeHistogram.getStdDeviation() / 1000.0))
+                .append(String.format("%.3f", recordTimeHistogram.getStdDeviation() / 1000.0))
                 .append("   ")
                 .append("sec")
                 .append(" ")
-                .append(traceCountHistogram.getMean());
+                .append(recordsCountHistogram.getMean());
 
         System.out.println(builder);
     }

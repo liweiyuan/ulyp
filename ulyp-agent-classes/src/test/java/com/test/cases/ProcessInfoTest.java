@@ -3,7 +3,7 @@ package com.test.cases;
 import com.google.protobuf.ProtocolStringList;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.transport.ProcessInfo;
-import com.ulyp.transport.TCallTraceLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -21,7 +21,7 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldSendValidProcessInfo() {
-        TCallTraceLogUploadRequest log = runSubprocessWithUiAndReturnTraceLogRaw(
+        TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnTraceLogRaw(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToTrace("main")

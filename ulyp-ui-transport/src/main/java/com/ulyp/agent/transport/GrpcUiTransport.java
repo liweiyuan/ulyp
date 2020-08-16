@@ -52,7 +52,7 @@ public class GrpcUiTransport implements UiTransport {
 
         uploadExecutor.submit(
                 () -> {
-                    TCallTraceLog log = TCallTraceLog.newBuilder()
+                    TCallRecordLog log = TCallRecordLog.newBuilder()
                             .setEnterTraces(traceLog.getEnterRecords().toByteString())
                             .setExitTraces(traceLog.getExitRecords().toByteString())
                             .build();
@@ -66,7 +66,7 @@ public class GrpcUiTransport implements UiTransport {
                         classDescriptionList.add(classDescription);
                     }
 
-                    TCallTraceLogUploadRequest.Builder requestBuilder = TCallTraceLogUploadRequest.newBuilder();
+                    TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
 
                     requestBuilder
                             .setTraceLogId(traceLog.getId())
@@ -81,11 +81,11 @@ public class GrpcUiTransport implements UiTransport {
                             .setLifetimeMillis(endLifetimeEpochMillis - traceLog.getEpochMillisCreatedTime());
 
                     long id = traceLog.getId();
-                    ListenableFuture<TCallTraceLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());
+                    ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());
 
-                    Futures.addCallback(upload, new FutureCallback<TCallTraceLogUploadResponse>() {
+                    Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
                         @Override
-                        public void onSuccess(TCallTraceLogUploadResponse result) {
+                        public void onSuccess(TCallRecordLogUploadResponse result) {
                             traceLogsCurrentlyInSending.remove(id);
                         }
 

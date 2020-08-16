@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 public class UIServerStub implements AutoCloseable {
 
-    private final CompletableFuture<TCallTraceLogUploadRequest> future = new CompletableFuture<>();
+    private final CompletableFuture<TCallRecordLogUploadRequest> future = new CompletableFuture<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     private final Server server;
 
@@ -33,7 +33,7 @@ public class UIServerStub implements AutoCloseable {
                         }
 
                         @Override
-                        public void uploadCallGraph(TCallTraceLogUploadRequest request, StreamObserver<TCallTraceLogUploadResponse> responseObserver) {
+                        public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
                             future.complete(request);
                             responseObserver.onCompleted();
                         }
@@ -47,7 +47,7 @@ public class UIServerStub implements AutoCloseable {
         }
     }
 
-    public TCallTraceLogUploadRequest get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
+    public TCallRecordLogUploadRequest get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
         return future.get(timeout, unit);
     }
 

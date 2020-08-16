@@ -9,7 +9,7 @@ import com.ulyp.core.CallTraceTree;
 import com.ulyp.core.CallGraphDatabase;
 import com.ulyp.core.CallGraphDao;
 import com.ulyp.core.heap.HeapCallGraphDatabase;
-import com.ulyp.transport.TCallTraceLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequest;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -54,7 +54,7 @@ public class FxController implements Initializable {
         processTabs = new ProcessTabs(callGraphDatabase, processTabPane);
     }
 
-    public void onCallTraceTreeUploaded(TCallTraceLogUploadRequest request) {
+    public void onCallTraceTreeUploaded(TCallRecordLogUploadRequest request) {
         CallTraceTree tree = new CallGraphDao(
                 new CallEnterRecordList(request.getTraceLog().getEnterTraces()),
                 new CallExitRecordList(request.getTraceLog().getExitTraces()),
@@ -65,8 +65,8 @@ public class FxController implements Initializable {
         Platform.runLater(() -> addTree(request, tree));
     }
 
-    private void addTree(TCallTraceLogUploadRequest request, CallTraceTree tree) {
-        ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getMainClassName());
+    private void addTree(TCallRecordLogUploadRequest request, CallTraceTree tree) {
+        ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
         processTab.addTree(tree, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
 

@@ -87,14 +87,14 @@ public class CallRecordLog {
         return enterRecords.size();
     }
 
-    private void pushCurrentMethodCallId(int callId, boolean canTrace) {
+    private void pushCurrentMethodCallId(int callId, boolean canRecord) {
         callIdsStack.pushInt(callId);
         /*
         * If current method call is not traced, then children (i.e. calls within this method) should be traced as well, otherwise
         * the tree will lose it's form. We prohibit it by setting number of calls already made to maximum.
         */
-        callCountStack.pushInt(canTrace ? 0 : Integer.MAX_VALUE);
-        recordedStack.push(canTrace);
+        callCountStack.pushInt(canRecord ? 0 : Integer.MAX_VALUE);
+        recordedStack.push(canRecord);
     }
 
     private long popCurrentCallId() {

@@ -18,11 +18,11 @@ public class H2MemDatabaseBenchmark implements Benchmark {
     public List<BenchmarkProfile> getProfiles() {
         return Arrays.asList(
                 new BenchmarkProfileBuilder()
-                        .withTracedMethod(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
+                        .withMethodToRecord(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
                         .withInstrumentedPackages(new PackageList("com", "org"))
                         .build(),
                 new BenchmarkProfileBuilder()
-                        .withTracedMethod(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
+                        .withMethodToRecord(new MethodMatcher(H2MemDatabaseBenchmark.class, "main"))
                         .withInstrumentedPackages(new PackageList("com", "org"))
                         .withUiDisabled()
                         .build(),

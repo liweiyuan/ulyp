@@ -9,7 +9,7 @@ import com.ulyp.core.CallTraceTree;
 import com.ulyp.core.CallGraphDatabase;
 import com.ulyp.core.CallGraphDao;
 import com.ulyp.core.heap.HeapCallGraphDatabase;
-import com.ulyp.transport.TCallTraceLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
@@ -40,7 +40,7 @@ public class AbstractInstrumentationTest {
 
     @NotNull
     protected CallTraceTree runSubprocessWithUi(TestSettingsBuilder settings) {
-        TCallTraceLogUploadRequest request = runSubprocessWithUiAndReturnTraceLogRaw(settings);
+        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnTraceLogRaw(settings);
 
         CallGraphDatabase database = new HeapCallGraphDatabase();
         return new CallGraphDao(
@@ -53,7 +53,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected TCallTraceLogUploadRequest runSubprocessWithUiAndReturnTraceLogRaw(TestSettingsBuilder settings) {
+    protected TCallRecordLogUploadRequest runSubprocessWithUiAndReturnTraceLogRaw(TestSettingsBuilder settings) {
         int port = TestUtil.pickEmptyPort();
         try (UIServerStub stub = new UIServerStub(settings, port)) {
             TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));

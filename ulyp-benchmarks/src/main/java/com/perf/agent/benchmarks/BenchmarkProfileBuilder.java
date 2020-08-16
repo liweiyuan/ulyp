@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BenchmarkProfileBuilder {
 
-    private MethodMatcher tracedMethod;
+    private MethodMatcher methodToRecord;
     @NotNull
     private PackageList instrumentedPackages = new PackageList();
     private boolean uiEnabled = true;
@@ -23,8 +23,8 @@ public class BenchmarkProfileBuilder {
         return this;
     }
 
-    public BenchmarkProfileBuilder withTracedMethod(MethodMatcher tracedMethod) {
-        this.tracedMethod = tracedMethod;
+    public BenchmarkProfileBuilder withMethodToRecord(MethodMatcher methodToRecord) {
+        this.methodToRecord = methodToRecord;
         return this;
     }
 
@@ -43,6 +43,6 @@ public class BenchmarkProfileBuilder {
     }
 
     public BenchmarkProfile build() {
-        return new BenchmarkProfile(tracedMethod, instrumentedPackages, additionalProcessArgs, uiEnabled, uiPort);
+        return new BenchmarkProfile(methodToRecord, instrumentedPackages, additionalProcessArgs, uiEnabled, uiPort);
     }
 }

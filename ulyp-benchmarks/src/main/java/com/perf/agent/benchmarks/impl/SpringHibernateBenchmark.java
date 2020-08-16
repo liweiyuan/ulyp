@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SpringHibernateBenchmark implements Benchmark {
@@ -21,11 +20,11 @@ public class SpringHibernateBenchmark implements Benchmark {
     public List<BenchmarkProfile> getProfiles() {
         return Arrays.asList(
                 new BenchmarkProfileBuilder()
-                        .withTracedMethod(new MethodMatcher(SpringHibernateBenchmark.class, "main"))
+                        .withMethodToRecord(new MethodMatcher(SpringHibernateBenchmark.class, "main"))
                         .withInstrumentedPackages(new PackageList("com", "org"))
                         .build(),
                 new BenchmarkProfileBuilder()
-                        .withTracedMethod(new MethodMatcher(UserService.class, "save"))
+                        .withMethodToRecord(new MethodMatcher(UserService.class, "save"))
                         .withInstrumentedPackages(new PackageList("com", "org"))
                         .build(),
                 new BenchmarkProfileBuilder()

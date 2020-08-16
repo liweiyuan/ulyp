@@ -5,7 +5,7 @@ import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
 import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.TCallTraceLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.HdrHistogram.Histogram;
 
 import java.util.ArrayList;
@@ -42,14 +42,14 @@ public class BenchmarksForSomeProfileMain {
 
         Histogram procTimeHistogram = emptyHistogram();
         Histogram traceTimeHistogram = emptyHistogram();
-        Histogram traceCountHistogram = emptyHistogram();
+        Histogram recordsCountHistogram = emptyHistogram();
 
         for (int i = 0; i < ITERATIONS_PER_PROFILE; i++) {
-            int tracesCount = run(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram);
-            traceCountHistogram.recordValue(tracesCount);
+            int recordsCount = run(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram);
+            recordsCountHistogram.recordValue(recordsCount);
         }
 
-        runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram, traceCountHistogram));
+        runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, traceTimeHistogram, recordsCountHistogram));
 
         return runResults;
     }
@@ -63,10 +63,10 @@ public class BenchmarksForSomeProfileMain {
 
                 if (profile.shouldSendSomethingToUi()) {
 
-                    TCallTraceLogUploadRequest tCallTraceLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
-                    traceTimeHistogram.recordValue(tCallTraceLogUploadRequest.getLifetimeMillis());
+                    TCallRecordLogUploadRequest TCallRecordLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
+                    traceTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
 
-                    CallEnterRecordList tCallEnterTraceDecoders = new CallEnterRecordList(tCallTraceLogUploadRequest.getTraceLog().getEnterTraces());
+                    CallEnterRecordList tCallEnterTraceDecoders = new CallEnterRecordList(TCallRecordLogUploadRequest.getTraceLog().getEnterTraces());
                     return tCallEnterTraceDecoders.size();
                 }
 

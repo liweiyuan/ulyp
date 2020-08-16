@@ -14,7 +14,7 @@ import java.util.Objects;
 public class BenchmarkProfile {
 
     @Nullable
-    private final MethodMatcher tracedMethod;
+    private final MethodMatcher methodToRecord;
     @NotNull
     private final PackageList instrumentedPackages;
     private final List<String> additionalProcessArgs;
@@ -22,12 +22,12 @@ public class BenchmarkProfile {
     private final int uiListenPort;
 
     public BenchmarkProfile(
-            @Nullable MethodMatcher tracedMethod,
+            @Nullable MethodMatcher methodToRecord,
             @NotNull PackageList instrumentedPackages,
             List<String> additionalProcessArgs,
             boolean uiEnabled,
             int uiListenPort) {
-        this.tracedMethod = tracedMethod;
+        this.methodToRecord = methodToRecord;
         this.instrumentedPackages = instrumentedPackages;
         this.additionalProcessArgs = additionalProcessArgs;
         this.uiEnabled = uiEnabled;
@@ -35,7 +35,7 @@ public class BenchmarkProfile {
     }
 
     public boolean shouldSendSomethingToUi() {
-        return uiEnabled && !instrumentedPackages.isEmpty() && tracedMethod != null;
+        return uiEnabled && !instrumentedPackages.isEmpty() && methodToRecord != null;
     }
 
     public int getUiListenPort() {
@@ -53,8 +53,8 @@ public class BenchmarkProfile {
                 .setRecordCollectionsItems(false)
                 .addAllInstrumentedPackages(instrumentedPackages);
 
-        if (tracedMethod != null) {
-            builder = builder.addTraceStartMethods(tracedMethod.toString());
+        if (methodToRecord != null) {
+            builder = builder.addTraceStartMethods(methodToRecord.toString());
         }
 
         return builder.build();
@@ -70,7 +70,7 @@ public class BenchmarkProfile {
             args.add("-Dulyp.ui-port=" + uiListenPort);
         } else {
             args.add("-Dulyp.ui-enabled=false");
-            args.add("-Dulyp.start-method=" + Objects.requireNonNull(this.tracedMethod));
+            args.add("-Dulyp.start-method=" + Objects.requireNonNull(this.methodToRecord));
             args.add("-Dulyp.packages=" + this.instrumentedPackages);
         }
         args.addAll(additionalProcessArgs);
@@ -81,7 +81,7 @@ public class BenchmarkProfile {
     @Override
     public String toString() {
         if (!instrumentedPackages.isEmpty()) {
-            return instrumentedPackages + "/" + (tracedMethod != null ? tracedMethod : "no tracing");
+            return instrumentedPackages + "/" + (methodToRecord != null ? methodToRecord : "no tracing");
         } else {
             return "no agent";
         }

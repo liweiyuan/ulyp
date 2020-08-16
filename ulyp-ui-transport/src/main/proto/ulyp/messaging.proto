@@ -10,7 +10,7 @@ service UiTransport {
 
     rpc RequestSettings(SettingsRequest) returns (SettingsResponse) {}
 
-    rpc UploadCallGraph (TCallTraceLogUploadRequest) returns (TCallTraceLogUploadResponse) {}
+    rpc UploadCallGraph (TCallRecordLogUploadRequest) returns (TCallRecordLogUploadResponse) {}
 }
 
 message SettingsResponse {
@@ -25,7 +25,7 @@ message SettingsRequest {
 
 }
 
-message TCallTraceLog {
+message TCallRecordLog {
     bytes enterTraces = 2;
     bytes exitTraces = 3;
 }
@@ -44,8 +44,8 @@ message ProcessInfo {
     int64 pid = 3;
 }
 
-message TCallTraceLogUploadRequest {
-    TCallTraceLog traceLog = 1;
+message TCallRecordLogUploadRequest {
+    TCallRecordLog traceLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
     TClassDescriptionList classDescriptionList = 7;
     ProcessInfo processInfo = 3;
@@ -54,6 +54,6 @@ message TCallTraceLogUploadRequest {
     int64 traceLogId = 6;
 }
 
-message TCallTraceLogUploadResponse {
+message TCallRecordLogUploadResponse {
 
 }
