@@ -2,9 +2,9 @@ package com.ulyp.ui.renderers;
 
 import javafx.scene.text.Text;
 
-public class TrimmedText extends Text {
+public class MultilinedText extends Text {
 
-    public TrimmedText(String value) {
+    public MultilinedText(String value) {
         super(trimText(value));
     }
 
