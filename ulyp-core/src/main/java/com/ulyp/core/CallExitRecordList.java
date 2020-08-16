@@ -5,11 +5,11 @@ import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.core.printers.bytes.BinaryOutputForExitTraceImpl;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.TCallExitTraceDecoder;
-import com.ulyp.transport.TCallExitTraceEncoder;
+import com.ulyp.transport.TCallExitRecordDecoder;
+import com.ulyp.transport.TCallExitRecordEncoder;
 
 // Flexible SBE wrapper
-public class CallExitRecordList extends AbstractSbeRecordList<TCallExitTraceEncoder, TCallExitTraceDecoder> {
+public class CallExitRecordList extends AbstractSbeRecordList<TCallExitRecordEncoder, TCallExitRecordDecoder> {
 
     private final BinaryOutputForExitTraceImpl binaryOutput = new BinaryOutputForExitTraceImpl();
 

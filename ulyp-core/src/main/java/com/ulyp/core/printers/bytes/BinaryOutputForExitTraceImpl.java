@@ -1,13 +1,13 @@
 package com.ulyp.core.printers.bytes;
 
-import com.ulyp.transport.TCallExitTraceEncoder;
+import com.ulyp.transport.TCallExitRecordEncoder;
 import org.agrona.concurrent.UnsafeBuffer;
 
 public class BinaryOutputForExitTraceImpl extends AbstractBinaryOutput {
 
-    private TCallExitTraceEncoder encoder;
+    private TCallExitRecordEncoder encoder;
 
-    public void wrap(TCallExitTraceEncoder encoder) {
+    public void wrap(TCallExitRecordEncoder encoder) {
         this.encoder = encoder;
     }
 

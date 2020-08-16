@@ -73,23 +73,23 @@ public class Recorder {
     }
 
     public void onMethodEnter(MethodDescription method, Object callee, Object[] args) {
-        CallRecordLog callTraces = threadLocalRecordsLog.get();
-        if (callTraces == null) {
+        CallRecordLog log = threadLocalRecordsLog.get();
+        if (log == null) {
             return;
         }
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
-            logger.trace("Method enter on {}, method {}, args {}", callTraces, method, args);
+            logger.trace("Method enter on {}, method {}, args {}", log, method, args);
         }
-        callTraces.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
+        log.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
     public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
-        CallRecordLog callTracesLog = threadLocalRecordsLog.get();
-        if (callTracesLog == null) return;
+        CallRecordLog log = threadLocalRecordsLog.get();
+        if (log == null) return;
 
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
-            logger.trace("Method exit {}, method {}, return value {}, thrown {}", callTracesLog, method, result, thrown);
+            logger.trace("Method exit {}, method {}, return value {}, thrown {}", log, method, result, thrown);
         }
-        callTracesLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
+        log.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
     }
 }

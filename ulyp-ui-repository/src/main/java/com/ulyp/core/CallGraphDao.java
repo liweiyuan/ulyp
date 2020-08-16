@@ -48,11 +48,11 @@ public class CallGraphDao {
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
-        Iterator<TCallEnterTraceDecoder> enterTraceIt = enterTracesList.iterator();
-        Iterator<TCallExitTraceDecoder> exitTraceIt = exitTracesList.iterator();
+        Iterator<TCallEnterRecordDecoder> enterTraceIt = enterTracesList.iterator();
+        Iterator<TCallExitRecordDecoder> exitTraceIt = exitTracesList.iterator();
 
-        TCallEnterTraceDecoder currentEnterTrace = enterTraceIt.next();
-        TCallExitTraceDecoder currentExitTrace = exitTraceIt.next();
+        TCallEnterRecordDecoder currentEnterTrace = enterTraceIt.next();
+        TCallExitRecordDecoder currentExitTrace = exitTraceIt.next();
 
         CallBuilder root = new CallBuilder(null, methodDescriptionMap.get(currentEnterTrace.methodId()), currentEnterTrace);
         currentEnterTrace = enterTraceIt.hasNext() ? enterTraceIt.next() : null;
@@ -94,13 +94,13 @@ public class CallGraphDao {
         private ObjectValue returnValue;
         private boolean thrown;
 
-        private CallBuilder(CallBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterTraceDecoder decoder) {
+        private CallBuilder(CallBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterRecordDecoder decoder) {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
 
             this.args = new ArrayList<>();
-            TCallEnterTraceDecoder.ArgumentsDecoder arguments = decoder.arguments();
+            TCallEnterRecordDecoder.ArgumentsDecoder arguments = decoder.arguments();
             while (arguments.hasNext()) {
                 arguments = arguments.next();
                 UnsafeBuffer buffer = new UnsafeBuffer();
@@ -128,7 +128,7 @@ public class CallGraphDao {
             );
         }
 
-        private void setExitTraceData(TCallExitTraceDecoder decoder) {
+        private void setExitTraceData(TCallExitRecordDecoder decoder) {
             ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
             UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
             decoder.wrapReturnValue(returnValueBuffer);
