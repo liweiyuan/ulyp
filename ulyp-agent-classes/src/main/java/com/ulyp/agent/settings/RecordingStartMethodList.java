@@ -17,16 +17,7 @@ public class RecordingStartMethodList {
     }
 
     public RecordingStartMethodList(List<String> methods) {
-        if (methods != null) {
-            // TODO method matcher to have a proper constuctor
-            this.methods = methods.stream()
-                    .map(str -> new MethodMatcher(
-                            str.substring(0, str.indexOf('.')),
-                            str.substring(str.indexOf('.') + 1))
-                    ).collect(Collectors.toList());
-        } else {
-            this.methods = Collections.emptyList();
-        }
+        this.methods = methods.stream().map(MethodMatcher::parse).collect(Collectors.toList());
     }
 
     public boolean shouldStartTracing(MethodDescription description) {

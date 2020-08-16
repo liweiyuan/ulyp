@@ -21,7 +21,7 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
-                        .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
+                        .setInstrumentedPackages("com.test.cases.a")
                         .setMethodToRecord("main")
         );
 
@@ -37,8 +37,8 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
-                        .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
-                        .setExcludedFromInstrumentationPackages(Collections.singletonList("com.test.cases.a.b"))
+                        .setInstrumentedPackages("com.test.cases.a")
+                        .setExcludedFromInstrumentationPackages("com.test.cases.a.b")
                         .setMethodToRecord("main")
         );
 
@@ -59,8 +59,8 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
         CallRecordTree tree = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
-                        .setInstrumentedPackages(Collections.singletonList("com.test.cases.a"))
-                        .setExcludedFromInstrumentationPackages(Arrays.asList("com.test.cases.a.b", "com.test.cases.a.c"))
+                        .setInstrumentedPackages("com.test.cases.a")
+                        .setExcludedFromInstrumentationPackages("com.test.cases.a.b", "com.test.cases.a.c")
                         .setMethodToRecord("main")
         );
 

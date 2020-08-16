@@ -4,11 +4,22 @@ import com.ulyp.core.MethodDescription;
 
 public class MethodMatcher {
 
+    private static final char SEPARATOR = '.';
     private static final String WILDCARD = "*";
 
     private final String classSimpleName;
     private final String methodSimpleName;
     private final boolean isWildcard;
+
+    public static MethodMatcher parse(String text) {
+        int separatorPos = text.lastIndexOf(SEPARATOR);
+        // TODO regexp?
+        if (separatorPos < 0) {
+            throw new SettingsException("");
+        }
+
+        return new MethodMatcher(text.substring(0, separatorPos), text.substring(separatorPos + 1));
+    }
 
     public MethodMatcher(Class<?> clazz, String methodSimpleName) {
         this.classSimpleName = clazz.getSimpleName();

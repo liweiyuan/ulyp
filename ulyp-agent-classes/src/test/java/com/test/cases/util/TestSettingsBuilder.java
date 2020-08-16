@@ -4,6 +4,7 @@ import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.transport.GrpcUiAddress;
+import com.ulyp.core.util.PackageList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +19,8 @@ public class TestSettingsBuilder {
     public String hostName;
     private boolean uiEnabled = true;
     public int port;
-    private List<String> instrumentedPackages = new ArrayList<>();
-    private List<String> excludedFromInstrumentationPackages = new ArrayList<>();
+    private PackageList instrumentedPackages = new PackageList();
+    private PackageList excludedFromInstrumentationPackages = new PackageList();
     private int minRecordsForLog = 1;
     private int maxDepth = Integer.MAX_VALUE;
     private int maxCallsPerMethod = Integer.MAX_VALUE;
@@ -46,7 +47,7 @@ public class TestSettingsBuilder {
         return methodToRecord;
     }
 
-    public List<String> getInstrumentedPackages() {
+    public PackageList getInstrumentedPackages() {
         return instrumentedPackages;
     }
 
@@ -55,8 +56,8 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public TestSettingsBuilder setInstrumentedPackages(List<String> instrumentedPackages) {
-        this.instrumentedPackages = instrumentedPackages;
+    public TestSettingsBuilder setInstrumentedPackages(String... packages) {
+        this.instrumentedPackages = new PackageList(packages);
         return this;
     }
 
@@ -82,7 +83,7 @@ public class TestSettingsBuilder {
     public TestSettingsBuilder setMainClassName(Class<?> mainClassName) {
         this.mainClassName = mainClassName;
         if (instrumentedPackages.isEmpty()) {
-            instrumentedPackages = Collections.singletonList(mainClassName.getPackage().getName());
+            instrumentedPackages = new PackageList(mainClassName.getPackage().getName());
         }
         return this;
     }
@@ -102,12 +103,12 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public List<String> getExcludedFromInstrumentationPackages() {
+    public PackageList getExcludedFromInstrumentationPackages() {
         return excludedFromInstrumentationPackages;
     }
 
-    public TestSettingsBuilder setExcludedFromInstrumentationPackages(List<String> excludedFromInstrumentationPackages) {
-        this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
+    public TestSettingsBuilder setExcludedFromInstrumentationPackages(String... packages) {
+        this.excludedFromInstrumentationPackages = new PackageList(packages);
         return this;
     }
 

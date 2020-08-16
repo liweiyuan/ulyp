@@ -16,7 +16,6 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static SystemPropertiesSettings load() {
 
         PackageList instrumentationPackages = new PackageList(CommaSeparatedList.parse(System.getProperty(PACKAGES_PROPERTY, "")));
-
         PackageList excludedPackages = new PackageList(CommaSeparatedList.parse(System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "")));
 
         String methodsToRecord = System.getProperty(START_METHOD_PROPERTY, "");
