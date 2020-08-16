@@ -22,7 +22,7 @@ public class DisconnectedUiTransport implements UiTransport {
     }
 
     @Override
-    public void uploadAsync(CallRecordLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
+    public void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
 
     }
 

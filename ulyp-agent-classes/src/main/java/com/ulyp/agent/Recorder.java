@@ -44,7 +44,7 @@ public class Recorder {
             return;
         }
 
-        CallRecordLog traceLog = threadLocalRecordsLog.getOrCreate(() -> {
+        CallRecordLog recordLog = threadLocalRecordsLog.getOrCreate(() -> {
             CallRecordLog log = new CallRecordLog(
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
@@ -58,16 +58,16 @@ public class Recorder {
     }
 
     public void endRecordingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
-        CallRecordLog traceLog = threadLocalRecordsLog.get();
+        CallRecordLog recordLog = threadLocalRecordsLog.get();
         onMethodExit(methodDescription, result, thrown);
 
-        if (traceLog != null && traceLog.isComplete()) {
+        if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
-            if (traceLog.size() >= context.getSysPropsSettings().getMinTraceCount()) {
+            if (recordLog.size() >= context.getSysPropsSettings().getMinTraceCount()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                    logger.trace("Will send trace log {}", traceLog);
+                    logger.trace("Will send trace log {}", recordLog);
                 }
-                context.getTransport().uploadAsync(traceLog, MethodDescriptionDictionary.getInstance(), context.getProcessInfo());
+                context.getTransport().uploadAsync(recordLog, MethodDescriptionDictionary.getInstance(), context.getProcessInfo());
             }
         }
     }

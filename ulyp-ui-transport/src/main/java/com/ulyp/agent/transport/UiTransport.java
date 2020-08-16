@@ -14,7 +14,7 @@ public interface UiTransport {
 
     SettingsResponse getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException;
 
-    void uploadAsync(CallRecordLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo);
+    void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo);
 
     void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException;
 }

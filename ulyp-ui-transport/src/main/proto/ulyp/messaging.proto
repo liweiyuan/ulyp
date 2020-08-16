@@ -18,7 +18,7 @@ message SettingsResponse {
     bool recordCollectionsItems = 3;
     repeated string instrumentedPackages = 4;
     repeated string excludedFromInstrumentationPackages = 6;
-    repeated string traceStartMethods = 5;
+    repeated string methodsToRecord = 5;
 }
 
 message SettingsRequest {
@@ -45,7 +45,7 @@ message ProcessInfo {
 }
 
 message TCallRecordLogUploadRequest {
-    TCallRecordLog traceLog = 1;
+    TCallRecordLog recordLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
     TClassDescriptionList classDescriptionList = 7;
     ProcessInfo processInfo = 3;

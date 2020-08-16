@@ -46,15 +46,15 @@ public class GrpcUiTransport implements UiTransport {
         return uploadingServiceFutureStub.requestSettings(SettingsRequest.newBuilder().build()).get(duration.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    public void uploadAsync(CallRecordLog traceLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
+    public void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
 
         long endLifetimeEpochMillis = System.currentTimeMillis();
 
         uploadExecutor.submit(
                 () -> {
                     TCallRecordLog log = TCallRecordLog.newBuilder()
-                            .setEnterTraces(traceLog.getEnterRecords().toByteString())
-                            .setExitTraces(traceLog.getExitRecords().toByteString())
+                            .setEnterTraces(recordLog.getEnterRecords().toByteString())
+                            .setExitTraces(recordLog.getExitRecords().toByteString())
                             .build();
 
                     MethodDescriptionList methodDescriptionList = new MethodDescriptionList();
@@ -69,18 +69,18 @@ public class GrpcUiTransport implements UiTransport {
                     TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
 
                     requestBuilder
-                            .setTraceLogId(traceLog.getId())
-                            .setTraceLog(log)
+                            .setTraceLogId(recordLog.getId())
+                            .setRecordLog(log)
                             .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodDescriptionList.toByteString()).build())
                             .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
                             .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
                                     .setMainClassName(processInfo.getMainClassName())
                                     .addAllClasspath(processInfo.getClasspath().toList())
                                     .build())
-                            .setCreateEpochMillis(traceLog.getEpochMillisCreatedTime())
-                            .setLifetimeMillis(endLifetimeEpochMillis - traceLog.getEpochMillisCreatedTime());
+                            .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
+                            .setLifetimeMillis(endLifetimeEpochMillis - recordLog.getEpochMillisCreatedTime());
 
-                    long id = traceLog.getId();
+                    long id = recordLog.getId();
                     ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());
 
                     Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
@@ -98,7 +98,7 @@ public class GrpcUiTransport implements UiTransport {
                 }
         );
 
-        long id = traceLog.getId();
+        long id = recordLog.getId();
         traceLogsCurrentlyInSending.add(id);
     }
 

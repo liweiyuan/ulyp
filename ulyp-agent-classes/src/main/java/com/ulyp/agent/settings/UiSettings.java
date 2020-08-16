@@ -45,7 +45,7 @@ public class UiSettings {
 
         excludeFromInstrumentationPackages.setValue(new PackageList(settings.getExcludedFromInstrumentationPackagesList()));
         instrumentedPackages.setValue(new PackageList(settings.getInstrumentedPackagesList()));
-        recordingStartMethod.setValue(new RecordingStartMethodList(settings.getTraceStartMethodsList()));
+        recordingStartMethod.setValue(new RecordingStartMethodList(settings.getMethodsToRecordList()));
 
     }
 

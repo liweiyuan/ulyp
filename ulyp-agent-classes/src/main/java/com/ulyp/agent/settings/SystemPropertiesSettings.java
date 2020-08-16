@@ -65,7 +65,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     // TODO use package list
     private final List<String> instrumentatedPackages;
     private final List<String> excludedFromInstrumentationPackages;
-    private final RecordingStartMethodList startTracingMethods;
+    private final RecordingStartMethodList methodsToRecord;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
     private final int minTraceCount;
@@ -74,7 +74,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             @Nullable UiAddress uiAddress,
             List<String> instrumentedPackages,
             List<String> excludedFromInstrumentationPackages,
-            RecordingStartMethodList recordingStartMethodList,
+            RecordingStartMethodList methodsToRecord,
             int maxTreeDepth,
             int maxCallsPerMethod,
             int minTraceCount)
@@ -82,7 +82,7 @@ public class SystemPropertiesSettings implements AgentSettings {
         this.uiAddress = uiAddress;
         this.instrumentatedPackages = instrumentedPackages;
         this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
-        this.startTracingMethods = recordingStartMethodList;
+        this.methodsToRecord = methodsToRecord;
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsPerMethod = maxCallsPerMethod;
         this.minTraceCount = minTraceCount;
@@ -116,7 +116,7 @@ public class SystemPropertiesSettings implements AgentSettings {
             params.add("-D" + EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludedFromInstrumentationPackages));
         }
 
-        params.add("-D" + START_METHOD_PROPERTY + "=" + startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
+        params.add("-D" + START_METHOD_PROPERTY + "=" + methodsToRecord.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
         if (uiAddress != null) {
 
         } else {
@@ -137,7 +137,7 @@ public class SystemPropertiesSettings implements AgentSettings {
                     SettingsResponse.newBuilder()
                             .addAllInstrumentedPackages(getInstrumentatedPackages())
                             .addAllExcludedFromInstrumentationPackages(getExcludedFromInstrumentationPackages())
-                            .addAllTraceStartMethods(startTracingMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
+                            .addAllMethodsToRecord(methodsToRecord.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
                             .setMayStartRecording(true)
                             .setRecordCollectionsItems(false)
                             .build()
@@ -151,7 +151,7 @@ public class SystemPropertiesSettings implements AgentSettings {
                 "uiAddress=" + uiAddress +
                 ", packages=" + instrumentatedPackages +
                 ", excludePackages=" + excludedFromInstrumentationPackages +
-                ", startTracingMethods=" + startTracingMethods +
+                ", startTracingMethods=" + methodsToRecord +
                 ", maxTreeDepth=" + maxTreeDepth +
                 ", maxCallsPerMethod=" + maxCallsPerMethod +
                 ", minTraceCount=" + minTraceCount +

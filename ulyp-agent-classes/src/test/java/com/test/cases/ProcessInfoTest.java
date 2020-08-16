@@ -21,7 +21,7 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldSendValidProcessInfo() {
-        TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnTraceLogRaw(
+        TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnRecordLogRaw(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToTrace("main")

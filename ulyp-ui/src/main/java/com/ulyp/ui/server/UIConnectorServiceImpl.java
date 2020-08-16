@@ -35,7 +35,7 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
         response.addAllExcludedFromInstrumentationPackages(
                 Arrays.asList(viewController.getExcludedFromInstrumentationPackagesTextField().getText().split(","))
         );
-        response.addAllTraceStartMethods(CommaSeparatedList.parse(viewController.getStartMethodTextField().getText()));
+        response.addAllMethodsToRecord(CommaSeparatedList.parse(viewController.getStartMethodTextField().getText()));
 
         Slider slider = viewController.getTracingPrecisionSlider();
         response.setRecordCollectionsItems(Double.compare(viewController.getTracingPrecisionSlider().getValue(), slider.getMax()) == 0);

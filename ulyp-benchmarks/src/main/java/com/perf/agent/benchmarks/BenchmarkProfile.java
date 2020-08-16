@@ -54,7 +54,7 @@ public class BenchmarkProfile {
                 .addAllInstrumentedPackages(instrumentedPackages);
 
         if (methodToRecord != null) {
-            builder = builder.addTraceStartMethods(methodToRecord.toString());
+            builder = builder.addMethodsToRecord(methodToRecord.toString());
         }
 
         return builder.build();

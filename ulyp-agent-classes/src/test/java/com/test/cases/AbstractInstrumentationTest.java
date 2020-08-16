@@ -28,24 +28,25 @@ public class AbstractInstrumentationTest {
             try {
                 stub.get(5, TimeUnit.SECONDS);
 
-                Assert.fail("Got trace but expected that subprocess will not connect");
+                Assert.fail("Got record but expected that subprocess will not connect");
             } catch (TimeoutException te) {
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.fail("Could not capture trace log: " + e.getMessage());
+            Assert.fail("Could not capture record log: " + e.getMessage());
+            Assert.fail("Could not capture record log: " + e.getMessage());
         }
     }
 
     @NotNull
     protected CallTraceTree runSubprocessWithUi(TestSettingsBuilder settings) {
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnTraceLogRaw(settings);
+        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(settings);
 
         CallGraphDatabase database = new HeapCallGraphDatabase();
         return new CallGraphDao(
-                new CallEnterRecordList(request.getTraceLog().getEnterTraces()),
-                new CallExitRecordList(request.getTraceLog().getExitTraces()),
+                new CallEnterRecordList(request.getRecordLog().getEnterTraces()),
+                new CallExitRecordList(request.getRecordLog().getExitTraces()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 database
@@ -53,7 +54,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected TCallRecordLogUploadRequest runSubprocessWithUiAndReturnTraceLogRaw(TestSettingsBuilder settings) {
+    protected TCallRecordLogUploadRequest runSubprocessWithUiAndReturnRecordLogRaw(TestSettingsBuilder settings) {
         int port = TestUtil.pickEmptyPort();
         try (UIServerStub stub = new UIServerStub(settings, port)) {
             TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));
