@@ -1,7 +1,6 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.log.LoggingSettings;
-import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.core.util.PackageList;
@@ -20,7 +19,6 @@ public class Agent {
         String logLevel = LoggingSettings.LOG_LEVEL.name();
         AgentContext instance = AgentContext.getInstance();
         UiSettings uiSettings = instance.getUiSettings();
-        SystemPropertiesSettings systemPropertiesSettings = SystemPropertiesSettings.load();
 
         PackageList instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
         PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();

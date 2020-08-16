@@ -3,7 +3,7 @@ package com.test.cases.util;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.RecordingStartMethodList;
-import com.ulyp.agent.transport.UiAddress;
+import com.ulyp.agent.transport.GrpcUiAddress;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +113,7 @@ public class TestSettingsBuilder {
 
     public SystemPropertiesSettings build() {
         return new SystemPropertiesSettings(
-                new UiAddress(hostName, port),
+                new GrpcUiAddress(hostName, port),
                 instrumentedPackages,
                 excludedFromInstrumentationPackages,
                 new RecordingStartMethodList(new MethodMatcher(mainClassName, methodToRecord)),

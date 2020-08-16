@@ -1,14 +1,12 @@
 package com.ulyp.agent.settings;
 
+import com.ulyp.agent.transport.*;
 import com.ulyp.core.util.MethodMatcher;
-import com.ulyp.agent.transport.DisconnectedUiTransport;
-import com.ulyp.agent.transport.GrpcUiTransport;
-import com.ulyp.agent.transport.UiAddress;
-import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.core.util.CommaSeparatedList;
+import com.ulyp.core.util.PackageList;
 import com.ulyp.transport.SettingsResponse;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,23 +15,29 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public static SystemPropertiesSettings load() {
 
-        List<String> packages = new ArrayList<>(CommaSeparatedList.parse(System.getProperty(PACKAGES_PROPERTY, "")));
+        PackageList instrumentationPackages = new PackageList(CommaSeparatedList.parse(System.getProperty(PACKAGES_PROPERTY, "")));
 
-        String excludedPackagesStr = System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "");
-        List<String> excludedPackages = CommaSeparatedList.parse(excludedPackagesStr);
+        PackageList excludedPackages = new PackageList(CommaSeparatedList.parse(System.getProperty(EXCLUDE_PACKAGES_PROPERTY, "")));
 
         String methodsToRecord = System.getProperty(START_METHOD_PROPERTY, "");
-        RecordingStartMethodList tracingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(methodsToRecord));
+        RecordingStartMethodList recordingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(methodsToRecord));
 
         UiAddress uiAddress;
         boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
         if (uiEnabled) {
-            // TODO this looks stupid
             String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUiTransport.DEFAULT_ADDRESS.hostName);
             int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUiTransport.DEFAULT_ADDRESS.port)));
-            uiAddress = new UiAddress(uiHost, uiPort);
+            uiAddress = new GrpcUiAddress(uiHost, uiPort);
         } else {
-            uiAddress = null;
+            uiAddress = new DisconnectedUiAddress(
+                    SettingsResponse.newBuilder()
+                            .addAllInstrumentedPackages(instrumentationPackages)
+                            .addAllExcludedFromInstrumentationPackages(excludedPackages)
+                            .addAllMethodsToRecord(recordingStartMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
+                            .setMayStartRecording(true)
+                            .setRecordCollectionsItems(false)
+                            .build()
+            );
         }
 
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
@@ -41,9 +45,9 @@ public class SystemPropertiesSettings implements AgentSettings {
         int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
         return new SystemPropertiesSettings(
                 uiAddress,
-                packages,
+                instrumentationPackages,
                 excludedPackages,
-                tracingStartMethods,
+                recordingStartMethods,
                 maxTreeDepth,
                 maxCallPerMethod,
                 minTraceCount
@@ -60,21 +64,20 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String MAX_CALL_PER_METHOD = "ulyp.max-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
-    @Nullable
-    private final UiAddress uiAddress;
+    @NotNull private final UiAddress uiAddress;
     // TODO use package list
-    private final List<String> instrumentatedPackages;
-    private final List<String> excludedFromInstrumentationPackages;
-    private final RecordingStartMethodList methodsToRecord;
+    private final PackageList instrumentatedPackages;
+    private final PackageList excludedFromInstrumentationPackages;
+    @NotNull private final RecordingStartMethodList methodsToRecord;
     private final int maxTreeDepth;
     private final int maxCallsPerMethod;
     private final int minRecordsCountForLog;
 
     public SystemPropertiesSettings(
-            @Nullable UiAddress uiAddress,
-            List<String> instrumentedPackages,
-            List<String> excludedFromInstrumentationPackages,
-            RecordingStartMethodList methodsToRecord,
+            @NotNull UiAddress uiAddress,
+            PackageList instrumentedPackages,
+            PackageList excludedFromInstrumentationPackages,
+            @NotNull RecordingStartMethodList methodsToRecord,
             int maxTreeDepth,
             int maxCallsPerMethod,
             int minRecordsCountForLog)
@@ -100,14 +103,15 @@ public class SystemPropertiesSettings implements AgentSettings {
         return maxCallsPerMethod;
     }
 
-    public List<String> getInstrumentatedPackages() {
+    public PackageList getInstrumentatedPackages() {
         return instrumentatedPackages;
     }
 
-    public List<String> getExcludedFromInstrumentationPackages() {
+    public PackageList getExcludedFromInstrumentationPackages() {
         return excludedFromInstrumentationPackages;
     }
 
+    // TODO unused?
     public List<String> toCmdJavaProps() {
         List<String> params = new ArrayList<>();
 
@@ -117,11 +121,11 @@ public class SystemPropertiesSettings implements AgentSettings {
         }
 
         params.add("-D" + START_METHOD_PROPERTY + "=" + methodsToRecord.stream().map(MethodMatcher::toString).collect(Collectors.joining()));
-        if (uiAddress != null) {
-
-        } else {
-            params.add("-D" + UI_PORT_PROPERTY + "=" + uiAddress.port);
-        }
+//        if (uiAddress != null) {
+//
+//        } else {
+//            params.add("-D" + UI_PORT_PROPERTY + "=" + uiAddress.port);
+//        }
         params.add("-D" + MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
         params.add("-D" + MIN_TRACE_COUNT + "=" + minRecordsCountForLog);
         params.add("-D" + MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
@@ -130,19 +134,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     }
 
     public UiTransport buildUiTransport() {
-        if (uiAddress != null) {
-            return new GrpcUiTransport(uiAddress);
-        } else {
-            return new DisconnectedUiTransport(
-                    SettingsResponse.newBuilder()
-                            .addAllInstrumentedPackages(getInstrumentatedPackages())
-                            .addAllExcludedFromInstrumentationPackages(getExcludedFromInstrumentationPackages())
-                            .addAllMethodsToRecord(methodsToRecord.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
-                            .setMayStartRecording(true)
-                            .setRecordCollectionsItems(false)
-                            .build()
-            );
-        }
+        return uiAddress.buildTransport();
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.ulyp.agent.settings;
 
-import java.util.List;
+import com.ulyp.core.util.PackageList;
 
+// TODO retire
 public interface AgentSettings {
 
     int getMaxTreeDepth();
@@ -10,7 +11,7 @@ public interface AgentSettings {
 
     int getMaxCallsPerMethod();
 
-    List<String> getInstrumentatedPackages();
+    PackageList getInstrumentatedPackages();
 
-    List<String> getExcludedFromInstrumentationPackages();
+    PackageList getExcludedFromInstrumentationPackages();
 }

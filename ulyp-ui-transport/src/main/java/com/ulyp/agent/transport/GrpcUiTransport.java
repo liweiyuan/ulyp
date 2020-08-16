@@ -17,7 +17,7 @@ import java.util.concurrent.*;
 
 public class GrpcUiTransport implements UiTransport {
 
-    public static final UiAddress DEFAULT_ADDRESS = new UiAddress("localhost", 13991);
+    public static final GrpcUiAddress DEFAULT_ADDRESS = new GrpcUiAddress("localhost", 13991);
 
     private final ManagedChannel channel;
     private final UiTransportGrpc.UiTransportFutureStub uploadingServiceFutureStub;
@@ -32,7 +32,7 @@ public class GrpcUiTransport implements UiTransport {
     );
     private final Set<Long> recordLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    public GrpcUiTransport(UiAddress address) {
+    public GrpcUiTransport(GrpcUiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
                 .nameResolverFactory(new DnsNameResolverProvider())
                 .usePlaintext()
