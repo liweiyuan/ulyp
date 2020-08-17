@@ -44,7 +44,15 @@ public class ByteBuddyTypeTest {
 
     }
 
-    interface I3 {
+    interface I5 {
+
+    }
+
+    interface I4 extends I5 {
+
+    }
+
+    interface I3 extends I4 {
 
     }
 
@@ -69,6 +77,8 @@ public class ByteBuddyTypeTest {
                     add("com.ulyp.agent.util.ByteBuddyTypeTest$I1");
                     add("com.ulyp.agent.util.ByteBuddyTypeTest$I2");
                     add("com.ulyp.agent.util.ByteBuddyTypeTest$I3");
+                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I4");
+                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I5");
                 }},
                 type.getInterfacesClassesNames()
         );

@@ -15,14 +15,26 @@ public class ByteBuddyType implements Type {
     public ByteBuddyType(TypeDescription.Generic type) {
         this.type = type;
 
+        add(this.type);
+    }
+
+    private void add(TypeDescription.Generic type) {
         while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
             superClassesNames.add(type.getActualName());
 
             for (TypeDescription.Generic interfface : type.getInterfaces()) {
-                interfacesClassesNames.add(interfface.getActualName());
+                addInterfaceAndAllParentInterfaces(interfface);
             }
 
             type = type.getSuperClass();
+        }
+    }
+
+    private void addInterfaceAndAllParentInterfaces(TypeDescription.Generic interfface) {
+        interfacesClassesNames.add(interfface.getActualName());
+
+        for (TypeDescription.Generic parentInterface : interfface.getInterfaces()) {
+            addInterfaceAndAllParentInterfaces(parentInterface);
         }
     }
 
@@ -94,5 +106,10 @@ public class ByteBuddyType implements Type {
         return type.getDeclaredMethods().stream().anyMatch(
                 method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
         );
+    }
+
+    @Override
+    public String toString() {
+        return "ByteBuddyType{" +"name=" + getName() + '}';
     }
 }

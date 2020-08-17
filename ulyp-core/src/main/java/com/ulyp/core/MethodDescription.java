@@ -4,6 +4,7 @@ import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.Printers;
 import com.ulyp.core.printers.Type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,5 +78,19 @@ public class MethodDescription {
 
     public List<String> getParameterNames() {
         return parameterNames;
+    }
+
+    @Override
+    public String toString() {
+        return "MethodDescription{" +
+                "id=" + id +
+                ", methodName='" + methodName + '\'' +
+                ", declaringType=" + declaringType +
+                ", isStatic=" + isStatic +
+                ", returnsSomething=" + returnsSomething +
+                ", parameterNames=" + parameterNames +
+                ", paramPrinters=" + Arrays.toString(paramPrinters) +
+                ", resultPrinter=" + resultPrinter +
+                '}';
     }
 }

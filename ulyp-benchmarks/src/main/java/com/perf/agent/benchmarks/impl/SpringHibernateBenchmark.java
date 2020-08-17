@@ -40,6 +40,7 @@ public class SpringHibernateBenchmark implements Benchmark {
     @Override
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
+        System.out.println(context.getApplicationName());
         saver = context.getBean(UserService.class);
     }
 
