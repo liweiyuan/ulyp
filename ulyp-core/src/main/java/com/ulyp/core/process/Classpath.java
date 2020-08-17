@@ -1,15 +1,17 @@
 package com.ulyp.core.process;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Classpath {
 
     private final List<String> value;
 
     public Classpath() {
-        this.value = Arrays.asList(System.getProperty("java.class.path").split(File.pathSeparator));
+        this.value = Arrays.asList(
+                Pattern.compile(System.getProperty("path.separator"), Pattern.LITERAL).split(System.getProperty("java.class.path"))
+        );
     }
 
     public List<String> toList() {

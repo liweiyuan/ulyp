@@ -1,6 +1,7 @@
 package com.ulyp.agent.util;
 
 import net.bytebuddy.description.type.TypeDescription;
+import org.h2.jdbc.JdbcConnection;
 import org.junit.Assert;
 import org.junit.Test;
 

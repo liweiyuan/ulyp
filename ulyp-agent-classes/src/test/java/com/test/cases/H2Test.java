@@ -3,6 +3,8 @@ package com.test.cases;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.CallRecordTree;
+import com.ulyp.core.util.MethodMatcher;
+import org.h2.jdbc.JdbcConnection;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +12,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.Arrays;
 
 public class H2Test extends AbstractInstrumentationTest {
 
@@ -38,7 +39,7 @@ public class H2Test extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void testAtomicIntegerSum() {
+    public void shouldRecordMainMethodIfSpecified() {
 
         CallRecordTree tree = runSubprocessWithUi(new TestSettingsBuilder()
                 .setInstrumentedPackages("com.test", "org.h2")

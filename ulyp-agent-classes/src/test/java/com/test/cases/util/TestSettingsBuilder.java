@@ -14,7 +14,7 @@ public class TestSettingsBuilder {
 
     // TODO matcher
     private Class<?> mainClassName;
-    private String methodToRecord;
+    private MethodMatcher methodToRecord;
 
     public String hostName;
     private boolean uiEnabled = true;
@@ -43,10 +43,6 @@ public class TestSettingsBuilder {
         return recordCollectionItems;
     }
 
-    public String getMethodToRecord() {
-        return methodToRecord;
-    }
-
     public PackageList getInstrumentedPackages() {
         return instrumentedPackages;
     }
@@ -61,8 +57,21 @@ public class TestSettingsBuilder {
         return this;
     }
 
+    public MethodMatcher getMethodToRecord() {
+        return methodToRecord;
+    }
+
+    public TestSettingsBuilder setMethodToRecord(MethodMatcher methodToRecord) {
+        this.methodToRecord = methodToRecord;
+        return this;
+    }
+
     public TestSettingsBuilder setMethodToRecord(String startMethod) {
-        this.methodToRecord = startMethod;
+        if (mainClassName != null) {
+            this.methodToRecord = new MethodMatcher(mainClassName, startMethod);
+        } else {
+            throw new IllegalArgumentException("Please set main class name first");
+        }
         return this;
     }
 
@@ -110,17 +119,5 @@ public class TestSettingsBuilder {
     public TestSettingsBuilder setExcludedFromInstrumentationPackages(String... packages) {
         this.excludedFromInstrumentationPackages = new PackageList(packages);
         return this;
-    }
-
-    public SystemPropertiesSettings build() {
-        return new SystemPropertiesSettings(
-                new GrpcUiAddress(hostName, port),
-                instrumentedPackages,
-                excludedFromInstrumentationPackages,
-                new RecordingStartMethodList(new MethodMatcher(mainClassName, methodToRecord)),
-                maxDepth,
-                maxCallsPerMethod,
-                minRecordsForLog
-        );
     }
 }

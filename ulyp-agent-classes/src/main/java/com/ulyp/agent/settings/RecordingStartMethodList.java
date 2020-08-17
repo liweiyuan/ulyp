@@ -20,6 +20,7 @@ public class RecordingStartMethodList {
         this.methods = methods.stream().map(MethodMatcher::parse).collect(Collectors.toList());
     }
 
+    // tODO rename
     public boolean shouldStartTracing(MethodDescription description) {
         return methods.isEmpty() || methods.stream().anyMatch(matcher -> matcher.matches(description));
     }
@@ -30,7 +31,7 @@ public class RecordingStartMethodList {
 
     @Override
     public String toString() {
-        return "TracingStartMethodList{" +
+        return "RecordingStartMethodList{" +
                 "methods=" + methods +
                 '}';
     }
