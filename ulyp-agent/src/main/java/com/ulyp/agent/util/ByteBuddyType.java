@@ -1,6 +1,7 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.core.printers.Type;
+import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.HashSet;
@@ -15,18 +16,21 @@ public class ByteBuddyType implements Type {
     public ByteBuddyType(TypeDescription.Generic type) {
         this.type = type;
 
-        add(this.type);
+        addSuperTypes(type);
     }
 
-    private void add(TypeDescription.Generic type) {
-        while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
-            superClassesNames.add(type.getActualName());
+    private void addSuperTypes(TypeDescription.Generic type) {
+        TypeDefinition.Sort sort = type.getSort();
+        if (sort != TypeDefinition.Sort.VARIABLE && sort != TypeDefinition.Sort.VARIABLE_SYMBOLIC && sort != TypeDefinition.Sort.WILDCARD) {
+            while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
+                superClassesNames.add(type.getActualName());
 
-            for (TypeDescription.Generic interfface : type.getInterfaces()) {
-                addInterfaceAndAllParentInterfaces(interfface);
+                for (TypeDescription.Generic interfface : type.getInterfaces()) {
+                    addInterfaceAndAllParentInterfaces(interfface);
+                }
+
+                type = type.getSuperClass();
             }
-
-            type = type.getSuperClass();
         }
     }
 
@@ -92,6 +96,12 @@ public class ByteBuddyType implements Type {
     }
 
     @Override
+    public boolean isTypeVar() {
+        TypeDefinition.Sort sort = type.getSort();
+        return sort == TypeDefinition.Sort.VARIABLE || sort == TypeDefinition.Sort.VARIABLE_SYMBOLIC || sort == TypeDefinition.Sort.WILDCARD;
+    }
+
+    @Override
     public boolean isCollection() {
         return getInterfacesClassesNames().contains("java.util.Collection");
     }
@@ -103,9 +113,14 @@ public class ByteBuddyType implements Type {
 
     @Override
     public boolean hasToStringMethod() {
-        return type.getDeclaredMethods().stream().anyMatch(
-                method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
-        );
+        TypeDefinition.Sort sort = type.getSort();
+        if (sort != TypeDefinition.Sort.VARIABLE && sort != TypeDefinition.Sort.VARIABLE_SYMBOLIC && sort != TypeDefinition.Sort.WILDCARD) {
+            return type.getDeclaredMethods().stream().anyMatch(
+                    method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
+            );
+        } else {
+            return false;
+        }
     }
 
     @Override

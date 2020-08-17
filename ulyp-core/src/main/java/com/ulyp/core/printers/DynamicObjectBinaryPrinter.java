@@ -15,7 +15,7 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(Type type) {
-        return type.isInterface() || type.isExactlyJavaLangObject();
+        return type.isInterface() || type.isExactlyJavaLangObject() || type.isTypeVar();
     }
 
     @Override

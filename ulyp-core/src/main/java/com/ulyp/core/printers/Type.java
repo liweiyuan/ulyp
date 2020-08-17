@@ -46,6 +46,8 @@ public interface Type {
 
     boolean isInterface();
 
+    boolean isTypeVar();
+
     boolean isCollection();
 
     boolean isClassObject();
