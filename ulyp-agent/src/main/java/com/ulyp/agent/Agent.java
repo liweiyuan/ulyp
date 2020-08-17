@@ -63,7 +63,7 @@ public class Agent {
 
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
-                .transform(new BbTransformer(MethodAdvice.class, recordingStartMethodList))
+                .transform(new BbTransformer(RecordingAdvice.class, recordingStartMethodList))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
 
         if (LoggingSettings.LOG_LEVEL == Level.TRACE) {
