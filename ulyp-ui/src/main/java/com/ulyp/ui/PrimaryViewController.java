@@ -45,13 +45,13 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public Slider recordPrecisionSlider;
 
-    private ProcessTabs processTabs;
+    private CallRecordTreePrimaryView callRecordTreePrimaryView;
     private final CallRecordDatabase callRecordDatabase = new HeapCallRecordDatabase();
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        processTabs = new ProcessTabs(callRecordDatabase, processTabPane);
+        callRecordTreePrimaryView = new CallRecordTreePrimaryView(callRecordDatabase, processTabPane);
     }
 
     public void onCallRecordTreeUploaded(TCallRecordLogUploadRequest request) {
@@ -67,12 +67,12 @@ public class PrimaryViewController implements Initializable {
     }
 
     private void addTree(TCallRecordLogUploadRequest request, CallRecordTree tree) {
-        ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
+        ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
         processTab.addTree(tree, request.getProcessInfo(), renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void clearAll(Event event) {
-        processTabs.clear();
+        callRecordTreePrimaryView.clear();
     }
 
     public void onSearchActivated(KeyEvent event) {
@@ -81,7 +81,7 @@ public class PrimaryViewController implements Initializable {
 
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeItem selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeItem selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(true);
                 renderSettings.setShowArgumentClassNames(true);
@@ -90,9 +90,9 @@ public class PrimaryViewController implements Initializable {
         } else {
             if (event.isControlDown() && event.getCode() == KeyCode.C) {
                 // COPY currently selected
-                ProcessTab selectedTab = processTabs.getSelectedTab();
+                ProcessTab selectedTab = callRecordTreePrimaryView.getSelectedTab();
                 if (selectedTab != null) {
-                    CallRecordTreeItem selectedCallRecord = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+                    CallRecordTreeItem selectedCallRecord = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
                     if (selectedCallRecord != null) {
                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                         final ClipboardContent content = new ClipboardContent();
@@ -107,7 +107,7 @@ public class PrimaryViewController implements Initializable {
 
     public void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeItem selected = processTabs.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeItem selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(false);
                 renderSettings.setShowArgumentClassNames(false);

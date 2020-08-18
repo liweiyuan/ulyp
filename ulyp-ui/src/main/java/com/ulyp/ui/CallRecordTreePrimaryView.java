@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProcessTabs {
+public class CallRecordTreePrimaryView {
 
     private final CallRecordDatabase database;
     private final TabPane processTabPane;
     private final Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
-    public ProcessTabs(CallRecordDatabase database, TabPane processTabPane) {
+    public CallRecordTreePrimaryView(CallRecordDatabase database, TabPane processTabPane) {
         this.database = database;
         this.processTabPane = processTabPane;
     }
