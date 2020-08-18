@@ -1,10 +1,13 @@
 package com.ulyp.core.printers;
 
-public class StringRepresentation implements ObjectRepresentation {
+import com.ulyp.core.ClassDescription;
+
+public class StringRepresentation extends ObjectRepresentation {
 
     private final String text;
 
-    public StringRepresentation(String text) {
+    public StringRepresentation(ClassDescription classDescription, String text) {
+        super(classDescription);
         this.text = text;
     }
 

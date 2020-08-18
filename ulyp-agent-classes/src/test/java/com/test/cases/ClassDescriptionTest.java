@@ -40,11 +40,11 @@ public class ClassDescriptionTest extends AbstractInstrumentationTest {
         CallRecord root = tree.getRoot();
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("-234"));
-        assertThat(root.getArgs().get(0).getClassDescription().getSimpleName(), is("AtomicInteger"));
-        assertThat(root.getArgs().get(0).getClassDescription().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
+        assertThat(root.getArgs().get(0).getType().getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgs().get(0).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
 
         assertThat(root.getArgs().get(1).getPrintedText(), is("23"));
-        assertThat(root.getArgs().get(1).getClassDescription().getSimpleName(), is("AtomicInteger"));
-        assertThat(root.getArgs().get(1).getClassDescription().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
+        assertThat(root.getArgs().get(1).getType().getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgs().get(1).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
     }
 }

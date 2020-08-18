@@ -1,5 +1,6 @@
 package com.ulyp.core;
 
+import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
@@ -86,12 +87,12 @@ public class CallRecordTreeDao {
         private final CallRecordBuilder parent;
         private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
-        private final ObjectValue callee;
-        private final List<ObjectValue> args;
+        private final ObjectRepresentation callee;
+        private final List<ObjectRepresentation> args;
         private final List<CallRecord> children = new ArrayList<>();
 
         private CallRecord persisted;
-        private ObjectValue returnValue;
+        private ObjectRepresentation returnValue;
         private boolean thrown;
 
         private CallRecordBuilder(CallRecordBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterRecordDecoder decoder) {
@@ -105,13 +106,11 @@ public class CallRecordTreeDao {
                 arguments = arguments.next();
                 UnsafeBuffer buffer = new UnsafeBuffer();
                 arguments.wrapValue(buffer);
-                args.add(new ObjectValue(
-                        ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(
-                                classIdMap.get(arguments.classId()),
-                                new BinaryInputImpl(buffer),
-                                decodingContext),
-                        classIdMap.get(arguments.classId())
-                ));
+                args.add(ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(
+                        classIdMap.get(arguments.classId()),
+                        new BinaryInputImpl(buffer),
+                        decodingContext)
+                );
             }
 
             UnsafeBuffer buffer = new UnsafeBuffer();
@@ -119,22 +118,18 @@ public class CallRecordTreeDao {
 
             ClassDescription calleeType = classIdMap.get(decoder.calleeClassId());
 
-            this.callee = new ObjectValue(
-                    ObjectBinaryPrinterType.printerForId(decoder.calleePrinterId()).read(
-                            calleeType,
-                            new BinaryInputImpl(buffer),
-                            decodingContext),
-                    calleeType
+            this.callee = ObjectBinaryPrinterType.printerForId(decoder.calleePrinterId()).read(
+                    calleeType,
+                    new BinaryInputImpl(buffer),
+                    decodingContext
             );
         }
 
         private void setExitRecordData(TCallExitRecordDecoder decoder) {
-            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
             UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
             decoder.wrapReturnValue(returnValueBuffer);
-            this.returnValue = new ObjectValue(
-                    printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer), decodingContext),
-                    classIdMap.get(decoder.returnClassId()));
+            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(decoder.returnPrinterId());
+            this.returnValue = printer.read(classIdMap.get(decoder.returnClassId()), new BinaryInputImpl(returnValueBuffer), decodingContext);
             this.thrown = decoder.thrown() == BooleanType.T;
         }
 

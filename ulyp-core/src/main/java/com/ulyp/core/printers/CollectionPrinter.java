@@ -24,7 +24,7 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         boolean recordItems = binaryInput.readBoolean();
         if (recordItems) {
             return collectionDebugPrinter.read(classDescription, binaryInput, decodingContext);

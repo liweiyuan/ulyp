@@ -1,5 +1,6 @@
 package com.ulyp.core;
 
+import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodDescriptionDecoder;
 
@@ -13,18 +14,18 @@ public class CallRecord {
     private final String className;
     private final String methodName;
     private final boolean isVoidMethod;
-    private final ObjectValue callee;
-    private final List<ObjectValue> args;
+    private final ObjectRepresentation callee;
+    private final ObjectRepresentation returnValue;
+    private final List<ObjectRepresentation> args;
     private final List<String> parameterNames;
-    private final ObjectValue returnValue;
     private final boolean thrown;
     private final List<CallRecord> children;
     private final int subtreeNodeCount;
 
     public CallRecord(
-            ObjectValue callee,
-            List<ObjectValue> args,
-            ObjectValue returnValue,
+            ObjectRepresentation callee,
+            List<ObjectRepresentation> args,
+            ObjectRepresentation returnValue,
             boolean thrown,
             TMethodDescriptionDecoder methodDescription,
             List<CallRecord> children)
@@ -49,7 +50,7 @@ public class CallRecord {
         this.subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
     }
 
-    public ObjectValue getCallee() {
+    public ObjectRepresentation getCallee() {
         return callee;
     }
 
@@ -69,19 +70,19 @@ public class CallRecord {
         return methodName;
     }
 
-    public List<ObjectValue> getArgs() {
+    public List<ObjectRepresentation> getArgs() {
         return args;
     }
 
     public List<String> getArgTexts() {
-        return args.stream().map(ObjectValue::getPrintedText).collect(Collectors.toList());
+        return args.stream().map(ObjectRepresentation::getPrintedText).collect(Collectors.toList());
     }
 
     public List<String> getParameterNames() {
         return parameterNames;
     }
 
-    public ObjectValue getReturnValue() {
+    public ObjectRepresentation getReturnValue() {
         return returnValue;
     }
 

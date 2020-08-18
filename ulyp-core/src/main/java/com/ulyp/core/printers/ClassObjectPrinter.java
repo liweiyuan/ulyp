@@ -18,9 +18,9 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long typeId = binaryInput.readLong();
-        return () -> "Class{" + decodingContext.getClass(typeId).getName() + "}";
+        return new PlainObjectRepresentation(classDescription, "Class{" + decodingContext.getClass(typeId).getName() + "}");
     }
 
     @Override

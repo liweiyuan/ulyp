@@ -24,7 +24,7 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long totalElements = binaryInput.readLong();
         List<Printable> elements = new ArrayList<>();
         long writtenElements = binaryInput.readLong();
@@ -34,9 +34,11 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
             elements.add(printer.read(itemClassType, binaryInput, decodingContext));
         }
         int notWrittenItemsCount = (int) (totalElements - writtenElements);
-        return () ->
+        return new PlainObjectRepresentation(
+                classDescription,
                 elements.stream().map(Printable::print).collect(Collectors.toList()) +
-                (notWrittenItemsCount > 0 ? ", " + notWrittenItemsCount + " more..." : "");
+                (notWrittenItemsCount > 0 ? ", " + notWrittenItemsCount + " more..." : "")
+        );
     }
 
     @Override

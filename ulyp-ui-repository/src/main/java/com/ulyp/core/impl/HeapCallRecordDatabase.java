@@ -2,7 +2,7 @@ package com.ulyp.core.impl;
 
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.CallRecordDatabase;
-import com.ulyp.core.ObjectValue;
+import com.ulyp.core.printers.ObjectRepresentation;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +70,7 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
         if (StringUtils.containsIgnoreCase(node.getReturnValue().getPrintedText(), text)) {
             return true;
         }
-        for (ObjectValue arg: node.getArgs()) {
+        for (ObjectRepresentation arg: node.getArgs()) {
             if (StringUtils.containsIgnoreCase(arg.getPrintedText(), text)) {
                 return true;
             }

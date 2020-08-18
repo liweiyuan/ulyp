@@ -26,7 +26,7 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long totalElements = binaryInput.readLong();
         List<Printable> elements = new ArrayList<>();
         long writtenElements = binaryInput.readLong();
@@ -36,10 +36,11 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
             elements.add(printer.read(itemDescription, binaryInput, decodingContext));
         }
         int notShownElementsCount = (int) (totalElements - writtenElements);
-        return () -> "[" +
+        return new PlainObjectRepresentation(classDescription, "[" +
                 elements.stream().map(Printable::print).collect(Collectors.joining()) +
                 (notShownElementsCount > 0 ? ", " + notShownElementsCount + " more..." : "") +
-                "]";
+                "]"
+        );
     }
 
     @Override

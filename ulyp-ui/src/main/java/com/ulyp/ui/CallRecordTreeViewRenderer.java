@@ -1,7 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.ObjectValue;
+import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.FxObjectValue;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
@@ -55,9 +55,9 @@ public class CallRecordTreeViewRenderer {
         output.add(text().text("(").style("ulyp-ctt-sep").build());
 
         for (int i = 0; i < node.getArgs().size(); i++) {
-            ObjectValue argValue = node.getArgs().get(i);
+            ObjectRepresentation argValue = node.getArgs().get(i);
             if (renderSettings.showsArgumentClassNames()) {
-                output.add(text().text(argValue.getClassDescription().getSimpleName()).style("ulyp-ctt-arg-value").build());
+                output.add(text().text(argValue.getType().getSimpleName()).style("ulyp-ctt-arg-value").build());
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 

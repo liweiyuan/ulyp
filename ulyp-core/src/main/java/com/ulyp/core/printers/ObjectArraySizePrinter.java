@@ -19,12 +19,12 @@ public class ObjectArraySizePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long itemsCount = binaryInput.readLong();
         if (itemsCount > 0) {
-            return () -> classDescription.getSimpleName() + "[" + itemsCount + " items ]";
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "[" + itemsCount + " items ]");
         } else {
-            return classDescription::getSimpleName;
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName());
         }
     }
 

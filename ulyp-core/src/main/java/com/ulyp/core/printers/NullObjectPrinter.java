@@ -9,7 +9,7 @@ import com.ulyp.core.printers.bytes.StringView;
 
 public class NullObjectPrinter extends ObjectBinaryPrinter {
 
-    private StringView NULL_STRING = new StringView("null");
+    private static final String NULL_STRING = "null";
 
     protected NullObjectPrinter(int id) {
         super(id);
@@ -21,10 +21,10 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
         binaryInput.readLong();
-        return NULL_STRING;
+        return new PlainObjectRepresentation(classDescription, NULL_STRING);
     }
 
     @Override

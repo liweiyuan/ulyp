@@ -10,7 +10,7 @@ import com.ulyp.core.printers.bytes.StringView;
 
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
-    private StringView NULL_STRING = new StringView("null");
+    private String NULL_STRING = "null";
 
     private static final int TO_STRING_CALL_SUCCESS = 1;
     private static final int TO_STRING_CALL_NULL = 2;
@@ -30,14 +30,12 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long result = binaryInput.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
-            Printable printable = ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
-            // TODO return ToStringRepresentation
-            return printable::print;
+            return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
         } else if (result == TO_STRING_CALL_NULL) {
-            return NULL_STRING;
+            return new PlainObjectRepresentation(decodingContext.getClass(-1), NULL_STRING);
         } else {
             return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
         }

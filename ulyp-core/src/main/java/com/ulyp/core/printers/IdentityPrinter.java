@@ -18,7 +18,7 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long identityHashCode = binaryInput.readLong();
         return new IdentityObjectRepresentation(classDescription, identityHashCode);
     }

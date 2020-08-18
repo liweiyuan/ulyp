@@ -18,8 +18,8 @@ public abstract class ObjectBinaryPrinter {
         return id;
     }
 
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return binaryInput.readString();
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+        return new PlainObjectRepresentation(classDescription, binaryInput.readString().toString());
     }
 
     abstract boolean supports(Type type);
@@ -27,7 +27,7 @@ public abstract class ObjectBinaryPrinter {
     /**
      * @param obj object to print
      * @param out target binary stream to print to
-     * @param agentRuntime
+     * @param agentRuntime runtime provided by instrumentation library
      */
     public abstract void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception;
 }

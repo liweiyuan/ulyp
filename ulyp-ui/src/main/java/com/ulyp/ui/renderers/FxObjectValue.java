@@ -1,8 +1,7 @@
 package com.ulyp.ui.renderers;
 
 import com.ulyp.core.ClassDescription;
-import com.ulyp.core.ObjectValue;
-import com.ulyp.core.printers.Printable;
+import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.StringRepresentation;
 import javafx.scene.text.TextFlow;
 
@@ -14,21 +13,20 @@ public abstract class FxObjectValue extends TextFlow {
         this.type = type;
     }
 
-    public static FxObjectValue of(ObjectValue value) {
+    public static FxObjectValue of(ObjectRepresentation repr) {
         FxObjectValue objectValue;
-        Printable printable = value.asPrintable();
 
-        if (printable instanceof StringRepresentation) {
+        if (repr instanceof StringRepresentation) {
 
-            objectValue = new FxStringObjectValue((StringRepresentation) printable, value.getClassDescription());
+            objectValue = new FxStringObjectValue((StringRepresentation) repr, repr.getType());
         } else {
 
-            objectValue = new FxSimpleObjectValue(printable, value.getClassDescription());
+            objectValue = new FxPlainObjectValue(repr, repr.getType());
         }
 
         objectValue.getChildren().forEach(node -> {
             node.getStyleClass().add("ulyp-ctt");
-            node.getStyleClass().add("ulyp-ctt-object-value");
+            node.getStyleClass().add("ulyp-ctt-object-repr");
         });
         return objectValue;
     }

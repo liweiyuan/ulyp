@@ -20,8 +20,8 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new StringRepresentation(binaryInput.readString().toString());
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+        return new StringRepresentation(classDescription, binaryInput.readString().toString());
     }
 
     @Override

@@ -19,7 +19,7 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public Printable read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long printerId = binaryInput.readLong();
         return ObjectBinaryPrinterType.printerForId(printerId).read(classDescription, binaryInput, decodingContext);
     }
