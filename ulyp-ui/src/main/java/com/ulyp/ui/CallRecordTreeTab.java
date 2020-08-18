@@ -32,7 +32,7 @@ public class CallRecordTreeTab extends Tab {
         this.tree = tree;
         this.database = database;
 
-        view = new TreeView<>(new FxCallRecord(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
+        view = new TreeView<>(new CallRecordTreeItem(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
         view.prefHeightProperty().bind(treesTabs.heightProperty());
         view.prefWidthProperty().bind(treesTabs.widthProperty());
 
@@ -61,12 +61,12 @@ public class CallRecordTreeTab extends Tab {
     }
 
     @Nullable
-    public FxCallRecord getSelected() {
-        return (FxCallRecord) view.getSelectionModel().getSelectedItem();
+    public CallRecordTreeItem getSelected() {
+        return (CallRecordTreeItem) view.getSelectionModel().getSelectedItem();
     }
 
-    public FxCallRecord getRoot() {
-        return (FxCallRecord) view.getRoot();
+    public CallRecordTreeItem getRoot() {
+        return (CallRecordTreeItem) view.getRoot();
     }
 
     public void dispose() {

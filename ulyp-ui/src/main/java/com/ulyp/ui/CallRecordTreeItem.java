@@ -8,7 +8,7 @@ import javafx.scene.control.TreeItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FxCallRecord extends TreeItem<Node> {
+public class CallRecordTreeItem extends TreeItem<Node> {
 
     private final RenderSettings renderSettings;
     private final CallRecord node;
@@ -16,17 +16,17 @@ public class FxCallRecord extends TreeItem<Node> {
 
     private boolean loaded = false;
 
-    public FxCallRecord(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(FxCttTreeViewRenderer.render(node, renderSettings, totalNodeCountInTree));
+    public CallRecordTreeItem(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
+        super(CallRecordTreeViewRenderer.render(node, renderSettings, totalNodeCountInTree));
         this.node = node;
         this.renderSettings = renderSettings;
         this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(FxCttTreeViewRenderer.render(node, renderSettings, totalNodeCount));
+        setValue(CallRecordTreeViewRenderer.render(node, renderSettings, totalNodeCount));
         if (loaded) {
-            getChildren().forEach(node -> ((FxCallRecord) node).refresh());
+            getChildren().forEach(node -> ((CallRecordTreeItem) node).refresh());
         }
     }
 
@@ -48,9 +48,9 @@ public class FxCallRecord extends TreeItem<Node> {
 
     private void loadChildren() {
         loaded = true;
-        List<FxCallRecord> children = new ArrayList<>();
+        List<CallRecordTreeItem> children = new ArrayList<>();
         for (CallRecord child : node.getChildren()) {
-            children.add(new FxCallRecord(child, renderSettings, totalNodeCount));
+            children.add(new CallRecordTreeItem(child, renderSettings, totalNodeCount));
         }
 
         super.getChildren().setAll(children);

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FxCttTreeViewRenderer {
+public class CallRecordTreeViewRenderer {
 
     private static TextBuilder text() {
         return new TextBuilder().style("ulyp-ctt");
