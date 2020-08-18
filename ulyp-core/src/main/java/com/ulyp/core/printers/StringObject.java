@@ -2,11 +2,11 @@ package com.ulyp.core.printers;
 
 import com.ulyp.core.ClassDescription;
 
-public class StringRepresentation extends ObjectRepresentation {
+public class StringObject extends ObjectRepresentation {
 
     private final String text;
 
-    public StringRepresentation(ClassDescription classDescription, String text) {
+    public StringObject(ClassDescription classDescription, String text) {
         super(classDescription);
         this.text = text;
     }

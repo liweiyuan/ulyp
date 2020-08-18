@@ -5,9 +5,9 @@ import com.ulyp.core.printers.Printable;
 import javafx.scene.text.Text;
 
 // TODO retire
-public class FxPlainObjectValue extends FxObjectValue {
+public class RenderedPlainObject extends RenderedObject {
 
-    FxPlainObjectValue(Printable printable, ClassDescription classDescription) {
+    RenderedPlainObject(Printable printable, ClassDescription classDescription) {
         super(classDescription);
         Text text = new MultilinedText(printable.print());
         super.getChildren().add(text);

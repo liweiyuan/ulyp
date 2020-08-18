@@ -6,7 +6,6 @@ import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.BinaryOutputAppender;
-import com.ulyp.core.printers.bytes.StringView;
 
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
@@ -35,7 +34,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
         if (result == TO_STRING_CALL_SUCCESS) {
             return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
         } else if (result == TO_STRING_CALL_NULL) {
-            return new PlainObjectRepresentation(decodingContext.getClass(-1), NULL_STRING);
+            return new PlainObject(decodingContext.getClass(-1), NULL_STRING);
         } else {
             return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
         }

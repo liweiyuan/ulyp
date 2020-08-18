@@ -24,9 +24,9 @@ public class CollectionSizeOnlyPrinter extends ObjectBinaryPrinter {
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long size = binaryInput.readLong();
         if (size == 0) {
-            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{}");
+            return new PlainObject(classDescription, classDescription.getSimpleName() + "{}");
         } else {
-            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{" + size + "}");
+            return new PlainObject(classDescription, classDescription.getSimpleName() + "{" + size + "}");
         }
     }
 

@@ -1,12 +1,12 @@
 package com.ulyp.ui.renderers;
 
 import com.ulyp.core.ClassDescription;
-import com.ulyp.core.printers.StringRepresentation;
+import com.ulyp.core.printers.StringObject;
 import javafx.scene.text.Text;
 
-public class FxStringObjectValue extends FxObjectValue {
+public class RenderedStringObject extends RenderedObject {
 
-    FxStringObjectValue(StringRepresentation representation, ClassDescription classDescription) {
+    RenderedStringObject(StringObject representation, ClassDescription classDescription) {
         super(classDescription);
         Text text = new MultilinedText("\"" + representation.print() + "\"");
         text.getStyleClass().add("ulyp-ctt-string");

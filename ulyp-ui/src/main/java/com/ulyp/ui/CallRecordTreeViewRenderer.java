@@ -2,7 +2,7 @@ package com.ulyp.ui;
 
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
-import com.ulyp.ui.renderers.FxObjectValue;
+import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.StringUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -26,11 +26,11 @@ public class CallRecordTreeViewRenderer {
         List<Node> text = new ArrayList<>();
 
 
-        text.add(FxObjectValue.of(node.getReturnValue()));
+        text.add(RenderedObject.of(node.getReturnValue()));
 
         text.add(text().text(" : (").style("ulyp-ctt-sep").build());
 
-        text.add(FxObjectValue.of(node.getCallee()));
+        text.add(RenderedObject.of(node.getCallee()));
 
         text.add(text().text(") ").style("ulyp-ctt-sep").build());
 
@@ -66,7 +66,7 @@ public class CallRecordTreeViewRenderer {
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 
-            output.add(FxObjectValue.of(argValue));
+            output.add(RenderedObject.of(argValue));
 
             if (i < node.getArgs().size() - 1) {
                 output.add(text().text(", ").style("ulyp-ctt-sep").build());

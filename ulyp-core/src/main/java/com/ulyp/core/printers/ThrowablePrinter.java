@@ -22,7 +22,7 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     @Override
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         StringView msg = binaryInput.readString();
-        return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + ": " + msg);
+        return new PlainObject(classDescription, classDescription.getSimpleName() + ": " + msg);
     }
 
     @Override

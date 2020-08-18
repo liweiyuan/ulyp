@@ -34,7 +34,7 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
             elements.add(printer.read(itemClassType, binaryInput, decodingContext));
         }
         int notWrittenItemsCount = (int) (totalElements - writtenElements);
-        return new PlainObjectRepresentation(
+        return new PlainObject(
                 classDescription,
                 elements.stream().map(Printable::print).collect(Collectors.toList()) +
                 (notWrittenItemsCount > 0 ? ", " + notWrittenItemsCount + " more..." : "")

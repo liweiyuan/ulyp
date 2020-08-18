@@ -36,7 +36,7 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
             elements.add(printer.read(itemDescription, binaryInput, decodingContext));
         }
         int notShownElementsCount = (int) (totalElements - writtenElements);
-        return new PlainObjectRepresentation(classDescription, "[" +
+        return new PlainObject(classDescription, "[" +
                 elements.stream().map(Printable::print).collect(Collectors.joining()) +
                 (notShownElementsCount > 0 ? ", " + notShownElementsCount + " more..." : "") +
                 "]"

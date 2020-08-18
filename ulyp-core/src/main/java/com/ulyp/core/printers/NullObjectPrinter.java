@@ -5,7 +5,6 @@ import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
-import com.ulyp.core.printers.bytes.StringView;
 
 public class NullObjectPrinter extends ObjectBinaryPrinter {
 
@@ -24,7 +23,7 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
         binaryInput.readLong();
-        return new PlainObjectRepresentation(classDescription, NULL_STRING);
+        return new PlainObject(classDescription, NULL_STRING);
     }
 
     @Override

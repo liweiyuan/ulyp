@@ -21,7 +21,7 @@ public class StringPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new StringRepresentation(classDescription, binaryInput.readString().toString());
+        return new StringObject(classDescription, binaryInput.readString().toString());
     }
 
     @Override

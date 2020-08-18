@@ -5,11 +5,11 @@ import com.ulyp.core.ClassDescription;
 /**
  * Plain object representation which can only printed. Usually should not be used (clarify)
  */
-public class PlainObjectRepresentation extends ObjectRepresentation {
+public class PlainObject extends ObjectRepresentation {
 
     private final String text;
 
-    protected PlainObjectRepresentation(ClassDescription type, String text) {
+    protected PlainObject(ClassDescription type, String text) {
         super(type);
 
         this.text = text;
