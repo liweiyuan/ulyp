@@ -14,6 +14,14 @@ import java.lang.instrument.Instrumentation;
 
 public class Agent {
 
+    private static final String ULYP_LOGO =
+                    "   __  __    __ __  __    ____ \n" +
+                    "  / / / /   / / \\ \\/ /   / __ \\\n" +
+                    " / / / /   / /   \\  /   / /_/ /\n" +
+                    "/ /_/ /   / /___ / /   / ____/ \n" +
+                    "\\____/   /_____//_/   /_/      \n" +
+                    "                               ";
+
     public static void start(String args, Instrumentation instrumentation) {
 
         String logLevel = LoggingSettings.LOG_LEVEL.name();
@@ -24,10 +32,11 @@ public class Agent {
         PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();
         RecordingStartMethodList recordingStartMethodList = uiSettings.getRecordingStartMethod().getValue();
 
-        // TODO show that connected to UI (if connected)
-        System.out.println("Starting ULYP agent, logging level = " + logLevel +
-                ", packages = " + uiSettings.getInstrumentedPackages() +
-                ", tracing start methods = " + uiSettings.getRecordingStartMethod());
+
+        System.out.println(ULYP_LOGO);
+        System.out.println("Successfully connected to UI, logging level = " + logLevel +
+                ", instrumentation packages = " + uiSettings.getInstrumentedPackages() +
+                ", recording will start at " + uiSettings.getRecordingStartMethod());
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
