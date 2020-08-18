@@ -20,7 +20,6 @@ public class CallRecord {
     private final boolean thrown;
     private final List<CallRecord> children;
     private final int subtreeNodeCount;
-    private CallGraphDatabase database;
 
     public CallRecord(
             ObjectValue callee,
@@ -48,10 +47,6 @@ public class CallRecord {
 
         this.children = new ArrayList<>(children);
         this.subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
-    }
-
-    public CallGraphDatabase getDatabase() {
-        return database;
     }
 
     public ObjectValue getCallee() {
@@ -101,14 +96,6 @@ public class CallRecord {
     public CallRecord setId(long id) {
         this.id = id;
         return this;
-    }
-
-    public void setDatabase(CallGraphDatabase database) {
-        this.database = database;
-    }
-
-    public void delete() {
-        database.deleteSubtree(id);
     }
 
     /**

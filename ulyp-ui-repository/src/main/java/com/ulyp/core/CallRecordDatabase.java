@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.longs.LongList;
 
 import java.util.List;
 
-public interface CallGraphDatabase {
+public interface CallRecordDatabase {
 
     CallRecord find(long id);
 

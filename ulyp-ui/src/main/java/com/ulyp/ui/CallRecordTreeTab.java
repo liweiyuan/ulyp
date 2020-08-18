@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.ulyp.core.CallRecordDatabase;
 import com.ulyp.core.CallRecordTree;
 import com.ulyp.transport.ProcessInfo;
 import com.ulyp.ui.code.SourceCodeFinder;
@@ -12,14 +13,24 @@ import javafx.scene.control.TreeView;
 import javax.annotation.Nullable;
 import java.time.Duration;
 
-public class FxCallRecordTreeTab extends Tab {
+public class CallRecordTreeTab extends Tab {
 
     private final CallRecordTree tree;
+    private final CallRecordDatabase database;
     private final TreeView<Node> view;
 
     @SuppressWarnings("unchecked")
-    public FxCallRecordTreeTab(TabPane treesTabs, ProcessInfo processInfo, CallRecordTree tree, RenderSettings renderSettings, long id, Duration lifetime) {
+    public CallRecordTreeTab(
+            CallRecordDatabase database,
+            TabPane treesTabs,
+            ProcessInfo processInfo,
+            CallRecordTree tree,
+            RenderSettings renderSettings,
+            long id,
+            Duration lifetime)
+    {
         this.tree = tree;
+        this.database = database;
 
         view = new TreeView<>(new FxCallRecord(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
         view.prefHeightProperty().bind(treesTabs.heightProperty());
@@ -59,6 +70,8 @@ public class FxCallRecordTreeTab extends Tab {
     }
 
     public void dispose() {
-        tree.getRoot().delete();
+        // TODO return
+        database.deleteSubtree(tree.getRoot().getId());
+//        tree.getRoot().delete();
     }
 }

@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallGraphDatabase;
+import com.ulyp.core.CallRecordDatabase;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.jetbrains.annotations.NotNull;
@@ -10,11 +10,11 @@ import java.util.Map;
 
 public class ProcessTabs {
 
-    private final CallGraphDatabase database;
+    private final CallRecordDatabase database;
     private final TabPane processTabPane;
     private final Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
-    public ProcessTabs(CallGraphDatabase database, TabPane processTabPane) {
+    public ProcessTabs(CallRecordDatabase database, TabPane processTabPane) {
         this.database = database;
         this.processTabPane = processTabPane;
     }

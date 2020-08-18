@@ -6,9 +6,9 @@ import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.CallRecordTree;
-import com.ulyp.core.CallGraphDatabase;
-import com.ulyp.core.CallGraphDao;
-import com.ulyp.core.heap.HeapCallGraphDatabase;
+import com.ulyp.core.CallRecordDatabase;
+import com.ulyp.core.CallRecordTreeDao;
+import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -46,21 +46,21 @@ public class PrimaryViewController implements Initializable {
     public Slider recordPrecisionSlider;
 
     private ProcessTabs processTabs;
-    private final CallGraphDatabase callGraphDatabase = new HeapCallGraphDatabase();
+    private final CallRecordDatabase callRecordDatabase = new HeapCallRecordDatabase();
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        processTabs = new ProcessTabs(callGraphDatabase, processTabPane);
+        processTabs = new ProcessTabs(callRecordDatabase, processTabPane);
     }
 
     public void onCallRecordTreeUploaded(TCallRecordLogUploadRequest request) {
-        CallRecordTree tree = new CallGraphDao(
+        CallRecordTree tree = new CallRecordTreeDao(
                 new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
-                callGraphDatabase
+                callRecordDatabase
         ).getCallRecordTree();
 
         Platform.runLater(() -> addTree(request, tree));

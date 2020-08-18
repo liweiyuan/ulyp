@@ -6,9 +6,9 @@ import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.ClassDescriptionList;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.CallRecordTree;
-import com.ulyp.core.CallGraphDatabase;
-import com.ulyp.core.CallGraphDao;
-import com.ulyp.core.heap.HeapCallGraphDatabase;
+import com.ulyp.core.CallRecordDatabase;
+import com.ulyp.core.CallRecordTreeDao;
+import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -42,8 +42,8 @@ public class AbstractInstrumentationTest {
     protected CallRecordTree runSubprocessWithUi(TestSettingsBuilder settings) {
         TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(settings);
 
-        CallGraphDatabase database = new HeapCallGraphDatabase();
-        return new CallGraphDao(
+        CallRecordDatabase database = new HeapCallRecordDatabase();
+        return new CallRecordTreeDao(
                 new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),

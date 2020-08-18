@@ -1,7 +1,7 @@
-package com.ulyp.core.heap;
+package com.ulyp.core.impl;
 
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallGraphDatabase;
+import com.ulyp.core.CallRecordDatabase;
 import com.ulyp.core.ObjectValue;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class HeapCallGraphDatabase implements CallGraphDatabase {
+public class HeapCallRecordDatabase implements CallRecordDatabase {
 
     private final AtomicLong idGenerator = new AtomicLong();
     private final Map<Long, CallRecord> nodes = new ConcurrentHashMap<>();
@@ -46,7 +46,6 @@ public class HeapCallGraphDatabase implements CallGraphDatabase {
     public void persist(CallRecord node) {
         long id = idGenerator.incrementAndGet();
         node.setId(id);
-        node.setDatabase(this);
         nodes.put(id, node);
     }
 

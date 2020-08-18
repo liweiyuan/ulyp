@@ -10,20 +10,20 @@ import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.*;
 
-public class CallGraphDao {
+public class CallRecordTreeDao {
 
     private final CallEnterRecordList enterRecordsList;
     private final CallExitRecordList exitRecordsList;
     private final MethodDescriptionList methodDescriptionList;
     private final Long2ObjectMap<ClassDescription> classIdMap;
     private final DecodingContext decodingContext;
-    private final CallGraphDatabase database;
+    private final CallRecordDatabase database;
 
-    public CallGraphDao(CallEnterRecordList enterRecordsList,
-                        CallExitRecordList exitRecordsList,
-                        MethodDescriptionList methodDescriptionList,
-                        ClassDescriptionList classDescriptionList,
-                        CallGraphDatabase database)
+    public CallRecordTreeDao(CallEnterRecordList enterRecordsList,
+                             CallExitRecordList exitRecordsList,
+                             MethodDescriptionList methodDescriptionList,
+                             ClassDescriptionList classDescriptionList,
+                             CallRecordDatabase database)
     {
         this.database = database;
         this.enterRecordsList = enterRecordsList;
@@ -54,14 +54,14 @@ public class CallGraphDao {
         TCallEnterRecordDecoder currentEnterRecord = enterRecordIt.next();
         TCallExitRecordDecoder currentExitRecord = exitRecordIt.next();
 
-        CallBuilder root = new CallBuilder(null, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
+        CallRecordBuilder root = new CallRecordBuilder(null, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
         currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
 
-        Deque<CallBuilder> rootPath = new ArrayDeque<>();
+        Deque<CallRecordBuilder> rootPath = new ArrayDeque<>();
         rootPath.add(root);
 
-        for (; currentEnterRecord != null || currentExitRecord != null; ) {
-            CallBuilder currentNode = rootPath.getLast();
+        while (currentEnterRecord != null || currentExitRecord != null) {
+            CallRecordBuilder currentNode = rootPath.getLast();
 
             long currentCallId = currentNode.callId;
             if (currentExitRecord != null && currentExitRecord.callId() == currentCallId) {
@@ -70,7 +70,7 @@ public class CallGraphDao {
                 currentNode.persist();
                 rootPath.removeLast();
             } else if (currentEnterRecord != null) {
-                CallBuilder next = new CallBuilder(currentNode, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
+                CallRecordBuilder next = new CallRecordBuilder(currentNode, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
                 currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
                 rootPath.add(next);
             } else {
@@ -81,9 +81,9 @@ public class CallGraphDao {
         return new CallRecordTree(root.persisted);
     }
 
-    private class CallBuilder {
+    private class CallRecordBuilder {
 
-        private final CallBuilder parent;
+        private final CallRecordBuilder parent;
         private final TMethodDescriptionDecoder methodDescription;
         private final long callId;
         private final ObjectValue callee;
@@ -94,7 +94,7 @@ public class CallGraphDao {
         private ObjectValue returnValue;
         private boolean thrown;
 
-        private CallBuilder(CallBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterRecordDecoder decoder) {
+        private CallRecordBuilder(CallRecordBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterRecordDecoder decoder) {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
