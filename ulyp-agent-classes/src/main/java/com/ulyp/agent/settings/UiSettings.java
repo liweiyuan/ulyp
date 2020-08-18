@@ -65,7 +65,7 @@ public class UiSettings {
         return mayStartRecording;
     }
 
-    public SettingsProperty<Boolean> traceCollections() {
+    public SettingsProperty<Boolean> getRecordCollectionItems() {
         return recordCollectionItems;
     }
 }

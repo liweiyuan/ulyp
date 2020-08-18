@@ -54,7 +54,7 @@ public class BenchmarksForSomeProfileMain {
         return runResults;
     }
 
-    private static int run(Class<?> benchmarkClazz, BenchmarkProfile profile, Histogram procTimeHistogram, Histogram traceTimeHistogram) {
+    private static int run(Class<?> benchmarkClazz, BenchmarkProfile profile, Histogram procTimeHistogram, Histogram recordingTimeHistogram) {
 
         try (MillisMeasured measured = new MillisMeasured(procTimeHistogram)) {
             try (UIServerStub uiServerStub = new UIServerStub(profile)) {
@@ -64,7 +64,7 @@ public class BenchmarksForSomeProfileMain {
                 if (profile.shouldSendSomethingToUi()) {
 
                     TCallRecordLogUploadRequest TCallRecordLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
-                    traceTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
+                    recordingTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
 
                     CallEnterRecordList enterRecords = new CallEnterRecordList(TCallRecordLogUploadRequest.getRecordLog().getEnterRecords());
                     return enterRecords.size();

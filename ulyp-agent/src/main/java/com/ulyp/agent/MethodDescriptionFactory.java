@@ -49,7 +49,7 @@ public class MethodDescriptionFactory implements Advice.OffsetMapping.Factory<Me
                               Sort sort) {
             long id;
             com.ulyp.core.MethodDescription methodDescription = MethodDescriptionBuilder.newMethodDescription(instrumentedMethod);
-            if (recordingStartMethodList.shouldStartTracing(methodDescription)) {
+            if (recordingStartMethodList.shouldStartRecording(methodDescription)) {
                 id = startOrContinueRecordingCounter.decrementAndGet();
             } else {
                 id = continueRecordingCounter.incrementAndGet();

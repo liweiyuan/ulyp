@@ -32,7 +32,7 @@ public class Recorder {
 
         UiSettings uiSettings = context.getUiSettings();
         uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartRecording = newValue);
-        uiSettings.traceCollections().addListener((oldValue, newValue) -> this.recordingParamsUpdater.updateRecordCollectionItems(newValue));
+        uiSettings.getRecordCollectionItems().addListener((oldValue, newValue) -> this.recordingParamsUpdater.updateRecordCollectionItems(newValue));
     }
 
     public boolean recordingIsActiveInCurrentThread() {

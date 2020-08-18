@@ -40,16 +40,16 @@ public class SystemPropertiesSettings implements AgentSettings {
         }
 
         int maxTreeDepth = Integer.parseInt(System.getProperty(MAX_DEPTH_PROPERTY, String.valueOf(Integer.MAX_VALUE)));
-        int maxCallPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
-        int minTraceCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
+        int maxRecordedMethodCallsPerMethod = Integer.parseInt(System.getProperty(MAX_RECORDED_CALL_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
+        int minRecordsCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
         return new SystemPropertiesSettings(
                 uiAddress,
                 instrumentationPackages,
                 excludedPackages,
                 recordingStartMethods,
                 maxTreeDepth,
-                maxCallPerMethod,
-                minTraceCount
+                maxRecordedMethodCallsPerMethod,
+                minRecordsCount
         );
     }
 
@@ -60,7 +60,7 @@ public class SystemPropertiesSettings implements AgentSettings {
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
     public static final String UI_ENABLED = "ulyp.ui-enabled";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
-    public static final String MAX_CALL_PER_METHOD = "ulyp.max-calls-per-method";
+    public static final String MAX_RECORDED_CALL_PER_METHOD = "ulyp.max-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
     @NotNull private final UiAddress uiAddress;
@@ -126,7 +126,7 @@ public class SystemPropertiesSettings implements AgentSettings {
 //        }
         params.add("-D" + MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
         params.add("-D" + MIN_TRACE_COUNT + "=" + minRecordsCountForLog);
-        params.add("-D" + MAX_CALL_PER_METHOD + "=" + maxCallsPerMethod);
+        params.add("-D" + MAX_RECORDED_CALL_PER_METHOD + "=" + maxCallsPerMethod);
 
         return params;
     }
@@ -141,7 +141,7 @@ public class SystemPropertiesSettings implements AgentSettings {
                 "uiAddress=" + uiAddress +
                 ", packages=" + instrumentatedPackages +
                 ", excludePackages=" + excludedFromInstrumentationPackages +
-                ", startTracingMethods=" + methodsToRecord +
+                ", startRecordingMethods=" + methodsToRecord +
                 ", maxTreeDepth=" + maxTreeDepth +
                 ", maxCallsPerMethod=" + maxCallsPerMethod +
                 ", minTraceCount=" + minRecordsCountForLog +
