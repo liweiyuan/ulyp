@@ -60,14 +60,15 @@ public class PrimaryViewController implements Initializable {
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
-                callGraphDatabase).getCallRecordTree();
+                callGraphDatabase
+        ).getCallRecordTree();
 
         Platform.runLater(() -> addTree(request, tree));
     }
 
     private void addTree(TCallRecordLogUploadRequest request, CallRecordTree tree) {
         ProcessTab processTab = processTabs.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
-        processTab.addTree(tree, renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
+        processTab.addTree(tree, request.getProcessInfo(), renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
     }
 
     public void clearAll(Event event) {

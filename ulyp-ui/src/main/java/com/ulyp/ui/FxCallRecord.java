@@ -59,4 +59,11 @@ public class FxCallRecord extends TreeItem<Node> {
     public CallRecord getNode() {
         return node;
     }
+
+    @Override
+    public String toString() {
+        return "FxCallRecord{" +
+                "node=" + node +
+                '}';
+    }
 }

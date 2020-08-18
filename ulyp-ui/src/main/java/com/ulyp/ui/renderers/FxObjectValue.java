@@ -32,5 +32,4 @@ public abstract class FxObjectValue extends TextFlow {
         });
         return objectValue;
     }
-
 }
