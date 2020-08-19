@@ -72,7 +72,7 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
         CallRecord root = tree.getRoot();
 
         // TODO use enum repr
-        assertThat(root.getReturnValue().getPrintedText(), matchesPattern("TestClass@\\d+"));
+        assertThat(root.getReturnValue().getPrintedText(), matchesPattern("TestClass@[a-f\\d]+"));
     }
 
     @Test

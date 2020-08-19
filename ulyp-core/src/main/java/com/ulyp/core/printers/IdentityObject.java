@@ -13,6 +13,6 @@ public class IdentityObject extends ObjectRepresentation {
 
     @Override
     public String print() {
-        return this.getType().getSimpleName() + "@" + hashCode;
+        return this.getType().getSimpleName() + "@" + Long.toHexString(hashCode);
     }
 }
