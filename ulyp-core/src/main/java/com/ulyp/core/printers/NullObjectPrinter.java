@@ -8,8 +8,6 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class NullObjectPrinter extends ObjectBinaryPrinter {
 
-    private static final String NULL_STRING = "null";
-
     protected NullObjectPrinter(int id) {
         super(id);
     }
@@ -23,7 +21,7 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
         binaryInput.readLong();
-        return new PlainObject(classDescription, NULL_STRING);
+        return NullObject.getInstance();
     }
 
     @Override

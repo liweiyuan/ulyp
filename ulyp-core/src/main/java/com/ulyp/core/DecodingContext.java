@@ -11,6 +11,6 @@ public class DecodingContext {
     }
 
     public ClassDescription getClass(long id) {
-        return classIdMap.getOrDefault(id, ClassDescription.UNKNOWN_CLASS_DESCRIPTION);
+        return classIdMap.getOrDefault(id, ClassDescription.UNKNOWN);
     }
 }
