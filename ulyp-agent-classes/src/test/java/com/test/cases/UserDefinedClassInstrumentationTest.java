@@ -71,7 +71,8 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
         CallRecord root = tree.getRoot();
 
-        assertThat(root.getResult(), matchesPattern("TestClass@\\d+"));
+        // TODO use enum repr
+        assertThat(root.getReturnValue().getPrintedText(), matchesPattern("TestClass@\\d+"));
     }
 
     @Test
@@ -84,6 +85,6 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
 
         CallRecord root = tree.getRoot();
 
-        assertThat(root.getResult(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
+        assertThat(root.getReturnValue().getPrintedText(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
     }
 }

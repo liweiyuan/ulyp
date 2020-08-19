@@ -128,8 +128,8 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
+        // TODO use NullRepr
         assertThat(root.getReturnValue().getPrintedText(), is("null"));
-        assertThat(root.getResult(), is("null"));
         assertThat(root.getSubtreeNodeCount(), is(1));
         assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
@@ -223,7 +223,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getChildren(), is(hasSize(2)));
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("null"));
-        assertThat(root.getResult(), is("void"));
+        assertThat(root.isVoidMethod(), is(Boolean.TRUE));
         assertThat(root.getSubtreeNodeCount(), is(3));
         assertThat(root.getMethodName(), is("callTwoMethods"));
         assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SeveralMethodsTestCases"));
@@ -233,7 +233,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(call1.getChildren(), is(empty()));
         assertThat(call1.getArgs(), is(empty()));
         assertThat(call1.getReturnValue().getPrintedText(), is("null"));
-        assertThat(call1.getResult(), is("void"));
+        assertThat(call1.isVoidMethod(), is(Boolean.TRUE));
         assertThat(call1.getSubtreeNodeCount(), is(1));
         assertThat(call1.getMethodName(), is("method1"));
 
@@ -242,7 +242,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(call2.getChildren(), is(empty()));
         assertThat(call2.getArgs(), is(empty()));
         assertThat(call2.getReturnValue().getPrintedText(), is("null"));
-        assertThat(call2.getResult(), is("void"));
+        assertThat(call2.isVoidMethod(), is(Boolean.TRUE));
         assertThat(call2.getSubtreeNodeCount(), is(1));
         assertThat(call2.getMethodName(), is("method2"));
     }
@@ -259,6 +259,5 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(Collections.singletonList("45324")));
-        assertThat(root.getResult(), is("void"));
     }
 }
