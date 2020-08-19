@@ -66,6 +66,10 @@
     -fx-fill: rgb(0, 100, 0);
 }
 
+.ulyp-ctt-callee {
+    -fx-fill: rgb(255, 198, 109);
+}
+
 .ulyp-ctt-string {
     -fx-fill: rgb(0, 100, 0);
 }

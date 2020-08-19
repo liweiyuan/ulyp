@@ -4,16 +4,15 @@ import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.StringUtils;
+import com.ulyp.ui.util.WithStylesPane;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CallRecordTreeViewRenderer {
@@ -25,17 +24,15 @@ public class CallRecordTreeViewRenderer {
     public static Node render(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
         List<Node> text = new ArrayList<>();
 
+        if (node.isVoidMethod() && !node.hasThrown()) {
+            text.add(text().text("void").style("ulyp-ctt-sep").build());
+        } else {
+            text.add(new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get());
+        }
 
-        text.add(RenderedObject.of(node.getReturnValue()));
-
-        text.add(text().text(" : (").style("ulyp-ctt-sep").build());
-
-        text.add(RenderedObject.of(node.getCallee()));
-
-        text.add(text().text(") ").style("ulyp-ctt-sep").build());
+        text.add(text().text(" : ").style("ulyp-ctt-sep").build());
 
         text.addAll(renderMethodName(node));
-
         text.addAll(renderArguments(node, renderSettings));
 
         Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20);
@@ -78,12 +75,20 @@ public class CallRecordTreeViewRenderer {
     }
 
     @NotNull
-    private static List<Text> renderMethodName(CallRecord node) {
-        return Arrays.asList(
-                text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build(),
-                text().text(".").style("ulyp-ctt-method-name").build(),
-                text().text(node.getMethodName()).style("ulyp-ctt-method-name").build()
-        );
+    private static List<Node> renderMethodName(CallRecord node) {
+        List<Node> result = new ArrayList<>();
+
+        if (node.isStatic()) {
+            result.add(text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
+
+        } else {
+            RenderedObject callee = RenderedObject.of(node.getCallee());
+            callee.getChildren().forEach(child -> child.getStyleClass().add("ulyp-ctt-callee"));
+            result.add(callee);
+        }
+        result.add(text().text(".").style("ulyp-ctt-method-name").build());
+        result.add(text().text(node.getMethodName()).style("ulyp-ctt-method-name").build());
+        return result;
     }
 
 //    @NotNull
