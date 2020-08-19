@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AtomicNumbersTest extends AbstractInstrumentationTest {
+public class GenericsTest extends AbstractInstrumentationTest {
 
     static class Box<T> {
 

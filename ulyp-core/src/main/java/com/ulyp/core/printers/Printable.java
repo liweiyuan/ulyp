@@ -8,5 +8,6 @@ public interface Printable {
         return print();
     }
 
+    // TODO can be retired
     String print();
 }
