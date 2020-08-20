@@ -3,7 +3,6 @@ package com.test.libs;
 import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import com.ulyp.core.util.MethodMatcher;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,6 +13,30 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public class H2Test extends AbstractInstrumentationTest {
+
+    @Test
+    public void shouldRecordStatementCreation() {
+
+        CallRecord root = runSubprocessWithUi(new TestSettingsBuilder()
+                .setInstrumentedPackages("com.test", "org.h2")
+                .setMainClassName(H2TestRun.class)
+                .setMethodToRecord(MethodMatcher.parse("Connection.createStatement")));
+
+
+        Assert.assertTrue(root.getSubtreeNodeCount() > 10);
+    }
+
+    @Test
+    public void shouldRecordMainMethodIfSpecified() {
+
+        CallRecord root = runSubprocessWithUi(new TestSettingsBuilder()
+                .setInstrumentedPackages("com.test", "org.h2")
+                .setMainClassName(H2TestRun.class)
+                .setMethodToRecord("main"));
+
+
+        Assert.assertTrue(root.getSubtreeNodeCount() > 4000);
+    }
 
     static class H2TestRun {
 
@@ -36,31 +59,5 @@ public class H2Test extends AbstractInstrumentationTest {
                 }
             }
         }
-    }
-
-    @Test
-    public void shouldRecordStatementCreation() {
-
-        CallRecordTree tree = runSubprocessWithUi(new TestSettingsBuilder()
-                .setInstrumentedPackages("com.test", "org.h2")
-                .setMainClassName(H2TestRun.class)
-                .setMethodToRecord(MethodMatcher.parse("Connection.createStatement")));
-
-        CallRecord root = tree.getRoot();
-
-        Assert.assertTrue(root.getSubtreeNodeCount() > 10);
-    }
-
-    @Test
-    public void shouldRecordMainMethodIfSpecified() {
-
-        CallRecordTree tree = runSubprocessWithUi(new TestSettingsBuilder()
-                .setInstrumentedPackages("com.test", "org.h2")
-                .setMainClassName(H2TestRun.class)
-                .setMethodToRecord("main"));
-
-        CallRecord root = tree.getRoot();
-
-        Assert.assertTrue(root.getSubtreeNodeCount() > 4000);
     }
 }

@@ -5,10 +5,7 @@ import com.ulyp.core.CallRecordTree;
 import com.ulyp.transport.ProcessInfo;
 import com.ulyp.ui.code.SourceCodeFinder;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 
 import javax.annotation.Nullable;
 import java.time.Duration;
@@ -50,6 +47,8 @@ public class CallRecordTreeTab extends Tab {
         setText(tree.getRoot().getMethodName() + "(" + id + ", life=" + lifetime.toMillis() + "ms, nodes=" + tree.getRoot().getSubtreeNodeCount() + ")");
         setContent(scrollPane);
         setOnClosed(ev -> dispose());
+
+        setTooltip(new Tooltip("Thread: " + "12312312"));
     }
 
     public void markHasSearchResults() {

@@ -12,13 +12,6 @@ import static org.junit.Assert.assertThat;
 
 public class ProcessInfoTest extends AbstractInstrumentationTest {
 
-    public static class X {
-
-        public static void main(String[] args) {
-
-        }
-    }
-
     @Test
     public void shouldSendValidProcessInfo() {
         TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnRecordLogRaw(
@@ -34,5 +27,12 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
         assertThat(classpath.size(), greaterThan(0));
 
         assertThat(processInfo.getMainClassName(), is("com.test.cases.ProcessInfoTest$X"));
+    }
+
+    public static class X {
+
+        public static void main(String[] args) {
+
+        }
     }
 }

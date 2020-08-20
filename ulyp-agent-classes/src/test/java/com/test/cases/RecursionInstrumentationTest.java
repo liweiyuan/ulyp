@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -10,7 +9,22 @@ import static org.junit.Assert.assertThat;
 
 public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
 
+    @Test
+    public void testFibonacciMethodCall() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(RecursionTestCases.class)
+                        .setMethodToRecord("fibonacci")
+        );
+
+        assertThat(root.getSubtreeNodeCount(), is(177));
+    }
+
     public static class RecursionTestCases {
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new RecursionTestCases().fibonacci(10));
+        }
 
         public int fibonacci(int v) {
             if (v <= 1) {
@@ -18,22 +32,5 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
             }
             return fibonacci(v - 1) + fibonacci(v - 2);
         }
-
-        public static void main(String[] args) {
-            SafeCaller.call(() -> new RecursionTestCases().fibonacci(10));
-        }
-    }
-
-    @Test
-    public void testFibonacciMethodCall() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(RecursionTestCases.class)
-                        .setMethodToRecord("fibonacci")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getSubtreeNodeCount(), is(177));
     }
 }

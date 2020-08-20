@@ -57,6 +57,10 @@
 
 /* ULYP part */
 
+.tooltip {
+    -fx-font-size: 14px;
+}
+
 .ulyp-ctt {
     -fx-font-family: consolas;
     -fx-font-size: 14px;

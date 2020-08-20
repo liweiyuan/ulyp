@@ -1,13 +1,9 @@
 package com.test.cases;
 
-import com.test.cases.util.*;
-import com.ulyp.core.CallEnterRecordList;
-import com.ulyp.core.CallExitRecordList;
-import com.ulyp.core.ClassDescriptionList;
-import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.CallRecordTree;
-import com.ulyp.core.CallRecordDatabase;
-import com.ulyp.core.CallRecordTreeDao;
+import com.test.cases.util.TestSettingsBuilder;
+import com.test.cases.util.TestUtil;
+import com.test.cases.util.UIServerStub;
+import com.ulyp.core.*;
 import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +35,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected CallRecordTree runSubprocessWithUi(TestSettingsBuilder settings) {
+    protected CallRecord runSubprocessWithUi(TestSettingsBuilder settings) {
         TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(settings);
 
         CallRecordDatabase database = new HeapCallRecordDatabase();
@@ -49,7 +45,7 @@ public class AbstractInstrumentationTest {
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 database
-        ).getCallRecordTree();
+        ).get();
     }
 
     @NotNull

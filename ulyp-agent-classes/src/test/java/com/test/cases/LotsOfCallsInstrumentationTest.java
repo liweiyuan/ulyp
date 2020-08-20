@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -10,10 +9,54 @@ import static org.junit.Assert.assertThat;
 
 public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest {
 
+    @Test
+    public void shouldMake1000Calls() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(LotsOfCallsTestCases.class)
+                        .setMethodToRecord("make1000CallsSep")
+        );
+
+        assertThat(root.getChildren(), hasSize(1000));
+    }
+
+    @Test
+    public void shouldMakeLessCallsIfLimitedByMaxCallsProperty() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(LotsOfCallsTestCases.class)
+                        .setMethodToRecord("make1000CallsLevel0")
+                        .setMaxCallsPerMethod(7)
+        );
+
+        assertThat(root.getChildren(), hasSize(1));
+        assertThat(root.getChildren().get(0).getChildren(), hasSize(7));
+    }
+
+    @Test
+    public void shouldMakeLessCallsIfLimitedByMaxCallsProperty2() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(LotsOfCallsTestCases.class)
+                        .setMethodToRecord("level0")
+                        .setMaxCallsPerMethod(5)
+        );
+
+        assertThat(root.getChildren(), hasSize(5));
+        assertThat(root.getChildren().get(0).getChildren(), hasSize(5));
+        assertThat(root.getChildren().get(0).getChildren().get(0).getChildren(), hasSize(5));
+    }
+
     public static class LotsOfCallsTestCases {
 
         private static volatile int calls = 1000;
         private static volatile int value;
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsLevel0());
+            SafeCaller.call(() -> new LotsOfCallsTestCases().level0());
+            SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsSep());
+        }
 
         public void level0() {
             for (int i = 0; i < 10; i++) {
@@ -52,56 +95,5 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
                 value = subCall();
             }
         }
-
-        public static void main(String[] args) {
-            SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsLevel0());
-            SafeCaller.call(() -> new LotsOfCallsTestCases().level0());
-            SafeCaller.call(() -> new LotsOfCallsTestCases().make1000CallsSep());
-        }
-    }
-
-
-    @Test
-    public void shouldMake1000Calls() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToRecord("make1000CallsSep")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getChildren(), hasSize(1000));
-    }
-
-    @Test
-    public void shouldMakeLessCallsIfLimitedByMaxCallsProperty() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToRecord("make1000CallsLevel0")
-                        .setMaxCallsPerMethod(7)
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getChildren(), hasSize(1));
-        assertThat(root.getChildren().get(0).getChildren(), hasSize(7));
-    }
-
-    @Test
-    public void shouldMakeLessCallsIfLimitedByMaxCallsProperty2() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(LotsOfCallsTestCases.class)
-                        .setMethodToRecord("level0")
-                        .setMaxCallsPerMethod(5)
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getChildren(), hasSize(5));
-        assertThat(root.getChildren().get(0).getChildren(), hasSize(5));
-        assertThat(root.getChildren().get(0).getChildren().get(0).getChildren(), hasSize(5));
     }
 }

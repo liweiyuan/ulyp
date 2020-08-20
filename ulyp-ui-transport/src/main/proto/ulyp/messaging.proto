@@ -26,6 +26,7 @@ message SettingsRequest {
 }
 
 message TCallRecordLog {
+    string threadName = 1;
     bytes enterRecords = 2;
     bytes exitRecords = 3;
 }

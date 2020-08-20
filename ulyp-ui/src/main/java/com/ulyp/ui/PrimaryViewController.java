@@ -61,7 +61,7 @@ public class PrimaryViewController implements Initializable {
                 new MethodDescriptionList(request.getMethodDescriptionList().getData()),
                 new ClassDescriptionList(request.getClassDescriptionList().getData()),
                 callRecordDatabase
-        ).getCallRecordTree();
+        ).get();
 
         Platform.runLater(() -> addTree(request, tree));
     }

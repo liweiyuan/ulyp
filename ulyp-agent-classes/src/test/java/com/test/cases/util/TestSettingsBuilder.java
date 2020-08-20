@@ -1,24 +1,16 @@
 package com.test.cases.util;
 
 import com.ulyp.core.util.MethodMatcher;
-import com.ulyp.agent.settings.SystemPropertiesSettings;
-import com.ulyp.agent.settings.RecordingStartMethodList;
-import com.ulyp.agent.transport.GrpcUiAddress;
 import com.ulyp.core.util.PackageList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class TestSettingsBuilder {
 
+    public String hostName;
+    public int port;
     // TODO matcher
     private Class<?> mainClassName;
     private MethodMatcher methodToRecord;
-
-    public String hostName;
     private boolean uiEnabled = true;
-    public int port;
     private PackageList instrumentedPackages = new PackageList();
     private PackageList excludedFromInstrumentationPackages = new PackageList();
     private int minRecordsForLog = 1;
@@ -39,17 +31,25 @@ public class TestSettingsBuilder {
         return mainClassName;
     }
 
-    public boolean getRecordCollectionItems() {
-        return recordCollectionItems;
+    public TestSettingsBuilder setMainClassName(Class<?> mainClassName) {
+        this.mainClassName = mainClassName;
+        if (instrumentedPackages.isEmpty()) {
+            instrumentedPackages = new PackageList(mainClassName.getPackage().getName());
+        }
+        return this;
     }
 
-    public PackageList getInstrumentedPackages() {
-        return instrumentedPackages;
+    public boolean getRecordCollectionItems() {
+        return recordCollectionItems;
     }
 
     public TestSettingsBuilder setRecordCollectionItems(boolean recordCollectionItems) {
         this.recordCollectionItems = recordCollectionItems;
         return this;
+    }
+
+    public PackageList getInstrumentedPackages() {
+        return instrumentedPackages;
     }
 
     public TestSettingsBuilder setInstrumentedPackages(String... packages) {
@@ -86,14 +86,6 @@ public class TestSettingsBuilder {
 
     public TestSettingsBuilder setMaxCallsPerMethod(int maxCallsPerMethod) {
         this.maxCallsPerMethod = maxCallsPerMethod;
-        return this;
-    }
-
-    public TestSettingsBuilder setMainClassName(Class<?> mainClassName) {
-        this.mainClassName = mainClassName;
-        if (instrumentedPackages.isEmpty()) {
-            instrumentedPackages = new PackageList(mainClassName.getPackage().getName());
-        }
         return this;
     }
 

@@ -20,6 +20,7 @@ public class CallRecordLog {
     private final IntArrayList callCountStack = new IntArrayList();
 
     private final long epochMillisCreatedTime;
+    private final String threadName;
     private final int maxDepth;
     // TODO name?
     private final int maxCallsPerDepth;
@@ -33,6 +34,7 @@ public class CallRecordLog {
         this.maxCallsPerDepth = maxCallsPerDepth;
         this.agentRuntime = agentRuntime;
         callCountStack.addInt(0);
+        this.threadName = Thread.currentThread().getName();
     }
 
     public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object callee, Object[] args) {
@@ -105,6 +107,10 @@ public class CallRecordLog {
             System.err.println("Inconsistency found, no method stamp in stack");
             return -1;
         }
+    }
+
+    public String getThreadName() {
+        return threadName;
     }
 
     public CallEnterRecordList getEnterRecords() {

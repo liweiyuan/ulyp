@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +11,22 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ClassDescriptionTest extends AbstractInstrumentationTest {
+
+    @Test
+    public void shouldProvideArgumentTypes() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder().setMainClassName(AtomicNumbersTestCases.class)
+                        .setMethodToRecord("intSum")
+        );
+
+        assertThat(root.getArgs().get(0).getPrintedText(), is("-234"));
+        assertThat(root.getArgs().get(0).getType().getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgs().get(0).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
+
+        assertThat(root.getArgs().get(1).getPrintedText(), is("23"));
+        assertThat(root.getArgs().get(1).getType().getSimpleName(), is("AtomicInteger"));
+        assertThat(root.getArgs().get(1).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
+    }
 
     public static class AtomicNumbersTestCases {
 
@@ -27,24 +42,5 @@ public class ClassDescriptionTest extends AbstractInstrumentationTest {
             SafeCaller.call(() -> AtomicNumbersTestCases.intSum(new AtomicInteger(-234), new AtomicInteger(23)));
             SafeCaller.call(() -> AtomicNumbersTestCases.longSum(new AtomicLong(-234), new AtomicLong(23)));
         }
-    }
-
-
-    @Test
-    public void shouldProvideArgumentTypes() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder().setMainClassName(AtomicNumbersTestCases.class)
-                        .setMethodToRecord("intSum")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getArgs().get(0).getPrintedText(), is("-234"));
-        assertThat(root.getArgs().get(0).getType().getSimpleName(), is("AtomicInteger"));
-        assertThat(root.getArgs().get(0).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
-
-        assertThat(root.getArgs().get(1).getPrintedText(), is("23"));
-        assertThat(root.getArgs().get(1).getType().getSimpleName(), is("AtomicInteger"));
-        assertThat(root.getArgs().get(1).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
     }
 }

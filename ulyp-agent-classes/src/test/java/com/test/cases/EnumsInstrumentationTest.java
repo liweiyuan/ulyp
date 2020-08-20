@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -14,7 +13,32 @@ import static org.junit.Assert.assertThat;
 
 public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
 
+    @Test
+    public void shouldPrintEnumNames() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(EnumTestCases.class)
+                        .setMethodToRecord("consumesMapAndEnums")
+        );
+
+        assertThat(root.getArgs(), Matchers.hasSize(3));
+        assertThat(root.getArgTexts().get(1), is("T1"));
+        assertThat(root.getArgTexts().get(2), is("T2"));
+    }
+
     public static class EnumTestCases {
+
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new EnumTestCases().consumesMapAndEnums(
+                    new HashMap<TestEnum, TestEnum>() {{
+                        put(TestEnum.T1, TestEnum.T2);
+                    }},
+                    TestEnum.T1,
+                    TestEnum.T2));
+        }
+
+        public void consumesMapAndEnums(Map<TestEnum, TestEnum> map, TestEnum l1, TestEnum l2) {
+        }
 
         public enum TestEnum {
             T1("3.4"),
@@ -30,33 +54,5 @@ public class EnumsInstrumentationTest extends AbstractInstrumentationTest {
                 return s;
             }
         }
-
-        public void consumesMapAndEnums(Map<TestEnum, TestEnum> map, TestEnum l1, TestEnum l2) {
-        }
-
-        public static void main(String[] args) {
-            SafeCaller.call(() -> new EnumTestCases().consumesMapAndEnums(
-                    new HashMap<TestEnum, TestEnum>() {{
-                        put(TestEnum.T1, TestEnum.T2);
-                    }},
-                    TestEnum.T1,
-                    TestEnum.T2));
-        }
-    }
-
-
-    @Test
-    public void shouldPrintEnumNames() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(EnumTestCases.class)
-                        .setMethodToRecord("consumesMapAndEnums")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getArgs(), Matchers.hasSize(3));
-        assertThat(root.getArgTexts().get(1), is("T1"));
-        assertThat(root.getArgTexts().get(2), is("T2"));
     }
 }

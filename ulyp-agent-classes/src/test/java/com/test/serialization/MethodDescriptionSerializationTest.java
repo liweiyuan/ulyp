@@ -5,16 +5,10 @@ import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class MethodDescriptionSerializationTest extends AbstractInstrumentationTest {
-
-    static class X {
-        public static void main(String[] args) {
-        }
-    }
 
     @Test
     public void shouldMinimizeAmountMethodDescriptions() {
@@ -29,12 +23,10 @@ public class MethodDescriptionSerializationTest extends AbstractInstrumentationT
 
         // Currently there is an overhead of second method description creation for exit advice
         Assert.assertEquals(2, methodDescriptions.size());
+    }
 
-        methodDescriptions.copyingIterator().forEachRemaining(
-                desc -> {
-                    Assert.assertThat(desc.className(), Matchers.is("com.test.serialization.AtomicNumbersTest$X"));
-                    Assert.assertThat(desc.methodName(), Matchers.is("main"));
-                }
-        );
+    static class X {
+        public static void main(String[] args) {
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -17,6 +16,22 @@ import static org.junit.Assert.assertThat;
 
 public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
 
+    @Test
+    public void testUserDefinedClassLoader() {
+
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(UserDefinedClassLoaderTestCase.class)
+                        .setMethodToRecord("runInOwnClassLoader")
+        );
+
+        assertThat(root.getMethodName(), is("runInOwnClassLoader"));
+        assertThat(root.getChildren(), hasSize(1));
+
+        CallRecord callRecord = root.getChildren().get(0);
+        assertThat(callRecord.getMethodName(), is("hello"));
+    }
+
     static class UserDefinedClassLoaderTestCase {
 
         public static void hello() {
@@ -26,7 +41,7 @@ public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
         public static void runInOwnClassLoader() {
             URL[] urls;
             try {
-                URL url = Paths.get(".","build", "classes", "java", "test").toFile().toURL();
+                URL url = Paths.get(".", "build", "classes", "java", "test").toFile().toURL();
                 urls = new URL[]{url};
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
@@ -47,23 +62,5 @@ public class UserDefinedClassLoaderTest extends AbstractInstrumentationTest {
         public static void main(String[] args) {
             runInOwnClassLoader();
         }
-    }
-
-    @Test
-    public void testUserDefinedClassLoader() {
-
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(UserDefinedClassLoaderTestCase.class)
-                        .setMethodToRecord("runInOwnClassLoader")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getMethodName(), is("runInOwnClassLoader"));
-        assertThat(root.getChildren(), hasSize(1));
-
-        CallRecord callRecord = root.getChildren().get(0);
-        assertThat(callRecord.getMethodName(), is("hello"));
     }
 }

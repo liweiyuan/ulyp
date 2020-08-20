@@ -41,7 +41,7 @@ public class CallRecordTreeDao {
         }
     }
 
-    public CallRecordTree getCallRecordTree() {
+    public CallRecord get() {
         Long2ObjectMap<TMethodDescriptionDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
         Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
         while (iterator.hasNext()) {
@@ -79,7 +79,7 @@ public class CallRecordTreeDao {
             }
         }
 
-        return new CallRecordTree(root.persisted);
+        return root.persisted;
     }
 
     private class CallRecordBuilder {

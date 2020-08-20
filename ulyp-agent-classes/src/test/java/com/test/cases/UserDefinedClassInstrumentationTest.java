@@ -2,7 +2,6 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -11,10 +10,45 @@ import static org.junit.Assert.assertThat;
 
 public class UserDefinedClassInstrumentationTest extends AbstractInstrumentationTest {
 
+    @Test
+    public void shouldPrintEnumNames() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(UserDefinedClassTestCases.class)
+                        .setMethodToRecord("returnInnerClass")
+        );
+
+// TODO use enum repr
+        assertThat(root.getReturnValue().getPrintedText(), matchesPattern("TestClass@[a-f\\d]+"));
+    }
+
+    @Test
+    public void shouldNotFailIfToStringCallsTracedMethod() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(UserDefinedClassTestCases.class)
+                        .setMethodToRecord("returnClassThatCallsSelfInToString")
+        );
+
+        assertThat(root.getReturnValue().getPrintedText(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
+    }
+
     public static class UserDefinedClassTestCases {
 
-        public class TestClass {
+        public static void main(String[] args) {
+            SafeCaller.call(() -> new UserDefinedClassTestCases().returnInnerClass());
+            SafeCaller.call(() -> new UserDefinedClassTestCases().returnClassThatCallsSelfInToString(
+                    new UserDefinedClassTestCases.ToStringCallsSelf("n1", "s1"),
+                    new UserDefinedClassTestCases.ToStringCallsSelf("n1", "s1")
+            ));
+        }
 
+        UserDefinedClassTestCases.TestClass returnInnerClass() {
+            return new UserDefinedClassTestCases.TestClass();
+        }
+
+        UserDefinedClassTestCases.ToStringCallsSelf returnClassThatCallsSelfInToString(UserDefinedClassTestCases.ToStringCallsSelf v1, UserDefinedClassTestCases.ToStringCallsSelf v2) {
+            return new UserDefinedClassTestCases.ToStringCallsSelf(v1.toString() + v2.toString(), v1.toString() + "/" + v2.toString());
         }
 
         public static class ToStringCallsSelf {
@@ -44,47 +78,8 @@ public class UserDefinedClassInstrumentationTest extends AbstractInstrumentation
             }
         }
 
-        UserDefinedClassTestCases.TestClass returnInnerClass() {
-            return new UserDefinedClassTestCases.TestClass();
+        public class TestClass {
+
         }
-
-        UserDefinedClassTestCases.ToStringCallsSelf returnClassThatCallsSelfInToString(UserDefinedClassTestCases.ToStringCallsSelf v1, UserDefinedClassTestCases.ToStringCallsSelf v2) {
-            return new UserDefinedClassTestCases.ToStringCallsSelf(v1.toString() + v2.toString(), v1.toString() + "/" + v2.toString());
-        }
-
-        public static void main(String[] args) {
-            SafeCaller.call(() -> new UserDefinedClassTestCases().returnInnerClass());
-            SafeCaller.call(() -> new UserDefinedClassTestCases().returnClassThatCallsSelfInToString(
-                    new UserDefinedClassTestCases.ToStringCallsSelf("n1", "s1"),
-                    new UserDefinedClassTestCases.ToStringCallsSelf("n1", "s1")
-            ));
-        }
-    }
-
-    @Test
-    public void shouldPrintEnumNames() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(UserDefinedClassTestCases.class)
-                        .setMethodToRecord("returnInnerClass")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        // TODO use enum repr
-        assertThat(root.getReturnValue().getPrintedText(), matchesPattern("TestClass@[a-f\\d]+"));
-    }
-
-    @Test
-    public void shouldNotFailIfToStringCallsTracedMethod() {
-        CallRecordTree tree = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(UserDefinedClassTestCases.class)
-                        .setMethodToRecord("returnClassThatCallsSelfInToString")
-        );
-
-        CallRecord root = tree.getRoot();
-
-        assertThat(root.getReturnValue().getPrintedText(), is("ToStringCallsSelf{name='ToStringCallsSelf{name='n1', secondName='s1'}ToStringCallsSelf{name='n1', secondName='s1'}', secondName='ToStringCallsSelf{name='n1', secondName='s1'}/ToStringCallsSelf{name='n1', secondName='s1'}'}"));
     }
 }
