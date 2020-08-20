@@ -5,10 +5,10 @@ import com.ulyp.core.MethodDescriptionList;
 import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordTree;
 import com.ulyp.core.CallRecordDatabase;
 import com.ulyp.core.CallRecordTreeDao;
 import com.ulyp.core.impl.HeapCallRecordDatabase;
+import com.ulyp.transport.ProcessInfo;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -46,29 +46,19 @@ public class PrimaryViewController implements Initializable {
     public Slider recordPrecisionSlider;
 
     private CallRecordTreePrimaryView callRecordTreePrimaryView;
-    private final CallRecordDatabase callRecordDatabase = new HeapCallRecordDatabase();
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        callRecordTreePrimaryView = new CallRecordTreePrimaryView(callRecordDatabase, processTabPane);
+        callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane);
     }
 
     public void onCallRecordTreeUploaded(TCallRecordLogUploadRequest request) {
-        CallRecordTree tree = new CallRecordTreeDao(
-                new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
-                new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                new MethodDescriptionList(request.getMethodDescriptionList().getData()),
-                new ClassDescriptionList(request.getClassDescriptionList().getData()),
-                callRecordDatabase
-        ).get();
-
-        Platform.runLater(() -> addTree(request, tree));
-    }
-
-    private void addTree(TCallRecordLogUploadRequest request, CallRecordTree tree) {
-        ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(request.getProcessInfo().getMainClassName());
-        processTab.addTree(tree, request.getProcessInfo(), renderSettings, Duration.ofMillis(request.getLifetimeMillis()));
+        Platform.runLater(() -> {
+            CallRecordTree tree = new CallRecordTree(request);
+            ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
+            processTab.add(tree, renderSettings);
+        });
     }
 
     public void clearAll(Event event) {

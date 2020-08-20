@@ -1,24 +1,14 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallRecordTree;
-import com.ulyp.core.CallRecordDatabase;
-import com.ulyp.transport.ProcessInfo;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
-import java.time.Duration;
-
 public class ProcessTab extends Tab {
 
-    private final CallRecordDatabase database;
     private final TabPane callTreeTabs;
 
-    private long idGenerator = 0;
-
-    ProcessTab(CallRecordDatabase database, TabPane processTabPane, String mainClassName) {
+    ProcessTab(TabPane processTabPane, String mainClassName) {
         super(mainClassName);
-
-        this.database = database;
 
         TabPane tabPane = new TabPane();
         this.callTreeTabs = tabPane;
@@ -27,18 +17,13 @@ public class ProcessTab extends Tab {
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
     }
 
-    public void add(CallRecordTree tree, ProcessInfo processInfo, RenderSettings renderSettings, Duration lifetime) {
-        long id = idGenerator++;
-        CallRecordTreeTab tab = new CallRecordTreeTab(database, callTreeTabs, processInfo, tree, renderSettings, id, lifetime);
+    public void add(CallRecordTree tree, RenderSettings renderSettings) {
+        CallRecordTreeTab tab = new CallRecordTreeTab(callTreeTabs, tree, renderSettings);
         callTreeTabs.getTabs().add(tab);
     }
 
     public CallRecordTreeTab getSelectedTreeTab() {
         return (CallRecordTreeTab) callTreeTabs.getSelectionModel().getSelectedItem();
-    }
-
-    public void addTree(CallRecordTree tree, ProcessInfo processInfo, RenderSettings renderSettings, Duration lifetime) {
-        add(tree, processInfo, renderSettings, lifetime);
     }
 
     private void clearSearch() {

@@ -1,6 +1,5 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallRecordDatabase;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.jetbrains.annotations.NotNull;
@@ -10,12 +9,10 @@ import java.util.Map;
 
 public class CallRecordTreePrimaryView {
 
-    private final CallRecordDatabase database;
     private final TabPane processTabPane;
     private final Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
-    public CallRecordTreePrimaryView(CallRecordDatabase database, TabPane processTabPane) {
-        this.database = database;
+    public CallRecordTreePrimaryView(TabPane processTabPane) {
         this.processTabPane = processTabPane;
     }
 
@@ -37,7 +34,7 @@ public class CallRecordTreePrimaryView {
     public ProcessTab getOrCreateProcessTab(String mainClassName) {
         ProcessTab processTab = processesByMainClass.get(mainClassName);
         if (processTab == null) {
-            processesByMainClass.put(mainClassName, processTab = new ProcessTab(database, processTabPane, mainClassName));
+            processesByMainClass.put(mainClassName, processTab = new ProcessTab(processTabPane, mainClassName));
             processTabPane.getTabs().add(processTab);
         }
         return processTab;
