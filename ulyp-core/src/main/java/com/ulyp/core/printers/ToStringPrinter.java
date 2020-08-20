@@ -9,8 +9,6 @@ import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 
 public class ToStringPrinter extends ObjectBinaryPrinter {
 
-    private String NULL_STRING = "null";
-
     private static final int TO_STRING_CALL_SUCCESS = 1;
     private static final int TO_STRING_CALL_NULL = 2;
     private static final int TO_STRING_CALL_FAIL = 0;
@@ -32,9 +30,11 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         long result = binaryInput.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
-            return ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
+            // if StringObject representation is returned, then it will look as String literal in UI (green text with double quotes)
+            StringObject string = (StringObject) ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
+            return new PlainObject(classDescription, string.getPrintedText());
         } else if (result == TO_STRING_CALL_NULL) {
-            return new PlainObject(decodingContext.getClass(-1), NULL_STRING);
+            return NullObject.getInstance();
         } else {
             return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
         }

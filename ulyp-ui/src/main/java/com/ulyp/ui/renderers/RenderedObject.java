@@ -2,6 +2,7 @@ package com.ulyp.ui.renderers;
 
 import com.ulyp.core.ClassDescription;
 import com.ulyp.core.printers.NullObject;
+import com.ulyp.core.printers.NumberObject;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.StringObject;
 import javafx.scene.text.TextFlow;
@@ -22,7 +23,10 @@ public abstract class RenderedObject extends TextFlow {
             objectValue = new RenderedStringObject((StringObject) repr, repr.getType());
         } else if (repr instanceof NullObject) {
 
-            objectValue = RenderedNull.getInstance();
+            objectValue = new RenderedNull();
+        } else if (repr instanceof NumberObject) {
+
+            objectValue = new RenderedNumber((NumberObject) repr, repr.getType());
         } else {
 
             objectValue = new RenderedPlainObject(repr, repr.getType());

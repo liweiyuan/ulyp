@@ -6,5 +6,9 @@ public interface BinaryInput {
 
     long readLong();
 
-    StringView readString();
+    default String readString() {
+        return readStringView().toString();
+    }
+
+    StringView readStringView();
 }

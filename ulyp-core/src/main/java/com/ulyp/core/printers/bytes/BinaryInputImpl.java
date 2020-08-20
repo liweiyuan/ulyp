@@ -25,7 +25,7 @@ public class BinaryInputImpl implements BinaryInput {
     }
 
     @Override
-    public StringView readString() {
+    public StringView readStringView() {
         long length = readLong();
         if (length >= 0) {
             StringView view = new StringView();

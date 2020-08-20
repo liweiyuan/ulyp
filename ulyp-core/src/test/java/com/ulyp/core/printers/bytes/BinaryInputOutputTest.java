@@ -50,7 +50,7 @@ public class BinaryInputOutputTest {
         }
 
         assertEquals(2, binaryInput.readLong());
-        assertEquals("asdas", binaryInput.readString().toString());
+        assertEquals("asdas", binaryInput.readString());
         assertEquals(6, binaryInput.readLong());
         assertNull(binaryInput.readString());
     }

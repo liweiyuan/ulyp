@@ -19,7 +19,7 @@ public abstract class ObjectBinaryPrinter {
     }
 
     public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new PlainObject(classDescription, binaryInput.readString().toString());
+        return new PlainObject(classDescription, binaryInput.readString());
     }
 
     abstract boolean supports(Type type);
