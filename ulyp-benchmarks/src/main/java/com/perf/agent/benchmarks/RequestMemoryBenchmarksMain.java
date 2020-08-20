@@ -1,7 +1,8 @@
 package com.perf.agent.benchmarks;
 
 import com.perf.agent.benchmarks.impl.H2MemDatabaseBenchmark;
-import com.perf.agent.benchmarks.impl.SpringHibernateBenchmark;
+import com.perf.agent.benchmarks.impl.SpringHibernateMediumBenchmark;
+import com.perf.agent.benchmarks.impl.SpringHibernateSmallBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
 import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
@@ -17,8 +18,9 @@ public class RequestMemoryBenchmarksMain {
 
         List<RequestMemoryRunResult> runResults = new ArrayList<>();
 
-        runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
-        runResults.addAll(runBench(SpringHibernateBenchmark.class));
+//        runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
+//        runResults.addAll(runBench(SpringHibernateSmallBenchmark.class));
+        runResults.addAll(runBench(SpringHibernateMediumBenchmark.class));
 
         for (RequestMemoryRunResult runResult : runResults) {
             System.out.println(runResult);

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BenchmarkProcessRunner {
 
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
 
     public static void runClassInSeparateJavaProcess(Class<?> benchmarkClazz, BenchmarkProfile profile) {
         String classPath = System.getProperty("java.class.path");

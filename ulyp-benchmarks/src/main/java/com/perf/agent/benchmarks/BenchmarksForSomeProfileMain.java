@@ -1,6 +1,6 @@
 package com.perf.agent.benchmarks;
 
-import com.perf.agent.benchmarks.impl.SpringHibernateBenchmark;
+import com.perf.agent.benchmarks.impl.SpringHibernateSmallBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
 import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterRecordList;
@@ -29,7 +29,7 @@ public class BenchmarksForSomeProfileMain {
 //                )
                 .build();
 
-        for (PerformanceRunResult result : runBench(SpringHibernateBenchmark.class, trueProfile)) {
+        for (PerformanceRunResult result : runBench(SpringHibernateSmallBenchmark.class, trueProfile)) {
             result.print();
         }
     }

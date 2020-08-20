@@ -1,7 +1,7 @@
 package com.perf.agent.benchmarks;
 
 import com.perf.agent.benchmarks.impl.H2MemDatabaseBenchmark;
-import com.perf.agent.benchmarks.impl.SpringHibernateBenchmark;
+import com.perf.agent.benchmarks.impl.SpringHibernateSmallBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
 import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterRecordList;
@@ -21,7 +21,7 @@ public class PerformanceBenchmarksMain {
         List<PerformanceRunResult> runResults = new ArrayList<>();
 
         runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
-        runResults.addAll(runBench(SpringHibernateBenchmark.class));
+        runResults.addAll(runBench(SpringHibernateSmallBenchmark.class));
 
         for (PerformanceRunResult runResult : runResults) {
             runResult.print();

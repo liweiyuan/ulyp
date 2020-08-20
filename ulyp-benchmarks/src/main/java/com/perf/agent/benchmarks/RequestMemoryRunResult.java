@@ -23,9 +23,9 @@ public class RequestMemoryRunResult {
 
         builder.append(benchmarkClazz.getSimpleName());
         builder.append(": ");
-        padTo(builder, 30);
+        padTo(builder, 50);
         builder.append(profile);
-        padTo(builder, 70);
+        padTo(builder, 100);
 
         builder.append(bytesSize / 1000).append(" kb");
 
