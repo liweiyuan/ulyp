@@ -80,14 +80,18 @@ public class CallRecordTreeViewRenderer {
 
         if (node.isStatic()) {
             result.add(text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
-
         } else {
             RenderedObject callee = RenderedObject.of(node.getCallee());
             callee.getChildren().forEach(child -> child.getStyleClass().add("ulyp-ctt-callee"));
             result.add(callee);
         }
         result.add(text().text(".").style("ulyp-ctt-method-name").build());
-        result.add(text().text(node.getMethodName()).style("ulyp-ctt-method-name").build());
+
+        TextBuilder methodNameBuilder = text().text(node.getMethodName()).style("ulyp-ctt-method-name");
+        if (node.isStatic()) {
+            methodNameBuilder = methodNameBuilder.style("ulyp-ctt-static-method-name");
+        }
+        result.add(methodNameBuilder.build());
         return result;
     }
 

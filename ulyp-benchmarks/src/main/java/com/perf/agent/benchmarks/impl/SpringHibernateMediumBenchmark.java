@@ -9,6 +9,7 @@ import com.ulyp.core.util.PackageList;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -76,6 +77,8 @@ public class SpringHibernateMediumBenchmark implements Benchmark {
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println(ManagementFactory.getRuntimeMXBean().getInputArguments());
+
         long start = System.currentTimeMillis();
 
         SpringHibernateMediumBenchmark benchmark = new SpringHibernateMediumBenchmark();
