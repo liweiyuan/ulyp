@@ -11,8 +11,8 @@ public class RecordingParamsUpdater {
     }
 
     public void updateRecordCollectionItems(boolean value) {
-        CollectionPrinter collectionPrinter = (CollectionPrinter) ObjectBinaryPrinterType.COLLECTION_PRINTER.getPrinter();
-        collectionPrinter.setShouldRecordItems(value);
+//        CollectionPrinter collectionPrinter = (CollectionPrinter) ObjectBinaryPrinterType.COLLECTION_PRINTER.getPrinter();
+//        collectionPrinter.setShouldRecordItems(value);
         ObjectArrayPrinter objectArrayPrinter = (ObjectArrayPrinter) ObjectBinaryPrinterType.OBJECT_ARRAY_PRINTER.getPrinter();
         objectArrayPrinter.setShouldRecordItems(value);
     }
