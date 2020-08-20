@@ -12,6 +12,16 @@ public class AgentContext {
 
     private static final AgentContext instance = new AgentContext();
 
+    private static boolean agentLoaded = false;
+
+    public static synchronized boolean isLoaded() {
+        return agentLoaded;
+    }
+
+    public static synchronized void load() {
+        agentLoaded = true;
+    }
+
     public static AgentContext getInstance() {
         return instance;
     }

@@ -24,6 +24,11 @@ public class Agent {
 
     public static void start(String args, Instrumentation instrumentation) {
 
+        if (AgentContext.isLoaded()) {
+            return;
+        }
+        AgentContext.load();
+
         String logLevel = LoggingSettings.LOG_LEVEL.name();
         AgentContext instance = AgentContext.getInstance();
         UiSettings uiSettings = instance.getUiSettings();
