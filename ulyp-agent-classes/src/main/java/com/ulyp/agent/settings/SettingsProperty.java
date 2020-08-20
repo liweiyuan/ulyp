@@ -34,10 +34,6 @@ public class SettingsProperty<T> {
         listener.onValueChanged(currentValue, currentValue);
     }
 
-    public boolean hasValue() {
-        return value != null;
-    }
-
     @Override
     public String toString() {
         return "SettingsProperty{" +

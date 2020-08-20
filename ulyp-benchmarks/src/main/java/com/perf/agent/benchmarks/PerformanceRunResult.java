@@ -2,7 +2,7 @@ package com.perf.agent.benchmarks;
 
 import org.HdrHistogram.Histogram;
 
-public class RunResult {
+public class PerformanceRunResult {
 
     private final Class<?> benchmarkClazz;
     private final BenchmarkProfile profile;
@@ -10,7 +10,7 @@ public class RunResult {
     private final Histogram recordTimeHistogram;
     private final Histogram recordsCountHistogram;
 
-    public RunResult(
+    public PerformanceRunResult(
             Class<?> benchmarkClazz,
             BenchmarkProfile profile,
             Histogram procTimeHistogram,

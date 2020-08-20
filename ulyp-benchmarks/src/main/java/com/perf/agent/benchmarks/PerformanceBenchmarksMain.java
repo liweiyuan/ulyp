@@ -12,24 +12,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class BenchmarksMain {
+public class PerformanceBenchmarksMain {
 
     private static final int ITERATIONS_PER_PROFILE = 5;
 
     public static void main(String[] args) throws Exception {
 
-        List<RunResult> runResults = new ArrayList<>();
+        List<PerformanceRunResult> runResults = new ArrayList<>();
 
         runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
         runResults.addAll(runBench(SpringHibernateBenchmark.class));
 
-        for (RunResult runResult : runResults) {
+        for (PerformanceRunResult runResult : runResults) {
             runResult.print();
         }
     }
 
-    private static List<RunResult> runBench(Class<? extends Benchmark> benchmarkClazz) throws Exception {
-        List<RunResult> runResults = new ArrayList<>();
+    private static List<PerformanceRunResult> runBench(Class<? extends Benchmark> benchmarkClazz) throws Exception {
+        List<PerformanceRunResult> runResults = new ArrayList<>();
 
         Benchmark benchmark = benchmarkClazz.newInstance();
 
@@ -43,7 +43,7 @@ public class BenchmarksMain {
                 recordsCountHistogram.recordValue(recordsCount);
             }
 
-            runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, recordTimeHistogram, recordsCountHistogram));
+            runResults.add(new PerformanceRunResult(benchmarkClazz, profile, procTimeHistogram, recordTimeHistogram, recordsCountHistogram));
         }
 
         return runResults;

@@ -29,15 +29,15 @@ public class BenchmarksForSomeProfileMain {
 //                )
                 .build();
 
-        for (RunResult result : runBench(SpringHibernateBenchmark.class, trueProfile)) {
+        for (PerformanceRunResult result : runBench(SpringHibernateBenchmark.class, trueProfile)) {
             result.print();
         }
     }
 
-    private static List<RunResult> runBench(
+    private static List<PerformanceRunResult> runBench(
             Class<? extends Benchmark> benchmarkClazz,
             BenchmarkProfile profile) throws Exception {
-        List<RunResult> runResults = new ArrayList<>();
+        List<PerformanceRunResult> runResults = new ArrayList<>();
 
 
         Histogram procTimeHistogram = emptyHistogram();
@@ -49,7 +49,7 @@ public class BenchmarksForSomeProfileMain {
             recordsCountHistogram.recordValue(recordsCount);
         }
 
-        runResults.add(new RunResult(benchmarkClazz, profile, procTimeHistogram, recordingTimeHistogram, recordsCountHistogram));
+        runResults.add(new PerformanceRunResult(benchmarkClazz, profile, procTimeHistogram, recordingTimeHistogram, recordsCountHistogram));
 
         return runResults;
     }
