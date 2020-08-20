@@ -5,7 +5,6 @@ import com.ulyp.core.printers.Printers;
 import com.ulyp.core.printers.Type;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MethodDescription {
@@ -15,7 +14,6 @@ public class MethodDescription {
     private final Type declaringType;
     private final boolean isStatic;
     private final boolean returnsSomething;
-    private final List<String> parameterNames;
     private final ObjectBinaryPrinter[] paramPrinters;
     private final ObjectBinaryPrinter resultPrinter;
 
@@ -36,16 +34,6 @@ public class MethodDescription {
 
         this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypes);
         this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnType);
-
-//        boolean hasParamNames = executable.getParameterCount() > 0 && executable.getParameters()[0].isNamePresent();
-//        if (hasParamNames) {
-//            this.parameterNames = new ArrayList<>(executable.getParameterCount());
-//            for (Parameter parameter : executable.getParameters()) {
-//                parameterNames.add(parameter.getName());
-//            }
-//        } else {
-            this.parameterNames = Collections.emptyList();
-//        }
     }
 
     public long getId() {
@@ -76,10 +64,6 @@ public class MethodDescription {
         return returnsSomething;
     }
 
-    public List<String> getParameterNames() {
-        return parameterNames;
-    }
-
     @Override
     public String toString() {
         return "MethodDescription{" +
@@ -88,7 +72,6 @@ public class MethodDescription {
                 ", declaringType=" + declaringType +
                 ", isStatic=" + isStatic +
                 ", returnsSomething=" + returnsSomething +
-                ", parameterNames=" + parameterNames +
                 ", paramPrinters=" + Arrays.toString(paramPrinters) +
                 ", resultPrinter=" + resultPrinter +
                 '}';
