@@ -7,7 +7,12 @@ public interface BinaryInput {
     long readLong();
 
     default String readString() {
-        return readStringView().toString();
+        StringView view = readStringView();
+        if (view != null) {
+            return view.toString();
+        } else {
+            return null;
+        }
     }
 
     StringView readStringView();

@@ -26,6 +26,15 @@ public class BinaryInputOutputTest {
     private final BinaryInput binaryInput = new BinaryInputImpl(buffer);
 
     @Test
+    public void testSimpleReadWrite() throws Exception {
+        try (BinaryOutputAppender appender = binaryOutput.appender()) {
+            appender.append("abc");
+        }
+
+        assertEquals("abc", binaryInput.readString());
+    }
+
+    @Test
     public void test() throws Exception {
         try (BinaryOutputAppender appender = binaryOutput.appender()) {
             appender.append(2);
