@@ -29,32 +29,32 @@ public class Printers {
         return instance;
     }
 
-    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(List<Type> paramsTypes) {
+    public ObjectBinaryPrinter[] determinePrintersForParameterTypes(List<TypeInfo> paramsTypeInfos) {
         try {
-            if (paramsTypes.isEmpty()) {
+            if (paramsTypeInfos.isEmpty()) {
                 return empty;
             }
-            ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[paramsTypes.size()];
+            ObjectBinaryPrinter[] convs = new ObjectBinaryPrinter[paramsTypeInfos.size()];
             for (int i = 0; i < convs.length; i++) {
-                convs[i] = determinePrinterForType(paramsTypes.get(i));
+                convs[i] = determinePrinterForType(paramsTypeInfos.get(i));
             }
             return convs;
         } catch (Exception e) {
-            throw new RuntimeException("Could not prepare converters for method params " + paramsTypes, e);
+            throw new RuntimeException("Could not prepare converters for method params " + paramsTypeInfos, e);
         }
     }
 
-    public ObjectBinaryPrinter determinePrinterForReturnType(Type returnType) {
+    public ObjectBinaryPrinter determinePrinterForReturnType(TypeInfo returnTypeInfo) {
         try {
-            return determinePrinterForType(returnType);
+            return determinePrinterForType(returnTypeInfo);
         } catch (Exception e) {
-            throw new RuntimeException("Could not prepare converters for method params " + returnType, e);
+            throw new RuntimeException("Could not prepare converters for method params " + returnTypeInfo, e);
         }
     }
 
-    private static final ConcurrentMap<Type, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
+    private static final ConcurrentMap<TypeInfo, ObjectBinaryPrinter> cache = new ConcurrentHashMap<>(1024);
 
-    public ObjectBinaryPrinter determinePrinterForType(Type type) {
+    public ObjectBinaryPrinter determinePrinterForType(TypeInfo typeInfo) {
 //        return cache.computeIfAbsent(
 //                type, t -> {
 //                    for (ObjectBinaryPrinter printer : printers) {
@@ -66,10 +66,10 @@ public class Printers {
 //                }
 //        );
         for (ObjectBinaryPrinter printer : printers) {
-            if (printer.supports(type)) {
+            if (printer.supports(typeInfo)) {
                 return printer;
             }
         }
-        throw new RuntimeException("Could not find a suitable printer for type " + type);
+        throw new RuntimeException("Could not find a suitable printer for type " + typeInfo);
     }
 }

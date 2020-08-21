@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -9,22 +8,22 @@ import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 
 public class ObjectArrayPrinter extends ObjectBinaryPrinter {
 
-    private static final ObjectBinaryPrinter sizeOnlyPrinter = new ObjectArraySizePrinter(-1);
-    private static final ObjectBinaryPrinter debugPrinter = new ObjectArrayDebugPrinter(-1);
+    private static final ObjectBinaryPrinter sizeOnlyPrinter = new ObjectArraySizePrinter((byte) -1);
+    private static final ObjectBinaryPrinter debugPrinter = new ObjectArrayDebugPrinter((byte) -1);
 
     private volatile boolean shouldRecordItems = false;
 
-    protected ObjectArrayPrinter(int id) {
+    protected ObjectArrayPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
-        return type.isNonPrimitveArray();
+    boolean supports(TypeInfo typeInfo) {
+        return typeInfo.isNonPrimitveArray();
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
         boolean recordItems = binaryInput.readBoolean();
         if (recordItems) {
             return debugPrinter.read(classDescription, binaryInput, decodingContext);
@@ -34,7 +33,7 @@ public class ObjectArrayPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(recordItems);

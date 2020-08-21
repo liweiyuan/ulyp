@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ulyp.core.*;
-import com.ulyp.core.process.ProcessInfo;
+import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.transport.*;
 import io.grpc.ManagedChannel;
 import io.grpc.internal.DnsNameResolverProvider;
@@ -42,43 +42,45 @@ public class GrpcUiTransport implements UiTransport {
                 .withExecutor(Executors.newFixedThreadPool(3, new NamedThreadFactory("GRPC-Connector", true)));
     }
 
-    public SettingsResponse getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException {
+    public Settings getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException {
         return uploadingServiceFutureStub.requestSettings(SettingsRequest.newBuilder().build()).get(duration.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    public void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
+    public void uploadAsync(CallRecordTreeRequest request) {
 
-        long endLifetimeEpochMillis = System.currentTimeMillis();
+        CallRecordLog recordLog = request.getRecordLog();
 
         uploadExecutor.submit(
                 () -> {
+
                     TCallRecordLog log = TCallRecordLog.newBuilder()
                             .setThreadName(recordLog.getThreadName())
                             .setEnterRecords(recordLog.getEnterRecords().toByteString())
                             .setExitRecords(recordLog.getExitRecords().toByteString())
                             .build();
 
-                    MethodDescriptionList methodDescriptionList = new MethodDescriptionList();
-                    for (MethodDescription description : methodDescriptionDictionary.getMethodDescriptions()) {
-                        methodDescriptionList.add(description);
-                    }
-                    ClassDescriptionList classDescriptionList = new ClassDescriptionList();
-                    for (ClassDescription classDescription : methodDescriptionDictionary.getClassDescriptions()) {
-                        classDescriptionList.add(classDescription);
+                    MethodInfoList methodInfoList = new MethodInfoList();
+                    for (MethodInfo description : request.getMethods()) {
+                        methodInfoList.add(description);
                     }
 
                     TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
 
+                    for (TypeInfo typeInfo : request.getTypes()) {
+                        requestBuilder.addDescription(
+                                TClassDescription.newBuilder().setId((int) typeInfo.getId()).setName(typeInfo.getName()).build()
+                        );
+                    }
+
                     requestBuilder
                             .setRecordLog(log)
-                            .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodDescriptionList.toByteString()).build())
-                            .setClassDescriptionList(TClassDescriptionList.newBuilder().setData(classDescriptionList.toByteString()).build())
+                            .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
                             .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
-                                    .setMainClassName(processInfo.getMainClassName())
-                                    .addAllClasspath(processInfo.getClasspath().toList())
+                                    .setMainClassName(request.getProcessInfo().getMainClassName())
+                                    .addAllClasspath(request.getProcessInfo().getClasspath().toList())
                                     .build())
                             .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
-                            .setLifetimeMillis(endLifetimeEpochMillis - recordLog.getEpochMillisCreatedTime());
+                            .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime());
 
                     long id = recordLog.getId();
                     ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());

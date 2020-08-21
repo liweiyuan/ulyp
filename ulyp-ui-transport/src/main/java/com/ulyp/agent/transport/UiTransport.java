@@ -1,9 +1,6 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.core.CallRecordLog;
-import com.ulyp.core.MethodDescriptionDictionary;
-import com.ulyp.core.process.ProcessInfo;
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
@@ -12,9 +9,9 @@ import java.util.concurrent.TimeoutException;
 
 public interface UiTransport {
 
-    SettingsResponse getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException;
+    Settings getSettingsBlocking(Duration duration) throws InterruptedException, ExecutionException, TimeoutException;
 
-    void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo);
+    void uploadAsync(CallRecordTreeRequest request);
 
     void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException;
 }

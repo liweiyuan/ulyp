@@ -37,7 +37,7 @@ public class CallRecordLog {
         this.threadName = Thread.currentThread().getName();
     }
 
-    public void onMethodEnter(long methodId, ObjectBinaryPrinter[] printers, Object callee, Object[] args) {
+    public void onMethodEnter(int methodId, ObjectBinaryPrinter[] printers, Object callee, Object[] args) {
         if (!inProcessOfTracing) {
             return;
         }
@@ -59,7 +59,7 @@ public class CallRecordLog {
         }
     }
 
-    public void onMethodExit(long methodId, ObjectBinaryPrinter resultPrinter, Object returnValue, Throwable thrown) {
+    public void onMethodExit(int methodId, ObjectBinaryPrinter resultPrinter, Object returnValue, Throwable thrown) {
         if (!inProcessOfTracing) {
             return;
         }
@@ -67,13 +67,13 @@ public class CallRecordLog {
         inProcessOfTracing = false;
         try {
             boolean recordedEnterCall = recordEnterCallStack.popBoolean();
-            long callId = popCurrentCallId();
+            int callId = popCurrentCallId();
 
             if (recordedEnterCall && callId >= 0) {
                 if (thrown == null) {
-                    exitRecords.add(callId, methodId, agentRuntime, false, agentRuntime.getClassId(returnValue), resultPrinter, returnValue);
+                    exitRecords.add(callId, methodId, agentRuntime, false, resultPrinter, returnValue);
                 } else {
-                    exitRecords.add(callId, methodId, agentRuntime, true, agentRuntime.getClassId(thrown), ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
+                    exitRecords.add(callId, methodId, agentRuntime, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
                 }
             }
         } finally {
@@ -99,7 +99,7 @@ public class CallRecordLog {
         recordEnterCallStack.push(canRecord);
     }
 
-    private long popCurrentCallId() {
+    private int popCurrentCallId() {
         if (!callIdsStack.isEmpty()) {
             callCountStack.popInt();
             return callIdsStack.popInt();

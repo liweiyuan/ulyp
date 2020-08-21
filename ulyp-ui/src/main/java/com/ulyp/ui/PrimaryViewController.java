@@ -1,16 +1,10 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.ClassDescriptionList;
-import com.ulyp.core.MethodDescriptionList;
-import com.ulyp.core.CallEnterRecordList;
-import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.CallRecordDatabase;
-import com.ulyp.core.CallRecordTreeDao;
-import com.ulyp.core.impl.HeapCallRecordDatabase;
-import com.ulyp.transport.ProcessInfo;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequestList;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,9 +15,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
+import java.io.*;
 import java.net.URL;
-import java.time.Duration;
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 public class PrimaryViewController implements Initializable {
 
@@ -45,6 +40,8 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public Slider recordPrecisionSlider;
 
+    Supplier<File> fileChooser;
+
     private CallRecordTreePrimaryView callRecordTreePrimaryView;
     private final RenderSettings renderSettings = new RenderSettings();
 
@@ -53,7 +50,7 @@ public class PrimaryViewController implements Initializable {
         callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane);
     }
 
-    public void onCallRecordTreeUploaded(TCallRecordLogUploadRequest request) {
+    public void processRequest(TCallRecordLogUploadRequest request) {
         Platform.runLater(() -> {
             CallRecordTree tree = new CallRecordTree(request);
             ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
@@ -124,5 +121,21 @@ public class PrimaryViewController implements Initializable {
 
     public Slider getRecordPrecisionSlider() {
         return recordPrecisionSlider;
+    }
+
+    public void openRecordedDump(ActionEvent actionEvent) {
+        File file = fileChooser.get();
+        if (file != null) {
+            try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                TCallRecordLogUploadRequestList requests = TCallRecordLogUploadRequestList.parseFrom(inputStream);
+
+                for (TCallRecordLogUploadRequest request : requests.getRequestList()) {
+                    processRequest(request);
+                }
+            } catch (IOException e) {
+                // TODO show error dialog
+                e.printStackTrace();
+            }
+        }
     }
 }

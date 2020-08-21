@@ -1,10 +1,12 @@
 package com.ulyp.core;
 
-import com.ulyp.core.printers.Type;
+import com.ulyp.core.printers.TypeInfo;
+
+import java.util.Collection;
 
 public interface AgentRuntime {
 
-    long getClassId(Object o);
+    TypeInfo get(Object o);
 
-    Type toType(Class<?> clazz);
+    Collection<TypeInfo> getAllKnownTypes();
 }

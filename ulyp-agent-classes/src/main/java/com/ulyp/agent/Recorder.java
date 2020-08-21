@@ -3,6 +3,7 @@ package com.ulyp.agent;
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.UiSettings;
+import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,7 @@ public class Recorder {
         return threadLocalRecordsLog.get() != null;
     }
 
-    public void startOrContinueRecording(AgentRuntime agentRuntime, MethodDescription methodDescription, Object callee, Object[] args) {
+    public void startOrContinueRecording(AgentRuntime agentRuntime, MethodInfo methodInfo, Object callee, Object[] args) {
         if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
             return;
         }
@@ -50,16 +51,16 @@ public class Recorder {
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                logger.trace("Create new {}, method {}, args {}", log, methodDescription, args);
+                logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
             }
             return log;
         });
-        onMethodEnter(methodDescription, callee, args);
+        onMethodEnter(methodInfo, callee, args);
     }
 
-    public void endRecordingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
+    public void endRecordingIfPossible(AgentRuntime agentRuntime, MethodInfo methodInfo, Object result, Throwable thrown) {
         CallRecordLog recordLog = threadLocalRecordsLog.get();
-        onMethodExit(methodDescription, result, thrown);
+        onMethodExit(methodInfo, result, thrown);
 
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
@@ -67,12 +68,19 @@ public class Recorder {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", recordLog);
                 }
-                context.getTransport().uploadAsync(recordLog, MethodDescriptionDictionary.getInstance(), context.getProcessInfo());
+                context.getTransport().uploadAsync(
+                        new CallRecordTreeRequest(
+                                recordLog,
+                                MethodDescriptionMap.getInstance().values(),
+                                agentRuntime.getAllKnownTypes(),
+                                context.getProcessInfo()
+                        )
+                );
             }
         }
     }
 
-    public void onMethodEnter(MethodDescription method, Object callee, Object[] args) {
+    public void onMethodEnter(MethodInfo method, Object callee, Object[] args) {
         CallRecordLog log = threadLocalRecordsLog.get();
         if (log == null) {
             return;
@@ -83,7 +91,7 @@ public class Recorder {
         log.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
-    public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
+    public void onMethodExit(MethodInfo method, Object result, Throwable thrown) {
         CallRecordLog log = threadLocalRecordsLog.get();
         if (log == null) return;
 

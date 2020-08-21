@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -9,27 +8,24 @@ import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 
 public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
 
-    protected DynamicObjectBinaryPrinter(int id) {
+    protected DynamicObjectBinaryPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
-        return type.isInterface() || type.isExactlyJavaLangObject() || type.isTypeVar();
+    boolean supports(TypeInfo typeInfo) {
+        return typeInfo.isInterface() || typeInfo.isExactlyJavaLangObject() || typeInfo.isTypeVar();
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long printerId = binaryInput.readLong();
-        return ObjectBinaryPrinterType.printerForId(printerId).read(classDescription, binaryInput, decodingContext);
+    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
+        byte printerId = binaryInput.readByte();
+        return ObjectBinaryPrinterType.printerForId(printerId).read(typeInfo, binaryInput, decodingContext);
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        Class<?> type = obj.getClass();
-        ObjectBinaryPrinter printer = (type != Object.class)
-                ? Printers.getInstance().determinePrinterForType(agentRuntime.toType(obj.getClass())) :
-                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter();
+    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+        ObjectBinaryPrinter printer = typeInfo.getSuggestedPrinter();
 
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(printer.getId());

@@ -6,6 +6,7 @@ import com.perf.agent.benchmarks.BenchmarkProfileBuilder;
 import com.perf.agent.benchmarks.impl.spring.*;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
+import org.HdrHistogram.Histogram;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -13,27 +14,24 @@ import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class SpringHibernateMediumBenchmark implements Benchmark {
 
-    private static final int PEOPLE_PER_DEPT = 1;
-    private static final int DEPT_COUNT = 1;
+    private static final int PEOPLE_PER_DEPT = 30;
+    private static final int DEPT_COUNT = 20;
 
     @Override
     public List<BenchmarkProfile> getProfiles() {
         return Arrays.asList(
                 new BenchmarkProfileBuilder()
-                        .withMethodToRecord(new MethodMatcher(SpringHibernateMediumBenchmark.class, "main"))
                         .withInstrumentedPackages(new PackageList("com", "org"))
                         .build(),
                 new BenchmarkProfileBuilder()
-                        .withMethodToRecord(new MethodMatcher(SpringHibernateMediumBenchmark.class, "setUp"))
+                        .withMethodToRecord(new MethodMatcher(DepartmentService.class, "shuffle"))
+                        .withUiDisabled()
                         .withInstrumentedPackages(new PackageList("com", "org"))
-                        .build(),
-                new BenchmarkProfileBuilder()
-                        .withInstrumentedPackages(new PackageList("com", "org"))
-                        .build(),
-                new BenchmarkProfileBuilder().build()
+                        .build()
         );
     }
 
@@ -73,7 +71,16 @@ public class SpringHibernateMediumBenchmark implements Benchmark {
 
     @Override
     public void run() throws Exception {
-        departmentService.shufflePeople();
+        Histogram histogram = new Histogram(1, TimeUnit.MINUTES.toMillis(5), 2);
+
+        for (int i = 0; i < 100; i++) {
+            long startNanos = System.nanoTime();
+            departmentService.shufflePeople();
+            long elapsed = System.nanoTime() - startNanos;
+            histogram.recordValue(elapsed / 1000000);
+        }
+
+        histogram.outputPercentileDistribution(System.out, 1.0);
     }
 
     public static void main(String[] args) throws Exception {

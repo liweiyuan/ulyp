@@ -17,6 +17,12 @@
     <children>
         <MenuBar>
             <menus>
+            <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openRecordedDump" text="Open dump" />
+                  <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Close all recordings" />
+               </items>
+            </Menu>
                 <Menu mnemonicParsing="false" text="Tabs">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#clearAll" text="Clear all" />

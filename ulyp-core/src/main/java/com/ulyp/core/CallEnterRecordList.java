@@ -3,6 +3,7 @@ package com.ulyp.core;
 import com.google.protobuf.ByteString;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
+import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.bytes.BinaryOutputForEnterRecordImpl;
 import com.ulyp.transport.TCallEnterRecordDecoder;
 import com.ulyp.transport.TCallEnterRecordEncoder;
@@ -20,8 +21,8 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
     }
 
     public void add(
-            long callId,
-            long methodId,
+            int callId,
+            int methodId,
             AgentRuntime agentRuntime,
             ObjectBinaryPrinter[] printers,
             Object callee,
@@ -36,8 +37,10 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
             for (int i = 0; i < args.length; i++) {
                 ObjectBinaryPrinter printer = args[i] != null ? printers[i] : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
 
+                TypeInfo argTypeInfo = agentRuntime.get(args[i]);
+
                 argumentsEncoder = argumentsEncoder.next();
-                argumentsEncoder.classId(agentRuntime.getClassId(args[i]));
+                argumentsEncoder.classId(argTypeInfo.getId());
                 argumentsEncoder.printerId(printer.getId());
                 binaryOutput.wrap(encoder);
                 try {
@@ -49,7 +52,7 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
 
             ObjectBinaryPrinter printer = callee != null ? ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
 
-            encoder.calleeClassId(agentRuntime.getClassId(callee));
+            encoder.calleeClassId(agentRuntime.get(callee).getId());
             encoder.calleePrinterId(printer.getId());
             binaryOutput.wrap(encoder);
             try {

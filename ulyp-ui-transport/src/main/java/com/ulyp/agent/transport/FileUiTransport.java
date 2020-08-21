@@ -1,0 +1,106 @@
+package com.ulyp.agent.transport;
+
+import com.ulyp.core.*;
+import com.ulyp.core.printers.TypeInfo;
+import com.ulyp.transport.*;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.*;
+
+/**
+ * Dumps all requests to file which can later be opened in UI
+ */
+public class FileUiTransport implements UiTransport {
+
+    private final Settings settings;
+    private final Path filePath;
+    private final Set<Future<?>> convertingFutures = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final ExecutorService executorService = Executors.newFixedThreadPool(
+            5,
+            new NamedThreadFactory("Record-Log-Converter", true)
+    );
+
+    private TCallRecordLogUploadRequestList.Builder requestList = TCallRecordLogUploadRequestList.newBuilder();
+
+    public FileUiTransport(Settings settings, Path filePath) {
+        this.filePath = filePath;
+        this.settings = settings;
+    }
+
+    public Settings getSettingsBlocking(Duration duration) {
+        return settings;
+    }
+
+    public void uploadAsync(CallRecordTreeRequest request) {
+
+        convertingFutures.add(executorService.submit(() -> addToList(request)));
+    }
+
+    private void addToList(CallRecordTreeRequest request) {
+        CallRecordLog recordLog = request.getRecordLog();
+
+        TCallRecordLog log = TCallRecordLog.newBuilder()
+                .setThreadName(recordLog.getThreadName())
+                .setEnterRecords(recordLog.getEnterRecords().toByteString())
+                .setExitRecords(recordLog.getExitRecords().toByteString())
+                .build();
+
+        MethodInfoList methodInfoList = new MethodInfoList();
+        for (MethodInfo description : request.getMethods()) {
+            methodInfoList.add(description);
+        }
+
+        TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
+
+        for (TypeInfo typeInfo : request.getTypes()) {
+            requestBuilder.addDescription(
+                    TClassDescription.newBuilder().setId((int) typeInfo.getId()).setName(typeInfo.getName()).build()
+            );
+        }
+
+        requestBuilder
+                .setRecordLog(log)
+                .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
+                .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
+                        .setMainClassName(request.getProcessInfo().getMainClassName())
+                        .addAllClasspath(request.getProcessInfo().getClasspath().toList())
+                        .build())
+                .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
+                .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime());
+
+        TCallRecordLogUploadRequest protobufRequest = requestBuilder.build();
+
+        synchronized (this) {
+            requestList.addRequest(protobufRequest);
+        }
+    }
+
+    public void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
+        for (Future<?> future : this.convertingFutures) {
+            try {
+                future.get(time, timeUnit);
+            } catch (ExecutionException | TimeoutException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        synchronized (this) {
+
+            TCallRecordLogUploadRequestList requests = requestList.build();
+
+            try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath.toFile(), false))) {
+                requests.writeTo(outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

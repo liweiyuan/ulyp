@@ -1,6 +1,7 @@
 package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectRepresentation;
+import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
@@ -15,37 +16,37 @@ public class CallRecordTreeDao {
 
     private final CallEnterRecordList enterRecordsList;
     private final CallExitRecordList exitRecordsList;
-    private final MethodDescriptionList methodDescriptionList;
-    private final Long2ObjectMap<ClassDescription> classIdMap;
+    private final MethodInfoList methodInfoList;
     private final DecodingContext decodingContext;
     private final CallRecordDatabase database;
+    private final Long2ObjectMap<TypeInfo> classIdMap;
 
     public CallRecordTreeDao(CallEnterRecordList enterRecordsList,
                              CallExitRecordList exitRecordsList,
-                             MethodDescriptionList methodDescriptionList,
-                             ClassDescriptionList classDescriptionList,
+                             MethodInfoList methodInfoList,
+                             List<TClassDescription> classDescriptionList,
                              CallRecordDatabase database)
     {
         this.database = database;
         this.enterRecordsList = enterRecordsList;
         this.exitRecordsList = exitRecordsList;
-        this.methodDescriptionList = methodDescriptionList;
+        this.methodInfoList = methodInfoList;
 
         this.classIdMap = new Long2ObjectOpenHashMap<>();
-        this.decodingContext = new DecodingContext(classIdMap);
-        for (TClassDescriptionDecoder classDescription : classDescriptionList) {
+        for (TClassDescription classDescription : classDescriptionList) {
             this.classIdMap.put(
-                    classDescription.id(),
-                    new ClassDescription(classDescription.id(), classDescription.simpleClassName(), classDescription.className())
+                    classDescription.getId(),
+                    new NameOnlyTypeInfo(classDescription.getId(), classDescription.getName())
             );
         }
+        this.decodingContext = new DecodingContext(classIdMap);
     }
 
     public CallRecord get() {
-        Long2ObjectMap<TMethodDescriptionDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
-        Iterator<TMethodDescriptionDecoder> iterator = methodDescriptionList.copyingIterator();
+        Long2ObjectMap<TMethodInfoDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
+        Iterator<TMethodInfoDecoder> iterator = methodInfoList.copyingIterator();
         while (iterator.hasNext()) {
-            TMethodDescriptionDecoder methodDescription = iterator.next();
+            TMethodInfoDecoder methodDescription = iterator.next();
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
@@ -85,7 +86,7 @@ public class CallRecordTreeDao {
     private class CallRecordBuilder {
 
         private final CallRecordBuilder parent;
-        private final TMethodDescriptionDecoder methodDescription;
+        private final TMethodInfoDecoder methodDescription;
         private final long callId;
         private final ObjectRepresentation callee;
         private final List<ObjectRepresentation> args;
@@ -95,7 +96,7 @@ public class CallRecordTreeDao {
         private ObjectRepresentation returnValue;
         private boolean thrown;
 
-        private CallRecordBuilder(CallRecordBuilder parent, TMethodDescriptionDecoder methodDescription, TCallEnterRecordDecoder decoder) {
+        private CallRecordBuilder(CallRecordBuilder parent, TMethodInfoDecoder methodDescription, TCallEnterRecordDecoder decoder) {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
@@ -116,10 +117,10 @@ public class CallRecordTreeDao {
             UnsafeBuffer buffer = new UnsafeBuffer();
             decoder.wrapCallee(buffer);
 
-            ClassDescription calleeType = classIdMap.get(decoder.calleeClassId());
+            TypeInfo calleeTypeInfo = classIdMap.get(decoder.calleeClassId());
 
             this.callee = ObjectBinaryPrinterType.printerForId(decoder.calleePrinterId()).read(
-                    calleeType,
+                    calleeTypeInfo,
                     new BinaryInputImpl(buffer),
                     decodingContext
             );

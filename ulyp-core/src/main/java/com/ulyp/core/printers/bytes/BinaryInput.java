@@ -4,6 +4,10 @@ public interface BinaryInput {
 
     boolean readBoolean();
 
+    byte readByte();
+
+    int readInt();
+
     long readLong();
 
     default String readString() {

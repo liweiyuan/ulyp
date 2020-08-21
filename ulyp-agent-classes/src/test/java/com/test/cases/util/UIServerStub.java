@@ -19,8 +19,8 @@ public class UIServerStub implements AutoCloseable {
             server = ServerBuilder.forPort(port)
                     .addService(new UiTransportGrpc.UiTransportImplBase() {
                         @Override
-                        public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
-                            responseObserver.onNext(SettingsResponse
+                        public void requestSettings(SettingsRequest request, StreamObserver<Settings> responseObserver) {
+                            responseObserver.onNext(Settings
                                     .newBuilder()
                                     .setMayStartRecording(true)
                                     .setRecordCollectionsItems(settings.getRecordCollectionItems())

@@ -19,7 +19,7 @@ public class UIServerStub implements AutoCloseable {
         try {
             server = ServerBuilder.forPort(benchmarkProfile.getUiListenPort())
                     .addService(new UiTransportGrpc.UiTransportImplBase() {
-                        public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
+                        public void requestSettings(SettingsRequest request, StreamObserver<Settings> responseObserver) {
                             responseObserver.onNext(benchmarkProfile.getSettingsFromUi());
                             responseObserver.onCompleted();
                         }

@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -13,35 +12,35 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     private static final int TO_STRING_CALL_NULL = 2;
     private static final int TO_STRING_CALL_FAIL = 0;
 
-    protected ToStringPrinter(int id) {
+    protected ToStringPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
-        if (type.isExactlyJavaLangObject()) {
+    boolean supports(TypeInfo typeInfo) {
+        if (typeInfo.isExactlyJavaLangObject()) {
             return false;
         }
 
-        return type.hasToStringMethod();
+        return typeInfo.hasToStringMethod();
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
         long result = binaryInput.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
             // if StringObject representation is returned, then it will look as String literal in UI (green text with double quotes)
-            StringObject string = (StringObject) ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
-            return new PlainObject(classDescription, string.getPrintedText());
+            StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(typeInfo, binaryInput, decodingContext);
+            return new PlainObjectRepresentation(typeInfo, string.getPrintedText());
         } else if (result == TO_STRING_CALL_NULL) {
-            return NullObject.getInstance();
+            return new NullObjectRepresentation(typeInfo);
         } else {
-            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(classDescription, binaryInput, decodingContext);
+            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(typeInfo, binaryInput, decodingContext);
         }
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         try {
             String printed = obj.toString();
             if (printed != null) {

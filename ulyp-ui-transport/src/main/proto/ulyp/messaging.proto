@@ -8,12 +8,13 @@ package ulyp;
 
 service UiTransport {
 
-    rpc RequestSettings(SettingsRequest) returns (SettingsResponse) {}
+    rpc RequestSettings(SettingsRequest) returns (Settings) {}
 
     rpc UploadCallGraph (TCallRecordLogUploadRequest) returns (TCallRecordLogUploadResponse) {}
 }
 
-message SettingsResponse {
+// TODO rename to Settings
+message Settings {
     bool mayStartRecording = 1;
     bool recordCollectionsItems = 3;
     repeated string instrumentedPackages = 4;
@@ -31,11 +32,12 @@ message TCallRecordLog {
     bytes exitRecords = 3;
 }
 
-message TMethodDescriptionList {
-    bytes data = 1;
+message TClassDescription {
+    int32 id = 1;
+    string name = 2;
 }
 
-message TClassDescriptionList {
+message TMethodDescriptionList {
     bytes data = 1;
 }
 
@@ -48,10 +50,14 @@ message ProcessInfo {
 message TCallRecordLogUploadRequest {
     TCallRecordLog recordLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
-    TClassDescriptionList classDescriptionList = 7;
+    repeated TClassDescription description = 6;
     ProcessInfo processInfo = 3;
     int64 createEpochMillis = 4;
     int64 lifetimeMillis = 5;
+}
+
+message TCallRecordLogUploadRequestList {
+    repeated TCallRecordLogUploadRequest request = 1;
 }
 
 message TCallRecordLogUploadResponse {

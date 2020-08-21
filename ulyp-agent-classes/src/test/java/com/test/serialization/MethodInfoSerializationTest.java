@@ -2,13 +2,13 @@ package com.test.serialization;
 
 import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.util.TestSettingsBuilder;
-import com.ulyp.core.MethodDescriptionList;
+import com.ulyp.core.MethodInfoList;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MethodDescriptionSerializationTest extends AbstractInstrumentationTest {
+public class MethodInfoSerializationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldMinimizeAmountMethodDescriptions() {
@@ -19,10 +19,10 @@ public class MethodDescriptionSerializationTest extends AbstractInstrumentationT
                         .setMethodToRecord(MethodMatcher.parse("X.main"))
         );
 
-        MethodDescriptionList methodDescriptions = new MethodDescriptionList(request.getMethodDescriptionList().getData());
+        MethodInfoList methodDescriptions = new MethodInfoList(request.getMethodDescriptionList().getData());
 
         // Currently there is an overhead of second method description creation for exit advice
-        Assert.assertEquals(2, methodDescriptions.size());
+        Assert.assertEquals(1, methodDescriptions.size());
     }
 
     static class X {

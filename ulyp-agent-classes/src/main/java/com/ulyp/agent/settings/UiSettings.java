@@ -3,7 +3,7 @@ package com.ulyp.agent.settings;
 import com.ulyp.agent.transport.NamedThreadFactory;
 import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 
 import java.time.Duration;
 import java.util.concurrent.*;
@@ -23,7 +23,7 @@ public class UiSettings {
 
     public UiSettings(UiTransport uiTransport) {
         try {
-            SettingsResponse settings = uiTransport.getSettingsBlocking(Duration.ofSeconds(3));
+            Settings settings = uiTransport.getSettingsBlocking(Duration.ofSeconds(3));
             onSettings(settings);
         } catch (Exception e) {
             // NOP
@@ -31,7 +31,7 @@ public class UiSettings {
 
         settingsUpdatingService.scheduleAtFixedRate(() -> {
             try {
-                SettingsResponse settings = uiTransport.getSettingsBlocking(Duration.ofMillis(500));
+                Settings settings = uiTransport.getSettingsBlocking(Duration.ofMillis(500));
                 onSettings(settings);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 // NOP
@@ -39,7 +39,7 @@ public class UiSettings {
         }, 1, 1, TimeUnit.SECONDS);
     }
 
-    private void onSettings(SettingsResponse settings) {
+    private void onSettings(Settings settings) {
         mayStartRecording.setValue(settings.getMayStartRecording());
         recordCollectionItems.setValue(settings.getRecordCollectionsItems());
 

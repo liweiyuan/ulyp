@@ -18,6 +18,20 @@ public class BinaryInputImpl implements BinaryInput {
     }
 
     @Override
+    public byte readByte() {
+        byte val = buffer.getByte(bytePos);
+        bytePos += Byte.BYTES;
+        return val;
+    }
+
+    @Override
+    public int readInt() {
+        int val = buffer.getInt(bytePos);
+        bytePos += Integer.BYTES;
+        return val;
+    }
+
+    @Override
     public long readLong() {
         long val = buffer.getLong(bytePos);
         bytePos += Long.BYTES;

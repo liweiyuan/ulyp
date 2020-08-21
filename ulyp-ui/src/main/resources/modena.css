@@ -94,6 +94,10 @@
     -fx-fill: rgb(169, 183, 198);
 }
 
+.ulyp-ctt-return-value.ulyp-ctt-thrown {
+    -fx-fill: rgb(255, 84, 80);
+}
+
 .ulyp-ctt-method-name {
     -fx-fill: rgb(255, 198, 109);
 }

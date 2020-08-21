@@ -18,9 +18,8 @@ public class RequestMemoryBenchmarksMain {
 
         List<RequestMemoryRunResult> runResults = new ArrayList<>();
 
-//        runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
-//        runResults.addAll(runBench(SpringHibernateSmallBenchmark.class));
-        runResults.addAll(runBench(SpringHibernateMediumBenchmark.class));
+        runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
+        runResults.addAll(runBench(SpringHibernateSmallBenchmark.class));
 
         for (RequestMemoryRunResult runResult : runResults) {
             System.out.println(runResult);

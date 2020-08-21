@@ -1,6 +1,6 @@
 package com.ulyp.core.util;
 
-import com.ulyp.core.MethodDescription;
+import com.ulyp.core.MethodInfo;
 
 public class MethodMatcher {
 
@@ -31,7 +31,7 @@ public class MethodMatcher {
         this.isWildcard = methodName.equals(WILDCARD);
     }
 
-    public boolean matches(MethodDescription methodRepresentation) {
+    public boolean matches(MethodInfo methodRepresentation) {
         return (isWildcard || methodRepresentation.getMethodName().equals(methodName)) &&
                 (methodRepresentation.getDeclaringType().getInterfacesSimpleClassNames().contains(classSimpleName) ||
                         methodRepresentation.getDeclaringType().getSuperClassesSimpleNames().contains(classSimpleName));

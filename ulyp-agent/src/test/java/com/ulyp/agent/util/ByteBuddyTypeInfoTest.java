@@ -1,16 +1,16 @@
 package com.ulyp.agent.util;
 
+import com.ulyp.core.printers.TypeTrait;
 import net.bytebuddy.description.type.TypeDescription;
-import org.h2.jdbc.JdbcConnection;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class ByteBuddyTypeTest {
+public class ByteBuddyTypeInfoTest {
 
     static class Y {
 
@@ -27,9 +27,9 @@ public class ByteBuddyTypeTest {
     @Test
     public void testHasToString() {
 
-        assertTrue(new ByteBuddyType(TypeDescription.ForLoadedType.of(X.class).asGenericType()).hasToStringMethod());
+        assertTrue(new ByteBuddyTypeInfo(TypeDescription.ForLoadedType.of(X.class).asGenericType()).hasToStringMethod());
 
-        assertFalse(new ByteBuddyType(TypeDescription.ForLoadedType.of(Y.class).asGenericType()).hasToStringMethod());
+        assertFalse(new ByteBuddyTypeInfo(TypeDescription.ForLoadedType.of(Y.class).asGenericType()).hasToStringMethod());
     }
 
     static class BaseClass implements I2, I3 {
@@ -61,8 +61,16 @@ public class ByteBuddyTypeTest {
     }
 
     @Test
+    public void testTypeTraits() {
+
+        assertThat(new ByteBuddyTypeInfo(Integer.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
+
+        assertThat(new ByteBuddyTypeInfo(Long.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
+    }
+
+    @Test
     public void testBaseClassNamesResolve() {
-        ByteBuddyType type = new ByteBuddyType(TypeDescription.ForLoadedType.of(TestClass.class).asGenericType());
+        ByteBuddyTypeInfo type = new ByteBuddyTypeInfo(TestClass.class);
 
         Assert.assertEquals(
                 new HashSet<String>() {{

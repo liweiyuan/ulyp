@@ -9,8 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +27,10 @@ public class UIMain extends Application {
         Parent root = loader.load();
 
         this.viewController = loader.getController();
+
+        FileChooser fileChooser = new FileChooser();
+
+        this.viewController.fileChooser = () -> fileChooser.showOpenDialog(stage);
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add("modena.css");
