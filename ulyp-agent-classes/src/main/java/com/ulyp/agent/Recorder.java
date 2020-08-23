@@ -9,6 +9,7 @@ import com.ulyp.core.*;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
 @ThreadSafe
@@ -17,6 +18,15 @@ public class Recorder {
     private static final Logger logger = AgentLogManager.getLogger(Recorder.class);
 
     private static final Recorder instance = new Recorder(AgentContext.getInstance());
+
+    /**
+     * Keeps current recording session count. Based on the fact that most of the time there is no
+     * recording sessions and this counter is equal to 0, it's possible to make a small performance optimization.
+     * Advice code (see RecordingAdvice class) can first check if there are any recording sessions are active at all. If there are any,
+     * then advice code will check thread local and know if there is recording session in this thread precisely.
+     * This helps minimizing thread local lookups in the advice code
+     */
+    public static final AtomicInteger currentRecordingSessionCount = new AtomicInteger();
 
     public static Recorder getInstance() {
         return instance;
@@ -53,6 +63,7 @@ public class Recorder {
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
                 logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
             }
+            currentRecordingSessionCount.incrementAndGet();
             return log;
         });
         onMethodEnter(methodInfo, callee, args);
@@ -64,6 +75,8 @@ public class Recorder {
 
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
+            currentRecordingSessionCount.decrementAndGet();
+
             if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", recordLog);

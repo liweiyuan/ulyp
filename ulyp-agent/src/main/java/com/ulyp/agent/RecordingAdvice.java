@@ -26,7 +26,7 @@ public class RecordingAdvice {
                     arguments
             );
         } else {
-            if (Recorder.getInstance().recordingIsActiveInCurrentThread()) {
+            if (Recorder.currentRecordingSessionCount.get() > 0 && Recorder.getInstance().recordingIsActiveInCurrentThread()) {
                 Recorder.getInstance().onMethodEnter(MethodDescriptionMap.getInstance().get(methodId), callee, arguments);
             }
         }
@@ -51,7 +51,7 @@ public class RecordingAdvice {
                     throwable
             );
         } else {
-            if (Recorder.getInstance().recordingIsActiveInCurrentThread()) {
+            if (Recorder.currentRecordingSessionCount.get() > 0 && Recorder.getInstance().recordingIsActiveInCurrentThread()) {
                 Recorder.getInstance().onMethodExit(MethodDescriptionMap.getInstance().get(methodId), returnValue, throwable);
             }
         }
