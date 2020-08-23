@@ -36,7 +36,7 @@ public class CallExitRecordList extends AbstractSbeRecordList<TCallExitRecordEnc
             TypeInfo classDescription = agentRuntime.get(returnValue);
             encoder.returnClassId(classDescription.getId());
 
-            ObjectBinaryPrinter printer = returnValue != null ? returnValuePrinter : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
+            ObjectBinaryPrinter printer = returnValue != null ? returnValuePrinter : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
 
             encoder.returnPrinterId(printer.getId());
             binaryOutput.wrap(encoder);

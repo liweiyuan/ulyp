@@ -21,7 +21,7 @@ public class Printers {
         printerTypes.sort(Comparator.comparing(ObjectBinaryPrinterType::getOrder));
 
         for (int i = 0; i < printerTypes.size(); i++) {
-            printers[i] = printerTypes.get(i).getPrinter();
+            printers[i] = printerTypes.get(i).getInstance();
         }
     }
 

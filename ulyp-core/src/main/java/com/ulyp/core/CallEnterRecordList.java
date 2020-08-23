@@ -35,7 +35,7 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
             TCallEnterRecordEncoder.ArgumentsEncoder argumentsEncoder = encoder.argumentsCount(args.length);
 
             for (int i = 0; i < args.length; i++) {
-                ObjectBinaryPrinter printer = args[i] != null ? printers[i] : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
+                ObjectBinaryPrinter printer = args[i] != null ? printers[i] : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
 
                 TypeInfo argTypeInfo = agentRuntime.get(args[i]);
 
@@ -50,7 +50,7 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
                 }
             }
 
-            ObjectBinaryPrinter printer = callee != null ? ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
+            ObjectBinaryPrinter printer = callee != null ? ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance() : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
 
             encoder.calleeClassId(agentRuntime.get(callee).getId());
             encoder.calleePrinterId(printer.getId());

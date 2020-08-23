@@ -30,12 +30,12 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
         long result = binaryInput.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
             // if StringObject representation is returned, then it will look as String literal in UI (green text with double quotes)
-            StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().read(typeInfo, binaryInput, decodingContext);
+            StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getInstance().read(typeInfo, binaryInput, decodingContext);
             return new PlainObjectRepresentation(typeInfo, string.getPrintedText());
         } else if (result == TO_STRING_CALL_NULL) {
             return new NullObjectRepresentation(typeInfo);
         } else {
-            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().read(typeInfo, binaryInput, decodingContext);
+            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().read(typeInfo, binaryInput, decodingContext);
         }
     }
 
@@ -46,7 +46,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
             if (printed != null) {
                 try (BinaryOutputAppender appender = out.appender()) {
                     appender.append(TO_STRING_CALL_SUCCESS);
-                    ObjectBinaryPrinterType.STRING_PRINTER.getPrinter().write(printed, appender, agentRuntime);
+                    ObjectBinaryPrinterType.STRING_PRINTER.getInstance().write(printed, appender, agentRuntime);
                 }
             } else {
                 try (BinaryOutputAppender appender = out.appender()) {
@@ -56,7 +56,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
         } catch (Throwable e) {
             try (BinaryOutputAppender appender = out.appender()) {
                 appender.append(TO_STRING_CALL_FAIL);
-                ObjectBinaryPrinterType.IDENTITY_PRINTER.getPrinter().write(obj, appender, agentRuntime);
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().write(obj, appender, agentRuntime);
             }
         }
     }

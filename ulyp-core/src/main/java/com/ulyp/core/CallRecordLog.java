@@ -73,7 +73,7 @@ public class CallRecordLog {
                 if (thrown == null) {
                     exitRecords.add(callId, methodId, agentRuntime, false, resultPrinter, returnValue);
                 } else {
-                    exitRecords.add(callId, methodId, agentRuntime, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getPrinter(), thrown);
+                    exitRecords.add(callId, methodId, agentRuntime, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getInstance(), thrown);
                 }
             }
         } finally {

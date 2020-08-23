@@ -23,10 +23,10 @@ public enum ObjectBinaryPrinterType {
 
     static {
         for (ObjectBinaryPrinterType printerType : values()) {
-            if (printers[printerType.getPrinter().getId()] != null) {
+            if (printers[printerType.getInstance().getId()] != null) {
                 throw new RuntimeException("Duplicate id");
             }
-            printers[printerType.getPrinter().getId()] = printerType.getPrinter();
+            printers[printerType.getInstance().getId()] = printerType.getInstance();
         }
     }
 
@@ -34,16 +34,16 @@ public enum ObjectBinaryPrinterType {
         return printers[id];
     }
 
-    private final ObjectBinaryPrinter printer;
+    private final ObjectBinaryPrinter instance;
     private final int order;
 
-    ObjectBinaryPrinterType(ObjectBinaryPrinter printer, int order) {
-        this.printer = printer;
+    ObjectBinaryPrinterType(ObjectBinaryPrinter instance, int order) {
+        this.instance = instance;
         this.order = order;
     }
 
-    public ObjectBinaryPrinter getPrinter() {
-        return printer;
+    public ObjectBinaryPrinter getInstance() {
+        return instance;
     }
 
     public int getOrder() {

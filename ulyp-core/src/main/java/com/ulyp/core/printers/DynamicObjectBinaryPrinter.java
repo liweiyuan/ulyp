@@ -26,6 +26,9 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         ObjectBinaryPrinter printer = typeInfo.getSuggestedPrinter();
+        if (printer.getId() == getId()) {
+            printer = ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance();
+        }
 
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(printer.getId());

@@ -51,7 +51,7 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
             for (int i = 0; i < elementsToWrite; i++) {
                 Object element = array[i];
                 appender.append(agentRuntime.get(element).getId());
-                ObjectBinaryPrinter printer = element != null ? ObjectBinaryPrinterType.DYNAMIC_OBJECT_PRINTER.getPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getPrinter();
+                ObjectBinaryPrinter printer = element != null ? ObjectBinaryPrinterType.DYNAMIC_OBJECT_PRINTER.getInstance() : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
                 appender.append(printer.getId());
                 printer.write(element, appender, agentRuntime);
             }
