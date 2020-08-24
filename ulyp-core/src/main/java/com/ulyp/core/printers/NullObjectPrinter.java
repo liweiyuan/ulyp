@@ -19,12 +19,12 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     @Override
     public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
-        binaryInput.readLong();
+        binaryInput.readBoolean();
         return new NullObjectRepresentation(typeInfo);
     }
 
     @Override
     public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(0);
+        out.writeBool(false);
     }
 }

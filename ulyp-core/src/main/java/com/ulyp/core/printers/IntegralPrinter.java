@@ -25,6 +25,6 @@ public class IntegralPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         Number number = (Number) obj;
-        out.write(number.longValue());
+        out.writeLong(number.longValue());
     }
 }

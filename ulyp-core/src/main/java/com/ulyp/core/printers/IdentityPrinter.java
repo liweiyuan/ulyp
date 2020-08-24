@@ -18,12 +18,12 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long identityHashCode = binaryInput.readLong();
+        int identityHashCode = binaryInput.readInt();
         return new IdentityObjectRepresentation(typeInfo, identityHashCode);
     }
 
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(System.identityHashCode(obj));
+        out.writeInt(System.identityHashCode(obj));
     }
 }

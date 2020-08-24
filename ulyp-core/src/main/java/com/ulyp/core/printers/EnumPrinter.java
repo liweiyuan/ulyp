@@ -16,6 +16,6 @@ public class EnumPrinter extends ObjectBinaryPrinter {
 
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(((Enum<?>) obj).name());
+        out.writeString(((Enum<?>) obj).name());
     }
 }

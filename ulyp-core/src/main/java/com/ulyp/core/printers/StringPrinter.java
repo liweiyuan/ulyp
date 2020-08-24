@@ -32,6 +32,6 @@ public class StringPrinter extends ObjectBinaryPrinter {
         } else {
             printed = text;
         }
-        out.write(printed);
+        out.writeString(printed);
     }
 }

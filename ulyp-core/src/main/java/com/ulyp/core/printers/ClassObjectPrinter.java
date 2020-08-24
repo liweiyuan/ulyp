@@ -18,12 +18,12 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long typeId = binaryInput.readLong();
+        long typeId = binaryInput.readInt();
         return new PlainObjectRepresentation(typeInfo, "Class{" + decodingContext.getType(typeId).getName() + "}");
     }
 
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(typeInfo.getId());
+        out.writeInt(typeInfo.getId());
     }
 }

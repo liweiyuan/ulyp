@@ -21,7 +21,7 @@ public class CollectionSizeOnlyPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long size = binaryInput.readLong();
+        long size = binaryInput.readInt();
         if (size == 0) {
             return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{}");
         } else {
@@ -32,6 +32,6 @@ public class CollectionSizeOnlyPrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         Collection<?> collection = (Collection<?>) obj;
-        out.write(collection.size());
+        out.writeInt(collection.size());
     }
 }

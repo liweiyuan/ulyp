@@ -2,15 +2,15 @@ package com.ulyp.core.printers;
 
 public class IdentityObjectRepresentation extends ObjectRepresentation {
 
-    private final long hashCode;
+    private final int hashCode;
 
-    public IdentityObjectRepresentation(TypeInfo typeInfo, long hashCode) {
+    public IdentityObjectRepresentation(TypeInfo typeInfo, int hashCode) {
         super(typeInfo);
         this.hashCode = hashCode;
     }
 
     @Override
     public String print() {
-        return this.getType().getSimpleName() + "@" + Long.toHexString(hashCode);
+        return this.getType().getSimpleName() + "@" + Integer.toHexString(hashCode);
     }
 }

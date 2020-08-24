@@ -23,6 +23,6 @@ public class AnyNumbersPrinter extends ObjectBinaryPrinter {
 
     @Override
     public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(obj.toString());
+        out.writeString(obj.toString());
     }
 }
