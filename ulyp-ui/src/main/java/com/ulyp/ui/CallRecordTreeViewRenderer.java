@@ -28,8 +28,6 @@ public class CallRecordTreeViewRenderer {
 
         text.addAll(renderReturnValue(node));
 
-        text.add(text().text(" : ").style("ulyp-ctt-sep").build());
-
         text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
@@ -44,15 +42,14 @@ public class CallRecordTreeViewRenderer {
     }
 
     private static List<Node> renderReturnValue(CallRecord node) {
-        if (node.isVoidMethod() && !node.hasThrown()) {
-            return Collections.singletonList(text().text("void").style("ulyp-ctt-sep").build());
-        } else {
-
+        if (!node.isVoidMethod() || node.hasThrown()) {
             RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get();
             if (node.hasThrown()) {
                 renderedObject = new WithStylesPane<>(renderedObject, "ulyp-ctt-thrown").get();
             }
-            return Collections.singletonList(renderedObject);
+            return Arrays.asList(renderedObject, text().text(" : ").style("ulyp-ctt-sep").build());
+        } else {
+            return Collections.emptyList();
         }
     }
 
