@@ -34,11 +34,11 @@ public class CallRecordTreeTab extends Tab {
         ScrollPane scrollPane = new ScrollPane(view);
         scrollPane.prefHeightProperty().bind(treesTabs.heightProperty());
         scrollPane.prefWidthProperty().bind(treesTabs.widthProperty());
-        setText(tree.getRoot().getMethodName() + "(" + tree.getId() + ", life=" + tree.getLifetime().toMillis() + "ms, nodes=" + tree.getRoot().getSubtreeNodeCount() + ")");
+
+        setText(tree.getTabName());
         setContent(scrollPane);
         setOnClosed(ev -> dispose());
-
-        setTooltip(new Tooltip("Thread: " + "12312312"));
+        setTooltip(tree.getTooltip());
     }
 
     public void markHasSearchResults() {

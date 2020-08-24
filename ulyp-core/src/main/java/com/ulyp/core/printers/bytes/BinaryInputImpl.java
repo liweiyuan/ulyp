@@ -13,8 +13,23 @@ public class BinaryInputImpl implements BinaryInput {
 
     @Override
     public boolean readBoolean() {
-        long val = readLong();
+        // TODO maybe optimize
+        long val = readInt();
         return val == 1;
+    }
+
+    @Override
+    public byte readByte() {
+        byte val = buffer.getByte(bytePos);
+        bytePos += Byte.BYTES;
+        return val;
+    }
+
+    @Override
+    public int readInt() {
+        int val = buffer.getInt(bytePos);
+        bytePos += Integer.BYTES;
+        return val;
     }
 
     @Override
@@ -26,10 +41,10 @@ public class BinaryInputImpl implements BinaryInput {
 
     @Override
     public StringView readStringView() {
-        long length = readLong();
+        int length = readInt();
         if (length >= 0) {
             StringView view = new StringView();
-            view.wrap(buffer, bytePos, (int) length);
+            view.wrap(buffer, bytePos,  length);
             bytePos += length;
             return view;
         } else {

@@ -42,8 +42,8 @@ public class AbstractInstrumentationTest {
         return new CallRecordTreeDao(
                 new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                new MethodDescriptionList(request.getMethodDescriptionList().getData()),
-                new ClassDescriptionList(request.getClassDescriptionList().getData()),
+                new MethodInfoList(request.getMethodDescriptionList().getData()),
+                request.getDescriptionList(),
                 database
         ).get();
     }

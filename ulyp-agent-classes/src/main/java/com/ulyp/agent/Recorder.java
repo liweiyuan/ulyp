@@ -3,11 +3,13 @@ package com.ulyp.agent;
 import com.ulyp.agent.log.AgentLogManager;
 import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.UiSettings;
+import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
 @ThreadSafe
@@ -16,6 +18,15 @@ public class Recorder {
     private static final Logger logger = AgentLogManager.getLogger(Recorder.class);
 
     private static final Recorder instance = new Recorder(AgentContext.getInstance());
+
+    /**
+     * Keeps current recording session count. Based on the fact that most of the time there is no
+     * recording sessions and this counter is equal to 0, it's possible to make a small performance optimization.
+     * Advice code (see RecordingAdvice class) can first check if there are any recording sessions are active at all. If there are any,
+     * then advice code will check thread local and know if there is recording session in this thread precisely.
+     * This helps minimizing thread local lookups in the advice code
+     */
+    public static final AtomicInteger currentRecordingSessionCount = new AtomicInteger();
 
     public static Recorder getInstance() {
         return instance;
@@ -39,7 +50,7 @@ public class Recorder {
         return threadLocalRecordsLog.get() != null;
     }
 
-    public void startOrContinueRecording(AgentRuntime agentRuntime, MethodDescription methodDescription, Object callee, Object[] args) {
+    public void startOrContinueRecording(AgentRuntime agentRuntime, MethodInfo methodInfo, Object callee, Object[] args) {
         if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
             return;
         }
@@ -50,29 +61,39 @@ public class Recorder {
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                logger.trace("Create new {}, method {}, args {}", log, methodDescription, args);
+                logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
             }
+            currentRecordingSessionCount.incrementAndGet();
             return log;
         });
-        onMethodEnter(methodDescription, callee, args);
+        onMethodEnter(methodInfo, callee, args);
     }
 
-    public void endRecordingIfPossible(MethodDescription methodDescription, Object result, Throwable thrown) {
+    public void endRecordingIfPossible(AgentRuntime agentRuntime, MethodInfo methodInfo, Object result, Throwable thrown) {
         CallRecordLog recordLog = threadLocalRecordsLog.get();
-        onMethodExit(methodDescription, result, thrown);
+        onMethodExit(methodInfo, result, thrown);
 
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
+            currentRecordingSessionCount.decrementAndGet();
+
             if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
                 if (LoggingSettings.IS_TRACE_TURNED_ON) {
                     logger.trace("Will send trace log {}", recordLog);
                 }
-                context.getTransport().uploadAsync(recordLog, MethodDescriptionDictionary.getInstance(), context.getProcessInfo());
+                context.getTransport().uploadAsync(
+                        new CallRecordTreeRequest(
+                                recordLog,
+                                MethodDescriptionMap.getInstance().values(),
+                                agentRuntime.getAllKnownTypes(),
+                                context.getProcessInfo()
+                        )
+                );
             }
         }
     }
 
-    public void onMethodEnter(MethodDescription method, Object callee, Object[] args) {
+    public void onMethodEnter(MethodInfo method, Object callee, Object[] args) {
         CallRecordLog log = threadLocalRecordsLog.get();
         if (log == null) {
             return;
@@ -83,7 +104,7 @@ public class Recorder {
         log.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
-    public void onMethodExit(MethodDescription method, Object result, Throwable thrown) {
+    public void onMethodExit(MethodInfo method, Object result, Throwable thrown) {
         CallRecordLog log = threadLocalRecordsLog.get();
         if (log == null) return;
 

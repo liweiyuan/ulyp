@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -8,24 +7,24 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class NullObjectPrinter extends ObjectBinaryPrinter {
 
-    protected NullObjectPrinter(int id) {
+    protected NullObjectPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
+    boolean supports(TypeInfo typeInfo) {
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
-        binaryInput.readLong();
-        return NullObject.getInstance();
+        binaryInput.readBoolean();
+        return new NullObjectRepresentation(typeInfo);
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(0);
+    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+        out.writeBool(false);
     }
 }

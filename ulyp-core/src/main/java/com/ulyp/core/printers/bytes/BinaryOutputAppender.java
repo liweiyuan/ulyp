@@ -24,6 +24,11 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
         append(value ? 1 : 0);
     }
 
+    public void append(int value) {
+        tmpBuffer.putInt(bytePos, value);
+        bytePos += Integer.BYTES;
+    }
+
     public void append(long value) {
         tmpBuffer.putLong(bytePos, value);
         bytePos += Long.BYTES;
@@ -60,17 +65,22 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
     }
 
     @Override
-    public void write(boolean val) throws Exception {
+    public void writeBool(boolean val) throws Exception {
         append(val);
     }
 
     @Override
-    public void write(long val) throws Exception {
+    public void writeInt(int val) throws Exception {
         append(val);
     }
 
     @Override
-    public void write(String value) throws Exception {
+    public void writeLong(long val) throws Exception {
+        append(val);
+    }
+
+    @Override
+    public void writeString(String value) throws Exception {
         append(value);
     }
 }

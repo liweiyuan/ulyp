@@ -2,41 +2,41 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.Printers;
-import com.ulyp.core.printers.Type;
+import com.ulyp.core.printers.TypeInfo;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MethodDescription {
+public class MethodInfo {
 
-    private final long id;
+    private final int id;
     private final String methodName;
-    private final Type declaringType;
+    private final TypeInfo declaringTypeInfo;
     private final boolean isStatic;
     private final boolean returnsSomething;
     private final ObjectBinaryPrinter[] paramPrinters;
     private final ObjectBinaryPrinter resultPrinter;
 
-    public MethodDescription(
-            long methodId,
+    public MethodInfo(
+            int methodId,
             String methodName,
             boolean isStatic,
             boolean returnsSomething,
-            List<Type> paramsTypes,
-            Type returnType,
-            Type declaringType)
+            List<TypeInfo> paramsTypeInfos,
+            TypeInfo returnTypeInfo,
+            TypeInfo declaringTypeInfo)
     {
         this.id = methodId;
         this.methodName = methodName;
         this.returnsSomething = returnsSomething;
-        this.declaringType = declaringType;
+        this.declaringTypeInfo = declaringTypeInfo;
         this.isStatic = isStatic;
 
-        this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypes);
-        this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnType);
+        this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypeInfos);
+        this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnTypeInfo);
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -52,8 +52,8 @@ public class MethodDescription {
         return resultPrinter;
     }
 
-    public Type getDeclaringType() {
-        return declaringType;
+    public TypeInfo getDeclaringType() {
+        return declaringTypeInfo;
     }
 
     public String getMethodName() {
@@ -69,7 +69,7 @@ public class MethodDescription {
         return "MethodDescription{" +
                 "id=" + id +
                 ", methodName='" + methodName + '\'' +
-                ", declaringType=" + declaringType +
+                ", declaringType=" + declaringTypeInfo +
                 ", isStatic=" + isStatic +
                 ", returnsSomething=" + returnsSomething +
                 ", paramPrinters=" + Arrays.toString(paramPrinters) +

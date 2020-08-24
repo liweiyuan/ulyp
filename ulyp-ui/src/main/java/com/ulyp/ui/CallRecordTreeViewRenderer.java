@@ -13,6 +13,8 @@ import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CallRecordTreeViewRenderer {
@@ -24,11 +26,7 @@ public class CallRecordTreeViewRenderer {
     public static Node render(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
         List<Node> text = new ArrayList<>();
 
-        if (node.isVoidMethod() && !node.hasThrown()) {
-            text.add(text().text("void").style("ulyp-ctt-sep").build());
-        } else {
-            text.add(new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get());
-        }
+        text.addAll(renderReturnValue(node));
 
         text.add(text().text(" : ").style("ulyp-ctt-sep").build());
 
@@ -43,6 +41,19 @@ public class CallRecordTreeViewRenderer {
         stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Node[0])));
 
         return stack;
+    }
+
+    private static List<Node> renderReturnValue(CallRecord node) {
+        if (node.isVoidMethod() && !node.hasThrown()) {
+            return Collections.singletonList(text().text("void").style("ulyp-ctt-sep").build());
+        } else {
+
+            RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get();
+            if (node.hasThrown()) {
+                renderedObject = new WithStylesPane<>(renderedObject, "ulyp-ctt-thrown").get();
+            }
+            return Collections.singletonList(renderedObject);
+        }
     }
 
     private static List<Node> renderArguments(CallRecord node, RenderSettings renderSettings) {

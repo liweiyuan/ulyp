@@ -1,7 +1,5 @@
 package com.perf.agent.benchmarks;
 
-import org.HdrHistogram.Histogram;
-
 public class RequestMemoryRunResult {
 
     private final Class<?> benchmarkClazz;

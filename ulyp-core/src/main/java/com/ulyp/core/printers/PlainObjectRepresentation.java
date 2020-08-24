@@ -1,16 +1,14 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
-
 /**
  * Plain object representation which can only printed. Usually should not be used (clarify)
  */
-public class PlainObject extends ObjectRepresentation {
+public class PlainObjectRepresentation extends ObjectRepresentation {
 
     private final String text;
 
-    protected PlainObject(ClassDescription type, String text) {
-        super(type);
+    protected PlainObjectRepresentation(TypeInfo typeInfo, String text) {
+        super(typeInfo);
 
         this.text = text;
     }

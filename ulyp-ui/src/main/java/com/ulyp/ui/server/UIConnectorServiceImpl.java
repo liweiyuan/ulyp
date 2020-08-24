@@ -18,15 +18,15 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
 
     @Override
     public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
-        viewController.onCallRecordTreeUploaded(request);
+        viewController.processRequest(request);
 
         responseObserver.onNext(TCallRecordLogUploadResponse.newBuilder().build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void requestSettings(SettingsRequest request, StreamObserver<SettingsResponse> responseObserver) {
-        SettingsResponse.Builder response = SettingsResponse.newBuilder();
+    public void requestSettings(SettingsRequest request, StreamObserver<Settings> responseObserver) {
+        Settings.Builder response = Settings.newBuilder();
         response.setMayStartRecording(viewController.getFxTracingSwitch().isSelected());
 
         response.addAllInstrumentedPackages(

@@ -1,6 +1,6 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 
 /**
  * Only used when UI is disabled explicitly. Users will probably never disable UI, mostly this is used
@@ -8,14 +8,14 @@ import com.ulyp.transport.SettingsResponse;
  */
 public class DisconnectedUiAddress implements UiAddress {
 
-    private final SettingsResponse settingsResponse;
+    private final Settings settings;
 
-    public DisconnectedUiAddress(SettingsResponse settingsResponse) {
-        this.settingsResponse = settingsResponse;
+    public DisconnectedUiAddress(Settings settings) {
+        this.settings = settings;
     }
 
     @Override
     public UiTransport buildTransport() {
-        return new DisconnectedUiTransport(settingsResponse);
+        return new DisconnectedUiTransport(settings);
     }
 }

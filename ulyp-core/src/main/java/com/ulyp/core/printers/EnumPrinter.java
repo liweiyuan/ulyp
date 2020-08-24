@@ -5,17 +5,17 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class EnumPrinter extends ObjectBinaryPrinter {
 
-    protected EnumPrinter(int id) {
+    protected EnumPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
-        return type.isEnum();
+    boolean supports(TypeInfo typeInfo) {
+        return typeInfo.isEnum();
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.write(((Enum<?>) obj).name());
+    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+        out.writeString(((Enum<?>) obj).name());
     }
 }

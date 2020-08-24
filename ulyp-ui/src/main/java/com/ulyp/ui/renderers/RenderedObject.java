@@ -1,32 +1,28 @@
 package com.ulyp.ui.renderers;
 
-import com.ulyp.core.ClassDescription;
-import com.ulyp.core.printers.NullObject;
-import com.ulyp.core.printers.NumberObject;
-import com.ulyp.core.printers.ObjectRepresentation;
-import com.ulyp.core.printers.StringObject;
+import com.ulyp.core.printers.*;
 import javafx.scene.text.TextFlow;
 
 public abstract class RenderedObject extends TextFlow {
 
-    private final ClassDescription type;
+    private final TypeInfo typeInfo;
 
-    protected RenderedObject(ClassDescription type) {
-        this.type = type;
+    protected RenderedObject(TypeInfo typeInfo) {
+        this.typeInfo = typeInfo;
     }
 
     public static RenderedObject of(ObjectRepresentation repr) {
         RenderedObject objectValue;
 
-        if (repr instanceof StringObject) {
+        if (repr instanceof StringObjectRepresentation) {
 
-            objectValue = new RenderedStringObject((StringObject) repr, repr.getType());
-        } else if (repr instanceof NullObject) {
+            objectValue = new RenderedStringObject((StringObjectRepresentation) repr, repr.getType());
+        } else if (repr instanceof NullObjectRepresentation) {
 
             objectValue = new RenderedNull();
-        } else if (repr instanceof NumberObject) {
+        } else if (repr instanceof NumberObjectRepresentation) {
 
-            objectValue = new RenderedNumber((NumberObject) repr, repr.getType());
+            objectValue = new RenderedNumber((NumberObjectRepresentation) repr, repr.getType());
         } else {
 
             objectValue = new RenderedPlainObject(repr, repr.getType());

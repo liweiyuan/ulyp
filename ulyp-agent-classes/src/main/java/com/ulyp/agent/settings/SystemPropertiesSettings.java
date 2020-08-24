@@ -1,10 +1,10 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.transport.*;
-import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.CommaSeparatedList;
+import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,12 +24,27 @@ public class SystemPropertiesSettings implements AgentSettings {
         UiAddress uiAddress;
         boolean uiEnabled = Boolean.parseBoolean(System.getProperty(UI_ENABLED, "true"));
         if (uiEnabled) {
-            String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUiTransport.DEFAULT_ADDRESS.hostName);
-            int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUiTransport.DEFAULT_ADDRESS.port)));
-            uiAddress = new GrpcUiAddress(uiHost, uiPort);
+            // TODO make url
+            String file = System.getProperty("ulyp.file");
+            if (file != null) {
+                uiAddress = new FileUiAddress(
+                        Settings.newBuilder()
+                                .addAllInstrumentedPackages(instrumentationPackages)
+                                .addAllExcludedFromInstrumentationPackages(excludedPackages)
+                                .addAllMethodsToRecord(recordingStartMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
+                                .setMayStartRecording(true)
+                                .setRecordCollectionsItems(false)
+                                .build(),
+                        file
+                );
+            } else {
+                String uiHost = System.getProperty(UI_HOST_PROPERTY, GrpcUiTransport.DEFAULT_ADDRESS.hostName);
+                int uiPort = Integer.parseInt(System.getProperty(UI_PORT_PROPERTY, String.valueOf(GrpcUiTransport.DEFAULT_ADDRESS.port)));
+                uiAddress = new GrpcUiAddress(uiHost, uiPort);
+            }
         } else {
             uiAddress = new DisconnectedUiAddress(
-                    SettingsResponse.newBuilder()
+                    Settings.newBuilder()
                             .addAllInstrumentedPackages(instrumentationPackages)
                             .addAllExcludedFromInstrumentationPackages(excludedPackages)
                             .addAllMethodsToRecord(recordingStartMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))

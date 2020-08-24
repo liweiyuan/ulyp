@@ -4,9 +4,11 @@ public interface BinaryOutput {
 
     BinaryOutputAppender appender();
 
-    void write(boolean val) throws Exception;
+    void writeBool(boolean val) throws Exception;
 
-    void write(long val) throws Exception;
+    void writeInt(int val) throws Exception;
 
-    void write(final String value) throws Exception;
+    void writeLong(long val) throws Exception;
+
+    void writeString(final String value) throws Exception;
 }

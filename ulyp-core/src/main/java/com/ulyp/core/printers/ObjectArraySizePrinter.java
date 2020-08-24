@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -8,29 +7,29 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class ObjectArraySizePrinter extends ObjectBinaryPrinter {
 
-    protected ObjectArraySizePrinter(int id) {
+    protected ObjectArraySizePrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
+    boolean supports(TypeInfo typeInfo) {
         // used manually
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long itemsCount = binaryInput.readLong();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+        int itemsCount = binaryInput.readInt();
         if (itemsCount > 0) {
-            return new PlainObject(classDescription, classDescription.getSimpleName() + "[" + itemsCount + " items ]");
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "[" + itemsCount + " items ]");
         } else {
-            return new PlainObject(classDescription, classDescription.getSimpleName());
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName());
         }
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         Object[] array = (Object[]) obj;
-        out.write(array.length);
+        out.writeInt(array.length);
     }
 }

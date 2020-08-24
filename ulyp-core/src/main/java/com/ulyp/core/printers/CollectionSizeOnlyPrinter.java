@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.ClassDescription;
 import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
@@ -10,29 +9,29 @@ import java.util.Collection;
 
 public class CollectionSizeOnlyPrinter extends ObjectBinaryPrinter {
 
-    protected CollectionSizeOnlyPrinter(int id) {
+    protected CollectionSizeOnlyPrinter(byte id) {
         super(id);
     }
 
     @Override
-    boolean supports(Type type) {
+    boolean supports(TypeInfo typeInfo) {
         // used manually
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(ClassDescription classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long size = binaryInput.readLong();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
+        long size = binaryInput.readInt();
         if (size == 0) {
-            return new PlainObject(classDescription, classDescription.getSimpleName() + "{}");
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{}");
         } else {
-            return new PlainObject(classDescription, classDescription.getSimpleName() + "{" + size + "}");
+            return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{" + size + "}");
         }
     }
 
     @Override
-    public void write(Object obj, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         Collection<?> collection = (Collection<?>) obj;
-        out.write(collection.size());
+        out.writeInt(collection.size());
     }
 }

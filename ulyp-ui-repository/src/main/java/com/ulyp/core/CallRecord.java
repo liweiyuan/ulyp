@@ -2,7 +2,7 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.transport.BooleanType;
-import com.ulyp.transport.TMethodDescriptionDecoder;
+import com.ulyp.transport.TMethodInfoDecoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CallRecord {
             List<ObjectRepresentation> args,
             ObjectRepresentation returnValue,
             boolean thrown,
-            TMethodDescriptionDecoder methodDescription,
+            TMethodInfoDecoder methodDescription,
             List<CallRecord> children)
     {
         this.callee = callee;
@@ -42,7 +42,7 @@ public class CallRecord {
         this.thrown = thrown;
         int originalLimit = methodDescription.limit();
 
-        TMethodDescriptionDecoder.ParameterNamesDecoder paramNamesDecoder = methodDescription.parameterNames();
+        TMethodInfoDecoder.ParameterNamesDecoder paramNamesDecoder = methodDescription.parameterNames();
         this.parameterNames = new ArrayList<>();
         while (paramNamesDecoder.hasNext()) {
             this.parameterNames.add(paramNamesDecoder.next().value());

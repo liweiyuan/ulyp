@@ -1,38 +1,35 @@
 package com.ulyp.agent.transport;
 
-import com.ulyp.core.CallRecordLog;
-import com.ulyp.core.MethodDescriptionDictionary;
-import com.ulyp.core.process.ProcessInfo;
-import com.ulyp.core.util.MethodMatcher;
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Used
  */
 public class DisconnectedUiTransport implements UiTransport {
 
-    private final SettingsResponse settings;
+    private final Settings settings;
 
-    public DisconnectedUiTransport(SettingsResponse settingsResponse) {
+    public DisconnectedUiTransport(Settings settingsResponse) {
         this.settings = settingsResponse;
     }
 
     @Override
-    public SettingsResponse getSettingsBlocking(Duration duration) {
+    public Settings getSettingsBlocking(Duration duration) {
         return settings;
     }
 
     @Override
-    public void uploadAsync(CallRecordLog recordLog, MethodDescriptionDictionary methodDescriptionDictionary, ProcessInfo processInfo) {
+    public void uploadAsync(CallRecordTreeRequest request) {
         // NOP
+        System.out.println("Won't send " + request.getRecordLog().size() + " records");
     }
 
     @Override
     public void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {
+
         // NOP
     }
 }

@@ -3,7 +3,7 @@ package com.perf.agent.benchmarks;
 import com.perf.agent.benchmarks.proc.BenchmarkEnv;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.SettingsResponse;
+import com.ulyp.transport.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -46,8 +46,8 @@ public class BenchmarkProfile {
      * Only will be called if this has {@link BenchmarkProfile#uiEnabled} set to true
      * @return settings to send to subprocess back as a response to settings request
      */
-    public SettingsResponse getSettingsFromUi() {
-        SettingsResponse.Builder builder = SettingsResponse
+    public Settings getSettingsFromUi() {
+        Settings.Builder builder = Settings
                 .newBuilder()
                 .setMayStartRecording(true)
                 .setRecordCollectionsItems(false)
