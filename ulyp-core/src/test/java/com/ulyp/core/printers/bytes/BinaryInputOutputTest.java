@@ -11,12 +11,6 @@ public class BinaryInputOutputTest {
     private final UnsafeBuffer buffer = new UnsafeBuffer(new byte[16 * 1024]);
 
     private final BinaryOutput binaryOutput = new AbstractBinaryOutput() {
-
-        @Override
-        public void write(byte[] bytes) {
-
-        }
-
         @Override
         public void write(UnsafeBuffer unsafeBuffer, int length) {
             buffer.putBytes(0, unsafeBuffer, 0, length);

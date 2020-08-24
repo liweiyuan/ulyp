@@ -35,7 +35,5 @@ public abstract class AbstractBinaryOutput implements BinaryOutput {
         }
     }
 
-    public abstract void write(final byte[] bytes);
-
     public abstract void write(final UnsafeBuffer unsafeBuffer, int length);
 }
