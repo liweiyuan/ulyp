@@ -2,8 +2,8 @@ package com.ulyp.agent.util;
 
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.Printers;
-import com.ulyp.core.printers.TypeTrait;
 import com.ulyp.core.printers.TypeInfo;
+import com.ulyp.core.printers.TypeTrait;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 
@@ -11,7 +11,6 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class ByteBuddyTypeInfo implements TypeInfo {
 
@@ -68,6 +67,11 @@ public class ByteBuddyTypeInfo implements TypeInfo {
 
     private Set<TypeTrait> derive(TypeDescription.Generic type) {
         Set<TypeTrait> traits = EnumSet.noneOf(TypeTrait.class);
+        TypeDefinition.Sort sort = type.getSort();
+        if (sort == TypeDefinition.Sort.VARIABLE || sort == TypeDefinition.Sort.VARIABLE_SYMBOLIC || sort == TypeDefinition.Sort.WILDCARD) {
+            traits.add(TypeTrait.TYPE_VAR);
+        }
+
         if (type.equals(TypeDescription.Generic.OBJECT)) {
             traits.add(TypeTrait.JAVA_LANG_OBJECT);
         } else if (type.equals(BYTE_BUDDY_STRING_TYPE)) {
@@ -97,15 +101,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
             traits.add(TypeTrait.INTERFACE);
         } else if (type.equals(TypeDescription.Generic.CLASS)) {
             traits.add(TypeTrait.CLASS_OBJECT);
-        } else {
-            TypeDefinition.Sort sort = type.getSort();
-            if (sort == TypeDefinition.Sort.VARIABLE || sort == TypeDefinition.Sort.VARIABLE_SYMBOLIC || sort == TypeDefinition.Sort.WILDCARD) {
-                traits.add(TypeTrait.TYPE_VAR);
-            } else {
-                traits.add(TypeTrait.UNKNOWN);
-            }
         }
-
         return traits;
     }
 
