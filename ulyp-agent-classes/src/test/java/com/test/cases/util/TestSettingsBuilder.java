@@ -7,7 +7,6 @@ public class TestSettingsBuilder {
 
     public String hostName;
     public int port;
-    // TODO matcher
     private Class<?> mainClassName;
     private MethodMatcher methodToRecord;
     private boolean uiEnabled = true;
