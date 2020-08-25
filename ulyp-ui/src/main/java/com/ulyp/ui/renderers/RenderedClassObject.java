@@ -1,11 +1,13 @@
 package com.ulyp.ui.renderers;
 
-import com.ulyp.core.printers.TypeInfo;
+import com.ulyp.core.printers.ClassObjectRepresentation;
+import javafx.scene.text.Text;
 
 public class RenderedClassObject extends RenderedObject {
-    public RenderedClassObject(TypeInfo typeInfo) {
-        super(typeInfo);
+    public RenderedClassObject(ClassObjectRepresentation classObject) {
+        super(classObject.getType());
+
+        Text text = new MultilinedText("class " + classObject.getCarriedType().getName());
+        super.getChildren().add(text);
     }
-
-
 }
