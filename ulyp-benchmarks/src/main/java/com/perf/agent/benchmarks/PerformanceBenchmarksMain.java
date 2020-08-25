@@ -23,7 +23,6 @@ public class PerformanceBenchmarksMain {
 
         runResults.addAll(runBench(H2MemDatabaseBenchmark.class));
         runResults.addAll(runBench(SpringHibernateSmallBenchmark.class));
-//        runResults.addAll(runBench(SpringHibernateMediumBenchmark.class));
 
         for (PerformanceRunResult runResult : runResults) {
             runResult.print();

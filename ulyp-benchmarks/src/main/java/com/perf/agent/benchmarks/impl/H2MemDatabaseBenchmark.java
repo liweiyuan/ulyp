@@ -84,8 +84,6 @@ public class H2MemDatabaseBenchmark implements Benchmark {
     public static void main(String[] args) throws Exception {
         long start = System.currentTimeMillis();
 
-        Thread.sleep(500 * 1000);
-
         H2MemDatabaseBenchmark benchmark = new H2MemDatabaseBenchmark();
         benchmark.setUp();
         benchmark.run();
