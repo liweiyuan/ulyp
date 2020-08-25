@@ -23,6 +23,9 @@ public abstract class RenderedObject extends TextFlow {
         } else if (repr instanceof NumberObjectRepresentation) {
 
             objectValue = new RenderedNumber((NumberObjectRepresentation) repr, repr.getType());
+        } else if (repr instanceof ClassObjectRepresentation) {
+
+            objectValue = new RenderedClassObject(repr.getType());
         } else {
 
             objectValue = new RenderedPlainObject(repr, repr.getType());

@@ -19,6 +19,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
     private static final Set<TypeDescription.Generic> PRIMITIVE_INTEGRAL_TYPES = new HashSet<>();
     private static final Set<TypeDescription.Generic> BOXED_INTEGRAL_TYPES = new HashSet<>();
     private static final Set<TypeDescription.Generic> PRIMITIVE_DOUBLE_TYPES = new HashSet<>();
+    private static final TypeDescription CLASS_OBJECT_ERASED = TypeDescription.Generic.CLASS.asErasure();
 
     private static final AtomicInteger classDescriptionId = new AtomicInteger(0);
 
@@ -99,7 +100,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
             traits.add(TypeTrait.ENUM);
         } else if (type.isInterface()) {
             traits.add(TypeTrait.INTERFACE);
-        } else if (type.equals(TypeDescription.Generic.CLASS)) {
+        } else if (type.asErasure().equals(CLASS_OBJECT_ERASED)) {
             traits.add(TypeTrait.CLASS_OBJECT);
         }
         return traits;

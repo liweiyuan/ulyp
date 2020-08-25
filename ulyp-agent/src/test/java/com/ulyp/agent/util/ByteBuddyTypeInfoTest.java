@@ -1,6 +1,8 @@
 package com.ulyp.agent.util;
 
 import com.ulyp.core.printers.TypeTrait;
+import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -60,8 +62,25 @@ public class ByteBuddyTypeInfoTest {
 
     }
 
+    public static void takeClass(Class<?> x) {
+
+    }
+
     @Test
-    public void testTypeTraits() {
+    public void testClassTypeTraits() throws NoSuchMethodException {
+        MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod method = new MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod(
+                this.getClass().getDeclaredMethod("takeClass", Class.class)
+        );
+
+        TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
+
+        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+
+        assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.CLASS_OBJECT));
+    }
+
+    @Test
+    public void testNumberTypeTraits() {
 
         assertThat(new ByteBuddyTypeInfo(Integer.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
 
