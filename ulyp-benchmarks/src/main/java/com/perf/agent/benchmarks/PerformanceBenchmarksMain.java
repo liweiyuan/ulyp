@@ -37,7 +37,7 @@ public class PerformanceBenchmarksMain {
         for (BenchmarkProfile profile : benchmark.getProfiles()) {
             Histogram procTimeHistogram = emptyHistogram();
             Histogram recordTimeHistogram = emptyHistogram();
-            Histogram recordsCountHistogram = emptyHistogram();
+            Histogram recordsCountHistogram = new Histogram(1, 10_000_000, 2);
 
             for (int i = 0; i < ITERATIONS_PER_PROFILE; i++) {
                 int recordsCount = run(benchmarkClazz, profile, procTimeHistogram, recordTimeHistogram);
