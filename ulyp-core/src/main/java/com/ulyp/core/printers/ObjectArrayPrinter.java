@@ -11,7 +11,7 @@ public class ObjectArrayPrinter extends ObjectBinaryPrinter {
     private static final ObjectBinaryPrinter sizeOnlyPrinter = new ObjectArraySizePrinter((byte) -1);
     private static final ObjectBinaryPrinter debugPrinter = new ObjectArrayDebugPrinter((byte) -1);
 
-    private volatile boolean shouldRecordItems = false;
+    private volatile boolean shouldRecordItems = true;
 
     protected ObjectArrayPrinter(byte id) {
         super(id);
@@ -33,19 +33,19 @@ public class ObjectArrayPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
         boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(recordItems);
             if (recordItems) {
-                debugPrinter.write(obj, appender, agentRuntime);
+                debugPrinter.write(object, objectType, appender, agentRuntime);
             } else {
-                sizeOnlyPrinter.write(obj, appender, agentRuntime);
+                sizeOnlyPrinter.write(object, objectType, appender, agentRuntime);
             }
         }
     }
 
     public void setShouldRecordItems(boolean recordItems) {
-        this.shouldRecordItems = recordItems;
+//        this.shouldRecordItems = recordItems;
     }
 }

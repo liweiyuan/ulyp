@@ -2,7 +2,6 @@ package com.ulyp.agent.util;
 
 import com.ulyp.core.printers.TypeTrait;
 import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -62,14 +61,50 @@ public class ByteBuddyTypeInfoTest {
 
     }
 
-    public static void takeClass(Class<?> x) {
+    public static <T> void takesGenericArray(T[] array) {
+
+    }
+
+    @Test
+    public void testTakesGenericArray() throws NoSuchMethodException {
+        MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod method = new MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod(
+                this.getClass().getDeclaredMethod("takesGenericArray", Object[].class)
+        );
+        TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
+
+
+        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+
+
+        assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.NON_PRIMITIVE_ARRAY));
+    }
+
+    public static void takesObjectArray(Object[] array) {
+
+    }
+
+    @Test
+    public void testTakesObjectArray() throws NoSuchMethodException {
+        MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod method = new MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod(
+                this.getClass().getDeclaredMethod("takesObjectArray", Object[].class)
+        );
+        TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
+
+
+        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+
+
+        assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.NON_PRIMITIVE_ARRAY));
+    }
+
+    public static void takesClass(Class<?> x) {
 
     }
 
     @Test
     public void testClassTypeTraits() throws NoSuchMethodException {
         MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod method = new MethodDescription.ForLoadedMethod.InDefinedShape.ForLoadedMethod(
-                this.getClass().getDeclaredMethod("takeClass", Class.class)
+                this.getClass().getDeclaredMethod("takesClass", Class.class)
         );
 
         TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
@@ -93,19 +128,19 @@ public class ByteBuddyTypeInfoTest {
 
         Assert.assertEquals(
                 new HashSet<String>() {{
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$TestClass");
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$BaseClass");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$TestClass");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$BaseClass");
                 }},
                 type.getSuperClassesNames()
         );
 
         Assert.assertEquals(
                 new HashSet<String>() {{
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I1");
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I2");
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I3");
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I4");
-                    add("com.ulyp.agent.util.ByteBuddyTypeTest$I5");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$I1");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$I2");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$I3");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$I4");
+                    add("com.ulyp.agent.util.ByteBuddyTypeInfoTest$I5");
                 }},
                 type.getInterfacesClassesNames()
         );

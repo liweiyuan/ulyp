@@ -14,6 +14,7 @@ public abstract class RenderedObject extends TextFlow {
     public static RenderedObject of(ObjectRepresentation repr) {
         RenderedObject objectValue;
 
+        // TODO replace with map
         if (repr instanceof StringObjectRepresentation) {
 
             objectValue = new RenderedStringObject((StringObjectRepresentation) repr, repr.getType());
@@ -23,6 +24,9 @@ public abstract class RenderedObject extends TextFlow {
         } else if (repr instanceof NumberObjectRepresentation) {
 
             objectValue = new RenderedNumber((NumberObjectRepresentation) repr, repr.getType());
+        } else if (repr instanceof ObjectArrayRepresentation) {
+
+            objectValue = new RenderedObjectArray((ObjectArrayRepresentation) repr);
         } else if (repr instanceof ClassObjectRepresentation) {
 
             objectValue = new RenderedClassObject((ClassObjectRepresentation) repr);

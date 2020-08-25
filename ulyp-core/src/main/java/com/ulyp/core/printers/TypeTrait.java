@@ -10,7 +10,6 @@ public enum TypeTrait {
     FRACTIONAL,
     PRIMITIVE_ARRAY,
     NON_PRIMITIVE_ARRAY,
-    OBJECT_ARRAY,
     ENUM,
     INTERFACE,
     TYPE_VAR,
