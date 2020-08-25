@@ -1,5 +1,7 @@
-package com.test.cases;
+package com.test.printers;
 
+import com.test.cases.AbstractInstrumentationTest;
+import com.test.cases.SafeCaller;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import org.junit.Test;
@@ -20,7 +22,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         );
 
         assertThat(root.getMethodName(), is("main"));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$MainMethodCase"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$MainMethodCase"));
         assertThat(root.getChildren(), hasSize(1));
     }
 
@@ -48,7 +50,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("asdvdsa2"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));
     }
 
@@ -65,7 +67,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         // TODO use NullRepr
         assertThat(root.getReturnValue().getPrintedText(), is("null"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
     }
 
@@ -81,7 +83,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("124234232"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnIntWithEmptyParams"));
     }
 
@@ -97,7 +99,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), matchesRegex("TestObject@\\d+"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnTestObjectWithEmptyParams"));
     }
 
@@ -113,7 +115,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("RuntimeException: exception message"));
         assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SimpleTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
     }
 
@@ -131,7 +133,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.isVoidMethod(), is(Boolean.TRUE));
         assertThat(root.getSubtreeNodeCount(), is(3));
         assertThat(root.getMethodName(), is("callTwoMethods"));
-        assertThat(root.getClassName(), is("com.test.cases.InstrumentationCodeTest$SeveralMethodsTestCases"));
+        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SeveralMethodsTestCases"));
 
         CallRecord call1 = root.getChildren().get(0);
 
