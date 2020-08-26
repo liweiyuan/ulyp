@@ -88,22 +88,6 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void shouldBeValidForTestObjectReturningMethodWithEmptyArgs() {
-        CallRecord root = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(SimpleTestCases.class)
-                        .setMethodToRecord("returnTestObjectWithEmptyParams")
-        );
-
-        assertThat(root.getChildren(), is(empty()));
-        assertThat(root.getArgTexts(), is(empty()));
-        assertThat(root.getReturnValue().getPrintedText(), matchesRegex("TestObject@\\d+"));
-        assertThat(root.getSubtreeNodeCount(), is(1));
-        assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
-        assertThat(root.getMethodName(), is("returnTestObjectWithEmptyParams"));
-    }
-
-    @Test
     public void shouldBeValidIfMethodThrowsException() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()
@@ -184,17 +168,12 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         public static void main(String[] args) {
             SafeCaller.call(() -> new SimpleTestCases().returnIntWithEmptyParams());
-            SafeCaller.call(() -> new SimpleTestCases().returnTestObjectWithEmptyParams());
             SafeCaller.call(() -> new SimpleTestCases().returnStringWithEmptyParams());
             SafeCaller.call(() -> new SimpleTestCases().returnNullObjectWithEmptyParams());
             SafeCaller.call(() -> new SimpleTestCases().throwsRuntimeException());
             SafeCaller.call(() -> new SimpleTestCases().consumesInt(45324));
             SafeCaller.call(() -> new SimpleTestCases().consumesIntAndString(45324, "asdasd"));
             staticMethod();
-        }
-
-        public SimpleTestCases.TestObject returnTestObjectWithEmptyParams() {
-            return new SimpleTestCases.TestObject();
         }
 
         public String returnStringWithEmptyParams() {

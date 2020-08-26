@@ -9,6 +9,10 @@ public class IdentityObjectRepresentation extends ObjectRepresentation {
         this.hashCode = hashCode;
     }
 
+    public int getHashCode() {
+        return hashCode;
+    }
+
     @Override
     public String print() {
         return this.getType().getSimpleName() + "@" + Integer.toHexString(hashCode);
