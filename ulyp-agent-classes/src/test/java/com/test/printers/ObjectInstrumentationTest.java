@@ -39,19 +39,6 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void shouldCallToStringIfPossible() {
-        CallRecord root = runSubprocessWithUi(
-                new TestSettingsBuilder()
-                        .setMainClassName(ObjectTestCases.class)
-                        .setMethodToRecord("acceptsTwoObjects3")
-        );
-
-        assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("X@.+"));
-        assertThat(root.getArgs().get(1).getPrintedText(), is("Y{}"));
-    }
-
-    @Test
     public void shouldPrintNullArguments() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()
