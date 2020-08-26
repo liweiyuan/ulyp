@@ -80,7 +80,7 @@ public class ObjectArrayInstrumentationTest extends AbstractInstrumentationTest 
         assertEquals(str1.getPrintedText(), "zx");
 
         StringObjectRepresentation str2 = (StringObjectRepresentation) items.get(2);
-        assertEquals(str2.getPrintedText(), "sdsd`");
+        assertEquals(str2.getPrintedText(), "sdsd");
     }
 
     public static class TakesVariousItemsArray {
