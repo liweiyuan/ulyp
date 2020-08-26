@@ -19,20 +19,20 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         // used manually
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long totalElements = binaryInput.readLong();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
+        long totalElements = input.readLong();
         List<Printable> elements = new ArrayList<>();
-        long writtenElements = binaryInput.readLong();
+        long writtenElements = input.readLong();
         for (int i = 0; i < writtenElements; i++) {
-            TypeInfo itemDescription = decodingContext.getType(binaryInput.readLong());
-            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(binaryInput.readByte());
-            elements.add(printer.read(itemDescription, binaryInput, decodingContext));
+            TypeInfo itemDescription = decodingContext.getType(input.readLong());
+            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(input.readByte());
+            elements.add(printer.read(itemDescription, input, decodingContext));
         }
         int notShownElementsCount = (int) (totalElements - writtenElements);
         return new PlainObjectRepresentation(classDescription, "[" +
@@ -43,9 +43,9 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         try (BinaryOutputAppender appender = out.appender()) {
-            Collection<?> collection = (Collection<?>) obj;
+            Collection<?> collection = (Collection<?>) object;
             int size = collection.size();
 
             appender.append(size);
@@ -55,10 +55,10 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
             appender.append(elementsToWrite);
             while (iterator.hasNext() && count <= elementsToWrite) {
                 Object element = iterator.next();
-                appender.append(agentRuntime.get(element).getId());
+                appender.append(runtime.get(element).getId());
                 ObjectBinaryPrinter printer = element != null ? ObjectBinaryPrinterType.DYNAMIC_OBJECT_PRINTER.getInstance() : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
                 appender.append(printer.getId());
-                printer.write(element, appender, agentRuntime);
+                printer.write(element, appender, runtime);
                 count++;
             }
         }

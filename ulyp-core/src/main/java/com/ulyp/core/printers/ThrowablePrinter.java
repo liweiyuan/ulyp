@@ -12,19 +12,19 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         // TODO maybe implement
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + ": " + binaryInput.readString());
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
+        return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + ": " + input.readString());
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        Throwable t = (Throwable) obj;
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        Throwable t = (Throwable) object;
         out.writeString(t.getMessage());
     }
 }

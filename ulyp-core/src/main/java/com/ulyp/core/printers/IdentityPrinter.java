@@ -12,18 +12,18 @@ public class IdentityPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         return true;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        int identityHashCode = binaryInput.readInt();
-        return new IdentityObjectRepresentation(typeInfo, identityHashCode);
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        int identityHashCode = input.readInt();
+        return new IdentityObjectRepresentation(objectType, identityHashCode);
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.writeInt(System.identityHashCode(obj));
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        out.writeInt(System.identityHashCode(object));
     }
 }

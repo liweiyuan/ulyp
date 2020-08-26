@@ -17,36 +17,36 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        if (typeInfo.isExactlyJavaLangObject()) {
+    boolean supports(TypeInfo type) {
+        if (type.isExactlyJavaLangObject()) {
             return false;
         }
 
-        return typeInfo.hasToStringMethod();
+        return type.hasToStringMethod();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        long result = binaryInput.readLong();
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        long result = input.readLong();
         if (result == TO_STRING_CALL_SUCCESS) {
             // if StringObject representation is returned, then it will look as String literal in UI (green text with double quotes)
-            StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getInstance().read(typeInfo, binaryInput, decodingContext);
-            return new PlainObjectRepresentation(typeInfo, string.getPrintedText());
+            StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getInstance().read(objectType, input, decodingContext);
+            return new PlainObjectRepresentation(objectType, string.getPrintedText());
         } else if (result == TO_STRING_CALL_NULL) {
-            return new NullObjectRepresentation(typeInfo);
+            return new NullObjectRepresentation(objectType);
         } else {
-            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().read(typeInfo, binaryInput, decodingContext);
+            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().read(objectType, input, decodingContext);
         }
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         try {
-            String printed = obj.toString();
+            String printed = object.toString();
             if (printed != null) {
                 try (BinaryOutputAppender appender = out.appender()) {
                     appender.append(TO_STRING_CALL_SUCCESS);
-                    ObjectBinaryPrinterType.STRING_PRINTER.getInstance().write(printed, appender, agentRuntime);
+                    ObjectBinaryPrinterType.STRING_PRINTER.getInstance().write(printed, appender, runtime);
                 }
             } else {
                 try (BinaryOutputAppender appender = out.appender()) {
@@ -56,7 +56,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
         } catch (Throwable e) {
             try (BinaryOutputAppender appender = out.appender()) {
                 appender.append(TO_STRING_CALL_FAIL);
-                ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().write(obj, appender, agentRuntime);
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().write(object, appender, runtime);
             }
         }
     }

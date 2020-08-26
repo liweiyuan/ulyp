@@ -18,29 +18,29 @@ public class ObjectArrayPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isNonPrimitveArray();
+    boolean supports(TypeInfo type) {
+        return type.isNonPrimitveArray();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        boolean recordItems = binaryInput.readBoolean();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
+        boolean recordItems = input.readBoolean();
         if (recordItems) {
-            return debugPrinter.read(classDescription, binaryInput, decodingContext);
+            return debugPrinter.read(classDescription, input, decodingContext);
         } else {
-            return sizeOnlyPrinter.read(classDescription, binaryInput, decodingContext);
+            return sizeOnlyPrinter.read(classDescription, input, decodingContext);
         }
     }
 
     @Override
-    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
         boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(recordItems);
             if (recordItems) {
-                debugPrinter.write(object, objectType, appender, agentRuntime);
+                debugPrinter.write(object, objectType, appender, runtime);
             } else {
-                sizeOnlyPrinter.write(object, objectType, appender, agentRuntime);
+                sizeOnlyPrinter.write(object, objectType, appender, runtime);
             }
         }
     }

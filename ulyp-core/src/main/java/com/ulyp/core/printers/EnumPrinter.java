@@ -10,12 +10,12 @@ public class EnumPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isEnum();
+    boolean supports(TypeInfo type) {
+        return type.isEnum();
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.writeString(((Enum<?>) obj).name());
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        out.writeString(((Enum<?>) object).name());
     }
 }

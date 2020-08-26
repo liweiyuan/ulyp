@@ -13,26 +13,26 @@ public class DynamicObjectBinaryPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isInterface() || typeInfo.isExactlyJavaLangObject() || typeInfo.isTypeVar();
+    boolean supports(TypeInfo type) {
+        return type.isInterface() || type.isExactlyJavaLangObject() || type.isTypeVar();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        byte printerId = binaryInput.readByte();
-        return ObjectBinaryPrinterType.printerForId(printerId).read(typeInfo, binaryInput, decodingContext);
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        byte printerId = input.readByte();
+        return ObjectBinaryPrinterType.printerForId(printerId).read(objectType, input, decodingContext);
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        ObjectBinaryPrinter printer = typeInfo.getSuggestedPrinter();
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        ObjectBinaryPrinter printer = objectType.getSuggestedPrinter();
         if (printer.getId() == getId()) {
             printer = ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance();
         }
 
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(printer.getId());
-            printer.write(obj, appender, agentRuntime);
+            printer.write(object, appender, runtime);
         }
     }
 }

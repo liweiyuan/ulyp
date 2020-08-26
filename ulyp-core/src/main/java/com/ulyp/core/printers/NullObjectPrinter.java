@@ -12,19 +12,19 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
-        binaryInput.readBoolean();
-        return new NullObjectRepresentation(typeInfo);
+        input.readBoolean();
+        return new NullObjectRepresentation(objectType);
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         out.writeBool(false);
     }
 }

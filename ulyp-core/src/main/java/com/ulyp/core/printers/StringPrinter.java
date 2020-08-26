@@ -14,18 +14,18 @@ public class StringPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isExactlyJavaLangString();
+    boolean supports(TypeInfo type) {
+        return type.isExactlyJavaLangString();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new StringObjectRepresentation(typeInfo, binaryInput.readString());
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        return new StringObjectRepresentation(objectType, input.readString());
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        String text = (String) obj;
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        String text = (String) object;
         String printed;
         if (text.length() > MAX_LENGTH) {
             printed = text.substring(0, MAX_LENGTH) + "...(" + text.length() + ")";

@@ -8,7 +8,6 @@ import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
 
@@ -17,20 +16,20 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         // used manually by ObjectArrayPrinter
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo type, BinaryInput binaryInput, DecodingContext decodingContext) {
-        int arrayLength = binaryInput.readInt();
+    public ObjectRepresentation read(TypeInfo type, BinaryInput input, DecodingContext decodingContext) {
+        int arrayLength = input.readInt();
         List<ObjectRepresentation> items = new ArrayList<>();
-        int recordedItemsCount = binaryInput.readInt();
+        int recordedItemsCount = input.readInt();
         for (int i = 0; i < recordedItemsCount; i++) {
-            TypeInfo itemClassTypeInfo = decodingContext.getType(binaryInput.readInt());
-            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(binaryInput.readByte());
-            items.add(printer.read(itemClassTypeInfo, binaryInput, decodingContext));
+            TypeInfo itemClassTypeInfo = decodingContext.getType(input.readInt());
+            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(input.readByte());
+            items.add(printer.read(itemClassTypeInfo, input, decodingContext));
         }
         return new ObjectArrayRepresentation(
                 type,
@@ -40,20 +39,20 @@ public class ObjectArrayDebugPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         try (BinaryOutputAppender appender = out.appender()) {
-            Object[] array = (Object[]) obj;
+            Object[] array = (Object[]) object;
             int length = array.length;
             appender.append(length);
             int itemsToRecord = Math.min(3, length);
             appender.append(itemsToRecord);
             for (int i = 0; i < itemsToRecord; i++) {
                 Object item = array[i];
-                TypeInfo itemType = agentRuntime.get(item);
+                TypeInfo itemType = runtime.get(item);
                 appender.append(itemType.getId());
                 ObjectBinaryPrinter printer = item != null ? itemType.getSuggestedPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
                 appender.append(printer.getId());
-                printer.write(item, itemType, appender, agentRuntime);
+                printer.write(item, itemType, appender, runtime);
             }
         }
     }

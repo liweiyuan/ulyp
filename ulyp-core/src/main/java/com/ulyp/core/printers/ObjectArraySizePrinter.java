@@ -12,14 +12,14 @@ public class ObjectArraySizePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
+    boolean supports(TypeInfo type) {
         // used manually
         return false;
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        int itemsCount = binaryInput.readInt();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
+        int itemsCount = input.readInt();
         if (itemsCount > 0) {
             return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "[" + itemsCount + " items ]");
         } else {
@@ -28,8 +28,8 @@ public class ObjectArraySizePrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        Object[] array = (Object[]) obj;
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        Object[] array = (Object[]) object;
         out.writeInt(array.length);
     }
 }

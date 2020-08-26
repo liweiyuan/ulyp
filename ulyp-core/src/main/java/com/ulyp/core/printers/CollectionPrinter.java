@@ -18,29 +18,29 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isCollection();
+    boolean supports(TypeInfo type) {
+        return type.isCollection();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput binaryInput, DecodingContext decodingContext) {
-        boolean recordItems = binaryInput.readBoolean();
+    public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
+        boolean recordItems = input.readBoolean();
         if (recordItems) {
-            return collectionDebugPrinter.read(classDescription, binaryInput, decodingContext);
+            return collectionDebugPrinter.read(classDescription, input, decodingContext);
         } else {
-            return collectionSizeOnlyPrinter.read(classDescription, binaryInput, decodingContext);
+            return collectionSizeOnlyPrinter.read(classDescription, input, decodingContext);
         }
     }
 
     @Override
-    public void write(Object obj, TypeInfo classDescription, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
+    public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
             appender.append(recordItems);
             if (recordItems) {
-                collectionDebugPrinter.write(obj, appender, agentRuntime);
+                collectionDebugPrinter.write(object, appender, runtime);
             } else {
-                collectionSizeOnlyPrinter.write(obj, appender, agentRuntime);
+                collectionSizeOnlyPrinter.write(object, appender, runtime);
             }
         }
     }

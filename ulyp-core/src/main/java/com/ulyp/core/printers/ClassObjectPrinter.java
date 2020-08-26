@@ -12,20 +12,20 @@ public class ClassObjectPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.isClassObject();
+    boolean supports(TypeInfo type) {
+        return type.isClassObject();
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
 
-        return new ClassObjectRepresentation(typeInfo, decodingContext.getType(binaryInput.readInt()));
+        return new ClassObjectRepresentation(objectType, decodingContext.getType(input.readInt()));
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        Class<?> clazz = (Class<?>) obj;
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        Class<?> clazz = (Class<?>) object;
 
-        out.writeInt(agentRuntime.get(clazz).getId());
+        out.writeInt(runtime.get(clazz).getId());
     }
 }

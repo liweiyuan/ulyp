@@ -12,17 +12,17 @@ public class AnyNumbersPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.getTraits().contains(TypeTrait.NUMBER) || typeInfo.getTraits().contains(TypeTrait.PRIMITIVE);
+    boolean supports(TypeInfo type) {
+        return type.getTraits().contains(TypeTrait.NUMBER) || type.getTraits().contains(TypeTrait.PRIMITIVE);
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new NumberObjectRepresentation(typeInfo, binaryInput.readString());
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        return new NumberObjectRepresentation(objectType, input.readString());
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        out.writeString(obj.toString());
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        out.writeString(object.toString());
     }
 }

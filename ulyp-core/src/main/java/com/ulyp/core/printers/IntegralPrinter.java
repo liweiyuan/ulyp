@@ -13,18 +13,18 @@ public class IntegralPrinter extends ObjectBinaryPrinter {
     }
 
     @Override
-    boolean supports(TypeInfo typeInfo) {
-        return typeInfo.getTraits().contains(TypeTrait.INTEGRAL);
+    boolean supports(TypeInfo type) {
+        return type.getTraits().contains(TypeTrait.INTEGRAL);
     }
 
     @Override
-    public ObjectRepresentation read(TypeInfo typeInfo, BinaryInput binaryInput, DecodingContext decodingContext) {
-        return new NumberObjectRepresentation(typeInfo, String.valueOf(binaryInput.readLong()));
+    public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
+        return new NumberObjectRepresentation(objectType, String.valueOf(input.readLong()));
     }
 
     @Override
-    public void write(Object obj, TypeInfo typeInfo, BinaryOutput out, AgentRuntime agentRuntime) throws Exception {
-        Number number = (Number) obj;
+    public void write(Object object, TypeInfo objectType, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        Number number = (Number) object;
         out.writeLong(number.longValue());
     }
 }
