@@ -10,10 +10,12 @@ import java.util.Map;
 public class CallRecordTreePrimaryView {
 
     private final TabPane processTabPane;
+    private final SourceCodeView sourceCodeView;
     private final Map<String, ProcessTab> processesByMainClass = new HashMap<>();
 
-    public CallRecordTreePrimaryView(TabPane processTabPane) {
+    public CallRecordTreePrimaryView(TabPane processTabPane, SourceCodeView sourceCodeView) {
         this.processTabPane = processTabPane;
+        this.sourceCodeView = sourceCodeView;
     }
 
     public void clear() {
@@ -34,7 +36,7 @@ public class CallRecordTreePrimaryView {
     public ProcessTab getOrCreateProcessTab(String mainClassName) {
         ProcessTab processTab = processesByMainClass.get(mainClassName);
         if (processTab == null) {
-            processesByMainClass.put(mainClassName, processTab = new ProcessTab(processTabPane, mainClassName));
+            processesByMainClass.put(mainClassName, processTab = new ProcessTab(processTabPane, sourceCodeView, mainClassName));
             processTabPane.getTabs().add(processTab);
         }
         return processTab;

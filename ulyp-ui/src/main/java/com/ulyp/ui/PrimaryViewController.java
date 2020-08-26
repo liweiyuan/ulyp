@@ -39,6 +39,8 @@ public class PrimaryViewController implements Initializable {
     public ToggleButton recordSwitchButton;
     @FXML
     public Slider recordPrecisionSlider;
+    @FXML
+    public SourceCodeView sourceCodeView;
 
     Supplier<File> fileChooser;
 
@@ -47,7 +49,7 @@ public class PrimaryViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane);
+        callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane, sourceCodeView);
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {

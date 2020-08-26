@@ -14,6 +14,7 @@ public class CallRecordTreeTab extends Tab {
     @SuppressWarnings("unchecked")
     public CallRecordTreeTab(
             TabPane treesTabs,
+            SourceCodeView sourceCodeView,
             CallRecordTree tree,
             RenderSettings renderSettings)
     {
@@ -27,7 +28,9 @@ public class CallRecordTreeTab extends Tab {
 
         view.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    System.out.println("Selected Text : " + newValue);
+                    CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
+                    String sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
+                    sourceCodeView.setText(sourceCode);
                 }
         );
 
@@ -52,10 +55,6 @@ public class CallRecordTreeTab extends Tab {
     @Nullable
     public CallRecordTreeItem getSelected() {
         return (CallRecordTreeItem) view.getSelectionModel().getSelectedItem();
-    }
-
-    public CallRecordTreeItem getRoot() {
-        return (CallRecordTreeItem) view.getRoot();
     }
 
     public void dispose() {
