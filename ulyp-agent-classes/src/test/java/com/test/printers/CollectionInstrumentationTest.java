@@ -4,6 +4,7 @@ import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.SafeCaller;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class CollectionInstrumentationTest extends AbstractInstrumentationTest {
 
     @Test
