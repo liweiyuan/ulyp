@@ -1,5 +1,6 @@
 package com.test.cases.util;
 
+import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
@@ -36,6 +37,7 @@ public class TestUtil {
             } else {
                 processArgs.add("-D" + SystemPropertiesSettings.UI_ENABLED + "=false");
             }
+//            processArgs.add("-D" + LoggingSettings.LOG_LEVEL_PROPERTY + "=TRACE");
             processArgs.add(settingsBuilder.getMainClassName().getName());
 
             ProcResult result = new ProcBuilder(javaBinary, processArgs.toArray(new String[]{}))

@@ -28,10 +28,6 @@ public class BbTransformer implements Transformer {
             final ClassLoader classLoader,
             final JavaModule module)
     {
-        if (typeDescription.isInterface()) {
-            return builder;
-        }
-
         final AsmVisitorWrapper methodsVisitor =
                 new AsmVisitorWrapper.ForDeclaredMethods()
                         .method(ElementMatchers
