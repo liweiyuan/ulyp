@@ -26,8 +26,21 @@ message SettingsRequest {
 
 }
 
+message TStackTraceElement {
+    string declaringClass = 1;
+    string methodName = 2;
+    string fileName = 3;
+    int32 lineNumber = 4;
+}
+
+message TStackTrace {
+    repeated TStackTraceElement element = 1;
+}
+
 message TCallRecordLog {
     string threadName = 1;
+    TStackTrace stackTrace = 4;
+
     bytes enterRecords = 2;
     bytes exitRecords = 3;
 }

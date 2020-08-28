@@ -5,6 +5,7 @@ import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import org.agrona.collections.IntArrayList;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class CallRecordLog {
@@ -13,14 +14,17 @@ public class CallRecordLog {
     private final long id = idGenerator.incrementAndGet();
 
     private final AgentRuntime agentRuntime;
+
     private final CallEnterRecordList enterRecords = new CallEnterRecordList();
     private final CallExitRecordList exitRecords = new CallExitRecordList();
+
     private final IntArrayList callIdsStack = new IntArrayList();
     private final BooleanArrayList recordEnterCallStack = new BooleanArrayList();
     private final IntArrayList callCountStack = new IntArrayList();
 
     private final long epochMillisCreatedTime;
     private final String threadName;
+    private final StackTraceElement[] stackTrace;
     private final int maxDepth;
     // TODO name?
     private final int maxCallsPerDepth;
@@ -34,6 +38,13 @@ public class CallRecordLog {
         this.maxCallsPerDepth = maxCallsPerDepth;
         this.agentRuntime = agentRuntime;
         callCountStack.addInt(0);
+
+        StackTraceElement[] wholeStackTrace = new Exception().getStackTrace();
+
+        // filter out CallRecordLog.<init>/Recorder.lambda$startOrContinueRecording$2/EnhancedThreadLocal.getOrCreate/Recorder.startOrContinueRecording
+        // from stack trace
+        // If code changed, there should be a readjustement, but don't worry as this is tested
+        this.stackTrace = Arrays.copyOfRange(new Exception().getStackTrace(), 4, wholeStackTrace.length);
         this.threadName = Thread.currentThread().getName();
     }
 
@@ -111,6 +122,10 @@ public class CallRecordLog {
 
     public String getThreadName() {
         return threadName;
+    }
+
+    public StackTraceElement[] getStackTrace() {
+        return stackTrace;
     }
 
     public CallEnterRecordList getEnterRecords() {
