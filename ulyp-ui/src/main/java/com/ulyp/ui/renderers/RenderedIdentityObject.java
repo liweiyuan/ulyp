@@ -13,7 +13,7 @@ public class RenderedIdentityObject extends RenderedObject {
         super.getChildren().addAll(
                 Arrays.asList(
                         StyledText.of(repr.getType().getSimpleName(), "ulyp-ctt-identity"),
-                        StyledText.of("#", "ulyp-ctt-identity"),
+                        StyledText.of("@", "ulyp-ctt-identity"),
                         StyledText.of(Integer.toHexString(repr.getHashCode()), "ulyp-ctt-identity")
                 )
         );
