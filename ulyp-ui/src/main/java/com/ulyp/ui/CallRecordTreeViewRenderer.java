@@ -32,7 +32,7 @@ public class CallRecordTreeViewRenderer {
         text.addAll(renderArguments(node, renderSettings));
 
         Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20);
-        rect.getStyleClass().add("ulyp-asd");
+//        rect.getStyleClass().add("ulyp-asd");
 
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_LEFT);

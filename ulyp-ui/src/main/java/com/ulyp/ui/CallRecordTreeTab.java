@@ -29,8 +29,10 @@ public class CallRecordTreeTab extends Tab {
         view.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
-                    String sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
-                    sourceCodeView.setText(sourceCode);
+                    if (callRecord != null && callRecord.getNode() != null) {
+                        String sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
+                        sourceCodeView.setText(sourceCode);
+                    }
                 }
         );
 
