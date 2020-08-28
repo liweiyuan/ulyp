@@ -2,7 +2,6 @@ package com.ulyp.ui.renderers;
 
 import com.ulyp.core.printers.IdentityObjectRepresentation;
 import com.ulyp.ui.util.StyledText;
-import javafx.scene.text.Text;
 
 import java.util.Arrays;
 
