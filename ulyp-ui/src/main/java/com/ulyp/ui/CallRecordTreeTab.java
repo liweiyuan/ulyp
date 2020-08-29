@@ -1,6 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.ui.code.SourceCodeFinder;
+import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 

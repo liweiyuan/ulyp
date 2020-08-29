@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import com.ulyp.ui.SourceCodeView?>
+<?import com.ulyp.ui.code.SourceCodeView?>
 <?scenebuilder-stylesheet DarkTheme.css?>
 
 <VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ulyp.ui.PrimaryViewController">

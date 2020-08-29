@@ -1,4 +1,4 @@
-package com.ulyp.ui;
+package com.ulyp.ui.code;
 
 import javafx.embed.swing.SwingNode;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
