@@ -23,7 +23,7 @@ public class SourceCodeView extends SwingNode {
 
         Theme theme;
         try {
-            theme = Theme.load(getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml"));
+            theme = Theme.load(getClass().getResourceAsStream("/rsyntax-dark.xml"));
             theme.apply(textArea);
         } catch (IOException e) {
             throw new RuntimeException("Could not load theme", e);

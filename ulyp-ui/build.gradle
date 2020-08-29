@@ -29,6 +29,7 @@ dependencies {
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
+    compile group: 'com.github.javaparser', name: 'javaparser-core', version: '3.16.1'
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
     compile group: 'org.agrona', name: 'agrona', version: '0.9.22'
