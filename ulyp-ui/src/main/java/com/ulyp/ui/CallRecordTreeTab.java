@@ -31,8 +31,7 @@ public class CallRecordTreeTab extends Tab {
                 (observable, oldValue, newValue) -> {
                     CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
                     if (callRecord != null && callRecord.getNode() != null) {
-                        String sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
-                        sourceCodeView.setText(sourceCode);
+                        sourceCodeView.setText(sourceCodeFinder.find(callRecord.getNode().getClassName()));
                     }
                 }
         );

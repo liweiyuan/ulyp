@@ -32,10 +32,10 @@ public class SourceCodeView extends SwingNode {
         setContent(textArea);
     }
 
-    public void setText(String text) {
+    public void setText(SourceCode code) {
         SwingUtilities.invokeLater(
                 () -> {
-                    this.textArea.setText(text);
+                    this.textArea.setText(code.getCode());
                 }
         );
     }
