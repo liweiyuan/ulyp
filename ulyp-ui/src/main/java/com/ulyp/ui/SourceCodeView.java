@@ -5,6 +5,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
@@ -32,6 +33,10 @@ public class SourceCodeView extends SwingNode {
     }
 
     public void setText(String text) {
-        this.textArea.setText(text);
+        SwingUtilities.invokeLater(
+                () -> {
+                    this.textArea.setText(text);
+                }
+        );
     }
 }
