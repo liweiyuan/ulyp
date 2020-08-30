@@ -36,7 +36,7 @@ public class AbstractInstrumentationTest {
 
     @NotNull
     protected CallRecord runSubprocessWithUi(TestSettingsBuilder settings) {
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(settings);
+        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(settings);
 
         CallRecordDatabase database = new HeapCallRecordDatabase();
         return new CallRecordTreeDao(
@@ -49,7 +49,7 @@ public class AbstractInstrumentationTest {
     }
 
     @NotNull
-    protected TCallRecordLogUploadRequest runSubprocessWithUiAndReturnRecordLogRaw(TestSettingsBuilder settings) {
+    protected TCallRecordLogUploadRequest runSubprocessWithUiAndReturnProtoRequest(TestSettingsBuilder settings) {
         int port = TestUtil.pickEmptyPort();
         try (UIServerStub stub = new UIServerStub(settings, port)) {
             TestUtil.runClassInSeparateJavaProcess(settings.setPort(port));

@@ -1,6 +1,8 @@
 package com.ulyp.ui;
 
+import com.ulyp.ui.code.SourceCode;
 import com.ulyp.ui.code.SourceCodeFinder;
+import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
@@ -29,8 +31,10 @@ public class CallRecordTreeTab extends Tab {
         view.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
-                    String sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
-                    sourceCodeView.setText(sourceCode);
+                    if (callRecord != null && callRecord.getNode() != null) {
+                        SourceCode sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
+                        sourceCodeView.setText(sourceCode, callRecord.getNode().getMethodName());
+                    }
                 }
         );
 

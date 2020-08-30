@@ -2,9 +2,7 @@ package com.ulyp.ui;
 
 import com.ulyp.core.*;
 import com.ulyp.core.impl.HeapCallRecordDatabase;
-import com.ulyp.transport.ProcessInfo;
-import com.ulyp.transport.TCallRecordLog;
-import com.ulyp.transport.TCallRecordLogUploadRequest;
+import com.ulyp.transport.*;
 import javafx.scene.control.Tooltip;
 
 import java.sql.Timestamp;
@@ -21,6 +19,7 @@ public class CallRecordTree {
     private final long id;
     private final CallRecord root;
     private final ProcessInfo processInfo;
+    private final TStackTrace stackTrace;
     private final String threadName;
     private final long epochCreatedTimeMillis;
     private final Duration lifetime;
@@ -44,6 +43,7 @@ public class CallRecordTree {
         this.lifetime = Duration.ofMillis(request.getLifetimeMillis());
         this.processInfo = request.getProcessInfo();
         this.threadName = recordLog.getThreadName();
+        this.stackTrace = recordLog.getStackTrace();
     }
 
     public String getTabName() {
@@ -52,12 +52,27 @@ public class CallRecordTree {
 
     public Tooltip getTooltip() {
 
-        String text = "Thread: " + this.threadName + "\n" +
-                "Created at: " + new Timestamp(this.epochCreatedTimeMillis) + "\n" +
-                "Finished at: " + new Timestamp(this.epochCreatedTimeMillis + lifetime.toMillis()) + "\n" +
-                "Lifetime: " + lifetime.toMillis() + " millis" + "\n";
+        StringBuilder builder = new StringBuilder()
+                .append("Thread: ").append(this.threadName).append("\n")
+                .append("Created at: ").append(new Timestamp(this.epochCreatedTimeMillis)).append("\n")
+                .append("Finished at: ").append(new Timestamp(this.epochCreatedTimeMillis + lifetime.toMillis())).append("\n")
+                .append("Lifetime: ").append(lifetime.toMillis()).append(" millis").append("\n");
 
-        return new Tooltip(text);
+        builder.append("Stack trace: ").append("\n");
+
+        for (TStackTraceElement element: stackTrace.getElementList()) {
+            builder.append("\tat ")
+                    .append(element.getDeclaringClass())
+                    .append(".")
+                    .append(element.getMethodName())
+                    .append("(")
+                    .append(element.getFileName())
+                    .append(":")
+                    .append(element.getLineNumber())
+                    .append(")");
+        }
+
+        return new Tooltip(builder.toString());
     }
 
     public ProcessInfo getProcessInfo() {

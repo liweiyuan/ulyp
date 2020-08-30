@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.jetbrains.annotations.NotNull;

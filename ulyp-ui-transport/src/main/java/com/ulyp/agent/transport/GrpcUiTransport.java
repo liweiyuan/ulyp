@@ -53,37 +53,10 @@ public class GrpcUiTransport implements UiTransport {
         uploadExecutor.submit(
                 () -> {
 
-                    TCallRecordLog log = TCallRecordLog.newBuilder()
-                            .setThreadName(recordLog.getThreadName())
-                            .setEnterRecords(recordLog.getEnterRecords().toByteString())
-                            .setExitRecords(recordLog.getExitRecords().toByteString())
-                            .build();
-
-                    MethodInfoList methodInfoList = new MethodInfoList();
-                    for (MethodInfo description : request.getMethods()) {
-                        methodInfoList.add(description);
-                    }
-
-                    TCallRecordLogUploadRequest.Builder requestBuilder = TCallRecordLogUploadRequest.newBuilder();
-
-                    for (TypeInfo typeInfo : request.getTypes()) {
-                        requestBuilder.addDescription(
-                                TClassDescription.newBuilder().setId((int) typeInfo.getId()).setName(typeInfo.getName()).build()
-                        );
-                    }
-
-                    requestBuilder
-                            .setRecordLog(log)
-                            .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
-                            .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
-                                    .setMainClassName(request.getProcessInfo().getMainClassName())
-                                    .addAllClasspath(request.getProcessInfo().getClasspath().toList())
-                                    .build())
-                            .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
-                            .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime());
+                    TCallRecordLogUploadRequest protoRequest = RequestConverter.convert(request);
 
                     long id = recordLog.getId();
-                    ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(requestBuilder.build());
+                    ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(protoRequest);
 
                     Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
                         @Override

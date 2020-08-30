@@ -13,7 +13,7 @@ public class MethodInfoSerializationTest extends AbstractInstrumentationTest {
     @Test
     public void shouldMinimizeAmountMethodDescriptions() {
 
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnRecordLogRaw(
+        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToRecord(MethodMatcher.parse("X.main"))

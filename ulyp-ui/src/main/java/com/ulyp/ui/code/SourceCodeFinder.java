@@ -42,14 +42,14 @@ public class SourceCodeFinder {
         this.classpath = classpath;
     }
 
-    public String find(String javaClassName) {
+    public SourceCode find(String javaClassName) {
         for (String sourceJar : this.sourcesJar) {
             try {
                 ForSourceJarFile forSourceJarFile = new ForSourceJarFile(new JarFile(sourceJar));
 
                 Resolution locate = forSourceJarFile.locate(javaClassName);
                 if (locate.isResolved()) {
-                    return new String(locate.resolve());
+                    return new SourceCode(javaClassName, new String(locate.resolve()));
                 }
 
             } catch (IOException e) {
