@@ -33,7 +33,7 @@ public class CallRecordTreeTab extends Tab {
                     CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
                     if (callRecord != null && callRecord.getNode() != null) {
                         SourceCode sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
-                        sourceCodeView.setText(sourceCode);
+                        sourceCodeView.setText(sourceCode, callRecord.getNode().getMethodName());
                     }
                 }
         );

@@ -17,4 +17,8 @@ public class SourceCode {
     public String getCode() {
         return code;
     }
+
+    public int getLineCount() {
+        return code.split("\n").length;
+    }
 }
