@@ -7,7 +7,6 @@ import com.ulyp.ui.util.StringUtils;
 import com.ulyp.ui.util.WithStylesPane;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
@@ -31,24 +30,9 @@ public class CallRecordTreeViewRenderer {
         text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
-
-        Region rect = new Region();
-        int width = (int) (600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree);
-        // TODO move this to CSS
-        rect.setStyle(
-                "-fx-background-color: black; " +
-                "-fx-border-style: solid; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-color: rgb(78, 43, 0); " +
-                String.format("-fx-min-width: %d; ", width) +
-                "-fx-min-height:20; " +
-                String.format("-fx-max-width: %d; ", width) +
-                "-fx-max-height: 20;"
-        );
-
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_LEFT);
-        stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Node[0])));
+        stack.getChildren().addAll(new CallRecordTreeNodeRelativeWeight(node, totalNodeCountInTree), new TextFlow(text.toArray(new Node[0])));
 
         return stack;
     }
