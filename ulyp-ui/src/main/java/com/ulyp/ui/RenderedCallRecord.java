@@ -4,11 +4,9 @@ import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.StringUtils;
+import com.ulyp.ui.util.TextBuilder;
 import com.ulyp.ui.util.WithStylesPane;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,13 +15,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CallRecordTreeViewRenderer {
+public class RenderedCallRecord extends TextFlow {
 
-    private static TextBuilder text() {
-        return new TextBuilder().style("ulyp-ctt");
-    }
-
-    public static Node render(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
+    public RenderedCallRecord(CallRecord node, RenderSettings renderSettings) {
         List<Node> text = new ArrayList<>();
 
         text.addAll(renderReturnValue(node));
@@ -31,14 +25,11 @@ public class CallRecordTreeViewRenderer {
         text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
-        Rectangle rect = new Rectangle(600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree,20);
-//        rect.getStyleClass().add("ulyp-asd");
+        getChildren().addAll(text);
+    }
 
-        StackPane stack = new StackPane();
-        stack.setAlignment(Pos.CENTER_LEFT);
-        stack.getChildren().addAll(rect, new TextFlow(text.toArray(new Node[0])));
-
-        return stack;
+    private static TextBuilder text() {
+        return new TextBuilder().style("ulyp-ctt");
     }
 
     private static List<Node> renderReturnValue(CallRecord node) {
@@ -102,29 +93,4 @@ public class CallRecordTreeViewRenderer {
         result.add(methodNameBuilder.build());
         return result;
     }
-
-//    @NotNull
-//    private static TextFlow renderReturnValue(CallRecord node, RenderSettings renderSettings) {
-//        List<Text> value = new ArrayList<>();
-
-//        if (renderSettings.showsReturnValueClassName()) {
-//            value.add(text().text(node.getReturnValue().getClassDescription().getSimpleName()).style("ulyp-ctt-return-value-type").build());
-//            value.add(text().text(": ").style("ulyp-ctt-sep").build());
-//        }
-
-//        Text returnValueText;
-//        if (node.hasThrown()) {
-//            returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-thrown-value").build();
-//        } else {
-//            if (node.getReturnValue().asPrintable() instanceof IdentityObjectRepresentation) {
-//
-//                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
-//            } else {
-//                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
-//            }
-//        }
-//
-//        value.add(returnValueText);
-//        return FxObjectValue.of(node.getReturnValue());
-//    }
 }

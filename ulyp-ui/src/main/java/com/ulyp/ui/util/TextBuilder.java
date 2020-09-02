@@ -1,4 +1,4 @@
-package com.ulyp.ui;
+package com.ulyp.ui.util;
 
 
 import javafx.scene.text.Text;

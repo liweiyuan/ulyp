@@ -2,36 +2,35 @@ package com.ulyp.ui;
 
 import com.ulyp.core.CallRecord;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CallRecordTreeItem extends TreeItem<Node> {
+public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
 
     private final RenderSettings renderSettings;
-    private final CallRecord node;
+    private final CallRecord callRecord;
     private final int totalNodeCount;
 
     private boolean loaded = false;
 
-    public CallRecordTreeItem(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(CallRecordTreeViewRenderer.render(node, renderSettings, totalNodeCountInTree));
-        this.node = node;
+    public CallRecordTreeNode(CallRecord callRecord, RenderSettings renderSettings, int totalNodeCountInTree) {
+        super(new CallTreeNodeContent(callRecord, renderSettings, totalNodeCountInTree));
+        this.callRecord = callRecord;
         this.renderSettings = renderSettings;
         this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(CallRecordTreeViewRenderer.render(node, renderSettings, totalNodeCount));
+        setValue(new CallTreeNodeContent(callRecord, renderSettings, totalNodeCount));
         if (loaded) {
-            getChildren().forEach(node -> ((CallRecordTreeItem) node).refresh());
+            getChildren().forEach(node -> ((CallRecordTreeNode) node).refresh());
         }
     }
 
     @Override
-    public ObservableList<TreeItem<Node>> getChildren() {
+    public ObservableList<TreeItem<CallTreeNodeContent>> getChildren() {
         if (!loaded) {
             loadChildren();
         }
@@ -48,22 +47,22 @@ public class CallRecordTreeItem extends TreeItem<Node> {
 
     private void loadChildren() {
         loaded = true;
-        List<CallRecordTreeItem> children = new ArrayList<>();
-        for (CallRecord child : node.getChildren()) {
-            children.add(new CallRecordTreeItem(child, renderSettings, totalNodeCount));
+        List<CallRecordTreeNode> children = new ArrayList<>();
+        for (CallRecord child : callRecord.getChildren()) {
+            children.add(new CallRecordTreeNode(child, renderSettings, totalNodeCount));
         }
 
         super.getChildren().setAll(children);
     }
 
-    public CallRecord getNode() {
-        return node;
+    public CallRecord getCallRecord() {
+        return callRecord;
     }
 
     @Override
     public String toString() {
         return "FxCallRecord{" +
-                "node=" + node +
+                "node=" + callRecord +
                 '}';
     }
 }

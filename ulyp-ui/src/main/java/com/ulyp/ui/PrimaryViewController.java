@@ -9,7 +9,9 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -29,8 +31,6 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public VBox primaryPane;
     @FXML
-    public TabPane processTabPane;
-    @FXML
     public TextField instrumentedPackagesTextField;
     @FXML
     public TextField excludedFromInstrumentationPackagesTextField;
@@ -42,36 +42,33 @@ public class PrimaryViewController implements Initializable {
     public Slider recordPrecisionSlider;
     @FXML
     public SourceCodeView sourceCodeView;
+    @FXML
+    public ProcessTabPane processTabPane;
 
     Supplier<File> fileChooser;
 
-    private CallRecordTreePrimaryView callRecordTreePrimaryView;
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane, sourceCodeView);
+
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {
         Platform.runLater(() -> {
             CallRecordTree tree = new CallRecordTree(request);
-            ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
+            ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName(), sourceCodeView);
             processTab.add(tree, renderSettings);
         });
     }
 
     public void clearAll(Event event) {
-        callRecordTreePrimaryView.clear();
-    }
-
-    public void onSearchActivated(KeyEvent event) {
-
+        processTabPane.clear();
     }
 
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeItem selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(true);
                 renderSettings.setShowArgumentClassNames(true);
@@ -80,13 +77,13 @@ public class PrimaryViewController implements Initializable {
         } else {
             if (event.isControlDown() && event.getCode() == KeyCode.C) {
                 // COPY currently selected
-                ProcessTab selectedTab = callRecordTreePrimaryView.getSelectedTab();
+                ProcessTab selectedTab = processTabPane.getSelectedTab();
                 if (selectedTab != null) {
-                    CallRecordTreeItem selectedCallRecord = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+                    CallRecordTreeNode selectedCallRecord = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
                     if (selectedCallRecord != null) {
                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                         final ClipboardContent content = new ClipboardContent();
-                        CallRecord callRecord = selectedCallRecord.getNode();
+                        CallRecord callRecord = selectedCallRecord.getCallRecord();
                         content.putString(callRecord.getClassName() + "." + callRecord.getMethodName());
                         clipboard.setContent(content);
                     }
@@ -97,7 +94,7 @@ public class PrimaryViewController implements Initializable {
 
     public void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeItem selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(false);
                 renderSettings.setShowArgumentClassNames(false);

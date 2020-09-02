@@ -4,6 +4,7 @@ import com.ulyp.core.CallRecordLog;
 import com.ulyp.core.MethodInfo;
 import com.ulyp.core.MethodInfoList;
 import com.ulyp.core.printers.TypeInfo;
+import com.ulyp.core.util.StringUtils;
 import com.ulyp.transport.*;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class RequestConverter {
                                                 .map(stackTraceElement -> TStackTraceElement.newBuilder()
                                                         .setDeclaringClass(stackTraceElement.getClassName())
                                                         .setMethodName(stackTraceElement.getMethodName())
-                                                        .setFileName(stackTraceElement.getFileName())
+                                                        .setFileName(StringUtils.nullToEmpty(stackTraceElement.getFileName()))
                                                         .setLineNumber(stackTraceElement.getLineNumber())
                                                         .build())
                                                 .collect(Collectors.toList())

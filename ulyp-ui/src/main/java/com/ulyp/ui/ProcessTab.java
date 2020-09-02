@@ -6,19 +6,28 @@ import javafx.scene.control.TabPane;
 
 public class ProcessTab extends Tab {
 
+    private final String mainClassName;
     private final TabPane callTreeTabs;
     private final SourceCodeView sourceCodeView;
 
     ProcessTab(TabPane processTabPane, SourceCodeView sourceCodeView, String mainClassName) {
         super(mainClassName);
 
+        this.mainClassName = mainClassName;
+
         this.sourceCodeView = sourceCodeView;
 
         TabPane tabPane = new TabPane();
         this.callTreeTabs = tabPane;
         setContent(tabPane);
+
+        // TODO get rid of that?
         tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
+    }
+
+    public String getMainClassName() {
+        return mainClassName;
     }
 
     public void add(CallRecordTree tree, RenderSettings renderSettings) {
@@ -43,31 +52,4 @@ public class ProcessTab extends Tab {
             fxCallRecordTreeTab.dispose();
         }
     }
-
-    public void applySearch(String searchText) {
-//        this.lastAppliedSearchText = searchText;
-//
-//        if (searchText.trim().isEmpty()) {
-//            clearSearch();
-//            return;
-//        }
-//
-//        for (Tab tab : callTreeTabs.getTabs()) {
-//            applySearchForTab((FxCallRecordTreeTab) tab, searchText);
-//        }
-    }
-
-//    // TODO move into tab
-//    private void applySearchForTab(FxCallRecordTreeTab fxTab, String searchText) {
-//        FxCallRecord root = fxTab.getRoot();
-//        LongList result = database.searchSubtree(searchText, root.getNode());
-//
-//        if (!result.isEmpty()) {
-//            fxTab.markHasSearchResults();
-//        }
-//
-//        for (long id : result) {
-//            System.out.println(database.find(id));
-//        }
-//    }
 }
