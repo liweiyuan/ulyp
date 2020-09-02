@@ -98,29 +98,4 @@ public class CallRecordTreeViewRenderer {
         result.add(methodNameBuilder.build());
         return result;
     }
-
-//    @NotNull
-//    private static TextFlow renderReturnValue(CallRecord node, RenderSettings renderSettings) {
-//        List<Text> value = new ArrayList<>();
-
-//        if (renderSettings.showsReturnValueClassName()) {
-//            value.add(text().text(node.getReturnValue().getClassDescription().getSimpleName()).style("ulyp-ctt-return-value-type").build());
-//            value.add(text().text(": ").style("ulyp-ctt-sep").build());
-//        }
-
-//        Text returnValueText;
-//        if (node.hasThrown()) {
-//            returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-thrown-value").build();
-//        } else {
-//            if (node.getReturnValue().asPrintable() instanceof IdentityObjectRepresentation) {
-//
-//                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
-//            } else {
-//                returnValueText = text().text(trimText(node.getResult())).style("ulyp-ctt-return-value").build();
-//            }
-//        }
-//
-//        value.add(returnValueText);
-//        return FxObjectValue.of(node.getReturnValue());
-//    }
 }
