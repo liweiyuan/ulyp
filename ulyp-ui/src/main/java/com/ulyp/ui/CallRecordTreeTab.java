@@ -22,7 +22,7 @@ public class CallRecordTreeTab extends Tab {
     {
         this.tree = tree;
 
-        view = new TreeView<>(new CallRecordTreeItem(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
+        view = new TreeView<>(new CallRecordTreeNode(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
         view.prefHeightProperty().bind(treesTabs.heightProperty());
         view.prefWidthProperty().bind(treesTabs.widthProperty());
 
@@ -30,7 +30,7 @@ public class CallRecordTreeTab extends Tab {
 
         view.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    CallRecordTreeItem callRecord = (CallRecordTreeItem) newValue;
+                    CallRecordTreeNode callRecord = (CallRecordTreeNode) newValue;
                     if (callRecord != null && callRecord.getNode() != null) {
                         SourceCode sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
                         sourceCodeView.setText(sourceCode, callRecord.getNode().getMethodName());
@@ -57,8 +57,8 @@ public class CallRecordTreeTab extends Tab {
     }
 
     @Nullable
-    public CallRecordTreeItem getSelected() {
-        return (CallRecordTreeItem) view.getSelectionModel().getSelectedItem();
+    public CallRecordTreeNode getSelected() {
+        return (CallRecordTreeNode) view.getSelectionModel().getSelectedItem();
     }
 
     public void dispose() {
