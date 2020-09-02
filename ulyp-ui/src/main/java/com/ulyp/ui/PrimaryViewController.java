@@ -29,8 +29,6 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public VBox primaryPane;
     @FXML
-    public TabPane processTabPane;
-    @FXML
     public TextField instrumentedPackagesTextField;
     @FXML
     public TextField excludedFromInstrumentationPackagesTextField;
@@ -42,32 +40,33 @@ public class PrimaryViewController implements Initializable {
     public Slider recordPrecisionSlider;
     @FXML
     public SourceCodeView sourceCodeView;
+    @FXML
+    public CallRecordTreePrimaryView processTabPane;
 
     Supplier<File> fileChooser;
 
-    private CallRecordTreePrimaryView callRecordTreePrimaryView;
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        callRecordTreePrimaryView = new CallRecordTreePrimaryView(processTabPane, sourceCodeView);
+
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {
         Platform.runLater(() -> {
             CallRecordTree tree = new CallRecordTree(request);
-            ProcessTab processTab = callRecordTreePrimaryView.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
+            ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName(), sourceCodeView);
             processTab.add(tree, renderSettings);
         });
     }
 
     public void clearAll(Event event) {
-        callRecordTreePrimaryView.clear();
+        processTabPane.clear();
     }
 
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeNode selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(true);
                 renderSettings.setShowArgumentClassNames(true);
@@ -76,9 +75,9 @@ public class PrimaryViewController implements Initializable {
         } else {
             if (event.isControlDown() && event.getCode() == KeyCode.C) {
                 // COPY currently selected
-                ProcessTab selectedTab = callRecordTreePrimaryView.getSelectedTab();
+                ProcessTab selectedTab = processTabPane.getSelectedTab();
                 if (selectedTab != null) {
-                    CallRecordTreeNode selectedCallRecord = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+                    CallRecordTreeNode selectedCallRecord = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
                     if (selectedCallRecord != null) {
                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                         final ClipboardContent content = new ClipboardContent();
@@ -93,7 +92,7 @@ public class PrimaryViewController implements Initializable {
 
     public void keyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeNode selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
+            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
                 renderSettings.setShowReturnValueClassName(false);
                 renderSettings.setShowArgumentClassNames(false);

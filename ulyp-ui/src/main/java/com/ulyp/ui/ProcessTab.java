@@ -17,6 +17,8 @@ public class ProcessTab extends Tab {
         TabPane tabPane = new TabPane();
         this.callTreeTabs = tabPane;
         setContent(tabPane);
+
+        // TODO get rid of that?
         tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
     }
