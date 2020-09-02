@@ -3,15 +3,17 @@ package com.ulyp.ui;
 import com.ulyp.ui.code.SourceCode;
 import com.ulyp.ui.code.SourceCodeFinder;
 import com.ulyp.ui.code.SourceCodeView;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeView;
 
 import javax.annotation.Nullable;
 
 public class CallRecordTreeTab extends Tab {
 
     private final CallRecordTree tree;
-    private final TreeView<Node> view;
+    private final TreeView<CallTreeNodeContent> view;
 
     @SuppressWarnings("unchecked")
     public CallRecordTreeTab(
@@ -31,9 +33,9 @@ public class CallRecordTreeTab extends Tab {
         view.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     CallRecordTreeNode callRecord = (CallRecordTreeNode) newValue;
-                    if (callRecord != null && callRecord.getNode() != null) {
-                        SourceCode sourceCode = sourceCodeFinder.find(callRecord.getNode().getClassName());
-                        sourceCodeView.setText(sourceCode, callRecord.getNode().getMethodName());
+                    if (callRecord != null && callRecord.getCallRecord() != null) {
+                        SourceCode sourceCode = sourceCodeFinder.find(callRecord.getCallRecord().getClassName());
+                        sourceCodeView.setText(sourceCode, callRecord.getCallRecord().getMethodName());
                     }
                 }
         );

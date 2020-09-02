@@ -86,7 +86,7 @@ public class PrimaryViewController implements Initializable {
                     if (selectedCallRecord != null) {
                         final Clipboard clipboard = Clipboard.getSystemClipboard();
                         final ClipboardContent content = new ClipboardContent();
-                        CallRecord callRecord = selectedCallRecord.getNode();
+                        CallRecord callRecord = selectedCallRecord.getCallRecord();
                         content.putString(callRecord.getClassName() + "." + callRecord.getMethodName());
                         clipboard.setContent(content);
                     }

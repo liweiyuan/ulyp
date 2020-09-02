@@ -6,9 +6,7 @@ import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.StringUtils;
 import com.ulyp.ui.util.TextBuilder;
 import com.ulyp.ui.util.WithStylesPane;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,13 +15,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CallRecordTreeViewRenderer {
+public class RenderedCallRecord extends TextFlow {
 
-    private static TextBuilder text() {
-        return new TextBuilder().style("ulyp-ctt");
-    }
-
-    public static Node render(CallRecord node, RenderSettings renderSettings, int totalNodeCountInTree) {
+    public RenderedCallRecord(CallRecord node, RenderSettings renderSettings) {
         List<Node> text = new ArrayList<>();
 
         text.addAll(renderReturnValue(node));
@@ -31,11 +25,11 @@ public class CallRecordTreeViewRenderer {
         text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
-        StackPane stack = new StackPane();
-        stack.setAlignment(Pos.CENTER_LEFT);
-        stack.getChildren().addAll(new CallRecordTreeNodeRelativeWeight(node, totalNodeCountInTree), new TextFlow(text.toArray(new Node[0])));
+        getChildren().addAll(text);
+    }
 
-        return stack;
+    private static TextBuilder text() {
+        return new TextBuilder().style("ulyp-ctt");
     }
 
     private static List<Node> renderReturnValue(CallRecord node) {

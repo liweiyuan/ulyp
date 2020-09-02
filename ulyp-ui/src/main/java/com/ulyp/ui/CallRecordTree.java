@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Full deserialized record log sent from agent
+ * Full deserialized record log sent from agent formed as a tree
  */
 public class CallRecordTree {
 
