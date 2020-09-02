@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO should inherit TabPane
 public class CallRecordTreePrimaryView {
 
     private final TabPane processTabPane;

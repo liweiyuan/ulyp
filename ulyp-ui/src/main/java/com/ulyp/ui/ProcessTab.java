@@ -43,31 +43,4 @@ public class ProcessTab extends Tab {
             fxCallRecordTreeTab.dispose();
         }
     }
-
-    public void applySearch(String searchText) {
-//        this.lastAppliedSearchText = searchText;
-//
-//        if (searchText.trim().isEmpty()) {
-//            clearSearch();
-//            return;
-//        }
-//
-//        for (Tab tab : callTreeTabs.getTabs()) {
-//            applySearchForTab((FxCallRecordTreeTab) tab, searchText);
-//        }
-    }
-
-//    // TODO move into tab
-//    private void applySearchForTab(FxCallRecordTreeTab fxTab, String searchText) {
-//        FxCallRecord root = fxTab.getRoot();
-//        LongList result = database.searchSubtree(searchText, root.getNode());
-//
-//        if (!result.isEmpty()) {
-//            fxTab.markHasSearchResults();
-//        }
-//
-//        for (long id : result) {
-//            System.out.println(database.find(id));
-//        }
-//    }
 }
