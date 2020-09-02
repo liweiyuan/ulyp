@@ -4,6 +4,7 @@ import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.StringUtils;
+import com.ulyp.ui.util.TextBuilder;
 import com.ulyp.ui.util.WithStylesPane;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
