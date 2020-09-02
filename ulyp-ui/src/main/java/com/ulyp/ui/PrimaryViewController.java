@@ -41,7 +41,7 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public SourceCodeView sourceCodeView;
     @FXML
-    public CallRecordTreePrimaryView processTabPane;
+    public ProcessTabPane processTabPane;
 
     Supplier<File> fileChooser;
 

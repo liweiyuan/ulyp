@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import com.ulyp.ui.code.SourceCodeView?>
-<?import com.ulyp.ui.CallRecordTreePrimaryView?>
+<?import com.ulyp.ui.ProcessTabPane?>
 <?scenebuilder-stylesheet DarkTheme.css?>
 
 <VBox fx:id="primaryPane" prefHeight="469.0" prefWidth="713.4" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ulyp.ui.PrimaryViewController">
@@ -84,7 +84,7 @@
         <items>
           <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="5000.0" prefWidth="5000.0">
                <children>
-                    <CallRecordTreePrimaryView fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="408.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <ProcessTabPane fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased" prefHeight="408.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
