@@ -65,10 +65,6 @@ public class PrimaryViewController implements Initializable {
         callRecordTreePrimaryView.clear();
     }
 
-    public void onSearchActivated(KeyEvent event) {
-
-    }
-
     public void keyPressed(KeyEvent event) {
         if (event.getCode() == KeyCode.SHIFT) {
             CallRecordTreeNode selected = callRecordTreePrimaryView.getSelectedTab().getSelectedTreeTab().getSelected();
