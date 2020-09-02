@@ -6,11 +6,14 @@ import javafx.scene.control.TabPane;
 
 public class ProcessTab extends Tab {
 
+    private final String mainClassName;
     private final TabPane callTreeTabs;
     private final SourceCodeView sourceCodeView;
 
     ProcessTab(TabPane processTabPane, SourceCodeView sourceCodeView, String mainClassName) {
         super(mainClassName);
+
+        this.mainClassName = mainClassName;
 
         this.sourceCodeView = sourceCodeView;
 
@@ -21,6 +24,10 @@ public class ProcessTab extends Tab {
         // TODO get rid of that?
         tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
         tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
+    }
+
+    public String getMainClassName() {
+        return mainClassName;
     }
 
     public void add(CallRecordTree tree, RenderSettings renderSettings) {
