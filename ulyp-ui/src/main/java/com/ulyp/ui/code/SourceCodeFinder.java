@@ -57,7 +57,7 @@ public class SourceCodeFinder {
             }
         }
 
-        return null;
+        return new SourceCode("", "");
     }
 
     interface ClassFileLocator {
