@@ -48,25 +48,21 @@ public class SourceCodeTab extends Tab {
 
                     synchronized (this) {
                         long genertedStamp = ++this.stamp;
-                        if (code == null) {
-                            this.textArea.setText(null);
-                        } else {
-                            this.textArea.setText(code.getCode());
+                        this.textArea.setText(code.getCode());
 
-                            SwingUtilities.invokeLater(
-                                    () -> {
-                                        synchronized (this) {
-                                            if (this.stamp == genertedStamp) {
-                                                int newVerticalPos = Math.max(
-                                                        (int) ((new MethodLineNumberFinder(code).getLine(methodNameToScrollTo, 0) - 10) * textScrollPane.getVerticalScrollBar().getMaximum() * 1.0 / code.getLineCount()),
-                                                        0
-                                                );
-                                                this.textScrollPane.getVerticalScrollBar().setValue(newVerticalPos);
-                                            }
+                        SwingUtilities.invokeLater(
+                                () -> {
+                                    synchronized (this) {
+                                        if (this.stamp == genertedStamp) {
+                                            int newVerticalPos = Math.max(
+                                                    (int) ((new MethodLineNumberFinder(code).getLine(methodNameToScrollTo, 0) - 10) * textScrollPane.getVerticalScrollBar().getMaximum() * 1.0 / code.getLineCount()),
+                                                    0
+                                            );
+                                            this.textScrollPane.getVerticalScrollBar().setValue(newVerticalPos);
                                         }
                                     }
-                            );
-                        }
+                                }
+                        );
                     }
                 }
         );
