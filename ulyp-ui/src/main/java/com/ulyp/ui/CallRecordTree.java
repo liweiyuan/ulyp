@@ -30,7 +30,7 @@ public class CallRecordTree {
 
         TCallRecordLog recordLog = request.getRecordLog();
 
-        this.root = new CallRecordTreeDao(
+        this.root = new CallRecordTreeDeserializer(
                 new CallEnterRecordList(recordLog.getEnterRecords()),
                 new CallExitRecordList(recordLog.getExitRecords()),
                 new MethodInfoList(request.getMethodDescriptionList().getData()),

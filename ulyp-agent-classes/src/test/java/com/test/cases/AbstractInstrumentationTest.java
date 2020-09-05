@@ -39,7 +39,7 @@ public class AbstractInstrumentationTest {
         TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(settings);
 
         CallRecordDatabase database = new HeapCallRecordDatabase();
-        return new CallRecordTreeDao(
+        return new CallRecordTreeDeserializer(
                 new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
                 new CallExitRecordList(request.getRecordLog().getExitRecords()),
                 new MethodInfoList(request.getMethodDescriptionList().getData()),

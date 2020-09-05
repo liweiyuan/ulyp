@@ -12,7 +12,7 @@ import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.*;
 
-public class CallRecordTreeDao {
+public class CallRecordTreeDeserializer {
 
     private final CallEnterRecordList enterRecordsList;
     private final CallExitRecordList exitRecordsList;
@@ -21,11 +21,11 @@ public class CallRecordTreeDao {
     private final CallRecordDatabase database;
     private final Long2ObjectMap<TypeInfo> classIdMap;
 
-    public CallRecordTreeDao(CallEnterRecordList enterRecordsList,
-                             CallExitRecordList exitRecordsList,
-                             MethodInfoList methodInfoList,
-                             List<TClassDescription> classDescriptionList,
-                             CallRecordDatabase database)
+    public CallRecordTreeDeserializer(CallEnterRecordList enterRecordsList,
+                                      CallExitRecordList exitRecordsList,
+                                      MethodInfoList methodInfoList,
+                                      List<TClassDescription> classDescriptionList,
+                                      CallRecordDatabase database)
     {
         this.database = database;
         this.enterRecordsList = enterRecordsList;
