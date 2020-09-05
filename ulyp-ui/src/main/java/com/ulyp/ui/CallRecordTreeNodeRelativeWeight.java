@@ -16,9 +16,9 @@ public class CallRecordTreeNodeRelativeWeight extends Region {
                 "-fx-background-color: black; " +
                         "-fx-border-style: solid; " +
                         "-fx-border-width: 2; " +
-                        "-fx-border-color: rgb(78, 43, 0); " +
+                        "-fx-border-color: rgb(50, 50, 50); " +
                         String.format("-fx-min-width: %d; ", width) +
-                        "-fx-min-height:20; " +
+                        "-fx-min-height: 20; " +
                         String.format("-fx-max-width: %d; ", width) +
                         "-fx-max-height: 20;"
         );
