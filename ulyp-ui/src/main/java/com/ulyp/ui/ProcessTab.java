@@ -10,7 +10,7 @@ public class ProcessTab extends Tab {
     private final TabPane callTreeTabs;
     private final SourceCodeView sourceCodeView;
 
-    ProcessTab(TabPane processTabPane, SourceCodeView sourceCodeView, String mainClassName) {
+    ProcessTab(SourceCodeView sourceCodeView, String mainClassName) {
         super(mainClassName);
 
         this.mainClassName = mainClassName;
@@ -20,10 +20,6 @@ public class ProcessTab extends Tab {
         TabPane tabPane = new TabPane();
         this.callTreeTabs = tabPane;
         setContent(tabPane);
-
-        // TODO get rid of that?
-        tabPane.prefHeightProperty().bind(processTabPane.heightProperty());
-        tabPane.prefWidthProperty().bind(processTabPane.widthProperty());
     }
 
     public String getMainClassName() {

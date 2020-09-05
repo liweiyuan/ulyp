@@ -34,7 +34,7 @@ public class ProcessTabPane extends TabPane {
         if (processTab.isPresent()) {
             return (ProcessTab) processTab.get();
         } else {
-            ProcessTab tab = new ProcessTab(this, sourceCodeView, mainClassName);
+            ProcessTab tab = new ProcessTab(sourceCodeView, mainClassName);
             getTabs().add(tab);
             return tab;
         }
