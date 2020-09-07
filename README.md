@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/0xaa4eb/ulyp.svg?branch=master)](https://travis-ci.org/0xaa4eb/ulyp)
+[![Build Status](https://travis-ci.org/0xaa4eb/ulyp.svg?branch=master)](https://travis-ci.org/0xaa4eb/ulyp)[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F0xaa4eb%2Fulyp.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2F0xaa4eb%2Fulyp?ref=badge_shield)
+
 [![](https://tokei.rs/b1/github/0xaa4eb/ulyp)](https://github.com/0xaa4eb/ulyp)
 
 # Preface
@@ -77,3 +78,7 @@ Simple hibernate test recording:
 The whole method traces tree may be investigated in the UI:
 
 ![Ulyp UI](https://github.com/0xaa4eb/ulyp/blob/master/images/hibernate.png)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2F0xaa4eb%2Fulyp.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2F0xaa4eb%2Fulyp?ref=badge_large)
