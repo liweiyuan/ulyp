@@ -2,7 +2,6 @@
 
 <?scenebuilder-stylesheet DarkTheme.css?>
 
-<?import com.ulyp.ui.code.SourceCodeView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -69,16 +68,11 @@
         </HBox>
       <SplitPane dividerPositions="0.5014044943820225" prefHeight="418.0" prefWidth="714.0" VBox.vgrow="ALWAYS">
         <items>
-          <AnchorPane fx:id="processTabAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="5000.0" prefWidth="5000.0">
-               <children>
-
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <children>
-                   <SourceCodeView fx:id="sourceCodeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-               </children>
-            </AnchorPane>
+            <AnchorPane fx:id="processTabAnchorPane" maxHeight="1.7976931348623157E308"
+                        maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="5000.0"
+                        prefWidth="5000.0"/>
+            <AnchorPane fx:id="sourceCodeViewAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0"
+                        prefWidth="100.0"/>
         </items>
       </SplitPane>
     </children>

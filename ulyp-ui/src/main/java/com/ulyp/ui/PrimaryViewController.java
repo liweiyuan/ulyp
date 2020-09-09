@@ -19,7 +19,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.io.*;
 import java.net.URL;
@@ -36,6 +35,8 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public AnchorPane processTabAnchorPane;
     @FXML
+    public AnchorPane sourceCodeViewAnchorPane;
+    @FXML
     public TextField instrumentedPackagesTextField;
     @FXML
     public TextField excludedFromInstrumentationPackagesTextField;
@@ -45,13 +46,10 @@ public class PrimaryViewController implements Initializable {
     public ToggleButton recordSwitchButton;
     @FXML
     public Slider recordPrecisionSlider;
-    @FXML
+    @Autowired
     public SourceCodeView sourceCodeView;
     @Autowired
     public ProcessTabPane processTabPane;
-
-    @Autowired
-    private ApplicationContext context;
 
     Supplier<File> fileChooser;
 
@@ -71,6 +69,13 @@ public class PrimaryViewController implements Initializable {
 
         processTabPane.setOnKeyPressed(this::keyPressed);
         processTabPane.setOnKeyReleased(this::keyReleased);
+
+        this.sourceCodeViewAnchorPane.getChildren().add(sourceCodeView);
+
+        AnchorPane.setTopAnchor(sourceCodeView, 0.0);
+        AnchorPane.setBottomAnchor(sourceCodeView, 0.0);
+        AnchorPane.setRightAnchor(sourceCodeView, 0.0);
+        AnchorPane.setLeftAnchor(sourceCodeView, 0.0);
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {
