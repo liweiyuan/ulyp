@@ -1,5 +1,8 @@
 package com.ulyp.ui;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RenderSettings {
 
     private boolean showArgumentClassNames = false;
@@ -14,7 +17,7 @@ public class RenderSettings {
         return this;
     }
 
-    public boolean  showsReturnValueClassName() {
+    public boolean showsReturnValueClassName() {
         return showReturnValueClassName;
     }
 

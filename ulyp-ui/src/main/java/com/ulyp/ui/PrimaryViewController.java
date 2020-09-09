@@ -1,6 +1,5 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallRecord;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import com.ulyp.transport.TCallRecordLogUploadRequestList;
 import com.ulyp.ui.code.SourceCodeView;
@@ -12,10 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,25 +45,19 @@ public class PrimaryViewController implements Initializable {
     public SourceCodeView sourceCodeView;
     @Autowired
     public ProcessTabPane processTabPane;
+    @Autowired
+    private RenderSettings renderSettings;
 
     Supplier<File> fileChooser;
 
-    private final RenderSettings renderSettings = new RenderSettings();
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // <ProcessTabPane fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased"
-        // prefHeight="408.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-        // AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         this.processTabAnchorPane.getChildren().add(processTabPane);
 
         AnchorPane.setTopAnchor(processTabPane, 0.0);
         AnchorPane.setBottomAnchor(processTabPane, 0.0);
         AnchorPane.setRightAnchor(processTabPane, 0.0);
         AnchorPane.setLeftAnchor(processTabPane, 0.0);
-
-        processTabPane.setOnKeyPressed(this::keyPressed);
-        processTabPane.setOnKeyReleased(this::keyReleased);
 
         this.sourceCodeViewAnchorPane.getChildren().add(sourceCodeView);
 
@@ -88,43 +77,6 @@ public class PrimaryViewController implements Initializable {
 
     public void clearAll(Event event) {
         processTabPane.clear();
-    }
-
-    public void keyPressed(KeyEvent event) {
-        if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
-            if (selected != null) {
-                renderSettings.setShowReturnValueClassName(true);
-                renderSettings.setShowArgumentClassNames(true);
-                selected.refresh();
-            }
-        } else {
-            if (event.isControlDown() && event.getCode() == KeyCode.C) {
-                // COPY currently selected
-                ProcessTab selectedTab = processTabPane.getSelectedTab();
-                if (selectedTab != null) {
-                    CallRecordTreeNode selectedCallRecord = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
-                    if (selectedCallRecord != null) {
-                        final Clipboard clipboard = Clipboard.getSystemClipboard();
-                        final ClipboardContent content = new ClipboardContent();
-                        CallRecord callRecord = selectedCallRecord.getCallRecord();
-                        content.putString(callRecord.getClassName() + "." + callRecord.getMethodName());
-                        clipboard.setContent(content);
-                    }
-                }
-            }
-        }
-    }
-
-    public void keyReleased(KeyEvent event) {
-        if (event.getCode() == KeyCode.SHIFT) {
-            CallRecordTreeNode selected = processTabPane.getSelectedTab().getSelectedTreeTab().getSelected();
-            if (selected != null) {
-                renderSettings.setShowReturnValueClassName(false);
-                renderSettings.setShowArgumentClassNames(false);
-                selected.refresh();
-            }
-        }
     }
 
     public TextField getExcludedFromInstrumentationPackagesTextField() {
