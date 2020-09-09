@@ -31,7 +31,7 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
         Platform.runLater(() -> {
             CallRecordTree tree = new CallRecordTree(request);
             ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
-            processTab.add(tree, renderSettings);
+            processTab.add(tree);
         });
 
         responseObserver.onNext(TCallRecordLogUploadResponse.newBuilder().build());

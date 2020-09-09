@@ -5,28 +5,40 @@ import com.ulyp.ui.code.SourceCodeFinder;
 import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.Region;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 
+@Component
+@Scope(value = "prototype")
 public class CallRecordTreeTab extends Tab {
 
+    private final Region parent;
     private final CallRecordTree tree;
-    private final TreeView<CallTreeNodeContent> view;
+
+    private TreeView<CallTreeNodeContent> view;
+
+    @Autowired
+    private SourceCodeView sourceCodeView;
+    @Autowired
+    private RenderSettings renderSettings;
 
     @SuppressWarnings("unchecked")
-    public CallRecordTreeTab(
-            TabPane treesTabs,
-            SourceCodeView sourceCodeView,
-            CallRecordTree tree,
-            RenderSettings renderSettings)
-    {
+    public CallRecordTreeTab(Region parent, CallRecordTree tree) {
         this.tree = tree;
+        this.parent = parent;
+    }
 
+    @PostConstruct
+    public void init() {
         view = new TreeView<>(new CallRecordTreeNode(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
-        view.prefHeightProperty().bind(treesTabs.heightProperty());
-        view.prefWidthProperty().bind(treesTabs.widthProperty());
+        view.prefHeightProperty().bind(parent.heightProperty());
+        view.prefWidthProperty().bind(parent.widthProperty());
 
         SourceCodeFinder sourceCodeFinder = new SourceCodeFinder(tree.getProcessInfo().getClasspathList());
 
@@ -44,10 +56,6 @@ public class CallRecordTreeTab extends Tab {
         setContent(new ScrollPane(view));
         setOnClosed(ev -> dispose());
         setTooltip(tree.getTooltip());
-    }
-
-    public void clearSearchMark() {
-        setText(getText().replace("<>", ""));
     }
 
     @Nullable

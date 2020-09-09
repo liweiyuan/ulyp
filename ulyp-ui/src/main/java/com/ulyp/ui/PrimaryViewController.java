@@ -45,8 +45,6 @@ public class PrimaryViewController implements Initializable {
     public SourceCodeView sourceCodeView;
     @Autowired
     public ProcessTabPane processTabPane;
-    @Autowired
-    private RenderSettings renderSettings;
 
     Supplier<File> fileChooser;
 
@@ -101,7 +99,7 @@ public class PrimaryViewController implements Initializable {
                     Platform.runLater(() -> {
                         CallRecordTree tree = new CallRecordTree(request);
                         ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
-                        processTab.add(tree, renderSettings);
+                        processTab.add(tree);
                     });
                 }
             } catch (IOException e) {
