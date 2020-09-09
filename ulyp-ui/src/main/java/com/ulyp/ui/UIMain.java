@@ -20,12 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 public class UIMain extends Application {
 
-    private PrimaryViewController viewController;
+    private ApplicationContext context;
 
     @Override
     public void start(Stage stage) throws Exception {
-
-        ApplicationContext context = new AnnotationConfigApplicationContext(Configuration.class);
+        context = new AnnotationConfigApplicationContext(Configuration.class);
 
         FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("PrimaryView.fxml"));
         loader.setControllerFactory(cl -> {
@@ -36,11 +35,11 @@ public class UIMain extends Application {
 
         Parent root = loader.load();
 
-        this.viewController = loader.getController();
+        PrimaryViewController viewController = loader.getController();
 
         FileChooser fileChooser = new FileChooser();
 
-        this.viewController.fileChooser = () -> fileChooser.showOpenDialog(stage);
+        viewController.fileChooser = () -> fileChooser.showOpenDialog(stage);
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add("modena.css");
@@ -67,7 +66,7 @@ public class UIMain extends Application {
     private void startGrpcServer() throws IOException {
         Server server = ServerBuilder.forPort(GrpcUiTransport.DEFAULT_ADDRESS.port)
                 .maxInboundMessageSize(1324 * 1024 * 1024)
-                .addService(new UIConnectorServiceImpl(viewController))
+                .addService(context.getBean(UIConnectorServiceImpl.class))
                 .build()
                 .start();
 

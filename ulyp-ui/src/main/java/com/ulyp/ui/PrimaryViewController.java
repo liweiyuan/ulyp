@@ -67,14 +67,6 @@ public class PrimaryViewController implements Initializable {
         AnchorPane.setLeftAnchor(sourceCodeView, 0.0);
     }
 
-    public void processRequest(TCallRecordLogUploadRequest request) {
-        Platform.runLater(() -> {
-            CallRecordTree tree = new CallRecordTree(request);
-            ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
-            processTab.add(tree, renderSettings);
-        });
-    }
-
     public void clearAll(Event event) {
         processTabPane.clear();
     }
@@ -106,7 +98,11 @@ public class PrimaryViewController implements Initializable {
                 TCallRecordLogUploadRequestList requests = TCallRecordLogUploadRequestList.parseFrom(inputStream);
 
                 for (TCallRecordLogUploadRequest request : requests.getRequestList()) {
-                    processRequest(request);
+                    Platform.runLater(() -> {
+                        CallRecordTree tree = new CallRecordTree(request);
+                        ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
+                        processTab.add(tree, renderSettings);
+                    });
                 }
             } catch (IOException e) {
                 // TODO show error dialog
