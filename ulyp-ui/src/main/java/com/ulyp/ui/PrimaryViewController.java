@@ -16,6 +16,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +33,8 @@ public class PrimaryViewController implements Initializable {
 
     @FXML
     public VBox primaryPane;
+    @FXML
+    public AnchorPane processTabAnchorPane;
     @FXML
     public TextField instrumentedPackagesTextField;
     @FXML
@@ -56,12 +59,24 @@ public class PrimaryViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // <ProcessTabPane fx:id="processTabPane" onKeyPressed="#keyPressed" onKeyReleased="#keyReleased"
+        // prefHeight="408.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+        // AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        this.processTabAnchorPane.getChildren().add(processTabPane);
+
+        AnchorPane.setTopAnchor(processTabPane, 0.0);
+        AnchorPane.setBottomAnchor(processTabPane, 0.0);
+        AnchorPane.setRightAnchor(processTabPane, 0.0);
+        AnchorPane.setLeftAnchor(processTabPane, 0.0);
+
+        processTabPane.setOnKeyPressed(this::keyPressed);
+        processTabPane.setOnKeyReleased(this::keyReleased);
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {
         Platform.runLater(() -> {
             CallRecordTree tree = new CallRecordTree(request);
-            ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName(), sourceCodeView);
+            ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
             processTab.add(tree, renderSettings);
         });
     }

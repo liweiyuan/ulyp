@@ -28,7 +28,11 @@ public class UIMain extends Application {
         ApplicationContext context = new AnnotationConfigApplicationContext(Configuration.class);
 
         FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("PrimaryView.fxml"));
-        loader.setControllerFactory(context::getBean);
+        loader.setControllerFactory(cl -> {
+            Object bean = context.getBean(cl);
+            System.out.println(cl + " -> " + bean);
+            return bean;
+        });
 
         Parent root = loader.load();
 

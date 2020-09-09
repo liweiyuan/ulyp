@@ -1,9 +1,9 @@
 package com.ulyp.ui.code;
 
 import javafx.scene.control.TabPane;
+import org.springframework.stereotype.Component;
 
-import javax.swing.*;
-
+@Component
 public class SourceCodeView extends TabPane {
 
     private final SourceCodeTab mainTab;

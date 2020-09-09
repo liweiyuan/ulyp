@@ -1,19 +1,17 @@
 package com.ulyp.ui;
 
-import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 
-@Component
 public class ProcessTabPane extends TabPane {
 
-    public ProcessTabPane() {
-    }
+    @Autowired
+    private ApplicationContext context;
 
     public void clear() {
         for (Tab tab : getTabs()) {
@@ -28,7 +26,7 @@ public class ProcessTabPane extends TabPane {
     }
 
     @NotNull
-    public ProcessTab getOrCreateProcessTab(String mainClassName, SourceCodeView sourceCodeView) {
+    public ProcessTab getOrCreateProcessTab(String mainClassName) {
         Optional<Tab> processTab = getTabs()
                 .stream()
                 .filter(tab -> mainClassName.equals(((ProcessTab) tab).getMainClassName()))
@@ -37,7 +35,7 @@ public class ProcessTabPane extends TabPane {
         if (processTab.isPresent()) {
             return (ProcessTab) processTab.get();
         } else {
-            ProcessTab tab = new ProcessTab(sourceCodeView, mainClassName);
+            ProcessTab tab = context.getBean(ProcessTab.class, mainClassName);
             getTabs().add(tab);
             return tab;
         }

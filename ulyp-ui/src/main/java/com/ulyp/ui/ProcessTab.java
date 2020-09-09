@@ -3,20 +3,30 @@ package com.ulyp.ui;
 import com.ulyp.ui.code.SourceCodeView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
+@Component
+@Scope(scopeName = "prototype")
 public class ProcessTab extends Tab {
 
     private final String mainClassName;
-    private final TabPane callTreeTabs;
-    private final SourceCodeView sourceCodeView;
+    private TabPane callTreeTabs;
 
-    ProcessTab(SourceCodeView sourceCodeView, String mainClassName) {
+    @Autowired
+    private SourceCodeView sourceCodeView;
+
+    ProcessTab(String mainClassName) {
         super(mainClassName);
 
         this.mainClassName = mainClassName;
+    }
 
-        this.sourceCodeView = sourceCodeView;
-
+    @PostConstruct
+    private void init() {
         TabPane tabPane = new TabPane();
         this.callTreeTabs = tabPane;
         setContent(tabPane);

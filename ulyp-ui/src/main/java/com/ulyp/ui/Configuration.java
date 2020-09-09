@@ -11,4 +11,15 @@ public class Configuration {
     public PrimaryViewController viewController() {
         return new PrimaryViewController();
     }
+
+    @Bean
+    public ProcessTabPane processTabPane() {
+        ProcessTabPane tabPane = new ProcessTabPane();
+
+        // TODO move somewhere
+        tabPane.setPrefHeight(408.0);
+        tabPane.setPrefWidth(354.0);
+
+        return tabPane;
+    }
 }
