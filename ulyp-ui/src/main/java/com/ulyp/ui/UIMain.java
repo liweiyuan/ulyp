@@ -1,7 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.agent.transport.GrpcUiTransport;
-import com.ulyp.ui.server.UIConnectorServiceImpl;
+import com.ulyp.ui.grpc.UIConnectorServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import javafx.application.Application;

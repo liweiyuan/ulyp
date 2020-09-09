@@ -1,4 +1,4 @@
-package com.ulyp.ui.server;
+package com.ulyp.ui.grpc;
 
 import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.transport.*;
