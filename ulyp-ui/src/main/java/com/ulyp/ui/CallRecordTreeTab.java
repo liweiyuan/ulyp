@@ -46,10 +46,6 @@ public class CallRecordTreeTab extends Tab {
         setTooltip(tree.getTooltip());
     }
 
-    public void markHasSearchResults() {
-        setText("<>" + getText());
-    }
-
     public void clearSearchMark() {
         setText(getText().replace("<>", ""));
     }

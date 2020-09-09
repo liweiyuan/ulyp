@@ -38,6 +38,7 @@ public class ProcessTab extends Tab {
 
     public void add(CallRecordTree tree, RenderSettings renderSettings) {
         CallRecordTreeTab tab = new CallRecordTreeTab(callTreeTabs, sourceCodeView, tree, renderSettings);
+
         callTreeTabs.getTabs().add(tab);
     }
 
