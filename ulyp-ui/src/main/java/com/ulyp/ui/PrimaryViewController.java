@@ -44,7 +44,7 @@ public class PrimaryViewController implements Initializable {
     public Slider recordPrecisionSlider;
     @FXML
     public SourceCodeView sourceCodeView;
-    @FXML
+    @Autowired
     public ProcessTabPane processTabPane;
 
     @Autowired
