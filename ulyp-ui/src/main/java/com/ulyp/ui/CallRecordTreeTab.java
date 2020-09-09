@@ -40,12 +40,8 @@ public class CallRecordTreeTab extends Tab {
                 }
         );
 
-        ScrollPane scrollPane = new ScrollPane(view);
-        scrollPane.prefHeightProperty().bind(treesTabs.heightProperty());
-        scrollPane.prefWidthProperty().bind(treesTabs.widthProperty());
-
         setText(tree.getTabName());
-        setContent(scrollPane);
+        setContent(new ScrollPane(view));
         setOnClosed(ev -> dispose());
         setTooltip(tree.getTooltip());
     }
