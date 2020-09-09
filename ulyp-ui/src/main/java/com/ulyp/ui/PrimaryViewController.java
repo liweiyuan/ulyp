@@ -17,6 +17,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.io.*;
 import java.net.URL;
@@ -45,13 +47,15 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public ProcessTabPane processTabPane;
 
+    @Autowired
+    private ApplicationContext context;
+
     Supplier<File> fileChooser;
 
     private final RenderSettings renderSettings = new RenderSettings();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
     }
 
     public void processRequest(TCallRecordLogUploadRequest request) {

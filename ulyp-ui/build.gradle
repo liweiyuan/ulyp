@@ -25,9 +25,15 @@ def protocVersion = protobufVersion
 dependencies {
     compile project(':ulyp-ui-transport')
     compile project(':ulyp-ui-repository')
+
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"
+
+    compile group: 'org.springframework', name: 'spring-beans', version: '5.2.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-core', version: '5.2.8.RELEASE'
+
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
     compile group: 'com.github.javaparser', name: 'javaparser-core', version: '3.16.1'
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"

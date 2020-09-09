@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +24,12 @@ public class UIMain extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(Configuration.class);
+
         FXMLLoader loader = new FXMLLoader(UIMain.class.getClassLoader().getResource("PrimaryView.fxml"));
+        loader.setControllerFactory(context::getBean);
+
         Parent root = loader.load();
 
         this.viewController = loader.getController();
