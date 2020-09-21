@@ -3,7 +3,9 @@ package com.ulyp.ui;
 import com.ulyp.ui.code.SourceCode;
 import com.ulyp.ui.code.SourceCodeFinder;
 import com.ulyp.ui.code.SourceCodeView;
-import javafx.scene.control.ScrollPane;
+import com.ulyp.ui.font.FontSizeChanger;
+import com.ulyp.ui.util.ResizeEvent;
+import com.ulyp.ui.util.ResizeEventSupportingScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Region;
@@ -21,12 +23,14 @@ public class CallRecordTreeTab extends Tab {
     private final Region parent;
     private final CallRecordTree tree;
 
-    private TreeView<CallTreeNodeContent> view;
+    private TreeView<CallTreeNodeContent> treeView;
 
     @Autowired
     private SourceCodeView sourceCodeView;
     @Autowired
     private RenderSettings renderSettings;
+    @Autowired
+    private FontSizeChanger fontSizeChanger;
 
     @SuppressWarnings("unchecked")
     public CallRecordTreeTab(Region parent, CallRecordTree tree) {
@@ -36,13 +40,13 @@ public class CallRecordTreeTab extends Tab {
 
     @PostConstruct
     public void init() {
-        view = new TreeView<>(new CallRecordTreeNode(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
-        view.prefHeightProperty().bind(parent.heightProperty());
-        view.prefWidthProperty().bind(parent.widthProperty());
+        treeView = new TreeView<>(new CallRecordTreeNode(tree.getRoot(), renderSettings, tree.getRoot().getSubtreeNodeCount()));
+        treeView.prefHeightProperty().bind(parent.heightProperty());
+        treeView.prefWidthProperty().bind(parent.widthProperty());
 
         SourceCodeFinder sourceCodeFinder = new SourceCodeFinder(tree.getProcessInfo().getClasspathList());
 
-        view.getSelectionModel().selectedItemProperty().addListener(
+        treeView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     CallRecordTreeNode callRecord = (CallRecordTreeNode) newValue;
                     if (callRecord != null && callRecord.getCallRecord() != null) {
@@ -52,15 +56,27 @@ public class CallRecordTreeTab extends Tab {
                 }
         );
 
+        ResizeEventSupportingScrollPane scrollPane = new ResizeEventSupportingScrollPane(treeView);
+
+        scrollPane.addListener(
+                resizeEvent -> {
+                    if (resizeEvent == ResizeEvent.UP) {
+                        fontSizeChanger.upscale(parent.getScene());
+                    } else {
+                        fontSizeChanger.downscale(parent.getScene());
+                    }
+                }
+        );
+
         setText(tree.getTabName());
-        setContent(new ScrollPane(view));
+        setContent(scrollPane);
         setOnClosed(ev -> dispose());
         setTooltip(tree.getTooltip());
     }
 
     @Nullable
     public CallRecordTreeNode getSelected() {
-        return (CallRecordTreeNode) view.getSelectionModel().getSelectedItem();
+        return (CallRecordTreeNode) treeView.getSelectionModel().getSelectedItem();
     }
 
     public void dispose() {
