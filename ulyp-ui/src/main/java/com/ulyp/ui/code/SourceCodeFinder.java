@@ -1,195 +1,79 @@
 package com.ulyp.ui.code;
 
-import com.ulyp.ui.util.StreamDrainer;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SourceCodeFinder {
 
-    private final List<String> sourcesJar;
-    private final List<String> classpath;
+    private final List<com.ulyp.ui.code.JarFile> jars;
 
     public SourceCodeFinder(List<String> classpath) {
 
-        List<String> sourcesJar = new ArrayList<>();
+        this.jars = classpath.stream()
+                .filter(x -> new File(x).exists())
+                .filter(x -> !new File(x).isDirectory())
+                .map(x -> new com.ulyp.ui.code.JarFile(Paths.get(x).toFile()))
+                .collect(Collectors.toList());
 
-        for (String jar : classpath) {
-            if (jar.contains(".gradle")) {
-                Path path = Paths.get(jar);
+        List<com.ulyp.ui.code.JarFile> sourcesJars = new ArrayList<>();
 
-                Path libFolder = path.getParent().getParent();
-
-                for (File p : libFolder.toFile().listFiles()) {
-                    if (p.isDirectory()) {
-                        for (File jarFile : p.listFiles()) {
-                            if (jarFile.getAbsolutePath().contains("-sources.jar")) {
-                                sourcesJar.add(jarFile.getAbsolutePath());
-                            }
-                        }
-                    }
-                }
+        for (com.ulyp.ui.code.JarFile jarFile : this.jars) {
+            com.ulyp.ui.code.JarFile sourcesJar = jarFile.deriveSourcesJar();
+            if (sourcesJar != null) {
+                sourcesJars.add(sourcesJar);
             }
         }
 
-        this.sourcesJar = sourcesJar;
-        this.classpath = classpath;
+        this.jars.addAll(0, sourcesJars);
     }
 
     public SourceCode find(String javaClassName) {
-        for (String sourceJar : this.sourcesJar) {
-            try {
-                ForSourceJarFile forSourceJarFile = new ForSourceJarFile(new JarFile(sourceJar));
+        Optional<SourceCode> decompiled = Optional.empty();
 
-                Resolution locate = forSourceJarFile.locate(javaClassName);
-                if (locate.isResolved()) {
-                    return new SourceCode(javaClassName, new String(locate.resolve()));
-                }
+        for (com.ulyp.ui.code.JarFile jar : this.jars) {
+            SourceCode sourceCode = jar.findSourceByClassName(javaClassName);
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (sourceCode != null) {
+                return sourceCode;
+            }
+
+            ByteCode byteCode = jar.findByteCodeByClassName(javaClassName);
+
+            if (byteCode != null) {
+                decompiled = Optional.of(byteCode.decompile());
             }
         }
 
-        return new SourceCode("", "");
+        return decompiled.orElse(new SourceCode("", ""));
     }
-
-    interface ClassFileLocator {
-
-        Resolution locate(String name) throws IOException;
-    }
-
-    interface Resolution {
-
-        boolean isResolved();
-
-        byte[] resolve();
-
-        class Illegal implements Resolution {
-
-            private final String typeName;
-
-            public Illegal(String typeName) {
-                this.typeName = typeName;
-            }
-
-            public boolean isResolved() {
-                return false;
-            }
-
-            public byte[] resolve() {
-                throw new IllegalStateException("Could not locate class file for " + typeName);
-            }
-        }
-
-        class Explicit implements Resolution {
-
-            private final byte[] binaryRepresentation;
-
-            public Explicit(byte[] binaryRepresentation) {
-                this.binaryRepresentation = binaryRepresentation;
-            }
-
-            public boolean isResolved() {
-                return true;
-            }
-
-            public byte[] resolve() {
-                return binaryRepresentation;
-            }
-        }
-    }
-
-    static class ForFolder implements ClassFileLocator {
-
-        private final File folder;
-
-        public ForFolder(File folder) {
-            this.folder = folder;
-        }
-
-        public Resolution locate(String name) throws IOException {
-            File file = new File(folder, name.replace('.', File.separatorChar) + CLASS_FILE_EXTENSION);
-            if (file.exists()) {
-                InputStream inputStream = new FileInputStream(file);
-                try {
-                    return new Resolution.Explicit(StreamDrainer.DEFAULT.drain(inputStream));
-                } finally {
-                    inputStream.close();
-                }
-            } else {
-                return new Resolution.Illegal(name);
-            }
-        }
-
-        public void close() {
-            /* do nothing */
-        }
-    }
-
-    private static final String CLASS_FILE_EXTENSION = ".class";
-    private static final String CLASS_SOURCE_FILE_EXTENSION = ".java";
-
-    static class ForSourceJarFile implements ClassFileLocator {
-
-        private final JarFile jarFile;
-
-        public ForSourceJarFile(JarFile jarFile) {
-            this.jarFile = jarFile;
-        }
-
-        public Resolution locate(String name) throws IOException {
-            ZipEntry zipEntry = jarFile.getEntry(name.replace('.', '/') + CLASS_SOURCE_FILE_EXTENSION);
-            if (zipEntry == null) {
-                return new Resolution.Illegal(name);
-            } else {
-                InputStream inputStream = jarFile.getInputStream(zipEntry);
-                try {
-                    return new Resolution.Explicit(StreamDrainer.DEFAULT.drain(inputStream));
-                } finally {
-                    inputStream.close();
-                }
-            }
-        }
-
-        public void close() throws IOException {
-            jarFile.close();
-        }
-    }
-
-    static class ForJarFile implements ClassFileLocator {
-
-        private final JarFile jarFile;
-
-        public ForJarFile(JarFile jarFile) {
-            this.jarFile = jarFile;
-        }
-
-        public Resolution locate(String name) throws IOException {
-            ZipEntry zipEntry = jarFile.getEntry(name.replace('.', '/') + CLASS_FILE_EXTENSION);
-            if (zipEntry == null) {
-                return new Resolution.Illegal(name);
-            } else {
-                InputStream inputStream = jarFile.getInputStream(zipEntry);
-                try {
-                    return new Resolution.Explicit(StreamDrainer.DEFAULT.drain(inputStream));
-                } finally {
-                    inputStream.close();
-                }
-            }
-        }
-
-        public void close() throws IOException {
-            jarFile.close();
-        }
-    }
-
+//    static class ForFolder implements ClassFileLocator {
+//
+//        private final File folder;
+//
+//        public ForFolder(File folder) {
+//            this.folder = folder;
+//        }
+//
+//        public Resolution locate(String name) throws IOException {
+//            File file = new File(folder, name.replace('.', File.separatorChar) + CLASS_FILE_EXTENSION);
+//            if (file.exists()) {
+//                InputStream inputStream = new FileInputStream(file);
+//                try {
+//                    return new Resolution.Explicit(StreamDrainer.DEFAULT.drain(inputStream));
+//                } finally {
+//                    inputStream.close();
+//                }
+//            } else {
+//                return new Resolution.Illegal(name);
+//            }
+//        }
+//
+//        public void close() {
+//            /* do nothing */
+//        }
+//    }
 }
