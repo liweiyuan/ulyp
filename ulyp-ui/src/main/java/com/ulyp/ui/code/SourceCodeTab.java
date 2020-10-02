@@ -1,5 +1,6 @@
 package com.ulyp.ui.code;
 
+import com.ulyp.ui.code.util.MethodLineNumberFinder;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.Tab;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;

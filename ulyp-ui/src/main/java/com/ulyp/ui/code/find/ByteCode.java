@@ -1,4 +1,6 @@
-package com.ulyp.ui.code;
+package com.ulyp.ui.code.find;
+
+import com.ulyp.ui.code.SourceCode;
 
 public class ByteCode {
 

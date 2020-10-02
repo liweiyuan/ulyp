@@ -1,4 +1,6 @@
-package com.ulyp.ui.code;
+package com.ulyp.ui.code.find;
+
+import com.ulyp.ui.code.SourceCode;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -9,20 +11,20 @@ import java.util.stream.Collectors;
 
 public class SourceCodeFinder {
 
-    private final List<com.ulyp.ui.code.JarFile> jars;
+    private final List<JarFile> jars;
 
     public SourceCodeFinder(List<String> classpath) {
 
         this.jars = classpath.stream()
                 .filter(x -> new File(x).exists())
                 .filter(x -> !new File(x).isDirectory())
-                .map(x -> new com.ulyp.ui.code.JarFile(Paths.get(x).toFile()))
+                .map(x -> new JarFile(Paths.get(x).toFile()))
                 .collect(Collectors.toList());
 
-        List<com.ulyp.ui.code.JarFile> sourcesJars = new ArrayList<>();
+        List<JarFile> sourcesJars = new ArrayList<>();
 
-        for (com.ulyp.ui.code.JarFile jarFile : this.jars) {
-            com.ulyp.ui.code.JarFile sourcesJar = jarFile.deriveSourcesJar();
+        for (JarFile jarFile : this.jars) {
+            JarFile sourcesJar = jarFile.deriveSourcesJar();
             if (sourcesJar != null) {
                 sourcesJars.add(sourcesJar);
             }
@@ -34,7 +36,7 @@ public class SourceCodeFinder {
     public SourceCode find(String javaClassName) {
         Optional<SourceCode> decompiled = Optional.empty();
 
-        for (com.ulyp.ui.code.JarFile jar : this.jars) {
+        for (JarFile jar : this.jars) {
             SourceCode sourceCode = jar.findSourceByClassName(javaClassName);
 
             if (sourceCode != null) {

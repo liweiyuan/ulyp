@@ -1,9 +1,10 @@
-package com.ulyp.ui.code;
+package com.ulyp.ui.code.util;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.ulyp.ui.code.SourceCode;
 
 import java.util.ArrayList;
 import java.util.List;

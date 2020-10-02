@@ -1,5 +1,6 @@
-package com.ulyp.ui.code;
+package com.ulyp.ui.code.find;
 
+import com.ulyp.ui.code.SourceCode;
 import com.ulyp.ui.util.StreamDrainer;
 import org.jetbrains.annotations.Nullable;
 

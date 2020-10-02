@@ -1,4 +1,4 @@
-package com.ulyp.ui.code;
+package com.ulyp.ui.code.find;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -1,7 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.ui.code.SourceCode;
-import com.ulyp.ui.code.SourceCodeFinder;
+import com.ulyp.ui.code.find.SourceCodeFinder;
 import com.ulyp.ui.code.SourceCodeView;
 import com.ulyp.ui.font.FontSizeChanger;
 import com.ulyp.ui.util.ResizeEvent;
