@@ -20,7 +20,7 @@ public class NullObjectPrinter extends ObjectBinaryPrinter {
     public ObjectRepresentation read(TypeInfo objectType, BinaryInput input, DecodingContext decodingContext) {
         // still need to read as this printer may be used inside another printer
         input.readBoolean();
-        return new NullObjectRepresentation(objectType);
+        return new NullObjectRepresentation(new UnknownTypeInfo());
     }
 
     @Override
