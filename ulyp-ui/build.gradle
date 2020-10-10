@@ -1,6 +1,11 @@
 buildscript {
     repositories {
+
         jcenter()
+
+        flatDir {
+            dirs 'ulyp-ui/fernflower.jar'
+        }
     }
     dependencies {
         classpath group: 'commons-codec', name: 'commons-codec', version: '1.2'
@@ -26,6 +31,7 @@ dependencies {
     compile project(':ulyp-ui-transport')
     compile project(':ulyp-ui-repository')
 
+    implementation files('libs/fernflower.jar')
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"

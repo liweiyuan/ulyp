@@ -2,7 +2,6 @@ package com.ulyp.ui.code.find;
 
 import com.ulyp.core.process.Classpath;
 import com.ulyp.ui.code.SourceCode;
-import com.ulyp.ui.code.find.SourceCodeFinder;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.containsString;

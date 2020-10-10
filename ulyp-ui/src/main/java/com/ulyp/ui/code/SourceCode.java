@@ -21,4 +21,12 @@ public class SourceCode {
     public int getLineCount() {
         return code.split("\n").length;
     }
+
+    @Override
+    public String toString() {
+        return "SourceCode{" +
+                "className='" + className + '\'' +
+                ", code='" + code + '\'' +
+                '}';
+    }
 }
