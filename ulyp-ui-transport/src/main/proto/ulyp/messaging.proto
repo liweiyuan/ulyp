@@ -13,7 +13,6 @@ service UiTransport {
     rpc UploadCallGraph (TCallRecordLogUploadRequest) returns (TCallRecordLogUploadResponse) {}
 }
 
-// TODO rename to Settings
 message Settings {
     bool mayStartRecording = 1;
     bool recordCollectionsItems = 3;
