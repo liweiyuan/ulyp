@@ -75,4 +75,8 @@ public class JarFile {
             }
         }
     }
+
+    public String getAbsolutePath() {
+        return this.file.getAbsolutePath();
+    }
 }

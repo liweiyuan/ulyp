@@ -46,7 +46,7 @@ public class SourceCodeFinder {
             ByteCode byteCode = jar.findByteCodeByClassName(javaClassName);
 
             if (byteCode != null) {
-                decompiled = Optional.of(byteCode.decompile());
+                decompiled = Optional.of(byteCode.decompile().prependToSource(String.format("// Decompiled from: %s \n", jar.getAbsolutePath())));
             }
         }
 

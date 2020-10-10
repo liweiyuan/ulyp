@@ -18,6 +18,10 @@ public class SourceCode {
         return code;
     }
 
+    public SourceCode prependToSource(String text) {
+        return new SourceCode(this.className, text + this.code);
+    }
+
     public int getLineCount() {
         return code.split("\n").length;
     }
