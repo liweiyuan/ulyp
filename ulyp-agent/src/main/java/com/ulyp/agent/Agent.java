@@ -53,12 +53,6 @@ public class Agent {
             }
         }
 
-//        if (tracingMatcher == null) {
-//            tracingMatcher = ElementMatchers.named("java.lang.Thread");
-//        } else {
-//            tracingMatcher = tracingMatcher.or(ElementMatchers.named("java.lang.Thread"));
-//        }
-
         excludedPackages.add("java");
         excludedPackages.add("javax");
         excludedPackages.add("jdk");
