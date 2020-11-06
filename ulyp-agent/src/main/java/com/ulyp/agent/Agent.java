@@ -53,6 +53,12 @@ public class Agent {
             }
         }
 
+//        if (tracingMatcher == null) {
+//            tracingMatcher = ElementMatchers.named("java.lang.Thread");
+//        } else {
+//            tracingMatcher = tracingMatcher.or(ElementMatchers.named("java.lang.Thread"));
+//        }
+
         excludedPackages.add("java");
         excludedPackages.add("javax");
         excludedPackages.add("jdk");
@@ -78,7 +84,8 @@ public class Agent {
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
                 .transform(new BbTransformer(RecordingAdvice.class, recordingStartMethodList))
-                .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
+                .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
+                .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 
         if (LoggingSettings.LOG_LEVEL == Level.TRACE) {
             agentBuilder = agentBuilder.with(AgentBuilder.Listener.StreamWriting.toSystemOut());
