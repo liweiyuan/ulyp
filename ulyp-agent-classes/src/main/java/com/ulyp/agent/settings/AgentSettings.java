@@ -9,7 +9,7 @@ public interface AgentSettings {
 
     int getMinRecordsCountForLog();
 
-    int getMaxCallsPerMethod();
+    int getMaxCallsToRecordPerMethod();
 
     PackageList getInstrumentatedPackages();
 

@@ -1,6 +1,5 @@
 package com.test.cases.util;
 
-import com.ulyp.agent.log.LoggingSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import org.buildobjects.process.ProcBuilder;
 import org.buildobjects.process.ProcResult;
@@ -30,7 +29,7 @@ public class TestUtil {
             processArgs.add("-javaagent:" + agentJar.getAbsolutePath());
             processArgs.add("-cp");
             processArgs.add(classPath);
-            processArgs.add("-D" + SystemPropertiesSettings.MAX_RECORDED_CALL_PER_METHOD + "=" + settingsBuilder.getMaxCallsPerMethod());
+            processArgs.add("-D" + SystemPropertiesSettings.MAX_CALL_TO_RECORD_PER_METHOD + "=" + settingsBuilder.getMaxCallsPerMethod());
             if (settingsBuilder.isUiEnabled()) {
                 processArgs.add("-D" + SystemPropertiesSettings.UI_HOST_PROPERTY + "=localhost");
                 processArgs.add("-D" + SystemPropertiesSettings.UI_PORT_PROPERTY + "=" + settingsBuilder.port);

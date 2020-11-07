@@ -26,16 +26,15 @@ public class CallRecordLog {
     private final String threadName;
     private final StackTraceElement[] stackTrace;
     private final int maxDepth;
-    // TODO name?
-    private final int maxCallsPerDepth;
+    private final int maxCallsToRecordPerMethod;
 
     private boolean inProcessOfTracing = true;
     private int callIdCounter = 0;
 
-    public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsPerDepth) {
+    public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
-        this.maxCallsPerDepth = maxCallsPerDepth;
+        this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
         this.agentRuntime = agentRuntime;
         callCountStack.addInt(0);
 
@@ -58,7 +57,7 @@ public class CallRecordLog {
             int callsMadeInCurrentMethod = callCountStack.getInt(callCountStack.size() - 1);
 
             int callId = callIdCounter++;
-            boolean canRecord = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsPerDepth;
+            boolean canRecord = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsToRecordPerMethod;
             pushCurrentMethodCallId(callId, canRecord);
 
             if (canRecord) {

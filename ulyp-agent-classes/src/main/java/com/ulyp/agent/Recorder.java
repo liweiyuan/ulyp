@@ -59,7 +59,7 @@ public class Recorder {
             CallRecordLog log = new CallRecordLog(
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
-                    context.getSysPropsSettings().getMaxCallsPerMethod());
+                    context.getSysPropsSettings().getMaxCallsToRecordPerMethod());
             if (LoggingSettings.IS_TRACE_TURNED_ON) {
                 logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
             }
