@@ -49,35 +49,7 @@ public class CallRecordTreeTab extends Tab {
         this.recordingInfo = firstChunk.getRecordingInfo();
     }
 
-    public String getTabName() {
-        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + root.getSubtreeNodeCount() + ")";
-    }
-
-    private Tooltip getTooltipText() {
-
-        StringBuilder builder = new StringBuilder()
-                .append("Thread: ").append(recordingInfo).append("\n")
-                .append("Created at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis())).append("\n")
-                .append("Finished at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis() + this.recordingInfo.getLifetimeMillis())).append("\n")
-                .append("Lifetime: ").append(recordingInfo.getLifetimeMillis()).append(" millis").append("\n");
-
-        builder.append("Stack trace: ").append("\n");
-
-        for (TStackTraceElement element: recordingInfo.getStackTrace().getElementList()) {
-            builder.append("\tat ")
-                    .append(element.getDeclaringClass())
-                    .append(".")
-                    .append(element.getMethodName())
-                    .append("(")
-                    .append(element.getFileName())
-                    .append(":")
-                    .append(element.getLineNumber())
-                    .append(")");
-        }
-
-        return new Tooltip(builder.toString());
-    }
-
+    @PostConstruct
     public void init() {
         treeView = new TreeView<>(new CallRecordTreeNode(root, renderSettings, root.getSubtreeNodeCount()));
         treeView.prefHeightProperty().bind(parent.heightProperty());
@@ -111,6 +83,35 @@ public class CallRecordTreeTab extends Tab {
         setContent(scrollPane);
         setOnClosed(ev -> dispose());
         setTooltip(getTooltipText());
+    }
+
+    public String getTabName() {
+        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + root.getSubtreeNodeCount() + ")";
+    }
+
+    private Tooltip getTooltipText() {
+
+        StringBuilder builder = new StringBuilder()
+                .append("Thread: ").append(recordingInfo).append("\n")
+                .append("Created at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis())).append("\n")
+                .append("Finished at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis() + this.recordingInfo.getLifetimeMillis())).append("\n")
+                .append("Lifetime: ").append(recordingInfo.getLifetimeMillis()).append(" millis").append("\n");
+
+        builder.append("Stack trace: ").append("\n");
+
+        for (TStackTraceElement element: recordingInfo.getStackTrace().getElementList()) {
+            builder.append("\tat ")
+                    .append(element.getDeclaringClass())
+                    .append(".")
+                    .append(element.getMethodName())
+                    .append("(")
+                    .append(element.getFileName())
+                    .append(":")
+                    .append(element.getLineNumber())
+                    .append(")");
+        }
+
+        return new Tooltip(builder.toString());
     }
 
     @Nullable

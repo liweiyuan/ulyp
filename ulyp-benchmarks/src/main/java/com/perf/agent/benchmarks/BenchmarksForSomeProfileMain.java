@@ -63,10 +63,10 @@ public class BenchmarksForSomeProfileMain {
 
                 if (profile.shouldSendSomethingToUi()) {
 
-                    TCallRecordLogUploadRequest TCallRecordLogUploadRequest = uiServerStub.get(5, TimeUnit.MINUTES);
-                    recordingTimeHistogram.recordValue(TCallRecordLogUploadRequest.getLifetimeMillis());
+                    TCallRecordLogUploadRequest request = uiServerStub.get(5, TimeUnit.MINUTES);
+                    recordingTimeHistogram.recordValue(request.getRecordingInfo().getLifetimeMillis());
 
-                    CallEnterRecordList enterRecords = new CallEnterRecordList(TCallRecordLogUploadRequest.getRecordLog().getEnterRecords());
+                    CallEnterRecordList enterRecords = new CallEnterRecordList(request.getRecordLog().getEnterRecords());
                     return enterRecords.size();
                 }
 

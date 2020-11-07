@@ -45,6 +45,7 @@ public class ProcessTab extends Tab {
         } else {
             CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs, chunk);
             callTreeTabs.getTabs().add(tab);
+            tabsByRecordingId.put(chunk.getRecordingId(), tab);
         }
     }
 

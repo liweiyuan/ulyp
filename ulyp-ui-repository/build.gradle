@@ -3,6 +3,9 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+//
+//        jitpack { url 'https://jitpack.io' }
+//        snapshots{ url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 
@@ -20,6 +23,11 @@ dependencies {
     compile project(':ulyp-core')
     compile project(':ulyp-ui-transport')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+
+    implementation(platform("org.dizitart:nitrite-bom:4.0.0-SNAPSHOT"))
+    implementation 'org.dizitart:nitrite'
+    implementation 'org.dizitart:nitrite-mvstore-adapter'
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
 }
