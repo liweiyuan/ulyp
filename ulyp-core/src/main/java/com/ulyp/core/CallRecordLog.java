@@ -44,7 +44,7 @@ public class CallRecordLog {
         // filter out CallRecordLog.<init>/Recorder.lambda$startOrContinueRecording$2/EnhancedThreadLocal.getOrCreate/Recorder.startOrContinueRecording
         // from stack trace
         // If code changed, there should be a readjustement, but don't worry as this is tested
-        this.stackTrace = Arrays.copyOfRange(new Exception().getStackTrace(), 4, wholeStackTrace.length);
+        this.stackTrace = Arrays.copyOfRange(wholeStackTrace, 5, wholeStackTrace.length);
         this.threadName = Thread.currentThread().getName();
     }
 
