@@ -135,15 +135,19 @@ public class CallRecordTreeDeserializer {
         }
 
         public void persist() {
+            int subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
+
             CallRecord node = new CallRecord(
                     callee,
                     args,
                     returnValue,
                     thrown,
                     methodDescription,
-                    children
+                    database,
+                    subtreeNodeCount
             );
             database.persist(node);
+            children.forEach(child -> database.linkChild(node.getId(), child.getId()));
             if (parent != null) {
                 parent.children.add(node);
             }

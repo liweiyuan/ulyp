@@ -23,7 +23,7 @@ public class CallRecord {
     private final ObjectRepresentation returnValue;
     private final List<ObjectRepresentation> args;
     private final boolean thrown;
-    private final List<CallRecord> children;
+    private final CallRecordDatabase database;
     private final int subtreeNodeCount;
 
     public CallRecord(
@@ -32,7 +32,8 @@ public class CallRecord {
             ObjectRepresentation returnValue,
             boolean thrown,
             TMethodInfoDecoder methodDescription,
-            List<CallRecord> children)
+            CallRecordDatabase database,
+            int subtreeNodeCount)
     {
         this.callee = callee;
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
@@ -51,8 +52,8 @@ public class CallRecord {
         this.methodName = methodDescription.methodName();
         methodDescription.limit(originalLimit);
 
-        this.children = new ArrayList<>(children);
-        this.subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
+        this.database = database;
+        this.subtreeNodeCount = subtreeNodeCount;
     }
 
     public ObjectRepresentation getCallee() {
@@ -104,7 +105,7 @@ public class CallRecord {
     }
 
     public List<CallRecord> getChildren() {
-        return children;
+        return database.getChildren(this.id);
     }
 
     public CallRecord setId(long id) {

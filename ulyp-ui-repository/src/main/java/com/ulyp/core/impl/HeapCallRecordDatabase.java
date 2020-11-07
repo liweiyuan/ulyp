@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
 
     private final AtomicLong idGenerator = new AtomicLong();
     private final Map<Long, CallRecord> nodes = new ConcurrentHashMap<>();
+    private final Map<Long, List<CallRecord>> children = new ConcurrentHashMap<>();
 
     @Override
     public CallRecord find(long id) {
@@ -25,8 +27,7 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public void deleteSubtree(long id) {
-        CallRecord callRecord = nodes.get(id);
-        for (CallRecord child : callRecord.getChildren()) {
+        for (CallRecord child : getChildren(id)) {
             deleteSubtree(child.getId());
         }
         nodes.remove(id);
@@ -34,12 +35,7 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public List<CallRecord> getChildren(long id) {
-        CallRecord node = find(id);
-        if (node != null) {
-            return node.getChildren();
-        } else {
-            return Collections.emptyList();
-        }
+        return children.computeIfAbsent(id, i -> new ArrayList<>());
     }
 
     @Override
@@ -47,6 +43,11 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
         long id = idGenerator.incrementAndGet();
         node.setId(id);
         nodes.put(id, node);
+    }
+
+    @Override
+    public void linkChild(long parentId, long childId) {
+        children.computeIfAbsent(parentId, i -> new ArrayList<>()).add(find(childId));
     }
 
     @Override
