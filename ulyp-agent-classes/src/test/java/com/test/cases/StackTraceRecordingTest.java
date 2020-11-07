@@ -18,7 +18,7 @@ public class StackTraceRecordingTest extends AbstractInstrumentationTest {
                         .setMethodToRecord(MethodMatcher.parse("X.foo"))
         );
 
-        TStackTrace stackTrace = request.getRecordLog().getStackTrace();
+        TStackTrace stackTrace = request.getRecordingInfo().getStackTrace();
 
         TStackTraceElement firstElement = stackTrace.getElementList().get(0);
 

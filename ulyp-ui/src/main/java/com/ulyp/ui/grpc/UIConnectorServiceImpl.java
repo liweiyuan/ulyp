@@ -29,7 +29,7 @@ public class UIConnectorServiceImpl extends UiTransportGrpc.UiTransportImplBase 
     @Override
     public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
         Platform.runLater(() -> {
-            CallRecordTree tree = new CallRecordTree(request);
+            CallRecordTreeChunk tree = new CallRecordTreeChunk(request);
             ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
             processTab.add(tree);
         });

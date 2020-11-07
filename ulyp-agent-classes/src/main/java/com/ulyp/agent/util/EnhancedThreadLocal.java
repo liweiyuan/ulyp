@@ -14,6 +14,10 @@ public class EnhancedThreadLocal<T> {
         tl.set(null);
     }
 
+    public void set(T v) {
+        tl.set(v);
+    }
+
     public T getOrCreate(Supplier<T> newValueSupplier) {
         T value = tl.get();
         if (value == null) {

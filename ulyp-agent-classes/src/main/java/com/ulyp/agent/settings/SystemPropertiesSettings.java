@@ -1,6 +1,10 @@
 package com.ulyp.agent.settings;
 
 import com.ulyp.agent.transport.*;
+import com.ulyp.agent.transport.file.FileUiAddress;
+import com.ulyp.agent.transport.grpc.GrpcUiAddress;
+import com.ulyp.agent.transport.grpc.GrpcUiTransport;
+import com.ulyp.agent.transport.nop.DisconnectedUiAddress;
 import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;

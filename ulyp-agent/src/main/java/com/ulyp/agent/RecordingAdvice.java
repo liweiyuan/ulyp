@@ -52,7 +52,7 @@ public class RecordingAdvice {
             );
         } else {
             if (Recorder.currentRecordingSessionCount.get() > 0 && Recorder.getInstance().recordingIsActiveInCurrentThread()) {
-                Recorder.getInstance().onMethodExit(MethodDescriptionMap.getInstance().get(methodId), returnValue, throwable);
+                Recorder.getInstance().onMethodExit(ByteBuddyAgentRuntime.getInstance(), MethodDescriptionMap.getInstance().get(methodId), returnValue, throwable);
             }
         }
     }

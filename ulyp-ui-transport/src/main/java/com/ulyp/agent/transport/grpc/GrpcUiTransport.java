@@ -58,25 +58,25 @@ public class GrpcUiTransport implements UiTransport {
 
                     TCallRecordLogUploadRequest protoRequest = RequestConverter.convert(request);
 
-                    long id = recordLog.getId();
+                    long recordingSessionId = recordLog.getRecordingSessionId();
                     ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(protoRequest);
 
                     Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
                         @Override
                         public void onSuccess(TCallRecordLogUploadResponse result) {
-                            recordLogsCurrentlyInSending.remove(id);
+                            recordLogsCurrentlyInSending.remove(recordingSessionId);
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
                             t.printStackTrace();
-                            recordLogsCurrentlyInSending.remove(id);
+                            recordLogsCurrentlyInSending.remove(recordingSessionId);
                         }
                     }, responseProcessingExecutor);
                 }
         );
 
-        long id = recordLog.getId();
+        long id = recordLog.getRecordingSessionId();
         recordLogsCurrentlyInSending.add(id);
     }
 

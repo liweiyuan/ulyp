@@ -97,9 +97,9 @@ public class PrimaryViewController implements Initializable {
 
                 for (TCallRecordLogUploadRequest request : requests.getRequestList()) {
                     Platform.runLater(() -> {
-                        CallRecordTree tree = new CallRecordTree(request);
-                        ProcessTab processTab = processTabPane.getOrCreateProcessTab(tree.getProcessInfo().getMainClassName());
-                        processTab.add(tree);
+                        CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
+                        ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
+                        processTab.uploadChunk(chunk);
                     });
                 }
             } catch (IOException e) {

@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CallRecordLog {
     public static final AtomicLong idGenerator = new AtomicLong(3000000000L);
 
-    private final long id = idGenerator.incrementAndGet();
+    private long recordingSessionId;
 
     private final AgentRuntime agentRuntime;
 
@@ -32,6 +32,7 @@ public class CallRecordLog {
     private int callIdCounter = 0;
 
     public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
+        this.recordingSessionId = idGenerator.incrementAndGet();
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
@@ -45,6 +46,36 @@ public class CallRecordLog {
         // If code changed, there should be a readjustement, but don't worry as this is tested
         this.stackTrace = Arrays.copyOfRange(wholeStackTrace, 5, wholeStackTrace.length);
         this.threadName = Thread.currentThread().getName();
+    }
+
+    private CallRecordLog(
+            long recordingSessionId,
+            AgentRuntime agentRuntime,
+            long epochMillisCreatedTime,
+            String threadName,
+            StackTraceElement[] stackTrace,
+            int maxDepth,
+            int maxCallsToRecordPerMethod,
+            boolean inProcessOfTracing,
+            int callIdCounter)
+    {
+        this.recordingSessionId = recordingSessionId;
+        this.agentRuntime = agentRuntime;
+        this.epochMillisCreatedTime = epochMillisCreatedTime;
+        this.threadName = threadName;
+        this.stackTrace = stackTrace;
+        this.maxDepth = maxDepth;
+        this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
+        this.inProcessOfTracing = inProcessOfTracing;
+        this.callIdCounter = callIdCounter;
+    }
+
+    public CallRecordLog cloneWithoutData() {
+        return new CallRecordLog(this.recordingSessionId, this.agentRuntime, this.epochMillisCreatedTime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
+    }
+
+    public long estimateBytesSize() {
+        return enterRecords.buffer.capacity() + exitRecords.buffer.capacity();
     }
 
     public void onMethodEnter(int methodId, ObjectBinaryPrinter[] printers, Object callee, Object[] args) {
@@ -135,8 +166,8 @@ public class CallRecordLog {
         return exitRecords;
     }
 
-    public long getId() {
-        return id;
+    public long getRecordingSessionId() {
+        return recordingSessionId;
     }
 
     public long getEpochMillisCreatedTime() {
@@ -146,7 +177,7 @@ public class CallRecordLog {
     @Override
     public String toString() {
         return "CallRecordLog{" +
-                "id=" + id +
+                "id=" + recordingSessionId +
                 ", calls=" + callIdsStack.size() +
                 '}';
     }

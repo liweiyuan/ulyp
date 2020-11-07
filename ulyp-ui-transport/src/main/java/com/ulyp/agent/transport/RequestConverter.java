@@ -16,21 +16,6 @@ public class RequestConverter {
         CallRecordLog recordLog = request.getRecordLog();
 
         TCallRecordLog log = TCallRecordLog.newBuilder()
-                .setStackTrace(
-                        TStackTrace.newBuilder()
-                                .addAllElement(
-                                        Arrays.stream(recordLog.getStackTrace())
-                                                .map(stackTraceElement -> TStackTraceElement.newBuilder()
-                                                        .setDeclaringClass(stackTraceElement.getClassName())
-                                                        .setMethodName(stackTraceElement.getMethodName())
-                                                        .setFileName(StringUtils.nullToEmpty(stackTraceElement.getFileName()))
-                                                        .setLineNumber(stackTraceElement.getLineNumber())
-                                                        .build())
-                                                .collect(Collectors.toList())
-                                )
-                                .build()
-                )
-                .setThreadName(recordLog.getThreadName())
                 .setEnterRecords(recordLog.getEnterRecords().toByteString())
                 .setExitRecords(recordLog.getExitRecords().toByteString())
                 .build();
@@ -48,15 +33,35 @@ public class RequestConverter {
             );
         }
 
-        return requestBuilder
-                .setRecordLog(log)
-                .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
+        RecordingInfo recordingInfo = RecordingInfo.newBuilder()
+                .setStackTrace(
+                        TStackTrace.newBuilder()
+                                .addAllElement(
+                                        Arrays.stream(recordLog.getStackTrace())
+                                                .map(stackTraceElement -> TStackTraceElement.newBuilder()
+                                                        .setDeclaringClass(stackTraceElement.getClassName())
+                                                        .setMethodName(stackTraceElement.getMethodName())
+                                                        .setFileName(StringUtils.nullToEmpty(stackTraceElement.getFileName()))
+                                                        .setLineNumber(stackTraceElement.getLineNumber())
+                                                        .build())
+                                                .collect(Collectors.toList())
+                                )
+                                .build()
+                )
+                .setThreadName(recordLog.getThreadName())
                 .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
                         .setMainClassName(request.getProcessInfo().getMainClassName())
                         .addAllClasspath(request.getProcessInfo().getClasspath().toList())
                         .build())
+                .setId(request.getRecordLog().getRecordingSessionId())
                 .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime())
+                .build();
+
+        return requestBuilder
+                .setRecordingInfo(recordingInfo)
+                .setRecordLog(log)
+                .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
                 .build();
     }
 }

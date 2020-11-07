@@ -14,13 +14,13 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldSendValidProcessInfo() {
-        TCallRecordLogUploadRequest log = runSubprocessWithUiAndReturnProtoRequest(
+        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToRecord("main")
         );
 
-        ProcessInfo processInfo = log.getProcessInfo();
+        ProcessInfo processInfo = request.getRecordingInfo().getProcessInfo();
 
         ProtocolStringList classpath = processInfo.getClasspathList();
 

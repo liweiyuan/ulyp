@@ -1,6 +1,6 @@
 package com.ulyp.ui;
 
-import com.ulyp.agent.transport.GrpcUiTransport;
+import com.ulyp.agent.transport.grpc.GrpcUiTransport;
 import com.ulyp.ui.grpc.UIConnectorServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

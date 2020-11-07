@@ -37,9 +37,6 @@ message TStackTrace {
 }
 
 message TCallRecordLog {
-    string threadName = 1;
-    TStackTrace stackTrace = 4;
-
     bytes enterRecords = 2;
     bytes exitRecords = 3;
 }
@@ -59,13 +56,20 @@ message ProcessInfo {
     int64 pid = 3;
 }
 
+message RecordingInfo {
+    ProcessInfo processInfo = 1;
+    int64 createEpochMillis = 2;
+    int64 lifetimeMillis = 3;
+    int64 id = 4;
+    string threadName = 5;
+    TStackTrace stackTrace = 6;
+}
+
 message TCallRecordLogUploadRequest {
     TCallRecordLog recordLog = 1;
     TMethodDescriptionList methodDescriptionList = 2;
     repeated TClassDescription description = 6;
-    ProcessInfo processInfo = 3;
-    int64 createEpochMillis = 4;
-    int64 lifetimeMillis = 5;
+    RecordingInfo recordingInfo = 7;
 }
 
 message TCallRecordLogUploadRequestList {

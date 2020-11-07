@@ -70,9 +70,9 @@ public class Recorder {
     }
 
     public void endRecordingIfPossible(AgentRuntime agentRuntime, MethodInfo methodInfo, Object result, Throwable thrown) {
-        CallRecordLog recordLog = threadLocalRecordsLog.get();
-        onMethodExit(methodInfo, result, thrown);
+        onMethodExit(agentRuntime, methodInfo, result, thrown);
 
+        CallRecordLog recordLog = threadLocalRecordsLog.get();
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
             currentRecordingSessionCount.decrementAndGet();
@@ -104,13 +104,30 @@ public class Recorder {
         log.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
-    public void onMethodExit(MethodInfo method, Object result, Throwable thrown) {
-        CallRecordLog log = threadLocalRecordsLog.get();
-        if (log == null) return;
+    public void onMethodExit(AgentRuntime agentRuntime, MethodInfo method, Object result, Throwable thrown) {
+        CallRecordLog currentRecordLog = threadLocalRecordsLog.get();
+        if (currentRecordLog == null) return;
 
         if (LoggingSettings.IS_TRACE_TURNED_ON) {
-            logger.trace("Method exit {}, method {}, return value {}, thrown {}", log, method, result, thrown);
+            logger.trace("Method exit {}, method {}, return value {}, thrown {}", currentRecordLog, method, result, thrown);
         }
-        log.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
+        currentRecordLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
+
+        if (currentRecordLog.estimateBytesSize() > 256 * 1024) {
+            if (LoggingSettings.IS_TRACE_TURNED_ON) {
+                logger.trace("Will send trace log {}", currentRecordLog);
+            }
+            CallRecordLog newRecordLog = currentRecordLog.cloneWithoutData();
+            threadLocalRecordsLog.set(newRecordLog);
+
+            context.getTransport().uploadAsync(
+                    new CallRecordTreeRequest(
+                            currentRecordLog,
+                            MethodDescriptionMap.getInstance().values(),
+                            agentRuntime.getAllKnownTypes(),
+                            context.getProcessInfo()
+                    )
+            );
+        }
     }
 }

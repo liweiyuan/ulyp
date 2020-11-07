@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Scope(scopeName = "prototype")
@@ -17,6 +19,7 @@ public class ProcessTab extends Tab {
     private TabPane callTreeTabs;
     @Autowired
     private ApplicationContext applicationContext;
+    private Map<Long, CallRecordTreeTab> tabsByRecordingId = new HashMap<>();
 
     ProcessTab(String mainClassName) {
         super(mainClassName);
@@ -35,10 +38,14 @@ public class ProcessTab extends Tab {
         return mainClassName;
     }
 
-    public void add(CallRecordTree tree) {
-        CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs, tree);
-
-        callTreeTabs.getTabs().add(tab);
+    public void uploadChunk(CallRecordTreeChunk chunk) {
+        CallRecordTreeTab callRecordTreeTab = tabsByRecordingId.get(chunk.getRecordingId());
+        if (callRecordTreeTab != null) {
+            callRecordTreeTab.uploadChunk(chunk);
+        } else {
+            CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs, chunk);
+            callTreeTabs.getTabs().add(tab);
+        }
     }
 
     public CallRecordTreeTab getSelectedTreeTab() {
