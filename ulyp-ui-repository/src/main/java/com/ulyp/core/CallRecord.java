@@ -1,16 +1,18 @@
 package com.ulyp.core;
 
+import com.ulyp.core.printers.NotRecordedObjectRepresentation;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TMethodInfoDecoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CallRecord {
 
-    private long id;
+    private long id = -1;
     private final String className;
 
     // TODO move this group to method class
@@ -20,17 +22,17 @@ public class CallRecord {
     private final List<String> parameterNames;
 
     private final ObjectRepresentation callee;
-    private final ObjectRepresentation returnValue;
     private final List<ObjectRepresentation> args;
-    private final boolean thrown;
+
+    private ObjectRepresentation returnValue = NotRecordedObjectRepresentation.getInstance();
+    private boolean thrown;
+
     private final CallRecordDatabase database;
-    private final int subtreeNodeCount;
+    private int subtreeNodeCount;
 
     public CallRecord(
             ObjectRepresentation callee,
             List<ObjectRepresentation> args,
-            ObjectRepresentation returnValue,
-            boolean thrown,
             TMethodInfoDecoder methodDescription,
             CallRecordDatabase database,
             int subtreeNodeCount)
@@ -39,8 +41,6 @@ public class CallRecord {
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.isStatic = methodDescription.staticFlag() == BooleanType.T;
         this.args = new ArrayList<>(args);
-        this.returnValue = returnValue;
-        this.thrown = thrown;
         int originalLimit = methodDescription.limit();
 
         TMethodInfoDecoder.ParameterNamesDecoder paramNamesDecoder = methodDescription.parameterNames();
@@ -54,6 +54,14 @@ public class CallRecord {
 
         this.database = database;
         this.subtreeNodeCount = subtreeNodeCount;
+    }
+
+    public void forEach(Consumer<CallRecord> recordConsumer) {
+        recordConsumer.accept(this);
+
+        for (CallRecord child : getChildren()) {
+            child.forEach(recordConsumer);
+        }
     }
 
     public ObjectRepresentation getCallee() {
@@ -108,6 +116,21 @@ public class CallRecord {
         return database.getChildren(this.id);
     }
 
+    public CallRecord setSubtreeNodeCount(int subtreeNodeCount) {
+        this.subtreeNodeCount = subtreeNodeCount;
+        return this;
+    }
+
+    public CallRecord setReturnValue(ObjectRepresentation returnValue) {
+        this.returnValue = returnValue;
+        return this;
+    }
+
+    public CallRecord setThrown(boolean thrown) {
+        this.thrown = thrown;
+        return this;
+    }
+
     public CallRecord setId(long id) {
         this.id = id;
         return this;
@@ -119,5 +142,9 @@ public class CallRecord {
                 "." +
                 methodName +
                 args;
+    }
+
+    public boolean isComplete() {
+        return returnValue != NotRecordedObjectRepresentation.getInstance();
     }
 }

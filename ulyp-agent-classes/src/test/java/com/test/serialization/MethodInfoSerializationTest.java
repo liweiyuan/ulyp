@@ -8,18 +8,20 @@ import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
+
 public class MethodInfoSerializationTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldMinimizeAmountMethodDescriptions() {
 
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(
+        List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToRecord(MethodMatcher.parse("X.main"))
         );
 
-        MethodInfoList methodDescriptions = new MethodInfoList(request.getMethodDescriptionList().getData());
+        MethodInfoList methodDescriptions = new MethodInfoList(requests.get(0).getMethodDescriptionList().getData());
 
         // Currently there is an overhead of second method description creation for exit advice
         Assert.assertEquals(1, methodDescriptions.size());

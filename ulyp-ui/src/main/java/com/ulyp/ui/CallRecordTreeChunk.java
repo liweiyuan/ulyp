@@ -4,6 +4,7 @@ import com.ulyp.core.*;
 import com.ulyp.transport.ProcessInfo;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
+import com.ulyp.transport.TCallRecordLogUploadRequestOrBuilder;
 
 /**
  * Full deserialized record log sent from agent formed as a tree.
@@ -17,17 +18,6 @@ public class CallRecordTreeChunk {
         this.request = request;
     }
 
-    public CallRecord uploadTo(CallRecordDatabase database) {
-
-        return new CallRecordTreeDeserializer(
-                new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
-                new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                new MethodInfoList(request.getMethodDescriptionList().getData()),
-                request.getDescriptionList(),
-                database
-        ).get();
-    }
-
     public ProcessInfo getProcessInfo() {
         return request.getRecordingInfo().getProcessInfo();
     }
@@ -37,10 +27,14 @@ public class CallRecordTreeChunk {
     }
 
     public long getRecordingId() {
-        return request.getRecordingInfo().getId();
+        return request.getRecordingInfo().getRecordingId();
     }
 
     public void dispose() {
 //        database.deleteSubtree(root.getId());
+    }
+
+    public TCallRecordLogUploadRequest getRequest() {
+        return request;
     }
 }

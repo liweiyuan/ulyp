@@ -11,17 +11,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CallRecordLog {
     public static final AtomicLong idGenerator = new AtomicLong(3000000000L);
 
-    private long recordingSessionId;
-
+    private final long recordingSessionId;
+    private final long chunkId;
     private final AgentRuntime agentRuntime;
-
     private final CallEnterRecordList enterRecords = new CallEnterRecordList();
     private final CallExitRecordList exitRecords = new CallExitRecordList();
-
-    private final IntArrayList callIdsStack = new IntArrayList();
-    private final BooleanArrayList recordEnterCallStack = new BooleanArrayList();
-    private final IntArrayList callCountStack = new IntArrayList();
-
+    private final IntArrayList callIdsStack;
+    private final BooleanArrayList recordEnterCallStack;
+    private final IntArrayList callCountStack;
     private final long epochMillisCreatedTime;
     private final String threadName;
     private final StackTraceElement[] stackTrace;
@@ -32,6 +29,10 @@ public class CallRecordLog {
     private int callIdCounter = 0;
 
     public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
+        this.chunkId = 0;
+        this.callIdsStack = new IntArrayList();
+        this.recordEnterCallStack = new BooleanArrayList();
+        this.callCountStack = new IntArrayList();
         this.recordingSessionId = idGenerator.incrementAndGet();
         this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
@@ -49,6 +50,10 @@ public class CallRecordLog {
     }
 
     private CallRecordLog(
+            long chunkId,
+            IntArrayList callIdsStack,
+            BooleanArrayList recordEnterCallStack,
+            IntArrayList callCountStack,
             long recordingSessionId,
             AgentRuntime agentRuntime,
             long epochMillisCreatedTime,
@@ -59,6 +64,10 @@ public class CallRecordLog {
             boolean inProcessOfTracing,
             int callIdCounter)
     {
+        this.chunkId = chunkId;
+        this.callIdsStack = callIdsStack;
+        this.callCountStack = callCountStack;
+        this.recordEnterCallStack = recordEnterCallStack;
         this.recordingSessionId = recordingSessionId;
         this.agentRuntime = agentRuntime;
         this.epochMillisCreatedTime = epochMillisCreatedTime;
@@ -71,7 +80,7 @@ public class CallRecordLog {
     }
 
     public CallRecordLog cloneWithoutData() {
-        return new CallRecordLog(this.recordingSessionId, this.agentRuntime, this.epochMillisCreatedTime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
+        return new CallRecordLog(this.chunkId + 1, this.callIdsStack, this.recordEnterCallStack, this.callCountStack, this.recordingSessionId, this.agentRuntime, this.epochMillisCreatedTime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
     }
 
     public long estimateBytesSize() {
@@ -148,6 +157,10 @@ public class CallRecordLog {
             System.err.println("Inconsistency found, no method stamp in stack");
             return -1;
         }
+    }
+
+    public long getChunkId() {
+        return chunkId;
     }
 
     public String getThreadName() {

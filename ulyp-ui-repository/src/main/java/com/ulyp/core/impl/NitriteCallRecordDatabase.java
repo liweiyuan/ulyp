@@ -40,6 +40,11 @@ public class NitriteCallRecordDatabase implements CallRecordDatabase {
     }
 
     @Override
+    public LongList getChildrenIds(long id) {
+        return null;
+    }
+
+    @Override
     public void persist(CallRecord node) {
 
     }
@@ -47,10 +52,5 @@ public class NitriteCallRecordDatabase implements CallRecordDatabase {
     @Override
     public void linkChild(long parentId, long childId) {
 
-    }
-
-    @Override
-    public LongList searchSubtree(String text, CallRecord node) {
-        return null;
     }
 }

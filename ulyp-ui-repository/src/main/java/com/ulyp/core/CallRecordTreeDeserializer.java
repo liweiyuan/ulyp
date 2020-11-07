@@ -1,48 +1,53 @@
 package com.ulyp.core;
 
-import com.ulyp.core.printers.ObjectRepresentation;
-import com.ulyp.core.printers.TypeInfo;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+import com.ulyp.core.printers.*;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
-import com.ulyp.core.printers.ObjectBinaryPrinter;
-import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.*;
 
 public class CallRecordTreeDeserializer {
 
-    private final CallEnterRecordList enterRecordsList;
-    private final CallExitRecordList exitRecordsList;
-    private final MethodInfoList methodInfoList;
-    private final DecodingContext decodingContext;
     private final CallRecordDatabase database;
-    private final Long2ObjectMap<TypeInfo> classIdMap;
 
-    public CallRecordTreeDeserializer(CallEnterRecordList enterRecordsList,
-                                      CallExitRecordList exitRecordsList,
-                                      MethodInfoList methodInfoList,
-                                      List<TClassDescription> classDescriptionList,
-                                      CallRecordDatabase database)
-    {
+    private final Long2ObjectMap<TypeInfo> classIdMap = new Long2ObjectOpenHashMap<>();
+    private final DecodingContext decodingContext = new DecodingContext(classIdMap);
+
+    private CallRecordBuilder root = null;
+    private final Deque<CallRecordBuilder> rootPath = new ArrayDeque<>();
+
+    public CallRecordTreeDeserializer(CallRecordDatabase database) {
         this.database = database;
-        this.enterRecordsList = enterRecordsList;
-        this.exitRecordsList = exitRecordsList;
-        this.methodInfoList = methodInfoList;
+    }
 
-        this.classIdMap = new Long2ObjectOpenHashMap<>();
+    public boolean hasCompleteTree() {
+        return getRoot().isComplete();
+    }
+
+    public CallRecord getRoot() {
+        return root.persist();
+    }
+
+    public CallRecord deserialize(
+            CallEnterRecordList enterRecordsList,
+            CallExitRecordList exitRecordsList,
+            MethodInfoList methodInfoList,
+            List<TClassDescription> classDescriptionList)
+    {
         for (TClassDescription classDescription : classDescriptionList) {
-            this.classIdMap.put(
+            classIdMap.put(
                     classDescription.getId(),
                     new NameOnlyTypeInfo(classDescription.getId(), classDescription.getName())
             );
         }
-        this.decodingContext = new DecodingContext(classIdMap);
-    }
 
-    public CallRecord get() {
         Long2ObjectMap<TMethodInfoDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
         Iterator<TMethodInfoDecoder> iterator = methodInfoList.copyingIterator();
         while (iterator.hasNext()) {
@@ -50,37 +55,37 @@ public class CallRecordTreeDeserializer {
             methodDescriptionMap.put(methodDescription.id(), methodDescription);
         }
 
-        Iterator<TCallEnterRecordDecoder> enterRecordIt = enterRecordsList.iterator();
-        Iterator<TCallExitRecordDecoder> exitRecordIt = exitRecordsList.iterator();
+        PeekingIterator<TCallEnterRecordDecoder> enterRecordIt = Iterators.peekingIterator(enterRecordsList.iterator());
+        PeekingIterator<TCallExitRecordDecoder> exitRecordIt = Iterators.peekingIterator(exitRecordsList.iterator());
 
-        TCallEnterRecordDecoder currentEnterRecord = enterRecordIt.next();
-        TCallExitRecordDecoder currentExitRecord = exitRecordIt.next();
+        if (this.root == null) {
+            TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
+            root = new CallRecordBuilder(null, methodDescriptionMap.get(enterRecord.methodId()), enterRecord);
+            rootPath.add(root);
+        }
 
-        CallRecordBuilder root = new CallRecordBuilder(null, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
-        currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
-
-        Deque<CallRecordBuilder> rootPath = new ArrayDeque<>();
-        rootPath.add(root);
-
-        while (currentEnterRecord != null || currentExitRecord != null) {
+        while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
             CallRecordBuilder currentNode = rootPath.getLast();
 
             long currentCallId = currentNode.callId;
-            if (currentExitRecord != null && currentExitRecord.callId() == currentCallId) {
-                currentNode.setExitRecordData(currentExitRecord);
-                currentExitRecord = exitRecordIt.hasNext() ? exitRecordIt.next() : null;
+            if (exitRecordIt.hasNext() && exitRecordIt.peek().callId() == currentCallId) {
+                currentNode.setExitRecordData(exitRecordIt.next());
                 currentNode.persist();
                 rootPath.removeLast();
-            } else if (currentEnterRecord != null) {
-                CallRecordBuilder next = new CallRecordBuilder(currentNode, methodDescriptionMap.get(currentEnterRecord.methodId()), currentEnterRecord);
-                currentEnterRecord = enterRecordIt.hasNext() ? enterRecordIt.next() : null;
+            } else if (enterRecordIt.hasNext()) {
+                TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
+                CallRecordBuilder next = new CallRecordBuilder(currentNode, methodDescriptionMap.get(enterRecord.methodId()), enterRecord);
                 rootPath.add(next);
             } else {
                 throw new RuntimeException("Inconsistent state");
             }
         }
 
-        return root.persisted;
+        for (CallRecordBuilder node : rootPath) {
+            node.persist();
+        }
+
+        return root.persist();
     }
 
     private class CallRecordBuilder {
@@ -90,13 +95,17 @@ public class CallRecordTreeDeserializer {
         private final long callId;
         private final ObjectRepresentation callee;
         private final List<ObjectRepresentation> args;
-        private final List<CallRecord> children = new ArrayList<>();
+        private final LongList childrenIds = new LongArrayList();
 
         private CallRecord persisted;
-        private ObjectRepresentation returnValue;
+        private ObjectRepresentation returnValue = NotRecordedObjectRepresentation.getInstance();
         private boolean thrown;
 
-        private CallRecordBuilder(CallRecordBuilder parent, TMethodInfoDecoder methodDescription, TCallEnterRecordDecoder decoder) {
+        private CallRecordBuilder(
+                CallRecordBuilder parent,
+                TMethodInfoDecoder methodDescription,
+                TCallEnterRecordDecoder decoder)
+        {
             this.parent = parent;
             this.methodDescription = methodDescription;
             this.callId = decoder.callId();
@@ -134,24 +143,34 @@ public class CallRecordTreeDeserializer {
             this.thrown = decoder.thrown() == BooleanType.T;
         }
 
-        public void persist() {
-            int subtreeNodeCount = children.stream().map(CallRecord::getSubtreeNodeCount).reduce(1, Integer::sum);
-
-            CallRecord node = new CallRecord(
-                    callee,
-                    args,
-                    returnValue,
-                    thrown,
-                    methodDescription,
-                    database,
-                    subtreeNodeCount
-            );
-            database.persist(node);
-            children.forEach(child -> database.linkChild(node.getId(), child.getId()));
-            if (parent != null) {
-                parent.children.add(node);
+        public CallRecord persist() {
+            int subtreeNodeCount = childrenIds.stream()
+                    .map(database::find)
+                    .map(CallRecord::getSubtreeNodeCount)
+                    .reduce(1, Integer::sum);
+            CallRecord node;
+            if (persisted != null) {
+                node = persisted;
+            } else {
+                node = new CallRecord(
+                        callee,
+                        args,
+                        methodDescription,
+                        database,
+                        subtreeNodeCount
+                );
             }
+            node.setReturnValue(this.returnValue);
+            node.setThrown(this.thrown);
+            node.setSubtreeNodeCount(subtreeNodeCount);
+
+            database.persist(node);
             persisted = node;
+            childrenIds.forEach((long childId) -> database.linkChild(node.getId(), childId));
+            if (parent != null) {
+                parent.childrenIds.add(node.getId());
+            }
+            return persisted;
         }
     }
 }

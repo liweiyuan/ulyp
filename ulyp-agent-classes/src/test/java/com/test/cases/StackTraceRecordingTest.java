@@ -8,17 +8,19 @@ import com.ulyp.transport.TStackTraceElement;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
+
 public class StackTraceRecordingTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldRecordStackTraceOfMethodWhenRecordingStarted() {
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(
+        List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(
                 new TestSettingsBuilder()
                         .setMainClassName(StackTraceTestCase.class)
                         .setMethodToRecord(MethodMatcher.parse("X.foo"))
         );
 
-        TStackTrace stackTrace = request.getRecordingInfo().getStackTrace();
+        TStackTrace stackTrace = requests.get(0).getRecordingInfo().getStackTrace();
 
         TStackTraceElement firstElement = stackTrace.getElementList().get(0);
 

@@ -2,7 +2,6 @@ package com.ulyp.ui;
 
 import com.ulyp.core.*;
 import com.ulyp.core.impl.HeapCallRecordDatabase;
-import com.ulyp.transport.ProcessInfo;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TStackTraceElement;
 import com.ulyp.ui.code.SourceCode;
@@ -13,6 +12,7 @@ import com.ulyp.ui.util.ResizeEvent;
 import com.ulyp.ui.util.ResizeEventSupportingScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Region;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +22,19 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 @Component
 @Scope(value = "prototype")
 public class CallRecordTreeTab extends Tab {
 
     private final Region parent;
-
+    private final CallRecord root;
     private final CallRecordDatabase database = new HeapCallRecordDatabase();
     private final RecordingInfo recordingInfo;
-    private final CallRecord root;
+    private final CallRecordTreeDeserializer callRecordTreeDeserializer = new CallRecordTreeDeserializer(database);
 
     private TreeView<CallTreeNodeContent> treeView;
 
@@ -45,13 +48,20 @@ public class CallRecordTreeTab extends Tab {
     @SuppressWarnings("unchecked")
     public CallRecordTreeTab(Region parent, CallRecordTreeChunk firstChunk) {
         this.parent = parent;
-        this.root = firstChunk.uploadTo(database);
+
+        this.callRecordTreeDeserializer.deserialize(
+                new CallEnterRecordList(firstChunk.getRequest().getRecordLog().getEnterRecords()),
+                new CallExitRecordList(firstChunk.getRequest().getRecordLog().getExitRecords()),
+                new MethodInfoList(firstChunk.getRequest().getMethodDescriptionList().getData()),
+                firstChunk.getRequest().getDescriptionList()
+        );
+        this.root = callRecordTreeDeserializer.getRoot();
         this.recordingInfo = firstChunk.getRecordingInfo();
     }
 
     @PostConstruct
     public void init() {
-        treeView = new TreeView<>(new CallRecordTreeNode(root, renderSettings, root.getSubtreeNodeCount()));
+        treeView = new TreeView<>(new CallRecordTreeNode(database, root.getId(), renderSettings, root.getSubtreeNodeCount()));
         treeView.prefHeightProperty().bind(parent.heightProperty());
         treeView.prefWidthProperty().bind(parent.widthProperty());
 
@@ -124,6 +134,25 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public void uploadChunk(CallRecordTreeChunk chunk) {
+        System.out.println("Uploaded chunk!!!");
+        callRecordTreeDeserializer.deserialize(
+                new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
+                new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
+                new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
+                chunk.getRequest().getDescriptionList()
+        );
 
+//        Queue<CallRecordTreeNode> queue = new ArrayDeque<>();
+        CallRecordTreeNode root = (CallRecordTreeNode) treeView.getRoot();
+        root.refresh();
+//        queue.add(root);
+
+//        while (!queue.isEmpty()) {
+//            CallRecordTreeNode node = (CallRecordTreeNode) queue.poll();
+//            node.refresh();
+//            if (node.isLoaded()) {
+//
+//            }
+//        }
     }
 }

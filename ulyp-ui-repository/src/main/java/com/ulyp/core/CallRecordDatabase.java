@@ -12,9 +12,9 @@ public interface CallRecordDatabase {
 
     List<CallRecord> getChildren(long id);
 
+    LongList getChildrenIds(long id);
+
     void persist(CallRecord node);
 
     void linkChild(long parentId, long childId);
-
-    LongList searchSubtree(String text, CallRecord node);
 }

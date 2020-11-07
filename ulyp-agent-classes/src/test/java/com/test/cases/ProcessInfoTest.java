@@ -6,6 +6,8 @@ import com.ulyp.transport.ProcessInfo;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -14,13 +16,13 @@ public class ProcessInfoTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldSendValidProcessInfo() {
-        TCallRecordLogUploadRequest request = runSubprocessWithUiAndReturnProtoRequest(
+        List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(
                 new TestSettingsBuilder()
                         .setMainClassName(X.class)
                         .setMethodToRecord("main")
         );
 
-        ProcessInfo processInfo = request.getRecordingInfo().getProcessInfo();
+        ProcessInfo processInfo = requests.get(0).getRecordingInfo().getProcessInfo();
 
         ProtocolStringList classpath = processInfo.getClasspathList();
 

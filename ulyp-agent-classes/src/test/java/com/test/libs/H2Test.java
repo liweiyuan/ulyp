@@ -34,7 +34,11 @@ public class H2Test extends AbstractInstrumentationTest {
                 .setMainClassName(H2TestRun.class)
                 .setMethodToRecord("main"));
 
-
+        root.forEach(
+                record -> {
+                    Assert.assertTrue(record.isComplete());
+                }
+        );
         Assert.assertTrue(root.getSubtreeNodeCount() > 4000);
     }
 
@@ -52,10 +56,12 @@ public class H2Test extends AbstractInstrumentationTest {
                     statement.execute("create table test(id int primary key, name varchar)");
                 }
 
-                try (PreparedStatement statement = connection.prepareStatement("insert into test values(?, ?)")) {
-                    statement.setInt(1, 42);
-                    statement.setString(2, "Hello World");
-                    statement.execute();
+                for (int i = 0; i < 50; i++) {
+                    try (PreparedStatement statement = connection.prepareStatement("insert into test values(?, ?)")) {
+                        statement.setInt(1, i);
+                        statement.setString(2, "Hello World" + i);
+                        statement.execute();
+                    }
                 }
             }
         }

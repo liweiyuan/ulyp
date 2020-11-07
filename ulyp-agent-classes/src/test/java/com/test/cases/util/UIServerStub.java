@@ -6,11 +6,13 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class UIServerStub implements AutoCloseable {
 
-    private final CompletableFuture<TCallRecordLogUploadRequest> future = new CompletableFuture<>();
+    private final List<TCallRecordLogUploadRequest> requests = new ArrayList<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(2);
     private final Server server;
 
@@ -33,7 +35,7 @@ public class UIServerStub implements AutoCloseable {
 
                         @Override
                         public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
-                            future.complete(request);
+                            requests.add(request);
                             responseObserver.onCompleted();
                         }
                     })
@@ -46,8 +48,8 @@ public class UIServerStub implements AutoCloseable {
         }
     }
 
-    public TCallRecordLogUploadRequest get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
-        return future.get(timeout, unit);
+    public List<TCallRecordLogUploadRequest> getRequests() {
+        return requests;
     }
 
     @Override

@@ -53,7 +53,8 @@ public class RequestConverter {
                         .setMainClassName(request.getProcessInfo().getMainClassName())
                         .addAllClasspath(request.getProcessInfo().getClasspath().toList())
                         .build())
-                .setId(request.getRecordLog().getRecordingSessionId())
+                .setRecordingId(request.getRecordLog().getRecordingSessionId())
+                .setChunkId(request.getRecordLog().getChunkId())
                 .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime())
                 .build();

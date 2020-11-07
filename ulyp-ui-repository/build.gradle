@@ -23,6 +23,7 @@ dependencies {
     compile project(':ulyp-core')
     compile project(':ulyp-ui-transport')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    compile 'com.google.guava:guava:28.1-android'
 
     implementation(platform("org.dizitart:nitrite-bom:4.0.0-SNAPSHOT"))
     implementation 'org.dizitart:nitrite'
