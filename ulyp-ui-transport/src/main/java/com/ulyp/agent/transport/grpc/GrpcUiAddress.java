@@ -1,4 +1,7 @@
-package com.ulyp.agent.transport;
+package com.ulyp.agent.transport.grpc;
+
+import com.ulyp.agent.transport.UiAddress;
+import com.ulyp.agent.transport.UiTransport;
 
 /**
  * Used by default unless UI connection is disabled explicitly (it's disabled only in benchmarks)
