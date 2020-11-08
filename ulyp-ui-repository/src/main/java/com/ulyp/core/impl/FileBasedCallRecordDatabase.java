@@ -144,8 +144,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized CallRecord find(long id) {
-        int idd = (int) id;
-        long enterRecordAddress = enterRecordPos.get(idd);
+        long enterRecordAddress = enterRecordPos.get(id);
         if (enterRecordAddress == -1) {
             return null;
         }
@@ -191,7 +190,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                     0
             );
 
-            long exitPos = exitRecordPos.get(idd);
+            long exitPos = exitRecordPos.get(id);
             if (exitPos == -1) {
                 return callRecord;
             }
