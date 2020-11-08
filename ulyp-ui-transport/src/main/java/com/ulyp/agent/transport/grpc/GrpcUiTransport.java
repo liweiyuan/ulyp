@@ -26,7 +26,7 @@ public class GrpcUiTransport implements UiTransport {
     private final UiTransportGrpc.UiTransportFutureStub uploadingServiceFutureStub;
 
     private final ExecutorService uploadExecutor = Executors.newFixedThreadPool(
-            5,
+            1,
             new NamedThreadFactory("GRPC-Transport-Senders", true)
     );
     private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(
