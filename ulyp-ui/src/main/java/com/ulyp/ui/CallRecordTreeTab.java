@@ -1,6 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.core.*;
+import com.ulyp.core.impl.FileBasedCallRecordDatabase;
 import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TStackTraceElement;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.sql.Timestamp;
 
 @Component
@@ -28,9 +30,8 @@ public class CallRecordTreeTab extends Tab {
 
     private final Region parent;
     private final CallRecord root;
-    private final CallRecordDatabase database = new HeapCallRecordDatabase();
+    private final FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase(new File("."));
     private final RecordingInfo recordingInfo;
-    private final CallRecordTreeDeserializer callRecordTreeDeserializer = new CallRecordTreeDeserializer(database);
 
     private TreeView<CallTreeNodeContent> treeView;
 
@@ -45,13 +46,17 @@ public class CallRecordTreeTab extends Tab {
     public CallRecordTreeTab(Region parent, CallRecordTreeChunk firstChunk) {
         this.parent = parent;
 
-        this.callRecordTreeDeserializer.deserialize(
-                new CallEnterRecordList(firstChunk.getRequest().getRecordLog().getEnterRecords()),
-                new CallExitRecordList(firstChunk.getRequest().getRecordLog().getExitRecords()),
-                new MethodInfoList(firstChunk.getRequest().getMethodDescriptionList().getData()),
-                firstChunk.getRequest().getDescriptionList()
-        );
-        this.root = callRecordTreeDeserializer.getRoot();
+        try {
+            database.persistBatch(
+                    new CallEnterRecordList(firstChunk.getRequest().getRecordLog().getEnterRecords()),
+                    new CallExitRecordList(firstChunk.getRequest().getRecordLog().getExitRecords()),
+                    new MethodInfoList(firstChunk.getRequest().getMethodDescriptionList().getData()),
+                    firstChunk.getRequest().getDescriptionList()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.root = database.find(0);
         this.recordingInfo = firstChunk.getRecordingInfo();
     }
 
@@ -130,24 +135,18 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public void uploadChunk(CallRecordTreeChunk chunk) {
-        callRecordTreeDeserializer.deserialize(
-                new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
-                new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
-                new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
-                chunk.getRequest().getDescriptionList()
-        );
+        try {
+            database.persistBatch(
+                    new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
+                    new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
+                    new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
+                    chunk.getRequest().getDescriptionList()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-//        Queue<CallRecordTreeNode> queue = new ArrayDeque<>();
         CallRecordTreeNode root = (CallRecordTreeNode) treeView.getRoot();
         root.refresh();
-//        queue.add(root);
-
-//        while (!queue.isEmpty()) {
-//            CallRecordTreeNode node = (CallRecordTreeNode) queue.poll();
-//            node.refresh();
-//            if (node.isLoaded()) {
-//
-//            }
-//        }
     }
 }

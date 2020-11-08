@@ -17,4 +17,6 @@ public interface CallRecordDatabase {
     void persist(CallRecord node);
 
     void linkChild(long parentId, long childId);
+
+    void close();
 }

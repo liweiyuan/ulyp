@@ -49,4 +49,9 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
     public synchronized void linkChild(long parentId, long childId) {
         children.computeIfAbsent(parentId, i -> new LongOpenHashSet()).add(childId);
     }
+
+    @Override
+    public void close() {
+
+    }
 }
