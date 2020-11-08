@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface CallRecordDatabase {
 
+    default CallRecord root() {
+        return find(0);
+    }
+
     CallRecord find(long id);
 
     void deleteSubtree(long id);

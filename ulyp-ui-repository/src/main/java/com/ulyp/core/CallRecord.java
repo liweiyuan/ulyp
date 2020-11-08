@@ -28,15 +28,13 @@ public class CallRecord {
     private boolean thrown;
 
     private final CallRecordDatabase database;
-    private int subtreeNodeCount;
 
     public CallRecord(
             long id,
             ObjectRepresentation callee,
             List<ObjectRepresentation> args,
             TMethodInfoDecoder methodDescription,
-            CallRecordDatabase database,
-            int subtreeNodeCount)
+            CallRecordDatabase database)
     {
         this.id = id;
         this.callee = callee;
@@ -55,7 +53,6 @@ public class CallRecord {
         methodDescription.limit(originalLimit);
 
         this.database = database;
-        this.subtreeNodeCount = subtreeNodeCount;
     }
 
     public void forEach(Consumer<CallRecord> recordConsumer) {
@@ -82,8 +79,8 @@ public class CallRecord {
         return isStatic;
     }
 
-    public int getSubtreeNodeCount() {
-        return subtreeNodeCount;
+    public long getSubtreeNodeCount() {
+        return database.getSubtreeCount(id);
     }
 
     public String getClassName() {
@@ -116,11 +113,6 @@ public class CallRecord {
 
     public List<CallRecord> getChildren() {
         return database.getChildren(this.id);
-    }
-
-    public CallRecord setSubtreeNodeCount(int subtreeNodeCount) {
-        this.subtreeNodeCount = subtreeNodeCount;
-        return this;
     }
 
     public CallRecord setReturnValue(ObjectRepresentation returnValue) {

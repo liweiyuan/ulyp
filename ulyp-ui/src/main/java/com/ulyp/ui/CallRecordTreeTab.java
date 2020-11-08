@@ -65,7 +65,7 @@ public class CallRecordTreeTab extends Tab {
 
     @PostConstruct
     public void init() {
-        treeView = new TreeView<>(new CallRecordTreeNode(database, root.getId(), renderSettings, root.getSubtreeNodeCount()));
+        treeView = new TreeView<>(new CallRecordTreeNode(database, root.getId(), renderSettings));
         treeView.prefHeightProperty().bind(parent.heightProperty());
         treeView.prefWidthProperty().bind(parent.widthProperty());
 
@@ -100,7 +100,10 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public String getTabName() {
-        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + database.countAll() + ")";
+        boolean complete = database.find(0).isComplete();
+
+        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + database.countAll() + ")"
+                + (complete ? " complete" : "");
     }
 
     private Tooltip getTooltipText() {

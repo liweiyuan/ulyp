@@ -147,10 +147,6 @@ public class CallRecordTreeDeserializer {
         }
 
         public CallRecord persist() {
-            int subtreeNodeCount = childrenIds.stream()
-                    .map(database::find)
-                    .map(CallRecord::getSubtreeNodeCount)
-                    .reduce(1, Integer::sum);
             CallRecord node;
             if (persisted != null) {
                 node = persisted;
@@ -160,13 +156,11 @@ public class CallRecordTreeDeserializer {
                         callee,
                         args,
                         methodDescription,
-                        database,
-                        subtreeNodeCount
+                        database
                 );
             }
             node.setReturnValue(this.returnValue);
             node.setThrown(this.thrown);
-            node.setSubtreeNodeCount(subtreeNodeCount);
 
             database.persist(node);
             persisted = node;

@@ -8,9 +8,8 @@ import javafx.scene.layout.Region;
  */
 public class CallRecordTreeNodeRelativeWeight extends Region {
 
-    public CallRecordTreeNodeRelativeWeight(CallRecord node, int totalNodeCountInTree) {
-//        int width = (int) (600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree);
-        int width = 0;
+    public CallRecordTreeNodeRelativeWeight(CallRecord node, long totalNodeCountInTree) {
+        int width = (int) (600.0 * node.getSubtreeNodeCount() / totalNodeCountInTree);
 
         // TODO move this to CSS
         setStyle(

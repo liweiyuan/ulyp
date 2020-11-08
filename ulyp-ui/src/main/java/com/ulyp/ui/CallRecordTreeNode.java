@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
@@ -15,29 +14,25 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
     private final RenderSettings renderSettings;
     private final CallRecordDatabase database;
     private final long callRecordId;
-    private final int totalNodeCount;
 
     private boolean loaded = false;
 
-    public CallRecordTreeNode(CallRecordDatabase database, long callRecordId, RenderSettings renderSettings, int totalNodeCountInTree) {
-        super(new CallTreeNodeContent(database.find(callRecordId), renderSettings, totalNodeCountInTree));
+    public CallRecordTreeNode(CallRecordDatabase database, long callRecordId, RenderSettings renderSettings) {
+        super(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
         this.database = database;
         this.callRecordId = callRecordId;
         this.renderSettings = renderSettings;
-        this.totalNodeCount = totalNodeCountInTree;
     }
 
     public void refresh() {
-        setValue(new CallTreeNodeContent(database.find(callRecordId), renderSettings, totalNodeCount));
+        setValue(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
         if (loaded) {
             LongList newChildren = database.getChildrenIds(callRecordId);
             int currentLoadedChildrenCount = getChildren().size();
 
             if (newChildren.size() > currentLoadedChildrenCount) {
-                // TODO might not work for off heap storage
-                newChildren.sort(Comparator.naturalOrder());
                 for (int i = currentLoadedChildrenCount; i < newChildren.size(); i++) {
-                    getChildren().add(new CallRecordTreeNode(database, newChildren.getLong(i), renderSettings, totalNodeCount));
+                    getChildren().add(new CallRecordTreeNode(database, newChildren.getLong(i), renderSettings));
                 }
             }
 
@@ -63,9 +58,10 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
 
     private void loadChildren() {
         List<CallRecordTreeNode> children = new ArrayList<>();
-        for (CallRecord child : database.getChildren(callRecordId)) {
-            // TODO optimize
-            children.add(new CallRecordTreeNode(database, child.getId(), renderSettings, totalNodeCount));
+
+        LongList childrenIds = database.getChildrenIds(callRecordId);
+        for (int i = 0; i < childrenIds.size(); i++) {
+            children.add(new CallRecordTreeNode(database, childrenIds.getLong(i), renderSettings));
         }
 
         super.getChildren().setAll(children);

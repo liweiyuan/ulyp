@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class FileBasedCallRecordDatabase implements CallRecordDatabase {
@@ -27,7 +28,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     private long enterPos = 0;
     private long exitPos = 0;
-    private long totalCount = 0;
+    private final AtomicLong totalCount = new AtomicLong(0);
     private final Long2ObjectMap<LongList> children = new Long2ObjectOpenHashMap<>();
     private final Long2LongMap idToParentIdMap = new Long2LongOpenHashMap();
     private final Long2LongMap idToSubtreeCountMap = new Long2LongOpenHashMap();
@@ -36,7 +37,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     private final Long2ObjectMap<TypeInfo> classIdMap = new Long2ObjectOpenHashMap<>();
     private final DecodingContext decodingContext = new DecodingContext(classIdMap);
     private final Long2ObjectMap<TMethodInfoDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
-    private final LongStack currentRootStack = new LongArrayList();
+    private final LongArrayList currentRootStack = new LongArrayList();
     private final byte[] tmpBuf = new byte[512 * 1024];
 
     public FileBasedCallRecordDatabase(String name) {
@@ -60,7 +61,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
         }
     }
 
-    public void persistBatch(
+    public synchronized void persistBatch(
             CallEnterRecordList enterRecords,
             CallExitRecordList exitRecords,
             MethodInfoList methodInfoList,
@@ -111,7 +112,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
         updateChildrenParentAndSubtreeCountMaps(enterRecords, exitRecords);
     }
 
-    private void updateChildrenParentAndSubtreeCountMaps(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) {
+    private synchronized void updateChildrenParentAndSubtreeCountMaps(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) {
         PeekingIterator<TCallEnterRecordDecoder> enterRecordIt = Iterators.peekingIterator(enterRecords.iterator());
         PeekingIterator<TCallExitRecordDecoder> exitRecordIt = Iterators.peekingIterator(exitRecords.iterator());
 
@@ -121,6 +122,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                 throw new RuntimeException("Call id of the root must be 0");
             }
             currentRootStack.push(enterRecord.callId());
+            idToSubtreeCountMap.put(0, 1);
         }
 
         while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
@@ -132,8 +134,14 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
             } else if (enterRecordIt.hasNext()) {
                 TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
                 linkChild(currentCallId, enterRecord.callId());
+
+                for (int i = 0; i < currentRootStack.size(); i++) {
+                    long id = currentRootStack.getLong(i);
+                    idToSubtreeCountMap.put(id, idToSubtreeCountMap.get(id) + 1);
+                }
+
                 currentRootStack.push(enterRecord.callId());
-                totalCount++;
+                totalCount.lazySet(totalCount.get() + 1);
             } else {
                 throw new RuntimeException("Inconsistent state");
             }
@@ -186,8 +194,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                     callee,
                     args,
                     methodDescriptionMap.get(enterRecordDecoder.methodId()),
-                    this,
-                    0
+                    this
             );
 
             long exitPos = exitRecordPos.get(id);
@@ -241,12 +248,12 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public long countAll() {
-        return totalCount;
+        return totalCount.get();
     }
 
     @Override
     public long getSubtreeCount(long id) {
-        return 0;
+        return idToSubtreeCountMap.get(id);
     }
 
     @Override
