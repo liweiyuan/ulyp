@@ -21,7 +21,7 @@ public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordE
     }
 
     public void add(
-            int callId,
+            long callId,
             int methodId,
             AgentRuntime agentRuntime,
             ObjectBinaryPrinter[] printers,

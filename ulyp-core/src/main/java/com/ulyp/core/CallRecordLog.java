@@ -3,7 +3,9 @@ package com.ulyp.core;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import org.agrona.collections.IntArrayList;
+import org.agrona.collections.LongArrayList;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,7 +18,7 @@ public class CallRecordLog {
     private final AgentRuntime agentRuntime;
     private final CallEnterRecordList enterRecords = new CallEnterRecordList();
     private final CallExitRecordList exitRecords = new CallExitRecordList();
-    private final IntArrayList callIdsStack;
+    private final LongArrayList callIdsStack;
     private final BooleanArrayList recordEnterCallStack;
     private final IntArrayList callCountStack;
     private final long epochMillisCreatedTime;
@@ -26,11 +28,11 @@ public class CallRecordLog {
     private final int maxCallsToRecordPerMethod;
 
     private boolean inProcessOfTracing = true;
-    private int callIdCounter = 0;
+    private long callIdCounter = 0;
 
     public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
         this.chunkId = 0;
-        this.callIdsStack = new IntArrayList();
+        this.callIdsStack = new LongArrayList();
         this.recordEnterCallStack = new BooleanArrayList();
         this.callCountStack = new IntArrayList();
         this.recordingSessionId = idGenerator.incrementAndGet();
@@ -51,7 +53,7 @@ public class CallRecordLog {
 
     private CallRecordLog(
             long chunkId,
-            IntArrayList callIdsStack,
+            LongArrayList callIdsStack,
             BooleanArrayList recordEnterCallStack,
             IntArrayList callCountStack,
             long recordingSessionId,
@@ -62,7 +64,7 @@ public class CallRecordLog {
             int maxDepth,
             int maxCallsToRecordPerMethod,
             boolean inProcessOfTracing,
-            int callIdCounter)
+            long callIdCounter)
     {
         this.chunkId = chunkId;
         this.callIdsStack = callIdsStack;
@@ -96,7 +98,7 @@ public class CallRecordLog {
         try {
             int callsMadeInCurrentMethod = callCountStack.getInt(callCountStack.size() - 1);
 
-            int callId = callIdCounter++;
+            long callId = callIdCounter++;
             boolean canRecord = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsToRecordPerMethod;
             pushCurrentMethodCallId(callId, canRecord);
 
@@ -117,7 +119,7 @@ public class CallRecordLog {
         inProcessOfTracing = false;
         try {
             boolean recordedEnterCall = recordEnterCallStack.popBoolean();
-            int callId = popCurrentCallId();
+            long callId = popCurrentCallId();
 
             if (recordedEnterCall && callId >= 0) {
                 if (thrown == null) {
@@ -139,8 +141,8 @@ public class CallRecordLog {
         return enterRecords.size();
     }
 
-    private void pushCurrentMethodCallId(int callId, boolean canRecord) {
-        callIdsStack.pushInt(callId);
+    private void pushCurrentMethodCallId(long callId, boolean canRecord) {
+        callIdsStack.pushLong(callId);
         /*
         * If current method call is not recorded, then children (i.e. calls within this method) should be recorded as well, otherwise
         * the tree will lose it's form. We prohibit it by setting number of calls already made to maximum.
@@ -149,10 +151,10 @@ public class CallRecordLog {
         recordEnterCallStack.push(canRecord);
     }
 
-    private int popCurrentCallId() {
+    private long popCurrentCallId() {
         if (!callIdsStack.isEmpty()) {
             callCountStack.popInt();
-            return callIdsStack.popInt();
+            return callIdsStack.popLong();
         } else {
             System.err.println("Inconsistency found, no method stamp in stack");
             return -1;

@@ -22,7 +22,7 @@ public class CallExitRecordList extends AbstractSbeRecordList<TCallExitRecordEnc
     }
 
     public void add(
-            int callId,
+            long callId,
             int methodId,
             AgentRuntime agentRuntime,
             boolean thrown,

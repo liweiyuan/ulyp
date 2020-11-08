@@ -100,13 +100,13 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public String getTabName() {
-        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + root.getSubtreeNodeCount() + ")";
+        return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + database.countAll() + ")";
     }
 
     private Tooltip getTooltipText() {
 
         StringBuilder builder = new StringBuilder()
-                .append("Thread: ").append(recordingInfo).append("\n")
+                .append("Thread: ").append(recordingInfo.getThreadName()).append("\n")
                 .append("Created at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis())).append("\n")
                 .append("Finished at: ").append(new Timestamp(this.recordingInfo.getCreateEpochMillis() + this.recordingInfo.getLifetimeMillis())).append("\n")
                 .append("Lifetime: ").append(recordingInfo.getLifetimeMillis()).append(" millis").append("\n");
@@ -150,6 +150,7 @@ public class CallRecordTreeTab extends Tab {
         }
 
         CallRecordTreeNode root = (CallRecordTreeNode) treeView.getRoot();
+        setText(getTabName());
         root.refresh();
     }
 }

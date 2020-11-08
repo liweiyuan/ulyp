@@ -46,6 +46,16 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
     }
 
     @Override
+    public long countAll() {
+        return nodes.size();
+    }
+
+    @Override
+    public long getSubtreeCount(long id) {
+        return 0;
+    }
+
+    @Override
     public synchronized void linkChild(long parentId, long childId) {
         children.computeIfAbsent(parentId, i -> new LongOpenHashSet()).add(childId);
     }

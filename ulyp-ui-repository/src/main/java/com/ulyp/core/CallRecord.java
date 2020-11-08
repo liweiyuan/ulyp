@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class CallRecord {
 
-    private long id;
+    private final long id;
     private final String className;
 
     // TODO move this group to method class

@@ -16,6 +16,10 @@ public interface CallRecordDatabase {
 
     void persist(CallRecord node);
 
+    long countAll();
+
+    long getSubtreeCount(long id);
+
     void linkChild(long parentId, long childId);
 
     void close();

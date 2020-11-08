@@ -109,7 +109,7 @@ public class Recorder {
 //        }
         currentRecordLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
 
-        if (currentRecordLog.estimateBytesSize() > 512 * 1024) {
+        if (currentRecordLog.estimateBytesSize() > 64 * 1024 * 1024) {
 //            if (LoggingSettings.IS_TRACE_TURNED_ON) {
 //                logger.trace("Will send trace log {}", currentRecordLog);
 //            }

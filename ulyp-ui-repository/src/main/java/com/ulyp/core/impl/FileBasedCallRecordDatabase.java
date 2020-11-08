@@ -9,10 +9,6 @@ import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.transport.*;
-import it.unimi.dsi.fastutil.ints.Int2LongMap;
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import org.agrona.concurrent.UnsafeBuffer;
 
@@ -31,14 +27,12 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     private long enterPos = 0;
     private long exitPos = 0;
-    private final Int2ObjectMap<LongList> children = new Int2ObjectOpenHashMap<>();
-    private final Int2LongMap enterRecordPos = new Int2LongOpenHashMap() {
-        @Override
-        public long defaultReturnValue() {
-            return -1;
-        }
-    };
-    private final Int2LongMap exitRecordPos = new Int2LongOpenHashMap();
+    private long totalCount = 0;
+    private final Long2ObjectMap<LongList> children = new Long2ObjectOpenHashMap<>();
+    private final Long2LongMap idToParentIdMap = new Long2LongOpenHashMap();
+    private final Long2LongMap idToSubtreeCountMap = new Long2LongOpenHashMap();
+    private final Long2LongMap enterRecordPos = new Long2LongOpenHashMap();
+    private final Long2LongMap exitRecordPos = new Long2LongOpenHashMap();
     private final Long2ObjectMap<TypeInfo> classIdMap = new Long2ObjectOpenHashMap<>();
     private final DecodingContext decodingContext = new DecodingContext(classIdMap);
     private final Long2ObjectMap<TMethodInfoDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
@@ -48,6 +42,8 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     public FileBasedCallRecordDatabase(String name) {
         exitRecordPos.defaultReturnValue(-1L);
         enterRecordPos.defaultReturnValue(-1L);
+        idToParentIdMap.defaultReturnValue(-1);
+        idToSubtreeCountMap.defaultReturnValue(-1);
 
         try {
             File enterRecordsFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
@@ -112,10 +108,10 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
             exitRecordPos.put(exitRecord.callId(), prevExitRecordPos + addr);
         }
 
-        linkChildren(enterRecords, exitRecords);
+        updateChildrenParentAndSubtreeCountMaps(enterRecords, exitRecords);
     }
 
-    private void linkChildren(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) {
+    private void updateChildrenParentAndSubtreeCountMaps(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) {
         PeekingIterator<TCallEnterRecordDecoder> enterRecordIt = Iterators.peekingIterator(enterRecords.iterator());
         PeekingIterator<TCallExitRecordDecoder> exitRecordIt = Iterators.peekingIterator(exitRecords.iterator());
 
@@ -137,6 +133,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                 TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
                 linkChild(currentCallId, enterRecord.callId());
                 currentRootStack.push(enterRecord.callId());
+                totalCount++;
             } else {
                 throw new RuntimeException("Inconsistent state");
             }
@@ -239,11 +236,18 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized void persist(CallRecord node) {
-//        if (node.getId() < 0) {
-//            long id = ++idGenerator;
-//            node.setId(id);
-//        }
-//        nodes.put(node.getId(), node);
+        // TODO retire
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long countAll() {
+        return totalCount;
+    }
+
+    @Override
+    public long getSubtreeCount(long id) {
+        return 0;
     }
 
     @Override
@@ -260,6 +264,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized void linkChild(long parentId, long childId) {
+        idToParentIdMap.put(childId, parentId);
         children.computeIfAbsent((int) parentId, i -> new LongArrayList()).add(childId);
     }
 }
