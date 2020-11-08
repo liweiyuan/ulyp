@@ -27,11 +27,11 @@ public class GrpcUiTransport implements UiTransport {
 
     private final ExecutorService uploadExecutor = Executors.newFixedThreadPool(
             1,
-            new NamedThreadFactory("GRPC-Transport-Senders", true)
+            new NamedThreadFactory("ULYP-GRPC-Transport-Senders", true)
     );
     private final ExecutorService responseProcessingExecutor = Executors.newFixedThreadPool(
             3,
-            new NamedThreadFactory("GRPC-Response-processor", true)
+            new NamedThreadFactory("ULYP-GRPC-Response-processor", true)
     );
     private final Set<RecordLogKey> recordLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
