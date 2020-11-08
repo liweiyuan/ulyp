@@ -33,7 +33,7 @@ public class GrpcUiTransport implements UiTransport {
             3,
             new NamedThreadFactory("GRPC-Response-processor", true)
     );
-    private final Set<Long> recordLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<RecordLogKey> recordLogsCurrentlyInSending = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public GrpcUiTransport(GrpcUiAddress address) {
         channel = NettyChannelBuilder.forAddress(address.hostName, address.port)
@@ -49,35 +49,57 @@ public class GrpcUiTransport implements UiTransport {
         return uploadingServiceFutureStub.requestSettings(SettingsRequest.newBuilder().build()).get(duration.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    public void uploadAsync(CallRecordTreeRequest request) {
+    private static class RecordLogKey {
+        private final long recordingSessionId;
+        private final long chunkId;
 
+        private RecordLogKey(CallRecordLog recordLog) {
+            this.recordingSessionId = recordLog.getRecordingSessionId();
+            this.chunkId = recordLog.getChunkId();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RecordLogKey that = (RecordLogKey) o;
+
+            if (recordingSessionId != that.recordingSessionId) return false;
+            return chunkId == that.chunkId;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (recordingSessionId ^ (recordingSessionId >>> 32));
+            result = 31 * result + (int) (chunkId ^ (chunkId >>> 32));
+            return result;
+        }
+    }
+
+    public void uploadAsync(CallRecordTreeRequest request) {
         CallRecordLog recordLog = request.getRecordLog();
+        recordLogsCurrentlyInSending.add(new RecordLogKey(recordLog));
 
         uploadExecutor.submit(
                 () -> {
-
                     TCallRecordLogUploadRequest protoRequest = RequestConverter.convert(request);
-
-                    long recordingSessionId = recordLog.getRecordingSessionId();
                     ListenableFuture<TCallRecordLogUploadResponse> upload = uploadingServiceFutureStub.uploadCallGraph(protoRequest);
 
                     Futures.addCallback(upload, new FutureCallback<TCallRecordLogUploadResponse>() {
                         @Override
                         public void onSuccess(TCallRecordLogUploadResponse result) {
-                            recordLogsCurrentlyInSending.remove(recordingSessionId);
+                            recordLogsCurrentlyInSending.remove(new RecordLogKey(recordLog));
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
                             t.printStackTrace();
-                            recordLogsCurrentlyInSending.remove(recordingSessionId);
+                            recordLogsCurrentlyInSending.remove(new RecordLogKey(recordLog));
                         }
                     }, responseProcessingExecutor);
                 }
         );
-
-        long id = recordLog.getRecordingSessionId();
-        recordLogsCurrentlyInSending.add(id);
     }
 
     public void shutdownNowAndAwaitForRecordsLogsSending(long time, TimeUnit timeUnit) throws InterruptedException {

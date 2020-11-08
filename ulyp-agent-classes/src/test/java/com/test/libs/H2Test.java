@@ -56,7 +56,7 @@ public class H2Test extends AbstractInstrumentationTest {
                     statement.execute("create table test(id int primary key, name varchar)");
                 }
 
-                for (int i = 0; i < 50; i++) {
+                for (int i = 0; i < 200; i++) {
                     try (PreparedStatement statement = connection.prepareStatement("insert into test values(?, ?)")) {
                         statement.setInt(1, i);
                         statement.setString(2, "Hello World" + i);

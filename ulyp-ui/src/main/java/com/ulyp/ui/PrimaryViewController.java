@@ -93,15 +93,17 @@ public class PrimaryViewController implements Initializable {
         File file = fileChooser.get();
         if (file != null) {
             try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-                TCallRecordLogUploadRequestList requests = TCallRecordLogUploadRequestList.parseFrom(inputStream);
 
-                for (TCallRecordLogUploadRequest request : requests.getRequestList()) {
+                while (inputStream.available() > 0) {
+                    TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseFrom(inputStream);
+
                     Platform.runLater(() -> {
                         CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
                         ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
                         processTab.uploadChunk(chunk);
                     });
                 }
+
             } catch (IOException e) {
                 // TODO show error dialog
                 e.printStackTrace();

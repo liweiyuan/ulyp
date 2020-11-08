@@ -35,7 +35,9 @@ public class UIServerStub implements AutoCloseable {
 
                         @Override
                         public void uploadCallGraph(TCallRecordLogUploadRequest request, StreamObserver<TCallRecordLogUploadResponse> responseObserver) {
-                            requests.add(request);
+                            synchronized (requests) {
+                                requests.add(request);
+                            }
                             responseObserver.onCompleted();
                         }
                     })
@@ -49,7 +51,9 @@ public class UIServerStub implements AutoCloseable {
     }
 
     public List<TCallRecordLogUploadRequest> getRequests() {
-        return requests;
+        synchronized (requests) {
+            return new ArrayList<>(requests);
+        }
     }
 
     @Override

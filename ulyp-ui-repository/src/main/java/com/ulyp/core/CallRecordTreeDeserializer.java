@@ -60,6 +60,9 @@ public class CallRecordTreeDeserializer {
 
         if (this.root == null) {
             TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
+            if (enterRecord.callId() != 0) {
+                throw new RuntimeException("Call id of the root must be 0");
+            }
             root = new CallRecordBuilder(null, methodDescriptionMap.get(enterRecord.methodId()), enterRecord);
             rootPath.add(root);
         }
