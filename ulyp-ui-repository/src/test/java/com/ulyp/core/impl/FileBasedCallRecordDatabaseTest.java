@@ -64,7 +64,7 @@ public class FileBasedCallRecordDatabaseTest {
         exitRecords.add(1, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
         exitRecords.add(0, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
 
-        FileBasedCallRecordDatabase fileBasedCallRecordDatabase = new FileBasedCallRecordDatabase(new File(""));
+        FileBasedCallRecordDatabase fileBasedCallRecordDatabase = new FileBasedCallRecordDatabase("test");
 
         fileBasedCallRecordDatabase.persistBatch(enterRecords, exitRecords, methodInfos, classDescriptionList);
 
@@ -120,7 +120,7 @@ public class FileBasedCallRecordDatabaseTest {
         );
         exitRecords.add(2, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
 
-        FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase(new File(""));
+        FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase("tmp");
 
         database.persistBatch(enterRecords, exitRecords, methodInfos, classDescriptionList);
 

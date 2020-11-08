@@ -1,8 +1,10 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.*;
+import com.ulyp.core.CallEnterRecordList;
+import com.ulyp.core.CallExitRecordList;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.MethodInfoList;
 import com.ulyp.core.impl.FileBasedCallRecordDatabase;
-import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TStackTraceElement;
 import com.ulyp.ui.code.SourceCode;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.sql.Timestamp;
 
 @Component
@@ -30,7 +31,7 @@ public class CallRecordTreeTab extends Tab {
 
     private final Region parent;
     private final CallRecord root;
-    private final FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase(new File("."));
+    private final FileBasedCallRecordDatabase database;
     private final RecordingInfo recordingInfo;
 
     private TreeView<CallTreeNodeContent> treeView;
@@ -43,21 +44,23 @@ public class CallRecordTreeTab extends Tab {
     private FontSizeChanger fontSizeChanger;
 
     @SuppressWarnings("unchecked")
-    public CallRecordTreeTab(Region parent, CallRecordTreeChunk firstChunk) {
+    public CallRecordTreeTab(Region parent, CallRecordTreeChunk chunk) {
         this.parent = parent;
 
         try {
+            database = new FileBasedCallRecordDatabase(chunk.getProcessInfo().getMainClassName());
+
             database.persistBatch(
-                    new CallEnterRecordList(firstChunk.getRequest().getRecordLog().getEnterRecords()),
-                    new CallExitRecordList(firstChunk.getRequest().getRecordLog().getExitRecords()),
-                    new MethodInfoList(firstChunk.getRequest().getMethodDescriptionList().getData()),
-                    firstChunk.getRequest().getDescriptionList()
+                    new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
+                    new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
+                    new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
+                    chunk.getRequest().getDescriptionList()
             );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         this.root = database.find(0);
-        this.recordingInfo = firstChunk.getRecordingInfo();
+        this.recordingInfo = chunk.getRecordingInfo();
     }
 
     @PostConstruct

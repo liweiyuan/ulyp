@@ -9,21 +9,21 @@ import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.transport.*;
-import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.ints.Int2LongMap;
+import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import org.agrona.concurrent.UnsafeBuffer;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
-    private final File enterRecordsFile;
-    private final File exitRecordsFile;
     private final OutputStream enterRecordsOutputStream;
     private final RandomAccessFile enterRecordRandomAccess;
     private final RandomAccessFile exitRecordRandomAccess;
@@ -45,14 +45,16 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     private final LongStack currentRootStack = new LongArrayList();
     private final byte[] tmpBuf = new byte[512 * 1024];
 
-    public FileBasedCallRecordDatabase(File file) {
-
+    public FileBasedCallRecordDatabase(String name) {
         exitRecordPos.defaultReturnValue(-1L);
         enterRecordPos.defaultReturnValue(-1L);
 
         try {
-            this.enterRecordsFile = new File("C:\\Temp\\db-enter-records.dat");
-            this.exitRecordsFile = new File("C:\\Temp\\db-exit-records.dat");
+            File enterRecordsFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
+            enterRecordsFile.deleteOnExit();
+            File exitRecordsFile = File.createTempFile("ulyp-" + name + "-exit-records", null);
+            exitRecordsFile.deleteOnExit();
+
             this.enterRecordsOutputStream = new BufferedOutputStream(new FileOutputStream(enterRecordsFile, false));
             this.exitRecordsOutputStream = new BufferedOutputStream(new FileOutputStream(exitRecordsFile, false));
             this.enterRecordRandomAccess = new RandomAccessFile(enterRecordsFile, "r");
