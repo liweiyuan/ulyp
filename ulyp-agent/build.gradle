@@ -54,7 +54,6 @@ shadowJar {
     relocate 'com.google', 'shadowed.com.google'
     relocate 'javax.annotation', 'shadowed.javax.annotation'
     relocate 'net.bytebuddy', 'shadowed.net.bytebuddy'
-//    relocate 'org.apache', 'shadowed.org.apache'
 
     archiveName = "${rootProject.name}-agent-${rootProject.version}.jar"
 

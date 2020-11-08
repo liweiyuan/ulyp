@@ -5,14 +5,13 @@ import com.ulyp.core.impl.HeapCallRecordDatabase;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TStackTraceElement;
 import com.ulyp.ui.code.SourceCode;
-import com.ulyp.ui.code.find.SourceCodeFinder;
 import com.ulyp.ui.code.SourceCodeView;
+import com.ulyp.ui.code.find.SourceCodeFinder;
 import com.ulyp.ui.font.FontSizeChanger;
 import com.ulyp.ui.util.ResizeEvent;
 import com.ulyp.ui.util.ResizeEventSupportingScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Region;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 @Component
 @Scope(value = "prototype")
@@ -134,7 +130,6 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public void uploadChunk(CallRecordTreeChunk chunk) {
-        System.out.println("Uploaded chunk!!!");
         callRecordTreeDeserializer.deserialize(
                 new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
                 new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),

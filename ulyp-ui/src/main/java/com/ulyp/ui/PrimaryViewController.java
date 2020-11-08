@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 public class PrimaryViewController implements Initializable {
@@ -46,6 +48,7 @@ public class PrimaryViewController implements Initializable {
     @Autowired
     public ProcessTabPane processTabPane;
 
+    private final ExecutorService uploaderExecutorService = Executors.newFixedThreadPool(1);
     Supplier<File> fileChooser;
 
     @Override
@@ -90,24 +93,35 @@ public class PrimaryViewController implements Initializable {
     }
 
     public void openRecordedDump(ActionEvent actionEvent) {
-        File file = fileChooser.get();
-        if (file != null) {
-            try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        final File file = fileChooser.get();
 
-                while (inputStream.available() > 0) {
-                    TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseFrom(inputStream);
+        uploaderExecutorService.submit(
+                () -> {
+                    if (file != null) {
+                        try (InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
 
-                    Platform.runLater(() -> {
-                        CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
-                        ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
-                        processTab.uploadChunk(chunk);
-                    });
+                            while (inputStream.available() > 0) {
+                                TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseDelimitedFrom(inputStream);
+
+                                Platform.runLater(() -> {
+                                    CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
+                                    ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
+                                    processTab.uploadChunk(chunk);
+                                });
+
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        } catch (IOException e) {
+                            // TODO show error dialog
+                            e.printStackTrace();
+                        }
+                    }
                 }
-
-            } catch (IOException e) {
-                // TODO show error dialog
-                e.printStackTrace();
-            }
-        }
+        );
     }
 }

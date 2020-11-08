@@ -1,12 +1,10 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.log.AgentLogManager;
-import com.ulyp.agent.log.LoggingSettings;
+import com.ulyp.core.log.LoggingSettings;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,8 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("unused")
 @ThreadSafe
 public class Recorder {
-
-    private static final Logger logger = AgentLogManager.getLogger(Recorder.class);
 
     private static final Recorder instance = new Recorder(AgentContext.getInstance());
 
@@ -60,9 +56,9 @@ public class Recorder {
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsToRecordPerMethod());
-            if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
-            }
+//            if (LoggingSettings.IS_TRACE_TURNED_ON) {
+//                logger.trace("Create new {}, method {}, args {}", log, methodInfo, args);
+//            }
             currentRecordingSessionCount.incrementAndGet();
             return log;
         });
@@ -78,9 +74,9 @@ public class Recorder {
             currentRecordingSessionCount.decrementAndGet();
 
             if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
-                if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                    logger.trace("Will send trace log {}", recordLog);
-                }
+//                if (LoggingSettings.IS_TRACE_TURNED_ON) {
+//                    logger.trace("Will send trace log {}", recordLog);
+//                }
                 context.getTransport().uploadAsync(
                         new CallRecordTreeRequest(
                                 recordLog,
@@ -98,9 +94,9 @@ public class Recorder {
         if (log == null) {
             return;
         }
-        if (LoggingSettings.IS_TRACE_TURNED_ON) {
-            logger.trace("Method enter on {}, method {}, args {}", log, method, args);
-        }
+//        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+//            logger.trace("Method enter on {}, method {}, args {}", log, method, args);
+//        }
         log.onMethodEnter(method.getId(), method.getParamPrinters(), callee, args);
     }
 
@@ -108,15 +104,15 @@ public class Recorder {
         CallRecordLog currentRecordLog = threadLocalRecordsLog.get();
         if (currentRecordLog == null) return;
 
-        if (LoggingSettings.IS_TRACE_TURNED_ON) {
-            logger.trace("Method exit {}, method {}, return value {}, thrown {}", currentRecordLog, method, result, thrown);
-        }
+//        if (LoggingSettings.IS_TRACE_TURNED_ON) {
+//            logger.trace("Method exit {}, method {}, return value {}, thrown {}", currentRecordLog, method, result, thrown);
+//        }
         currentRecordLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
 
         if (currentRecordLog.estimateBytesSize() > 512 * 1024) {
-            if (LoggingSettings.IS_TRACE_TURNED_ON) {
-                logger.trace("Will send trace log {}", currentRecordLog);
-            }
+//            if (LoggingSettings.IS_TRACE_TURNED_ON) {
+//                logger.trace("Will send trace log {}", currentRecordLog);
+//            }
             CallRecordLog newRecordLog = currentRecordLog.cloneWithoutData();
             threadLocalRecordsLog.set(newRecordLog);
 
