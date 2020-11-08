@@ -104,15 +104,15 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
     }
 
     @Override
-    public Iterator<Decoder> iterator() {
+    public AddressableItemIterator<Decoder> iterator() {
         return new ZeroCopyIterator();
     }
 
-    public Iterator<Decoder> copyingIterator() {
+    public AddressableItemIterator<Decoder> copyingIterator() {
         return new CopyingIterator();
     }
 
-    private class ZeroCopyIterator implements Iterator<Decoder> {
+    private class ZeroCopyIterator implements AddressableItemIterator<Decoder> {
 
         private int addr = LIST_HEADER_LENGTH;
 
@@ -133,9 +133,14 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
             addr += RECORD_HEADER_LENGTH + encodedLength;
             return decoder;
         }
+
+        @Override
+        public long address() {
+            return addr;
+        }
     }
 
-    private class CopyingIterator implements Iterator<Decoder> {
+    private class CopyingIterator implements AddressableItemIterator<Decoder> {
 
         private int addr = LIST_HEADER_LENGTH;
 
@@ -156,6 +161,11 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
             decoder.wrap(buffer, addr + RECORD_HEADER_LENGTH, blockLength, 0);
             addr += RECORD_HEADER_LENGTH + encodedLength;
             return decoder;
+        }
+
+        @Override
+        public long address() {
+            return addr;
         }
     }
 }
