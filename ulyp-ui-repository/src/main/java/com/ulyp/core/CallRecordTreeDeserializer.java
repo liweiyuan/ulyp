@@ -70,7 +70,7 @@ public class CallRecordTreeDeserializer {
         while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
             CallRecordBuilder currentNode = rootPath.getLast();
 
-            long currentCallId = currentNode.callId;
+            long currentCallId = currentNode.id;
             if (exitRecordIt.hasNext() && exitRecordIt.peek().callId() == currentCallId) {
                 currentNode.setExitRecordData(exitRecordIt.next());
                 currentNode.persist();
@@ -95,7 +95,7 @@ public class CallRecordTreeDeserializer {
 
         private final CallRecordBuilder parent;
         private final TMethodInfoDecoder methodDescription;
-        private final long callId;
+        private final long id;
         private final ObjectRepresentation callee;
         private final List<ObjectRepresentation> args;
         private final LongList childrenIds = new LongArrayList();
@@ -111,7 +111,7 @@ public class CallRecordTreeDeserializer {
         {
             this.parent = parent;
             this.methodDescription = methodDescription;
-            this.callId = decoder.callId();
+            this.id = decoder.callId();
 
             this.args = new ArrayList<>();
             TCallEnterRecordDecoder.ArgumentsDecoder arguments = decoder.arguments();
@@ -156,6 +156,7 @@ public class CallRecordTreeDeserializer {
                 node = persisted;
             } else {
                 node = new CallRecord(
+                        id,
                         callee,
                         args,
                         methodDescription,

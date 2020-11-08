@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class CallRecord {
 
-    private long id = -1;
+    private long id;
     private final String className;
 
     // TODO move this group to method class
@@ -31,12 +31,14 @@ public class CallRecord {
     private int subtreeNodeCount;
 
     public CallRecord(
+            long id,
             ObjectRepresentation callee,
             List<ObjectRepresentation> args,
             TMethodInfoDecoder methodDescription,
             CallRecordDatabase database,
             int subtreeNodeCount)
     {
+        this.id = id;
         this.callee = callee;
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.isStatic = methodDescription.staticFlag() == BooleanType.T;
@@ -128,11 +130,6 @@ public class CallRecord {
 
     public CallRecord setThrown(boolean thrown) {
         this.thrown = thrown;
-        return this;
-    }
-
-    public CallRecord setId(long id) {
-        this.id = id;
         return this;
     }
 

@@ -10,12 +10,10 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class HeapCallRecordDatabase implements CallRecordDatabase {
 
-    private long idGenerator = 0;
     private final Map<Long, CallRecord> nodes = new HashMap<>();
     private final Map<Long, LongSet> children = new HashMap<>();
 
@@ -44,10 +42,6 @@ public class HeapCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized void persist(CallRecord node) {
-        if (node.getId() < 0) {
-            long id = ++idGenerator;
-            node.setId(id);
-        }
         nodes.put(node.getId(), node);
     }
 
