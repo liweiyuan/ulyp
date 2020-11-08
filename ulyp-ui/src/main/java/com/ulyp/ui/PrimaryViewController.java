@@ -108,12 +108,6 @@ public class PrimaryViewController implements Initializable {
                                     ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
                                     processTab.uploadChunk(chunk);
                                 });
-
-                                try {
-                                    Thread.sleep(5000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                             }
 
                         } catch (IOException e) {
