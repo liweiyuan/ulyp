@@ -8,11 +8,7 @@ public class UiTurnedOffTest extends AbstractInstrumentationTest {
     @Test
     public void shouldNotConnectToUiIfExplicitlyUiTurnedOff() {
 
-        runSubprocessAndExpectNotConnected(
-                new TestSettingsBuilder()
-                        .setMainClassName(X.class)
-                        .setMethodToRecord("main")
-        );
+        runSubprocessAndExpectNotConnected(new TestSettingsBuilder().setMainClassName(X.class));
     }
 
     static class X {

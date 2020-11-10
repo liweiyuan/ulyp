@@ -18,7 +18,6 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                 new TestSettingsBuilder()
                         .setMainClassName(A.class)
                         .setInstrumentedPackages("com.test.cases.a")
-                        .setMethodToRecord("main")
         );
 
         assertThat(root.getMethodName(), is("main"));
@@ -33,7 +32,6 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMainClassName(A.class)
                         .setInstrumentedPackages("com.test.cases.a")
                         .setExcludedFromInstrumentationPackages("com.test.cases.a.b")
-                        .setMethodToRecord("main")
         );
 
         assertThat(root.getMethodName(), is("main"));
@@ -53,7 +51,6 @@ public class InstrumentationPackagesTest extends AbstractInstrumentationTest {
                         .setMainClassName(A.class)
                         .setInstrumentedPackages("com.test.cases.a")
                         .setExcludedFromInstrumentationPackages("com.test.cases.a.b", "com.test.cases.a.c")
-                        .setMethodToRecord("main")
         );
 
         assertThat(root.getMethodName(), is("main"));
