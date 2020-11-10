@@ -5,6 +5,12 @@ import java.util.Date;
 public class SysOutLogger implements Logger {
 
     @Override
+    public void error(String msg, Exception e) {
+        System.out.println(new Date() + " | " + Thread.currentThread().getName() + " | ERROR | " + msg + ", exception msg: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    @Override
     public void info(String msg) {
         System.out.println(new Date() + " | " + Thread.currentThread().getName() + " | INFO | " + msg);
     }
