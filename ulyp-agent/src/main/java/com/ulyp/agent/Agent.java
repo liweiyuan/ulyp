@@ -4,6 +4,9 @@ import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.core.log.LogLevel;
 import com.ulyp.core.log.LoggingSettings;
+import com.ulyp.core.process.ProcessInfo;
+import com.ulyp.core.util.ClassUtils;
+import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
@@ -36,6 +39,14 @@ public class Agent {
         PackageList instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
         PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();
         RecordingStartMethodList recordingStartMethodList = uiSettings.getRecordingStartMethod().getValue();
+
+        if (recordingStartMethodList == null || recordingStartMethodList.isEmpty()) {
+            // if not specified, then record main(String[] args) method as it's the only entry point to the program we have
+            ProcessInfo processInfo = instance.getProcessInfo();
+            recordingStartMethodList = new RecordingStartMethodList(
+                    new MethodMatcher(ClassUtils.getSimpleNameFromName(processInfo.getMainClassName()), "main")
+            );
+        }
 
 
         System.out.println(ULYP_LOGO);

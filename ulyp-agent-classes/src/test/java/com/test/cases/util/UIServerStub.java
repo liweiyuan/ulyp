@@ -22,14 +22,18 @@ public class UIServerStub implements AutoCloseable {
                     .addService(new UiTransportGrpc.UiTransportImplBase() {
                         @Override
                         public void requestSettings(SettingsRequest request, StreamObserver<Settings> responseObserver) {
-                            responseObserver.onNext(Settings
-                                    .newBuilder()
+
+                            Settings.Builder settingsBuilder = Settings.newBuilder()
                                     .setMayStartRecording(true)
                                     .setRecordCollectionsItems(settings.getRecordCollectionItems())
-                                    .addMethodsToRecord(settings.getMethodToRecord().toString())
                                     .addAllInstrumentedPackages(settings.getInstrumentedPackages())
-                                    .addAllExcludedFromInstrumentationPackages(settings.getExcludedFromInstrumentationPackages())
-                                    .build());
+                                    .addAllExcludedFromInstrumentationPackages(settings.getExcludedFromInstrumentationPackages());
+
+                            if (settings.getMethodToRecord() != null) {
+                                settingsBuilder.addMethodsToRecord(settings.getMethodToRecord().toString());
+                            }
+
+                            responseObserver.onNext(settingsBuilder.build());
                             responseObserver.onCompleted();
                         }
 

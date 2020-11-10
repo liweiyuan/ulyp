@@ -17,7 +17,7 @@ public class UiSettings {
 
     private final SettingsProperty<PackageList> instrumentedPackages = new SettingsProperty<>("Instrumented packages", new PackageList());
     private final SettingsProperty<PackageList> excludeFromInstrumentationPackages = new SettingsProperty<>("Exclude from instrumentation packages", new PackageList());
-    private final SettingsProperty<RecordingStartMethodList> recordingStartMethod = new SettingsProperty<>("Tracing start methods list");
+    private final SettingsProperty<RecordingStartMethodList> recordingStartMethod = new SettingsProperty<>("Tracing start methods list", new RecordingStartMethodList());
     private final SettingsProperty<Boolean> mayStartRecording = new SettingsProperty<>("May start tracing", true);
     private final SettingsProperty<Boolean> recordCollectionItems = new SettingsProperty<>("Record collection items", true);
 

@@ -3,6 +3,7 @@ package com.ulyp.agent.settings;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.MethodInfo;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,8 +17,16 @@ public class RecordingStartMethodList {
         this.methods = Collections.singletonList(methodMatcher);
     }
 
+    public RecordingStartMethodList() {
+        this(Collections.emptyList());
+    }
+
     public RecordingStartMethodList(List<String> methods) {
         this.methods = methods.stream().map(MethodMatcher::parse).collect(Collectors.toList());
+    }
+
+    public boolean isEmpty() {
+        return this.methods.isEmpty();
     }
 
     public boolean shouldStartRecording(MethodInfo description) {

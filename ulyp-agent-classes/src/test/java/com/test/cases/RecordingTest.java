@@ -1,12 +1,26 @@
 package com.test.cases;
 
+import com.test.cases.a.A;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.util.MethodMatcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DefaultMethodRecordingTest extends AbstractInstrumentationTest {
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+public class RecordingTest extends AbstractInstrumentationTest {
+
+    @Test
+    public void shouldRecordMainMethodIfMatcherIsNotSpecified() {
+        CallRecord root = runSubprocessWithUi(new TestSettingsBuilder().setMainClassName(RecursionTestCases.class));
+
+        assertThat(root.getMethodName(), is("main"));
+        assertThat(root.getClassName(), is(RecursionTestCases.class.getName()));
+        assertThat(root.getChildren(), Matchers.hasSize(1));
+    }
 
     @Test
     public void testRecordViaInterfaceMatcher() {
