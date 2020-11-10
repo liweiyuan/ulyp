@@ -22,6 +22,7 @@ public class SourceCodeFinder {
 
         this.jars = classpath.stream()
                 .filter(x -> new File(x).exists())
+                .filter(x -> new File(x).getName().endsWith(".jar"))
                 .filter(x -> !new File(x).isDirectory())
                 .map(x -> new JarFile(Paths.get(x).toFile()))
                 .collect(Collectors.toList());
