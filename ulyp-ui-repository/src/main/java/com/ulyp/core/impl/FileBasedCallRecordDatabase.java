@@ -9,6 +9,7 @@ import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.transport.*;
+import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.longs.*;
 import org.agrona.concurrent.UnsafeBuffer;
 
@@ -29,9 +30,9 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     private long enterPos = 0;
     private long exitPos = 0;
     private final AtomicLong totalCount = new AtomicLong(0);
-    private final Long2ObjectMap<LongList> children = new Long2ObjectOpenHashMap<>();
-    private final Long2LongMap idToParentIdMap = new Long2LongOpenHashMap();
-    private final Long2LongMap idToSubtreeCountMap = new Long2LongOpenHashMap();
+    private final Int2ObjectMap<IntList> children = new Int2ObjectOpenHashMap<>();
+    private final Int2IntMap idToParentIdMap = new Int2IntOpenHashMap();
+    private final Int2IntMap idToSubtreeCountMap = new Int2IntOpenHashMap();
     private final Long2LongMap enterRecordPos = new Long2LongOpenHashMap();
     private final Long2LongMap exitRecordPos = new Long2LongOpenHashMap();
     private final Long2ObjectMap<TypeInfo> classIdMap = new Long2ObjectOpenHashMap<>();
@@ -136,7 +137,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                 linkChild(currentCallId, enterRecord.callId());
 
                 for (int i = 0; i < currentRootStack.size(); i++) {
-                    long id = currentRootStack.getLong(i);
+                    int id = (int) currentRootStack.getLong(i);
                     idToSubtreeCountMap.put(id, idToSubtreeCountMap.get(id) + 1);
                 }
 
@@ -237,7 +238,12 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized LongList getChildrenIds(long id) {
-        return new LongArrayList(children.getOrDefault((int) id, LongLists.EMPTY_LIST));
+        IntList childrenIds = children.getOrDefault((int) id, IntLists.EMPTY_LIST);
+        LongArrayList longs = new LongArrayList();
+        for (int i = 0; i < childrenIds.size(); i++) {
+            longs.add(childrenIds.getInt(i));
+        }
+        return longs;
     }
 
     @Override
@@ -270,7 +276,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public synchronized void linkChild(long parentId, long childId) {
-        idToParentIdMap.put(childId, parentId);
-        children.computeIfAbsent((int) parentId, i -> new LongArrayList()).add(childId);
+        idToParentIdMap.put((int) childId, (int) parentId);
+        children.computeIfAbsent((int) parentId, i -> new IntArrayList()).add((int) childId);
     }
 }
