@@ -259,7 +259,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 
     @Override
     public long getSubtreeCount(long id) {
-        return idToSubtreeCountMap.get(id);
+        return idToSubtreeCountMap.get((int) id);
     }
 
     @Override

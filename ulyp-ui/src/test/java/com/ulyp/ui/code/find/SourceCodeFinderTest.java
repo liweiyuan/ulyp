@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -16,11 +18,12 @@ import static org.junit.Assert.assertThat;
 public class SourceCodeFinderTest {
 
     @Test
-    public void shouldFindSourceCodeFromJunitLibraryInCurrentClasspath() {
+    public void shouldFindSourceCodeFromJunitLibraryInCurrentClasspath() throws ExecutionException, InterruptedException {
         SourceCodeFinder sourceCodeFinder = new SourceCodeFinder(new Classpath().toList());
 
-        SourceCode sourceCode = sourceCodeFinder.find("org.junit.Test");
+        CompletableFuture<SourceCode> sourceCodeFuture = sourceCodeFinder.find("org.junit.Test");
 
+        SourceCode sourceCode = sourceCodeFuture.get();
 
         assertThat(sourceCode.getCode(), containsString("@Retention(RetentionPolicy.RUNTIME)"));
         assertThat(sourceCode.getCode(), containsString("public @interface Test {"));
@@ -29,10 +32,12 @@ public class SourceCodeFinderTest {
     }
 
     @Test
-    public void shouldFindBytecodeAndDecompile() {
+    public void shouldFindBytecodeAndDecompile() throws ExecutionException, InterruptedException {
         SourceCodeFinder sourceCodeFinder = new SourceCodeFinder(Arrays.asList(Paths.get("src", "test", "resources", "ProcessTab.jar").toString()));
 
-        SourceCode sourceCode = sourceCodeFinder.find("com.ulyp.ui.ProcessTab");
+        CompletableFuture<SourceCode> sourceCodeFuture = sourceCodeFinder.find("com.ulyp.ui.ProcessTab");
+
+        SourceCode sourceCode = sourceCodeFuture.get();
 
         Assert.assertThat(sourceCode.getCode(), Matchers.containsString("// Decompiled from"));
         Assert.assertThat(sourceCode.getCode(), Matchers.containsString("import org.springframework.stereotype.Component;"));

@@ -13,8 +13,10 @@ import com.ulyp.ui.code.find.SourceCodeFinder;
 import com.ulyp.ui.font.FontSizeChanger;
 import com.ulyp.ui.util.ResizeEvent;
 import com.ulyp.ui.util.ResizeEventSupportingScrollPane;
+import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Region;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Scope(value = "prototype")
@@ -73,10 +76,23 @@ public class CallRecordTreeTab extends Tab {
 
         treeView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    CallRecordTreeNode callRecord = (CallRecordTreeNode) newValue;
-                    if (callRecord != null && callRecord.getCallRecord() != null) {
-                        SourceCode sourceCode = sourceCodeFinder.find(callRecord.getCallRecord().getClassName());
-                        sourceCodeView.setText(sourceCode, callRecord.getCallRecord().getMethodName());
+                    final CallRecordTreeNode selectedNode = (CallRecordTreeNode) newValue;
+                    if (selectedNode != null && selectedNode.getCallRecord() != null) {
+                        CompletableFuture<SourceCode> sourceCodeFuture = sourceCodeFinder.find(selectedNode.getCallRecord().getClassName());
+
+                        sourceCodeFuture.thenAccept(
+                                sourceCode -> {
+                                    Platform.runLater(
+                                            () -> {
+                                                TreeItem<CallTreeNodeContent> currentlySelected = treeView.getSelectionModel().getSelectedItem();
+                                                CallRecordTreeNode currentlySelectedNode = (CallRecordTreeNode) currentlySelected;
+                                                if (selectedNode.getCallRecord().getId() == currentlySelectedNode.getCallRecord().getId()) {
+                                                    sourceCodeView.setText(sourceCode, currentlySelectedNode.getCallRecord().getMethodName());
+                                                }
+                                            }
+                                    );
+                                }
+                        );
                     }
                 }
         );

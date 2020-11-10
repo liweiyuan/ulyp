@@ -7,11 +7,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class SourceCodeFinder {
 
     private final List<JarFile> jars;
+    private final ExecutorService decompilingExecutorService = Executors.newFixedThreadPool(2);
 
     public SourceCodeFinder(List<String> classpath) {
 
@@ -33,24 +38,32 @@ public class SourceCodeFinder {
         this.jars.addAll(0, sourcesJars);
     }
 
-    public SourceCode find(String javaClassName) {
-        Optional<SourceCode> decompiled = Optional.empty();
-
+    public CompletableFuture<SourceCode> find(String javaClassName) {
         for (JarFile jar : this.jars) {
             SourceCode sourceCode = jar.findSourceByClassName(javaClassName);
 
             if (sourceCode != null) {
-                return sourceCode;
-            }
-
-            ByteCode byteCode = jar.findByteCodeByClassName(javaClassName);
-
-            if (byteCode != null) {
-                decompiled = Optional.of(byteCode.decompile().prependToSource(String.format("// Decompiled from: %s \n", jar.getAbsolutePath())));
+                return CompletableFuture.completedFuture(sourceCode);
             }
         }
 
-        return decompiled.orElse(new SourceCode("", ""));
+        CompletableFuture<SourceCode> result = new CompletableFuture<>();
+
+        decompilingExecutorService.execute(
+                () -> {
+                    for (JarFile jar : this.jars) {
+                        ByteCode byteCode = jar.findByteCodeByClassName(javaClassName);
+
+                        if (byteCode != null) {
+                            result.complete(byteCode.decompile().prependToSource(String.format("// Decompiled from: %s \n", jar.getAbsolutePath())));
+                        }
+                    }
+
+                    result.complete(new SourceCode("", ""));
+                }
+        );
+
+        return result;
     }
 //    static class ForFolder implements ClassFileLocator {
 //
