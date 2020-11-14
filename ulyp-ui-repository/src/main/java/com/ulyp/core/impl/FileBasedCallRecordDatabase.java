@@ -127,7 +127,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                 throw new RuntimeException("Call id of the root must be 0");
             }
             currentRootStack.push(enterRecord.callId());
-            idToSubtreeCountMap.put(0, 1);
+            idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
         }
 
         while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
@@ -138,7 +138,10 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
                 currentRootStack.popLong();
             } else if (enterRecordIt.hasNext()) {
                 TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
-                linkChild(currentCallId, enterRecord.callId());
+
+                idToParentIdMap.put((int) enterRecord.callId(), (int) currentCallId);
+                children.computeIfAbsent((int) currentCallId, i -> new IntArrayList()).add((int) enterRecord.callId());
+                idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
 
                 for (int i = 0; i < currentRootStack.size(); i++) {
                     int id = (int) currentRootStack.getLong(i);
@@ -265,11 +268,5 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public synchronized void linkChild(long parentId, long childId) {
-        idToParentIdMap.put((int) childId, (int) parentId);
-        children.computeIfAbsent((int) parentId, i -> new IntArrayList()).add((int) childId);
     }
 }

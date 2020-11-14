@@ -33,7 +33,5 @@ public interface CallRecordDatabase {
 
     long getSubtreeCount(long id);
 
-    void linkChild(long parentId, long childId);
-
     void close();
 }

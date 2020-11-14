@@ -4,9 +4,7 @@ language: java
 script: ./gradlew ulyp-agent-classes:check
 
 jdk:
-  - oraclejdk8
   - openjdk8
-  - oraclejdk11
   - openjdk11
 
 install:
