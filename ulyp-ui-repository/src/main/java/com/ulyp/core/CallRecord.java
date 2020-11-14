@@ -137,14 +137,12 @@ public class CallRecord {
         return database.getChildren(this.id);
     }
 
-    public CallRecord setReturnValue(ObjectRepresentation returnValue) {
+    public void setReturnValue(ObjectRepresentation returnValue) {
         this.returnValue = returnValue;
-        return this;
     }
 
-    public CallRecord setThrown(boolean thrown) {
+    public void setThrown(boolean thrown) {
         this.thrown = thrown;
-        return this;
     }
 
     public String toString() {
