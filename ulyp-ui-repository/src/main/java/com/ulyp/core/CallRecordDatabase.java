@@ -3,6 +3,7 @@ package com.ulyp.core;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Database which manages a particular call record tree.
@@ -19,9 +20,9 @@ public interface CallRecordDatabase {
 
     CallRecord find(long id);
 
-    void deleteSubtree(long id);
-
-    List<CallRecord> getChildren(long id);
+    default List<CallRecord> getChildren(long id) {
+        return getChildrenIds(id).stream().map(this::find).collect(Collectors.toList());
+    }
 
     LongList getChildrenIds(long id);
 

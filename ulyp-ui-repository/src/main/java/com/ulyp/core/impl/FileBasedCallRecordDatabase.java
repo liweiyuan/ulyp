@@ -227,18 +227,12 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
         }
     }
 
-    @Override
     public synchronized void deleteSubtree(long id) {
 //        for (CallRecord child : getChildren(id)) {
 //            deleteSubtree(child.getId());
 //        }
 //        nodes.remove(id);
         // TODO implement
-    }
-
-    @Override
-    public synchronized List<CallRecord> getChildren(long id) {
-        return getChildrenIds(id).stream().map(this::find).collect(Collectors.toList());
     }
 
     @Override
