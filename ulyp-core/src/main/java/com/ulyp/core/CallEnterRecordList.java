@@ -8,7 +8,9 @@ import com.ulyp.core.printers.bytes.BinaryOutputForEnterRecordImpl;
 import com.ulyp.transport.TCallEnterRecordDecoder;
 import com.ulyp.transport.TCallEnterRecordEncoder;
 
-// Flexible SBE wrapper
+/**
+ * Off-heap list with all call enter records
+ */
 public class CallEnterRecordList extends AbstractBinaryEncodedList<TCallEnterRecordEncoder, TCallEnterRecordDecoder> {
 
     private final BinaryOutputForEnterRecordImpl binaryOutput = new BinaryOutputForEnterRecordImpl();

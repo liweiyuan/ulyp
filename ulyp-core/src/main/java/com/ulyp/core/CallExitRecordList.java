@@ -9,7 +9,9 @@ import com.ulyp.transport.BooleanType;
 import com.ulyp.transport.TCallExitRecordDecoder;
 import com.ulyp.transport.TCallExitRecordEncoder;
 
-// Flexible SBE wrapper
+/**
+ * Off-heap list with all call exit records
+ */
 public class CallExitRecordList extends AbstractBinaryEncodedList<TCallExitRecordEncoder, TCallExitRecordDecoder> {
 
     private final BinaryOutputForExitRecordImpl binaryOutput = new BinaryOutputForExitRecordImpl();

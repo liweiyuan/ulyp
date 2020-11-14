@@ -13,7 +13,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-
+/**
+ * Off-heap list with all data stored flat in memory thanks to Simple Binary Encoding.
+ * Both SBE encoder and decoder must be specified in descendant classes
+ */
 public abstract class AbstractBinaryEncodedList<Encoder extends MessageEncoderFlyweight, Decoder extends MessageDecoderFlyweight> implements Iterable<Decoder> {
 
     private static final int LIST_HEADER_LENGTH = 2 * Integer.BYTES;
