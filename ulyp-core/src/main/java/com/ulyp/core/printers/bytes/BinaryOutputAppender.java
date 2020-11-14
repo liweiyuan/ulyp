@@ -2,6 +2,8 @@ package com.ulyp.core.printers.bytes;
 
 import org.agrona.concurrent.UnsafeBuffer;
 
+import java.nio.charset.StandardCharsets;
+
 public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
 
     private final byte[] tmp = new byte[32 * 1024];
@@ -41,9 +43,11 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
 
     public void append(String value) {
         if (value != null) {
-            append(value.length());
-            for (int i = 0; i < value.length(); i++) {
-                append((byte) value.charAt(i));
+            // TODO optimize for ASCII only strings
+            byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+            append(bytes.length);
+            for (byte b : bytes) {
+                append(b);
             }
         } else {
             append(-1);

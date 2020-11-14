@@ -28,6 +28,7 @@ public class StringPrinter extends ObjectBinaryPrinter {
         String text = (String) object;
         String printed;
         if (text.length() > MAX_LENGTH) {
+            // TODO optimize
             printed = text.substring(0, MAX_LENGTH) + "...(" + text.length() + ")";
         } else {
             printed = text;

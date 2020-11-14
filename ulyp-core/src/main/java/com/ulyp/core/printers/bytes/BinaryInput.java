@@ -10,14 +10,5 @@ public interface BinaryInput {
 
     long readLong();
 
-    default String readString() {
-        StringView view = readStringView();
-        if (view != null) {
-            return view.toString();
-        } else {
-            return null;
-        }
-    }
-
-    StringView readStringView();
+    String readString();
 }

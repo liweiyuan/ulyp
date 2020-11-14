@@ -20,7 +20,7 @@ public class BinaryInputOutputTest {
     private final BinaryInput binaryInput = new BinaryInputImpl(buffer);
 
     @Test
-    public void testSimpleReadWrite() throws Exception {
+    public void testSimpleReadWriteString() throws Exception {
         try (BinaryOutputAppender appender = binaryOutput.appender()) {
             appender.append("abc");
         }
@@ -29,11 +29,29 @@ public class BinaryInputOutputTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void testSimpleReadWriteUtf8String() throws Exception {
         try (BinaryOutputAppender appender = binaryOutput.appender()) {
-            appender.append(2);
+            appender.append("АБЦ");
+        }
+
+        assertEquals("АБЦ", binaryInput.readString());
+    }
+
+    @Test
+    public void testSimpleReadWriteUtf8StringChineese() throws Exception {
+        try (BinaryOutputAppender appender = binaryOutput.appender()) {
+            appender.append("早上好");
+        }
+
+        assertEquals("早上好", binaryInput.readString());
+    }
+
+    @Test
+    public void testComplexReadWrite() throws Exception {
+        try (BinaryOutputAppender appender = binaryOutput.appender()) {
+            appender.append(2L);
             appender.append(null);
-            appender.append(6);
+            appender.append(6L);
         }
 
         assertEquals(2, binaryInput.readLong());
@@ -44,16 +62,16 @@ public class BinaryInputOutputTest {
     @Test
     public void testNestedAppender() throws Exception {
         try (BinaryOutputAppender appender = binaryOutput.appender()) {
-            appender.append(2);
+            appender.append(2L);
             try (BinaryOutputAppender appender2 = appender.appender()) {
-                appender2.append("asdas");
+                appender2.append("你吃了吗?");
             }
-            appender.append(6);
+            appender.append(6L);
             appender.append(null);
         }
 
         assertEquals(2, binaryInput.readLong());
-        assertEquals("asdas", binaryInput.readString());
+        assertEquals("你吃了吗?", binaryInput.readString());
         assertEquals(6, binaryInput.readLong());
         assertNull(binaryInput.readString());
     }

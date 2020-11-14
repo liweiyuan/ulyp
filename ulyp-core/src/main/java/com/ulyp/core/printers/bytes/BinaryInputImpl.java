@@ -2,6 +2,8 @@ package com.ulyp.core.printers.bytes;
 
 import org.agrona.DirectBuffer;
 
+import java.nio.charset.StandardCharsets;
+
 public class BinaryInputImpl implements BinaryInput {
 
     private final DirectBuffer buffer;
@@ -13,7 +15,6 @@ public class BinaryInputImpl implements BinaryInput {
 
     @Override
     public boolean readBoolean() {
-        // TODO maybe optimize
         long val = readInt();
         return val == 1;
     }
@@ -40,13 +41,13 @@ public class BinaryInputImpl implements BinaryInput {
     }
 
     @Override
-    public StringView readStringView() {
+    public String readString() {
         int length = readInt();
         if (length >= 0) {
-            StringView view = new StringView();
-            view.wrap(buffer, bytePos,  length);
+            byte[] buf = new byte[length];
+            this.buffer.getBytes(bytePos, buf);
             bytePos += length;
-            return view;
+            return new String(buf, StandardCharsets.UTF_8);
         } else {
             return null;
         }
