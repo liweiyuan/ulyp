@@ -53,8 +53,7 @@ public class AbstractInstrumentationTest {
             }
         }
 
-        // TODO getRoot()
-        return database.find(0L);
+        return database.getRoot();
     }
 
     protected List<TCallRecordLogUploadRequest> runSubprocessWithUiAndReturnProtoRequest(TestSettingsBuilder settings) {

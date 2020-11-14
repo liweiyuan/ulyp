@@ -124,7 +124,7 @@ public class FileBasedCallRecordDatabaseTest {
 
         database.persistBatch(enterRecords, exitRecords, methodInfos, classDescriptionList);
 
-        CallRecord root = database.find(0);
+        CallRecord root = database.getRoot();
 
         assertEquals(0, root.getId());
         assertTrue(root.getParameterNames().isEmpty());

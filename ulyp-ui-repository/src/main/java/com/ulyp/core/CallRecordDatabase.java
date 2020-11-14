@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CallRecordDatabase {
 
-    default CallRecord root() {
+    default CallRecord getRoot() {
         return find(0);
     }
 
