@@ -41,6 +41,10 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     private final LongArrayList currentRootStack = new LongArrayList();
     private final byte[] tmpBuf = new byte[512 * 1024];
 
+    public FileBasedCallRecordDatabase() {
+        this("");
+    }
+
     public FileBasedCallRecordDatabase(String name) {
         exitRecordPos.defaultReturnValue(-1L);
         enterRecordPos.defaultReturnValue(-1L);
@@ -229,6 +233,7 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
 //            deleteSubtree(child.getId());
 //        }
 //        nodes.remove(id);
+        // TODO implement
     }
 
     @Override
@@ -244,12 +249,6 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
             longs.add(childrenIds.getInt(i));
         }
         return longs;
-    }
-
-    @Override
-    public synchronized void persist(CallRecord node) {
-        // TODO retire
-        throw new UnsupportedOperationException();
     }
 
     @Override

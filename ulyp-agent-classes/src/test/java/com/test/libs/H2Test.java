@@ -4,6 +4,7 @@ import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.util.MethodMatcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class H2Test extends AbstractInstrumentationTest {
                 .setMethodToRecord(MethodMatcher.parse("Connection.createStatement")));
 
 
-        Assert.assertTrue(root.getSubtreeNodeCount() > 10);
+        Assert.assertThat(root.getSubtreeNodeCount(), Matchers.greaterThan(10L));
     }
 
     @Test
@@ -34,12 +35,9 @@ public class H2Test extends AbstractInstrumentationTest {
                 .setMainClassName(H2TestRun.class)
                 .setMethodToRecord("main"));
 
-        root.forEach(
-                record -> {
-                    Assert.assertTrue(record.isComplete());
-                }
-        );
-        Assert.assertTrue(root.getSubtreeNodeCount() > 4000);
+        root.forEach(record -> Assert.assertTrue("Not complete: " + record, record.isComplete()));
+
+        Assert.assertThat(root.getSubtreeNodeCount(), Matchers.greaterThan(4000L));
     }
 
     static class H2TestRun {

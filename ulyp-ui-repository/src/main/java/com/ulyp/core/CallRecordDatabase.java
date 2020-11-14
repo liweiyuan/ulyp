@@ -18,8 +18,6 @@ public interface CallRecordDatabase {
 
     LongList getChildrenIds(long id);
 
-    void persist(CallRecord node);
-
     long countAll();
 
     long getSubtreeCount(long id);

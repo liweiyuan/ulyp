@@ -32,7 +32,7 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(CallRecordTreeDeserializerTest.class));
+                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 
@@ -90,7 +90,7 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(CallRecordTreeDeserializerTest.class));
+                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 

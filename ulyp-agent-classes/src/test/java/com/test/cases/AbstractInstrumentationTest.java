@@ -3,12 +3,16 @@ package com.test.cases;
 import com.test.cases.util.TestSettingsBuilder;
 import com.test.cases.util.TestUtil;
 import com.test.cases.util.UIServerStub;
-import com.ulyp.core.*;
-import com.ulyp.core.impl.HeapCallRecordDatabase;
+import com.ulyp.core.CallEnterRecordList;
+import com.ulyp.core.CallExitRecordList;
+import com.ulyp.core.CallRecord;
+import com.ulyp.core.MethodInfoList;
+import com.ulyp.core.impl.FileBasedCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,19 +38,23 @@ public class AbstractInstrumentationTest {
     protected CallRecord runSubprocessWithUi(TestSettingsBuilder settings) {
         List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(settings);
 
-        CallRecordDatabase database = new HeapCallRecordDatabase();
-        CallRecordTreeDeserializer callRecordTreeDeserializer = new CallRecordTreeDeserializer(database);
+        FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase();
 
         for (TCallRecordLogUploadRequest request : requests) {
-            callRecordTreeDeserializer.deserialize(
-                    new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
-                    new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                    new MethodInfoList(request.getMethodDescriptionList().getData()),
-                    request.getDescriptionList()
-            );
+            try {
+                database.persistBatch(
+                        new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
+                        new CallExitRecordList(request.getRecordLog().getExitRecords()),
+                        new MethodInfoList(request.getMethodDescriptionList().getData()),
+                        request.getDescriptionList()
+                );
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
         }
 
-        return callRecordTreeDeserializer.getRoot();
+        // TODO getRoot()
+        return database.find(0L);
     }
 
     protected List<TCallRecordLogUploadRequest> runSubprocessWithUiAndReturnProtoRequest(TestSettingsBuilder settings) {
