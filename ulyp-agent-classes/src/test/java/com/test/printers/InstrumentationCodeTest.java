@@ -4,6 +4,7 @@ import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.SafeCaller;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
+import com.ulyp.core.printers.NullObjectRepresentation;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("asdvdsa2"));
-        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getSubtreeNodeCount(), is(1L));
         assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnStringWithEmptyParams"));
     }
@@ -64,9 +65,8 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
 
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
-        // TODO use NullRepr
-        assertThat(root.getReturnValue().getPrintedText(), is("null"));
-        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getReturnValue(), is(NullObjectRepresentation.getInstance()));
+        assertThat(root.getSubtreeNodeCount(), is(1L));
         assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnNullObjectWithEmptyParams"));
     }
@@ -82,7 +82,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("124234232"));
-        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getSubtreeNodeCount(), is(1L));
         assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("returnIntWithEmptyParams"));
     }
@@ -98,7 +98,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getChildren(), is(empty()));
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("RuntimeException: exception message"));
-        assertThat(root.getSubtreeNodeCount(), is(1));
+        assertThat(root.getSubtreeNodeCount(), is(1L));
         assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SimpleTestCases"));
         assertThat(root.getMethodName(), is("throwsRuntimeException"));
     }
@@ -115,7 +115,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(root.getArgTexts(), is(empty()));
         assertThat(root.getReturnValue().getPrintedText(), is("null"));
         assertThat(root.isVoidMethod(), is(Boolean.TRUE));
-        assertThat(root.getSubtreeNodeCount(), is(3));
+        assertThat(root.getSubtreeNodeCount(), is(3L));
         assertThat(root.getMethodName(), is("callTwoMethods"));
         assertThat(root.getClassName(), is("com.test.printers.InstrumentationCodeTest$SeveralMethodsTestCases"));
 
@@ -125,7 +125,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(call1.getArgs(), is(empty()));
         assertThat(call1.getReturnValue().getPrintedText(), is("null"));
         assertThat(call1.isVoidMethod(), is(Boolean.TRUE));
-        assertThat(call1.getSubtreeNodeCount(), is(1));
+        assertThat(call1.getSubtreeNodeCount(), is(1L));
         assertThat(call1.getMethodName(), is("method1"));
 
         CallRecord call2 = root.getChildren().get(1);
@@ -134,7 +134,7 @@ public class InstrumentationCodeTest extends AbstractInstrumentationTest {
         assertThat(call2.getArgs(), is(empty()));
         assertThat(call2.getReturnValue().getPrintedText(), is("null"));
         assertThat(call2.isVoidMethod(), is(Boolean.TRUE));
-        assertThat(call2.getSubtreeNodeCount(), is(1));
+        assertThat(call2.getSubtreeNodeCount(), is(1L));
         assertThat(call2.getMethodName(), is("method2"));
     }
 

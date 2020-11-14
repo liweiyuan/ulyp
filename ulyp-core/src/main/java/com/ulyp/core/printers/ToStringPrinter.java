@@ -33,7 +33,7 @@ public class ToStringPrinter extends ObjectBinaryPrinter {
             StringObjectRepresentation string = (StringObjectRepresentation) ObjectBinaryPrinterType.STRING_PRINTER.getInstance().read(objectType, input, decodingContext);
             return new PlainObjectRepresentation(objectType, string.getPrintedText());
         } else if (result == TO_STRING_CALL_NULL) {
-            return new NullObjectRepresentation(objectType);
+            return NullObjectRepresentation.getInstance();
         } else {
             return ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().read(objectType, input, decodingContext);
         }

@@ -17,7 +17,7 @@ public class RecursionInstrumentationTest extends AbstractInstrumentationTest {
                         .setMethodToRecord("fibonacci")
         );
 
-        assertThat(root.getSubtreeNodeCount(), is(177));
+        assertThat(root.getSubtreeNodeCount(), is(177L));
     }
 
     public static class RecursionTestCases {
