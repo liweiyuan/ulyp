@@ -6,7 +6,7 @@ import com.ulyp.transport.TMethodInfoDecoder;
 import com.ulyp.transport.TMethodInfoEncoder;
 
 // Flexible SBE wrapper
-public class MethodInfoList extends AbstractSbeRecordList<TMethodInfoEncoder, TMethodInfoDecoder> {
+public class MethodInfoList extends AbstractBinaryEncodedList<TMethodInfoEncoder, TMethodInfoDecoder> {
 
     public MethodInfoList() {
     }

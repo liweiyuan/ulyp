@@ -9,7 +9,7 @@ import com.ulyp.transport.TCallEnterRecordDecoder;
 import com.ulyp.transport.TCallEnterRecordEncoder;
 
 // Flexible SBE wrapper
-public class CallEnterRecordList extends AbstractSbeRecordList<TCallEnterRecordEncoder, TCallEnterRecordDecoder> {
+public class CallEnterRecordList extends AbstractBinaryEncodedList<TCallEnterRecordEncoder, TCallEnterRecordDecoder> {
 
     private final BinaryOutputForEnterRecordImpl binaryOutput = new BinaryOutputForEnterRecordImpl();
 

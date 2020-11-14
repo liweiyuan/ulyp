@@ -10,7 +10,7 @@ import com.ulyp.transport.TCallExitRecordDecoder;
 import com.ulyp.transport.TCallExitRecordEncoder;
 
 // Flexible SBE wrapper
-public class CallExitRecordList extends AbstractSbeRecordList<TCallExitRecordEncoder, TCallExitRecordDecoder> {
+public class CallExitRecordList extends AbstractBinaryEncodedList<TCallExitRecordEncoder, TCallExitRecordDecoder> {
 
     private final BinaryOutputForExitRecordImpl binaryOutput = new BinaryOutputForExitRecordImpl();
 

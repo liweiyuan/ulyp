@@ -13,7 +13,8 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlyweight, Decoder extends MessageDecoderFlyweight> implements Iterable<Decoder> {
+
+public abstract class AbstractBinaryEncodedList<Encoder extends MessageEncoderFlyweight, Decoder extends MessageDecoderFlyweight> implements Iterable<Decoder> {
 
     private static final int LIST_HEADER_LENGTH = 2 * Integer.BYTES;
     private static final int RECORD_HEADER_LENGTH = 2 * Integer.BYTES;
@@ -24,7 +25,7 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
 
     protected final MutableDirectBuffer buffer;
 
-    public AbstractSbeRecordList() {
+    public AbstractBinaryEncodedList() {
         buffer = new ExpandableDirectByteBuffer(64 * 1024);
         setSize(0);
         setLength(0);
@@ -32,7 +33,7 @@ public abstract class AbstractSbeRecordList<Encoder extends MessageEncoderFlywei
         initEncoder();
     }
 
-    public AbstractSbeRecordList(ByteString bytes) {
+    public AbstractBinaryEncodedList(ByteString bytes) {
         buffer = new UnsafeBuffer(bytes.asReadOnlyByteBuffer());
 
         initEncoder();
