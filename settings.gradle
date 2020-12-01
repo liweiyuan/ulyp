@@ -1,7 +1,6 @@
 rootProject.name = 'ulyp'
 
 include 'ulyp-ui'
-include 'ulyp-plugin'
 include 'ulyp-benchmarks'
 include 'ulyp-core'
 include 'ulyp-agent'
