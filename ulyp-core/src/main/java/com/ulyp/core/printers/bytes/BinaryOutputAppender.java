@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 
 public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
 
+    private static final int MAX_STRING_LENGTH = 200;
+
     private final byte[] tmp = new byte[32 * 1024];
     private final UnsafeBuffer tmpBuffer = new UnsafeBuffer(tmp);
 
@@ -43,8 +45,15 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
 
     public void append(String value) {
         if (value != null) {
+            String toPrint;
+            if (value.length() > MAX_STRING_LENGTH) {
+                toPrint = value.substring(0, MAX_STRING_LENGTH) + "...(" + value.length() + ")";
+            } else {
+                toPrint = value;
+            }
+
             // TODO optimize for ASCII only strings
-            byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+            byte[] bytes = toPrint.getBytes(StandardCharsets.UTF_8);
             append(bytes.length);
             for (byte b : bytes) {
                 append(b);
