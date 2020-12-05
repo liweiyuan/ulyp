@@ -7,6 +7,8 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 
 public class ThrowablePrinter extends ObjectBinaryPrinter {
 
+    private static final int MAX_LENGTH = 200;
+
     protected ThrowablePrinter(byte id) {
         super(id);
     }
@@ -25,6 +27,14 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         Throwable t = (Throwable) object;
-        out.writeString(t.getMessage());
+        String text = t.getMessage();
+        String printed;
+        if (text.length() > MAX_LENGTH) {
+            // TODO optimize
+            printed = text.substring(0, MAX_LENGTH) + "...(" + text.length() + ")";
+        } else {
+            printed = text;
+        }
+        out.writeString(printed);
     }
 }
