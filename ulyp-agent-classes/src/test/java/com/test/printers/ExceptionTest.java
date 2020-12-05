@@ -6,11 +6,7 @@ import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.core.printers.PlainObjectRepresentation;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
