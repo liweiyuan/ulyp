@@ -1,7 +1,6 @@
 package com.ulyp.ui;
 
 import com.ulyp.transport.TCallRecordLogUploadRequest;
-import com.ulyp.transport.TCallRecordLogUploadRequestList;
 import com.ulyp.ui.code.SourceCodeView;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -18,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class PrimaryViewController implements Initializable {
@@ -103,14 +104,19 @@ public class PrimaryViewController implements Initializable {
                             while (inputStream.available() > 0) {
                                 TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseDelimitedFrom(inputStream);
 
+                                CompletableFuture<Boolean> done = new CompletableFuture<>();
+
                                 Platform.runLater(() -> {
                                     CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
                                     ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
                                     processTab.uploadChunk(chunk);
+                                    done.complete(true);
                                 });
+
+                                done.get(3, TimeUnit.DAYS);
                             }
 
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             // TODO show error dialog
                             e.printStackTrace();
                         }
