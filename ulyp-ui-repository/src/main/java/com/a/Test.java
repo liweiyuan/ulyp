@@ -1,8 +1,7 @@
 package com.a;
 
-import com.ulyp.core.Record;
+import com.ulyp.core.impl.OnDiskCallRecordInfo;
 import org.dizitart.no2.Nitrite;
-import org.dizitart.no2.collection.NitriteCollection;
 import org.dizitart.no2.mvstore.MVStoreModule;
 import org.dizitart.no2.repository.ObjectRepository;
 
@@ -26,31 +25,25 @@ public class Test {
 //                .loadModule(new JacksonMapperModule())  // optional
                 .openOrCreate("user", "password");
 
-        NitriteCollection collection = db.getCollection("test");
+        ObjectRepository<OnDiskCallRecordInfo> repository = db.getRepository(OnDiskCallRecordInfo.class);
 
-        ObjectRepository<Record> repository = db.getRepository(Record.class);
-
-        Record rcord = new Record();
+        OnDiskCallRecordInfo rcord = new OnDiskCallRecordInfo();
         rcord.setId(104L);
-        rcord.setText("asdasd");
         repository.insert(rcord);
 
         System.out.println(repository.size());
 
-        Record byId = repository.getById(104L);
+        OnDiskCallRecordInfo byId = repository.getById(104L);
 
         System.out.println(byId.getId());
-        System.out.println(byId.getText());
 
-        rcord = new Record();
+        rcord = byId;
         rcord.setId(104L);
-        rcord.setText("123");
 
         repository.update(rcord);
 
         byId = repository.getById(104L);
 
         System.out.println(byId.getId());
-        System.out.println(byId.getText());
     }
 }

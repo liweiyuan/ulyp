@@ -1,19 +1,22 @@
 package com.ulyp.core.impl;
 
 import com.ulyp.core.*;
+import com.ulyp.core.printers.IdentityObjectRepresentation;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
+import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.transport.TClassDescription;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class FileBasedCallRecordDatabaseTest {
+public class OnDiskFileBasedCallRecordDatabaseTest {
 
     private final TestAgentRuntime agentRuntime = new TestAgentRuntime();
 
@@ -22,7 +25,6 @@ public class FileBasedCallRecordDatabaseTest {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
-        List<TClassDescription> classDescriptionList = new ArrayList<>();
 
         MethodInfo toStringMethod = new MethodInfo(
                 100,
@@ -31,7 +33,8 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
+                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+        );
 
         methodInfos.add(toStringMethod);
 
@@ -63,20 +66,24 @@ public class FileBasedCallRecordDatabaseTest {
         exitRecords.add(1, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
         exitRecords.add(0, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
 
-        OnDiskFileBasedCallRecordDatabase fileBasedCallRecordDatabase = new OnDiskFileBasedCallRecordDatabase("test");
+        OnDiskFileBasedCallRecordDatabase database = new OnDiskFileBasedCallRecordDatabase("test");
 
-        fileBasedCallRecordDatabase.persistBatch(enterRecords, exitRecords, methodInfos, classDescriptionList);
+        database.persistBatch(enterRecords, exitRecords, methodInfos, Collections.emptyList());
 
-        CallRecord root = fileBasedCallRecordDatabase.find(0);
+        CallRecord root = database.find(0);
 
         assertEquals(0, root.getId());
         assertTrue(root.getParameterNames().isEmpty());
+        assertThat(root.getMethodName(), Matchers.is("toString"));
+
+        ObjectRepresentation returnValue = root.getReturnValue();
+        assertThat(returnValue, Matchers.instanceOf(IdentityObjectRepresentation.class));
 
         assertEquals(1, root.getChildren().size());
     }
 
     @Test
-    public void testSavingViaChunks() throws IOException {
+    public void testSavingPartialChunk() throws IOException {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
@@ -89,7 +96,7 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
+                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 
@@ -127,8 +134,9 @@ public class FileBasedCallRecordDatabaseTest {
 
         assertEquals(0, root.getId());
         assertTrue(root.getParameterNames().isEmpty());
+        assertFalse(root.isComplete());
 
-        database.find(1);
-        database.find(2);
+        assertThat(database.find(1), Matchers.notNullValue());
+        assertThat(database.find(2), Matchers.notNullValue());
     }
 }

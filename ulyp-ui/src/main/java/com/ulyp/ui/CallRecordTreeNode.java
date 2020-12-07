@@ -27,12 +27,12 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
     public void refresh() {
         setValue(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
         if (loaded) {
-            LongList newChildren = database.getChildrenIds(callRecordId);
+            List<Long> newChildren = database.getChildrenIds(callRecordId);
             int currentLoadedChildrenCount = getChildren().size();
 
             if (newChildren.size() > currentLoadedChildrenCount) {
                 for (int i = currentLoadedChildrenCount; i < newChildren.size(); i++) {
-                    getChildren().add(new CallRecordTreeNode(database, newChildren.getLong(i), renderSettings));
+                    getChildren().add(new CallRecordTreeNode(database, newChildren.get(i), renderSettings));
                 }
             }
 
@@ -59,9 +59,9 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
     private void loadChildren() {
         List<CallRecordTreeNode> children = new ArrayList<>();
 
-        LongList childrenIds = database.getChildrenIds(callRecordId);
+        List<Long> childrenIds = database.getChildrenIds(callRecordId);
         for (int i = 0; i < childrenIds.size(); i++) {
-            children.add(new CallRecordTreeNode(database, childrenIds.getLong(i), renderSettings));
+            children.add(new CallRecordTreeNode(database, childrenIds.get(i), renderSettings));
         }
 
         super.getChildren().setAll(children);

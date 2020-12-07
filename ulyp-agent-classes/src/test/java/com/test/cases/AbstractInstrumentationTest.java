@@ -7,7 +7,7 @@ import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.MethodInfoList;
-import com.ulyp.core.impl.FileBasedCallRecordDatabase;
+import com.ulyp.core.impl.OnDiskFileBasedCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -38,7 +38,7 @@ public class AbstractInstrumentationTest {
     protected CallRecord runSubprocessWithUi(TestSettingsBuilder settings) {
         List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(settings);
 
-        FileBasedCallRecordDatabase database = new FileBasedCallRecordDatabase();
+        OnDiskFileBasedCallRecordDatabase database = new OnDiskFileBasedCallRecordDatabase();
 
         for (TCallRecordLogUploadRequest request : requests) {
             try {

@@ -4,7 +4,7 @@ import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.MethodInfoList;
-import com.ulyp.core.impl.FileBasedCallRecordDatabase;
+import com.ulyp.core.impl.OnDiskFileBasedCallRecordDatabase;
 import com.ulyp.transport.RecordingInfo;
 import com.ulyp.transport.TStackTraceElement;
 import com.ulyp.ui.code.SourceCode;
@@ -34,7 +34,7 @@ public class CallRecordTreeTab extends Tab {
 
     private final Region parent;
     private final CallRecord root;
-    private final FileBasedCallRecordDatabase database;
+    private final OnDiskFileBasedCallRecordDatabase database;
     private final RecordingInfo recordingInfo;
 
     private TreeView<CallTreeNodeContent> treeView;
@@ -51,7 +51,7 @@ public class CallRecordTreeTab extends Tab {
         this.parent = parent;
 
         try {
-            database = new FileBasedCallRecordDatabase(chunk.getProcessInfo().getMainClassName());
+            database = new OnDiskFileBasedCallRecordDatabase(chunk.getProcessInfo().getMainClassName());
 
             database.persistBatch(
                     new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),

@@ -24,7 +24,7 @@ public interface CallRecordDatabase {
         return getChildrenIds(id).stream().map(this::find).collect(Collectors.toList());
     }
 
-    LongList getChildrenIds(long id);
+    List<Long> getChildrenIds(long id);
 
     /**
      * @return total count of call records in the tree
