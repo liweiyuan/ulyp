@@ -17,7 +17,7 @@ public class TypeInfoTest extends AbstractInstrumentationTest {
     @Test
     public void shouldProvideArgumentTypes() {
         CallRecord root = runSubprocessWithUi(
-                new TestSettingsBuilder().setMainClassName(AtomicNumbersTestCases.class)
+                new TestSettingsBuilder().setMainClassName(TestCases.class)
                         .setMethodToRecord("intSum")
         );
 
@@ -33,14 +33,14 @@ public class TypeInfoTest extends AbstractInstrumentationTest {
         assertThat(root.getReturnValue().getPrintedText(), is("5"));
     }
 
-    public static class AtomicNumbersTestCases {
+    public static class TestCases {
 
         public static String intSum(AtomicInteger v1, AtomicLong v2) {
             return String.valueOf(v1.get() + v2.get());
         }
 
         public static void main(String[] args) {
-            SafeCaller.call(() -> AtomicNumbersTestCases.intSum(new AtomicInteger(2), new AtomicLong(3)));
+            SafeCaller.call(() -> TestCases.intSum(new AtomicInteger(2), new AtomicLong(3)));
         }
     }
 }
