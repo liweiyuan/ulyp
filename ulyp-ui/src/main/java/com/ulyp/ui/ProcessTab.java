@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Scope(scopeName = "prototype")
@@ -19,7 +19,8 @@ public class ProcessTab extends Tab {
     private TabPane callTreeTabs;
     @Autowired
     private ApplicationContext applicationContext;
-    private Map<Long, CallRecordTreeTab> tabsByRecordingId = new HashMap<>();
+
+    private final Map<Long, CallRecordTreeTab> tabsByRecordingId = new ConcurrentHashMap<>();
 
     ProcessTab(String mainClassName) {
         super(mainClassName);
@@ -38,15 +39,16 @@ public class ProcessTab extends Tab {
         return mainClassName;
     }
 
-    public void uploadChunk(CallRecordTreeChunk chunk) {
-        CallRecordTreeTab callRecordTreeTab = tabsByRecordingId.get(chunk.getRecordingId());
-        if (callRecordTreeTab != null) {
-            callRecordTreeTab.uploadChunk(chunk);
-        } else {
-            CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs, chunk);
+    public CallRecordTreeTab getOrCreateRecordingTab(final long recordingId) {
+        return tabsByRecordingId.computeIfAbsent(recordingId, rId -> {
+            CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs);
             callTreeTabs.getTabs().add(tab);
-            tabsByRecordingId.put(chunk.getRecordingId(), tab);
-        }
+            tabsByRecordingId.put(recordingId, tab);
+            tab.setOnClosed(ev -> {
+                this.tabsByRecordingId.remove(recordingId);
+            });
+            return tab;
+        });
     }
 
     public CallRecordTreeTab getSelectedTreeTab() {

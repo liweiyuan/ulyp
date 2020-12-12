@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,9 +29,12 @@ import java.util.concurrent.CompletableFuture;
 public class CallRecordTreeTab extends Tab {
 
     private final Region parent;
-    private final CallRecord root;
-    private final CallRecordDatabase database;
-    private final RecordingInfo recordingInfo;
+    @Nullable
+    private CallRecord root;
+    @Nullable
+    private CallRecordDatabase database;
+    @Nullable
+    private RecordingInfo recordingInfo;
 
     private TreeView<CallTreeNodeContent> treeView;
 
@@ -43,28 +45,18 @@ public class CallRecordTreeTab extends Tab {
     @Autowired
     private FontSizeChanger fontSizeChanger;
 
+    private boolean initialized = false;
+
     @SuppressWarnings("unchecked")
-    public CallRecordTreeTab(Region parent, CallRecordTreeChunk chunk) {
+    public CallRecordTreeTab(Region parent) {
         this.parent = parent;
-
-        try {
-            database = new InMemoryIndexFileBasedCallRecordDatabase(chunk.getProcessInfo().getMainClassName());
-
-            database.persistBatch(
-                    new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
-                    new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
-                    new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
-                    chunk.getRequest().getDescriptionList()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        this.root = database.find(0);
-        this.recordingInfo = chunk.getRecordingInfo();
     }
 
-    @PostConstruct
-    public void init() {
+    public synchronized void init() {
+        if (initialized) {
+            return;
+        }
+
         treeView = new TreeView<>(new CallRecordTreeNode(database, root.getId(), renderSettings));
         treeView.prefHeightProperty().bind(parent.heightProperty());
         treeView.prefWidthProperty().bind(parent.widthProperty());
@@ -110,16 +102,25 @@ public class CallRecordTreeTab extends Tab {
         setContent(scrollPane);
         setOnClosed(ev -> dispose());
         setTooltip(getTooltipText());
+
+        initialized = true;
     }
 
-    public String getTabName() {
+    public synchronized String getTabName() {
+        if (root == null) {
+            return "?";
+        }
+
         boolean complete = database.find(0).isComplete();
 
         return root.getMethodName() + "(" + 0 + ", life=" + recordingInfo.getLifetimeMillis() + " ms, nodes=" + database.countAll() + ")"
                 + (complete ? " complete" : "");
     }
 
-    private Tooltip getTooltipText() {
+    private synchronized Tooltip getTooltipText() {
+        if (root == null) {
+            return new Tooltip("");
+        }
 
         StringBuilder builder = new StringBuilder()
                 .append("Thread: ").append(recordingInfo.getThreadName()).append("\n")
@@ -153,20 +154,35 @@ public class CallRecordTreeTab extends Tab {
 //        this.tree.dispose();
     }
 
-    public void uploadChunk(CallRecordTreeChunk chunk) {
+    public synchronized void refreshTreeView() {
+        this.init();
+        CallRecordTreeNode root = (CallRecordTreeNode) treeView.getRoot();
+        setText(getTabName());
+        root.refresh();
+    }
+
+    public synchronized void uploadChunk(CallRecordTreeChunk chunk) {
         try {
+            if (database == null) {
+                database = new InMemoryIndexFileBasedCallRecordDatabase(chunk.getProcessInfo().getMainClassName());
+            }
+
+            if (recordingInfo == null) {
+                this.recordingInfo = chunk.getRecordingInfo();
+            }
+
             database.persistBatch(
                     new CallEnterRecordList(chunk.getRequest().getRecordLog().getEnterRecords()),
                     new CallExitRecordList(chunk.getRequest().getRecordLog().getExitRecords()),
                     new MethodInfoList(chunk.getRequest().getMethodDescriptionList().getData()),
                     chunk.getRequest().getDescriptionList()
             );
+
+            if (root == null) {
+                root = database.find(0);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        CallRecordTreeNode root = (CallRecordTreeNode) treeView.getRoot();
-        setText(getTabName());
-        root.refresh();
     }
 }

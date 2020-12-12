@@ -14,13 +14,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public class PrimaryViewController implements Initializable {
@@ -104,16 +105,11 @@ public class PrimaryViewController implements Initializable {
                             while (inputStream.available() > 0) {
                                 TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseDelimitedFrom(inputStream);
 
-                                CompletableFuture<Boolean> done = new CompletableFuture<>();
-
-                                Platform.runLater(() -> {
-                                    CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
-                                    ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
-                                    processTab.uploadChunk(chunk);
-                                    done.complete(true);
-                                });
-
-                                done.get(3, TimeUnit.DAYS);
+                                CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
+                                ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
+                                CallRecordTreeTab recordingTab = processTab.getOrCreateRecordingTab(chunk.getRecordingId());
+                                recordingTab.uploadChunk(chunk);
+                                Platform.runLater(recordingTab::refreshTreeView);
                             }
 
                         } catch (Exception e) {
