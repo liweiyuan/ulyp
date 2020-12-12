@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class FileBasedCallRecordDatabase implements CallRecordDatabase {
+public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatabase {
 
     private final OutputStream enterRecordsOutputStream;
     private final RandomAccessFile enterRecordRandomAccess;
@@ -40,11 +40,11 @@ public class FileBasedCallRecordDatabase implements CallRecordDatabase {
     private final LongArrayList currentRootStack = new LongArrayList();
     private final byte[] tmpBuf = new byte[512 * 1024];
 
-    public FileBasedCallRecordDatabase() {
+    public InMemoryIndexFileBasedCallRecordDatabase() {
         this("");
     }
 
-    public FileBasedCallRecordDatabase(String name) {
+    public InMemoryIndexFileBasedCallRecordDatabase(String name) {
         exitRecordPos.defaultReturnValue(-1L);
         enterRecordPos.defaultReturnValue(-1L);
         idToParentIdMap.defaultReturnValue(-1);

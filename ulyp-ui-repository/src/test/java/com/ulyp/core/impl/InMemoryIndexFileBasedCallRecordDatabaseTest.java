@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class FileBasedCallRecordDatabaseTest {
+public class InMemoryIndexFileBasedCallRecordDatabaseTest {
 
     private final TestAgentRuntime agentRuntime = new TestAgentRuntime();
 
@@ -31,7 +31,7 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 
@@ -89,7 +89,7 @@ public class FileBasedCallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(FileBasedCallRecordDatabaseTest.class));
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 
