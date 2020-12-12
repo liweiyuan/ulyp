@@ -1,5 +1,6 @@
 package com.ulyp.ui;
 
+import com.ulyp.ui.util.FxThreadExecutor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +41,16 @@ public class ProcessTab extends Tab {
     }
 
     public CallRecordTreeTab getOrCreateRecordingTab(final long recordingId) {
-        return tabsByRecordingId.computeIfAbsent(recordingId, rId -> {
-            CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs);
-            callTreeTabs.getTabs().add(tab);
-            tabsByRecordingId.put(recordingId, tab);
-            tab.setOnClosed(ev -> {
-                this.tabsByRecordingId.remove(recordingId);
-            });
-            return tab;
-        });
+        return FxThreadExecutor.execute(
+                () -> tabsByRecordingId.computeIfAbsent(recordingId, rId -> {
+                    CallRecordTreeTab tab = applicationContext.getBean(CallRecordTreeTab.class, callTreeTabs);
+                    callTreeTabs.getTabs().add(tab);
+                    tab.setOnClosed(ev -> {
+                        this.tabsByRecordingId.remove(recordingId);
+                    });
+                    return tab;
+                })
+        );
     }
 
     public CallRecordTreeTab getSelectedTreeTab() {

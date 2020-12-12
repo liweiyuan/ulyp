@@ -1,6 +1,7 @@
 package com.ulyp.ui;
 
 import com.ulyp.core.CallRecord;
+import com.ulyp.ui.util.FxThreadExecutor;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.Clipboard;
@@ -39,18 +40,22 @@ public class ProcessTabPane extends TabPane {
 
     @NotNull
     public ProcessTab getOrCreateProcessTab(String mainClassName) {
-        Optional<Tab> processTab = getTabs()
-                .stream()
-                .filter(tab -> mainClassName.equals(((ProcessTab) tab).getMainClassName()))
-                .findFirst();
+        return FxThreadExecutor.execute(
+                () -> {
+                    Optional<Tab> processTab = getTabs()
+                            .stream()
+                            .filter(tab -> mainClassName.equals(((ProcessTab) tab).getMainClassName()))
+                            .findFirst();
 
-        if (processTab.isPresent()) {
-            return (ProcessTab) processTab.get();
-        } else {
-            ProcessTab tab = context.getBean(ProcessTab.class, mainClassName);
-            getTabs().add(tab);
-            return tab;
-        }
+                    if (processTab.isPresent()) {
+                        return (ProcessTab) processTab.get();
+                    } else {
+                        ProcessTab tab = context.getBean(ProcessTab.class, mainClassName);
+                        getTabs().add(tab);
+                        return tab;
+                    }
+                }
+        );
     }
 
     public void keyPressed(KeyEvent event) {
