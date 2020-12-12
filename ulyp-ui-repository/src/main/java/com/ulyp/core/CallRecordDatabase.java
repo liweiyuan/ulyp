@@ -1,7 +1,8 @@
 package com.ulyp.core;
 
-import it.unimi.dsi.fastutil.longs.LongList;
+import com.ulyp.transport.TClassDescription;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,12 @@ import java.util.stream.Collectors;
  * Database which manages a particular call record tree.
  */
 public interface CallRecordDatabase {
+
+    void persistBatch(
+            CallEnterRecordList enterRecords,
+            CallExitRecordList exitRecords,
+            MethodInfoList methodInfoList,
+            List<TClassDescription> classDescriptionList) throws IOException;
 
     /**
     * @return the root of the call record tree. The root node stands for the first method which is called in a
