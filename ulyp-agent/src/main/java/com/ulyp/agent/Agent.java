@@ -87,8 +87,8 @@ public class Agent {
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
                 .transform(new BbTransformer(RecordingAdvice.class, recordingStartMethodList))
-                .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-                .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
+                .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
+                // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 
         if (LoggingSettings.LOG_LEVEL == LogLevel.TRACE) {
             agentBuilder = agentBuilder.with(AgentBuilder.Listener.StreamWriting.toSystemOut());
