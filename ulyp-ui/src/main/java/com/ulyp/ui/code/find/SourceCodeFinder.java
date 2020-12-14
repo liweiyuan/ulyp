@@ -36,9 +36,13 @@ public class SourceCodeFinder {
         List<JarFile> sourcesJars = new ArrayList<>();
 
         for (JarFile jarFile : this.jars) {
-            JarFile sourcesJar = jarFile.deriveSourcesJar();
-            if (sourcesJar != null) {
-                sourcesJars.add(sourcesJar);
+            try {
+                JarFile sourcesJar = jarFile.deriveSourcesJar();
+                if (sourcesJar != null) {
+                    sourcesJars.add(sourcesJar);
+                }
+            } catch (Exception e) {
+                System.out.println("Could not open derive sources jar for " + jarFile);
             }
         }
 
