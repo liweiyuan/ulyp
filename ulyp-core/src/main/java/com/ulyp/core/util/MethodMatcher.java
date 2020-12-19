@@ -9,7 +9,9 @@ public class MethodMatcher {
 
     private final String classSimpleName;
     private final String methodName;
-    private final boolean isWildcard;
+    private final boolean isClassNameWildcard;
+    private final boolean isMethodWildcard;
+    private final boolean isAbsoluteWildcard;
 
     public static MethodMatcher parse(String text) {
         int separatorPos = text.lastIndexOf(SEPARATOR);
@@ -28,13 +30,19 @@ public class MethodMatcher {
     public MethodMatcher(String classSimpleName, String methodName) {
         this.classSimpleName = classSimpleName;
         this.methodName = methodName;
-        this.isWildcard = methodName.equals(WILDCARD);
+        this.isClassNameWildcard = classSimpleName.equals(WILDCARD);
+        this.isMethodWildcard = methodName.equals(WILDCARD);
+        this.isAbsoluteWildcard = isClassNameWildcard && isMethodWildcard;
     }
 
     public boolean matches(MethodInfo methodRepresentation) {
-        return (isWildcard || methodRepresentation.getMethodName().equals(methodName)) &&
-                (methodRepresentation.getDeclaringType().getInterfacesSimpleClassNames().contains(classSimpleName) ||
-                        methodRepresentation.getDeclaringType().getSuperClassesSimpleNames().contains(classSimpleName));
+        if (isAbsoluteWildcard) {
+            return true;
+        } else {
+            return (isMethodWildcard || methodRepresentation.getMethodName().equals(methodName)) &&
+                    (methodRepresentation.getDeclaringType().getInterfacesSimpleClassNames().contains(classSimpleName) ||
+                            methodRepresentation.getDeclaringType().getSuperClassesSimpleNames().contains(classSimpleName));
+        }
     }
 
     @Override
