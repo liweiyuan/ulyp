@@ -74,7 +74,7 @@ public class SystemPropertiesSettings implements AgentSettings {
 
     public static final String PACKAGES_PROPERTY = "ulyp.packages";
     public static final String EXCLUDE_PACKAGES_PROPERTY = "ulyp.exclude-packages";
-    public static final String START_METHOD_PROPERTY = "ulyp.start-method";
+    public static final String START_METHOD_PROPERTY = "ulyp.methods";
     public static final String UI_HOST_PROPERTY = "ulyp.ui-host";
     public static final String UI_PORT_PROPERTY = "ulyp.ui-port";
     public static final String UI_ENABLED = "ulyp.ui-enabled";

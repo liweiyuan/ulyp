@@ -70,7 +70,7 @@ public class BenchmarkProfile {
             args.add("-Dulyp.ui-port=" + uiListenPort);
         } else {
             args.add("-Dulyp.ui-enabled=false");
-            args.add("-Dulyp.start-method=" + Objects.requireNonNull(this.methodToRecord));
+            args.add("-Dulyp.methods=" + Objects.requireNonNull(this.methodToRecord));
             args.add("-Dulyp.packages=" + this.instrumentedPackages);
         }
         args.addAll(additionalProcessArgs);
