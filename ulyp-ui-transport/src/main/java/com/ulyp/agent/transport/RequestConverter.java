@@ -49,6 +49,7 @@ public class RequestConverter {
                                 .build()
                 )
                 .setThreadName(recordLog.getThreadName())
+                .setThreadId(recordLog.getThreadId())
                 .setProcessInfo(com.ulyp.transport.ProcessInfo.newBuilder()
                         .setMainClassName(request.getProcessInfo().getMainClassName())
                         .addAllClasspath(request.getProcessInfo().getClasspath().toList())

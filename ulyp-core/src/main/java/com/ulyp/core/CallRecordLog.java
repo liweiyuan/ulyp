@@ -22,6 +22,7 @@ public class CallRecordLog {
     private final IntArrayList callCountStack;
     private final long epochMillisCreatedTime = System.currentTimeMillis();
     private final String threadName;
+    private final long threadId;
     private final StackTraceElement[] stackTrace;
     private final int maxDepth;
     private final int maxCallsToRecordPerMethod;
@@ -47,6 +48,7 @@ public class CallRecordLog {
         // If code changed, there should be a readjustement, but don't worry as this is tested
         this.stackTrace = Arrays.copyOfRange(wholeStackTrace, 5, wholeStackTrace.length);
         this.threadName = Thread.currentThread().getName();
+        this.threadId = Thread.currentThread().getId();
     }
 
     private CallRecordLog(
@@ -57,6 +59,7 @@ public class CallRecordLog {
             long recordingSessionId,
             AgentRuntime agentRuntime,
             String threadName,
+            long threadId,
             StackTraceElement[] stackTrace,
             int maxDepth,
             int maxCallsToRecordPerMethod,
@@ -70,6 +73,7 @@ public class CallRecordLog {
         this.recordingSessionId = recordingSessionId;
         this.agentRuntime = agentRuntime;
         this.threadName = threadName;
+        this.threadId = threadId;
         this.stackTrace = stackTrace;
         this.maxDepth = maxDepth;
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
@@ -78,7 +82,7 @@ public class CallRecordLog {
     }
 
     public CallRecordLog cloneWithoutData() {
-        return new CallRecordLog(this.chunkId + 1, this.callIdsStack, this.recordEnterCallStack, this.callCountStack, this.recordingSessionId, this.agentRuntime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
+        return new CallRecordLog(this.chunkId + 1, this.callIdsStack, this.recordEnterCallStack, this.callCountStack, this.recordingSessionId, this.agentRuntime, this.threadName, this.threadId, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
     }
 
     public long estimateBytesSize() {
@@ -163,6 +167,10 @@ public class CallRecordLog {
 
     public String getThreadName() {
         return threadName;
+    }
+
+    public long getThreadId() {
+        return threadId;
     }
 
     public StackTraceElement[] getStackTrace() {

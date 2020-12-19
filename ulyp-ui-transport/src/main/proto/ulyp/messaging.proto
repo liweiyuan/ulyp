@@ -63,6 +63,7 @@ message RecordingInfo {
     int64 recordingId = 4;
     int64 chunkId = 7;
     string threadName = 5;
+    int64 threadId = 8;
     TStackTrace stackTrace = 6;
 }
 
