@@ -52,7 +52,7 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"
-    testCompile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.8'
+    testCompile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.18'
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
 }
 

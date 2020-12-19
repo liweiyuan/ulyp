@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compileOnly project(':ulyp-agent-classes')
-    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.8'
+    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.18'
 
     testCompile project(':ulyp-agent-classes')
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'

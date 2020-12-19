@@ -1,6 +1,7 @@
 package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinter;
+import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.core.printers.Printers;
 import com.ulyp.core.printers.TypeInfo;
 
@@ -13,6 +14,7 @@ public class MethodInfo {
     private final String methodName;
     private final TypeInfo declaringTypeInfo;
     private final boolean isStatic;
+    private final boolean isConstructor;
     private final boolean returnsSomething;
     private final ObjectBinaryPrinter[] paramPrinters;
     private final ObjectBinaryPrinter resultPrinter;
@@ -20,6 +22,7 @@ public class MethodInfo {
     public MethodInfo(
             int methodId,
             String methodName,
+            boolean isConstructor,
             boolean isStatic,
             boolean returnsSomething,
             List<TypeInfo> paramsTypeInfos,
@@ -27,13 +30,20 @@ public class MethodInfo {
             TypeInfo declaringTypeInfo)
     {
         this.id = methodId;
-        this.methodName = methodName;
-        this.returnsSomething = returnsSomething;
+        if (!isConstructor) {
+            this.methodName = methodName;
+        } else {
+            this.methodName = "<init>";
+        }
+        this.isConstructor = isConstructor;
+        this.returnsSomething = isConstructor || returnsSomething;
         this.declaringTypeInfo = declaringTypeInfo;
         this.isStatic = isStatic;
 
         this.paramPrinters = Printers.getInstance().determinePrintersForParameterTypes(paramsTypeInfos);
-        this.resultPrinter = Printers.getInstance().determinePrinterForReturnType(returnTypeInfo);
+        this.resultPrinter = isConstructor ?
+                ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance() :
+                Printers.getInstance().determinePrinterForReturnType(returnTypeInfo);
     }
 
     public int getId() {
@@ -42,6 +52,10 @@ public class MethodInfo {
 
     public boolean isStatic() {
         return isStatic;
+    }
+
+    public boolean isConstructor() {
+        return isConstructor;
     }
 
     public ObjectBinaryPrinter[] getParamPrinters() {

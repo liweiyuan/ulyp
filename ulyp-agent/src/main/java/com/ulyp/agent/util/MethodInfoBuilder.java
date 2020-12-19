@@ -7,7 +7,6 @@ import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class MethodInfoBuilder {
@@ -23,6 +22,7 @@ public class MethodInfoBuilder {
         return new MethodInfo(
                 counter.incrementAndGet(),
                 description.getActualName(),
+                description.isConstructor(),
                 description.isStatic(),
                 returns,
                 parameters,

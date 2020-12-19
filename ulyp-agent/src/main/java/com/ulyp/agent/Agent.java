@@ -9,6 +9,7 @@ import com.ulyp.core.util.ClassUtils;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -48,7 +49,6 @@ public class Agent {
             );
         }
 
-
         System.out.println(ULYP_LOGO);
         System.out.println("Successfully connected to UI, logging level = " + logLevel +
                 ", instrumentation packages = " + uiSettings.getInstrumentedPackages() +
@@ -84,9 +84,27 @@ public class Agent {
             finalMatcher = finalMatcher.and(tracingMatcher);
         }
 
+        MethodDescriptionFactory methodDescriptionFactory = new MethodDescriptionFactory(recordingStartMethodList);
+
         AgentBuilder agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
-                .transform(new BbTransformer(MethodCallRecordingAdvice.class, recordingStartMethodList))
+                .transform((builder, typeDescription, classLoader, module) -> builder.visit(
+                        Advice.withCustomMapping()
+                                .bind(methodDescriptionFactory)
+                                .to(MethodCallRecordingAdvice.class)
+                                .on(ElementMatchers
+                                        .isMethod()
+                                        .and(ElementMatchers.not(ElementMatchers.isAbstract()))
+                                        .and(ElementMatchers.not(ElementMatchers.isConstructor()))
+                                        .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
+                                        .and(ElementMatchers.not(ElementMatchers.isToString())))
+                ))
+                .transform((builder, typeDescription, classLoader, module) -> builder.visit(
+                        Advice.withCustomMapping()
+                                .bind(methodDescriptionFactory)
+                                .to(ConstructorCallRecordingAdvice.class)
+                                .on(ElementMatchers.isConstructor())
+                ))
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
                 // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 

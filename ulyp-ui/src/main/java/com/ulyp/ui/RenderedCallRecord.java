@@ -77,7 +77,7 @@ public class RenderedCallRecord extends TextFlow {
     private static List<Node> renderMethodName(CallRecord node) {
         List<Node> result = new ArrayList<>();
 
-        if (node.isStatic()) {
+        if (node.isStatic() || node.isConstructor()) {
             result.add(text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
         } else {
             RenderedObject callee = RenderedObject.of(node.getCallee());

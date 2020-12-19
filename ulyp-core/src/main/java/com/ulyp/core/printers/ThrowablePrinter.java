@@ -27,14 +27,6 @@ public class ThrowablePrinter extends ObjectBinaryPrinter {
     @Override
     public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
         Throwable t = (Throwable) object;
-        String text = t.getMessage();
-        String printed;
-        if (text.length() > MAX_LENGTH) {
-            // TODO optimize
-            printed = text.substring(0, MAX_LENGTH) + "...(" + text.length() + ")";
-        } else {
-            printed = text;
-        }
-        out.writeString(printed);
+        out.writeString(t.getMessage());
     }
 }

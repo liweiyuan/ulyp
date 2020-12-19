@@ -41,6 +41,7 @@ public class CallRecord {
     private final String methodName;
     private final boolean isVoidMethod;
     private final boolean isStatic;
+    private final boolean isConstructor;
     private final List<String> parameterNames;
 
     private final ObjectRepresentation callee;
@@ -62,6 +63,7 @@ public class CallRecord {
         this.callee = callee;
         this.isVoidMethod = methodDescription.returnsSomething() == BooleanType.F;
         this.isStatic = methodDescription.staticFlag() == BooleanType.T;
+        this.isConstructor = methodDescription.constructor() == BooleanType.T;
         this.args = new ArrayList<>(args);
         int originalLimit = methodDescription.limit();
 
@@ -95,6 +97,10 @@ public class CallRecord {
 
     public boolean isVoidMethod() {
         return isVoidMethod;
+    }
+
+    public boolean isConstructor() {
+        return isConstructor;
     }
 
     public boolean isStatic() {

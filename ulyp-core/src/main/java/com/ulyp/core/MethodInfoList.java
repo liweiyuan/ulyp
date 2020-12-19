@@ -20,6 +20,7 @@ public class MethodInfoList extends AbstractBinaryEncodedList<TMethodInfoEncoder
             encoder.id(methodInfo.getId());
             encoder.returnsSomething(methodInfo.returnsSomething() ? BooleanType.T : BooleanType.F);
             encoder.staticFlag(methodInfo.isStatic() ? BooleanType.T : BooleanType.F);
+            encoder.constructor(methodInfo.isConstructor() ? BooleanType.T : BooleanType.F);
 
             // TODO delete
             encoder.parameterNamesCount(0);

@@ -3,30 +3,29 @@ package com.ulyp.agent;
 import com.ulyp.agent.util.ByteBuddyAgentRuntime;
 import com.ulyp.core.MethodDescriptionMap;
 import net.bytebuddy.asm.Advice;
-import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class MethodCallRecordingAdvice {
+public class ConstructorCallRecordingAdvice {
 
     /**
      * @param methodId injected right into bytecode unique method id. Mapping is made by
      *                 {@link MethodDescriptionFactory} class.
      */
+    @SuppressWarnings("UnusedAssignment")
     @Advice.OnMethodEnter
     static void enter(
-            @MethodDescriptionValue int methodId,
             @Advice.Local("callId") long callId,
-            @Advice.This(optional = true) Object callee,
-            @Advice.AllArguments Object[] arguments) {
+            @MethodDescriptionValue int methodId,
+            @Advice.AllArguments Object[] arguments)
+    {
         if (methodId < 0) {
-            callId = Recorder.getInstance().startOrContinueRecordingOnMethodEnter(
+            callId = Recorder.getInstance().startOrContinueRecordingOnConstructorEnter(
                     ByteBuddyAgentRuntime.getInstance(),
                     MethodDescriptionMap.getInstance().get(methodId),
-                    callee,
                     arguments
             );
         } else {
             if (Recorder.currentRecordingSessionCount.get() > 0 && Recorder.getInstance().recordingIsActiveInCurrentThread()) {
-                callId = Recorder.getInstance().onMethodEnter(MethodDescriptionMap.getInstance().get(methodId), callee, arguments);
+                callId = Recorder.getInstance().onConstructorEnter(MethodDescriptionMap.getInstance().get(methodId), arguments);
             }
         }
     }
@@ -36,28 +35,26 @@ public class MethodCallRecordingAdvice {
      *                 {@link MethodDescriptionFactory} class. Guaranteed to be the same
      *                 as for enter advice
      */
-    @Advice.OnMethodExit(onThrowable = Throwable.class)
+    @Advice.OnMethodExit
     static void exit(
-            @MethodDescriptionValue int methodId,
             @Advice.Local("callId") long callId,
-            @Advice.Thrown Throwable throwable,
-            @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnValue) {
+            @MethodDescriptionValue int methodId,
+            @Advice.This Object returnValue)
+    {
         if (callId >= 0) {
             if (methodId < 0) {
-                Recorder.getInstance().endRecordingIfPossibleOnMethodExit(
+                Recorder.getInstance().endRecordingIfPossibleOnConstructorExit(
                         ByteBuddyAgentRuntime.getInstance(),
                         MethodDescriptionMap.getInstance().get(methodId),
-                        returnValue,
-                        throwable,
-                        callId
+                        callId,
+                        returnValue
                 );
             } else {
                 if (Recorder.currentRecordingSessionCount.get() > 0 && Recorder.getInstance().recordingIsActiveInCurrentThread()) {
-                    Recorder.getInstance().onMethodExit(
+                    Recorder.getInstance().onConstructorExit(
                             ByteBuddyAgentRuntime.getInstance(),
                             MethodDescriptionMap.getInstance().get(methodId),
                             returnValue,
-                            throwable,
                             callId
                     );
                 }
