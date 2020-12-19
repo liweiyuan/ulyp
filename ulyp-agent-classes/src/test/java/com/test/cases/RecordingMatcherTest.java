@@ -37,6 +37,14 @@ public class RecordingMatcherTest extends AbstractInstrumentationTest {
         default int foo() {
             return 42;
         }
+
+        default int bar() {
+            return 1;
+        }
+
+        default int zoo() {
+            return 2;
+        }
     }
 
     public static class Clazz implements Interface {
