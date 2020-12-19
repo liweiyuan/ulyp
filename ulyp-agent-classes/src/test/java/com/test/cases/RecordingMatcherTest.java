@@ -1,5 +1,6 @@
 package com.test.cases;
 
+import com.test.cases.util.RecordingResult;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.util.MethodMatcher;
@@ -14,22 +15,49 @@ public class RecordingMatcherTest extends AbstractInstrumentationTest {
 
     @Test
     public void shouldRecordMainMethodIfMatcherIsNotSpecified() {
-        CallRecord root = runSubprocessWithUi(new TestSettingsBuilder().setMainClassName(RecursionTestCases.class));
+        CallRecord root = runSubprocessWithUi(new TestSettingsBuilder().setMainClassName(TestCases.class));
 
         assertThat(root.getMethodName(), is("main"));
-        assertThat(root.getClassName(), is(RecursionTestCases.class.getName()));
-        assertThat(root.getChildren(), Matchers.hasSize(1));
+        assertThat(root.getClassName(), is(TestCases.class.getName()));
+        assertThat(root.getChildren(), Matchers.hasSize(3));
     }
 
     @Test
     public void testRecordViaInterfaceMatcher() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()
-                        .setMainClassName(RecursionTestCases.class)
+                        .setMainClassName(TestCases.class)
                         .setMethodToRecord(MethodMatcher.parse("Interface.foo"))
         );
 
         Assert.assertNotNull(root);
+    }
+
+    @Test
+    public void shouldRecordAllMethods() {
+        RecordingResult recordingResult = runSubprocess(
+                new TestSettingsBuilder()
+                        .setMainClassName(MultithreadedExample.class)
+                        .setMethodToRecord(MethodMatcher.parse("*.*"))
+        );
+
+        recordingResult.assertRecordingSessionCount(3);
+    }
+
+    public static class MultithreadedExample {
+
+        public static void main(String[] args) throws InterruptedException {
+            Thread t1 = new Thread(() -> new Clazz().bar());
+            t1.start();
+
+            Thread t2 = new Thread(() -> new Clazz().zoo());
+            t2.start();
+
+            t1.join();
+            t2.join();
+
+            System.out.println(new Clazz().foo());
+        }
     }
 
     public interface Interface {
@@ -51,10 +79,12 @@ public class RecordingMatcherTest extends AbstractInstrumentationTest {
 
     }
 
-    public static class RecursionTestCases {
+    public static class TestCases {
 
         public static void main(String[] args) {
             System.out.println(new Clazz().foo());
+            System.out.println(new Clazz().bar());
+            System.out.println(new Clazz().zoo());
         }
     }
 }

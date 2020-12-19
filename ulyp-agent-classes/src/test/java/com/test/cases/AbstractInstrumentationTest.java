@@ -1,18 +1,14 @@
 package com.test.cases;
 
+import com.test.cases.util.RecordingResult;
 import com.test.cases.util.TestSettingsBuilder;
 import com.test.cases.util.TestUtil;
 import com.test.cases.util.UIServerStub;
-import com.ulyp.core.CallEnterRecordList;
-import com.ulyp.core.CallExitRecordList;
 import com.ulyp.core.CallRecord;
-import com.ulyp.core.MethodInfoList;
-import com.ulyp.core.impl.OnDiskFileBasedCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -36,24 +32,12 @@ public class AbstractInstrumentationTest {
 
     @NotNull
     protected CallRecord runSubprocessWithUi(TestSettingsBuilder settings) {
-        List<TCallRecordLogUploadRequest> requests = runSubprocessWithUiAndReturnProtoRequest(settings);
+        return new RecordingResult(runSubprocessWithUiAndReturnProtoRequest(settings)).getSingleRoot();
+    }
 
-        OnDiskFileBasedCallRecordDatabase database = new OnDiskFileBasedCallRecordDatabase();
-
-        for (TCallRecordLogUploadRequest request : requests) {
-            try {
-                database.persistBatch(
-                        new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
-                        new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                        new MethodInfoList(request.getMethodDescriptionList().getData()),
-                        request.getDescriptionList()
-                );
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
-        }
-
-        return database.getRoot();
+    @NotNull
+    protected RecordingResult runSubprocess(TestSettingsBuilder settings) {
+        return new RecordingResult(runSubprocessWithUiAndReturnProtoRequest(settings));
     }
 
     protected List<TCallRecordLogUploadRequest> runSubprocessWithUiAndReturnProtoRequest(TestSettingsBuilder settings) {
