@@ -3,7 +3,6 @@ package com.ulyp.core;
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
 import org.agrona.collections.IntArrayList;
 import org.agrona.collections.LongArrayList;
 
@@ -21,7 +20,7 @@ public class CallRecordLog {
     private final LongArrayList callIdsStack;
     private final BooleanArrayList recordEnterCallStack;
     private final IntArrayList callCountStack;
-    private final long epochMillisCreatedTime;
+    private final long epochMillisCreatedTime = System.currentTimeMillis();
     private final String threadName;
     private final StackTraceElement[] stackTrace;
     private final int maxDepth;
@@ -36,7 +35,6 @@ public class CallRecordLog {
         this.recordEnterCallStack = new BooleanArrayList();
         this.callCountStack = new IntArrayList();
         this.recordingSessionId = idGenerator.incrementAndGet();
-        this.epochMillisCreatedTime = System.currentTimeMillis();
         this.maxDepth = maxDepth;
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
         this.agentRuntime = agentRuntime;
@@ -58,7 +56,6 @@ public class CallRecordLog {
             IntArrayList callCountStack,
             long recordingSessionId,
             AgentRuntime agentRuntime,
-            long epochMillisCreatedTime,
             String threadName,
             StackTraceElement[] stackTrace,
             int maxDepth,
@@ -72,7 +69,6 @@ public class CallRecordLog {
         this.recordEnterCallStack = recordEnterCallStack;
         this.recordingSessionId = recordingSessionId;
         this.agentRuntime = agentRuntime;
-        this.epochMillisCreatedTime = epochMillisCreatedTime;
         this.threadName = threadName;
         this.stackTrace = stackTrace;
         this.maxDepth = maxDepth;
@@ -82,7 +78,7 @@ public class CallRecordLog {
     }
 
     public CallRecordLog cloneWithoutData() {
-        return new CallRecordLog(this.chunkId + 1, this.callIdsStack, this.recordEnterCallStack, this.callCountStack, this.recordingSessionId, this.agentRuntime, this.epochMillisCreatedTime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
+        return new CallRecordLog(this.chunkId + 1, this.callIdsStack, this.recordEnterCallStack, this.callCountStack, this.recordingSessionId, this.agentRuntime, this.threadName, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
     }
 
     public long estimateBytesSize() {

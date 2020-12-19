@@ -1,6 +1,5 @@
 package com.ulyp.agent;
 
-import com.ulyp.core.log.LoggingSettings;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
@@ -109,7 +108,8 @@ public class Recorder {
 //        }
         currentRecordLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown);
 
-        if (currentRecordLog.estimateBytesSize() > 64 * 1024 * 1024) {
+        if (currentRecordLog.estimateBytesSize() > 64 * 1024 * 1024/* ||
+                (System.currentTimeMillis() - currentRecordLog.getEpochMillisCreatedTime()) > 1000*/) {
 //            if (LoggingSettings.IS_TRACE_TURNED_ON) {
 //                logger.trace("Will send trace log {}", currentRecordLog);
 //            }
