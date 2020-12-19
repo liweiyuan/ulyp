@@ -1,6 +1,5 @@
 package com.ulyp.ui;
 
-import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import com.ulyp.ui.code.SourceCodeView;
 import javafx.application.Platform;
@@ -105,8 +104,6 @@ public class PrimaryViewController implements Initializable {
 
                             while (inputStream.available() > 0) {
                                 TCallRecordLogUploadRequest request = TCallRecordLogUploadRequest.parseDelimitedFrom(inputStream);
-
-                                System.out.println(new CallEnterRecordList(request.getRecordLog().getEnterRecords()).size());
                                 CallRecordTreeChunk chunk = new CallRecordTreeChunk(request);
                                 ProcessTab processTab = processTabPane.getOrCreateProcessTab(chunk.getProcessInfo().getMainClassName());
                                 CallRecordTreeTab recordingTab = processTab.getOrCreateRecordingTab(chunk.getRecordingId());
