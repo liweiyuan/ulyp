@@ -5,7 +5,7 @@ import com.ulyp.core.MethodDescriptionMap;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class RecordingAdvice {
+public class MethodCallRecordingAdvice {
 
     /**
      * @param methodId injected right into bytecode unique method id. Mapping is made by
