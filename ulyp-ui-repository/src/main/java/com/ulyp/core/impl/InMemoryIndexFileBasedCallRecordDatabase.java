@@ -3,10 +3,7 @@ package com.ulyp.core.impl;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 import com.ulyp.core.*;
-import com.ulyp.core.printers.ObjectBinaryPrinter;
-import com.ulyp.core.printers.ObjectBinaryPrinterType;
-import com.ulyp.core.printers.ObjectRepresentation;
-import com.ulyp.core.printers.TypeInfo;
+import com.ulyp.core.printers.*;
 import com.ulyp.core.printers.bytes.BinaryInputImpl;
 import com.ulyp.transport.*;
 import it.unimi.dsi.fastutil.ints.*;
@@ -150,7 +147,14 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
                 currentRootStack.push(enterRecord.callId());
                 totalCount.lazySet(totalCount.get() + 1);
             } else {
-                throw new RuntimeException("Inconsistent state");
+                if (!currentRootStack.isEmpty() && currentRootStack.size() > 1) {
+                    long id = currentRootStack.popLong();
+                    CallRecord callRecord = find(id);
+                    callRecord.setThrown(true);
+                    callRecord.setReturnValue(new ThrownSomethingRepresentation());
+                } else {
+                    throw new RuntimeException("Inconsistent state");
+                }
             }
         }
     }

@@ -35,6 +35,9 @@ public abstract class RenderedObject extends TextFlow {
         } else if (repr instanceof IdentityObjectRepresentation) {
             objectValue = new RenderedIdentityObject((IdentityObjectRepresentation) repr);
 
+        } else if (repr instanceof ThrownSomethingRepresentation) {
+            objectValue = new RenderedThrownUnknownObject();
+
         } else {
 
             objectValue = new RenderedPlainObject(repr, repr.getType());
