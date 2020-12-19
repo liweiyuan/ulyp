@@ -29,7 +29,7 @@ public class ConstructorTest extends AbstractInstrumentationTest {
     }
 
     @Test
-    public void test() {
+    public void testHappyPathConstructor() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()
                         .setMainClassName(TestCases.class)
@@ -44,5 +44,39 @@ public class ConstructorTest extends AbstractInstrumentationTest {
         assertThat(xConstructorCall.getClassName(), Matchers.is("com.test.printers.ConstructorTest$X"));
 
         assertThat(xConstructorCall.getChildren(), Matchers.hasSize(1));
+    }
+
+    public static class X3 extends Base {
+
+        public X3() {
+            throw new RuntimeException("a");
+        }
+    }
+
+    public static class TestCasesThrows {
+
+        public static void main(String[] args) {
+            try {
+                System.out.println(new X3());
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    @Test
+    public void testConstructorThrown() {
+        CallRecord root = runSubprocessWithUi(
+                new TestSettingsBuilder()
+                        .setMainClassName(TestCasesThrows.class)
+                        .setMethodToRecord("main")
+        );
+
+        assertThat(root.getChildren(), Matchers.hasSize(1));
+
+        CallRecord ctr = root.getChildren().get(0);
+
+        assertThat(ctr.getMethodName(), Matchers.is("<init>"));
+        assertThat(ctr.getClassName(), Matchers.is("com.test.printers.ConstructorTest$X3"));
     }
 }

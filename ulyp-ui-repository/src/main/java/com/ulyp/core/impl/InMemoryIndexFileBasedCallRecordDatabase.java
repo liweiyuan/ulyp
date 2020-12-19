@@ -148,10 +148,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
                 totalCount.lazySet(totalCount.get() + 1);
             } else {
                 if (!currentRootStack.isEmpty() && currentRootStack.size() > 1) {
-                    long id = currentRootStack.popLong();
-                    CallRecord callRecord = find(id);
-                    callRecord.setThrown(true);
-                    callRecord.setReturnValue(new ThrownSomethingRepresentation());
+                    currentRootStack.popLong();
                 } else {
                     throw new RuntimeException("Inconsistent state");
                 }

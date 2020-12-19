@@ -1,7 +1,7 @@
 package com.test.cases.util;
 
 import com.ulyp.core.*;
-import com.ulyp.core.impl.OnDiskFileBasedCallRecordDatabase;
+import com.ulyp.core.impl.InMemoryIndexFileBasedCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Assert;
 
@@ -22,7 +22,7 @@ public class RecordingResult {
             try {
                 CallRecordDatabase database = recordingIdToRequest.computeIfAbsent(
                         request.getRecordingInfo().getRecordingId(),
-                        id -> new OnDiskFileBasedCallRecordDatabase()
+                        id -> new InMemoryIndexFileBasedCallRecordDatabase()
                 );
 
                 database.persistBatch(
