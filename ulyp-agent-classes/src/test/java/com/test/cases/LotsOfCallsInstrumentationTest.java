@@ -2,6 +2,7 @@ package com.test.cases;
 
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -21,6 +22,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
     }
 
     @Test
+    @Ignore
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()
@@ -34,6 +36,7 @@ public class LotsOfCallsInstrumentationTest extends AbstractInstrumentationTest 
     }
 
     @Test
+    @Ignore
     public void shouldMakeLessCallsIfLimitedByMaxCallsProperty2() {
         CallRecord root = runSubprocessWithUi(
                 new TestSettingsBuilder()

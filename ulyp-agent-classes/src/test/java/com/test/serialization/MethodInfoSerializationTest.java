@@ -5,6 +5,7 @@ import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.MethodInfoList;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
+import com.ulyp.transport.TMethodInfoDecoder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,8 +24,11 @@ public class MethodInfoSerializationTest extends AbstractInstrumentationTest {
 
         MethodInfoList methodDescriptions = new MethodInfoList(requests.get(0).getMethodDescriptionList().getData());
 
-        // Currently there is an overhead of second method description creation for exit advice
-        Assert.assertEquals(1, methodDescriptions.size());
+        for (TMethodInfoDecoder methodInfo : methodDescriptions) {
+            System.out.println(methodInfo);
+        }
+
+        Assert.assertEquals(2, methodDescriptions.size());
     }
 
     static class X {
