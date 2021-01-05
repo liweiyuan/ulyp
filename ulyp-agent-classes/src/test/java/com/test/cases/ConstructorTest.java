@@ -1,6 +1,5 @@
-package com.test.printers;
+package com.test.cases;
 
-import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
 import org.hamcrest.Matchers;
@@ -41,7 +40,7 @@ public class ConstructorTest extends AbstractInstrumentationTest {
         CallRecord xConstructorCall = root.getChildren().get(0);
 
         assertThat(xConstructorCall.getMethodName(), Matchers.is("<init>"));
-        assertThat(xConstructorCall.getClassName(), Matchers.is("com.test.printers.ConstructorTest$X"));
+        assertThat(xConstructorCall.getClassName(), Matchers.is("com.test.cases.ConstructorTest$X"));
 
         assertThat(xConstructorCall.getChildren(), Matchers.hasSize(1));
     }
@@ -77,6 +76,6 @@ public class ConstructorTest extends AbstractInstrumentationTest {
         CallRecord ctr = root.getChildren().get(0);
 
         assertThat(ctr.getMethodName(), Matchers.is("<init>"));
-        assertThat(ctr.getClassName(), Matchers.is("com.test.printers.ConstructorTest$X3"));
+        assertThat(ctr.getClassName(), Matchers.is("com.test.cases.ConstructorTest$X3"));
     }
 }
