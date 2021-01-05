@@ -99,12 +99,12 @@ public class Agent {
 //                                        .and(ElementMatchers.not(ElementMatchers.isToString()))
                                 )
                 ))
-                .transform((builder, typeDescription, classLoader, module) -> builder.visit(
+                /*.transform((builder, typeDescription, classLoader, module) -> builder.visit(
                         Advice.withCustomMapping()
                                 .bind(methodDescriptionFactory)
                                 .to(ConstructorCallRecordingAdvice.class)
                                 .on(ElementMatchers.isConstructor())
-                ))
+                ))*/
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
                 // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 
