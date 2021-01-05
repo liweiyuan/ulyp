@@ -31,14 +31,7 @@ public class ByteBuddyAgentRuntime implements AgentRuntime {
         if (o != null) {
             return classDescriptionMap.computeIfAbsent(
                     o.getClass(),
-                    klazz -> {
-                        try {
-                            return new ByteBuddyTypeInfo(klazz);
-                        } catch (Exception e) {
-                            LOGGER.error("Could not build type info from " + klazz, e);
-                            return UnknownTypeInfo.getInstance();
-                        }
-                    }
+                    ByteBuddyTypeInfo::of
             );
         } else {
             return UnknownTypeInfo.getInstance();
@@ -51,14 +44,7 @@ public class ByteBuddyAgentRuntime implements AgentRuntime {
         if (clazz != null) {
             return classDescriptionMap.computeIfAbsent(
                     clazz,
-                    klazz -> {
-                        try {
-                            return new ByteBuddyTypeInfo(klazz);
-                        } catch (Exception e) {
-                            LOGGER.error("Could not build type info from " + klazz, e);
-                            return UnknownTypeInfo.getInstance();
-                        }
-                    }
+                    ByteBuddyTypeInfo::of
             );
         } else {
             return UnknownTypeInfo.getInstance();

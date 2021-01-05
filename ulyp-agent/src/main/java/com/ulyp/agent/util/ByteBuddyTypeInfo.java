@@ -1,9 +1,6 @@
 package com.ulyp.agent.util;
 
-import com.ulyp.core.printers.ObjectBinaryPrinter;
-import com.ulyp.core.printers.Printers;
-import com.ulyp.core.printers.TypeInfo;
-import com.ulyp.core.printers.TypeTrait;
+import com.ulyp.core.printers.*;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 
@@ -41,27 +38,39 @@ public class ByteBuddyTypeInfo implements TypeInfo {
     private final int id;
     private final String actualName;
     private final Set<TypeTrait> typeTraits;
-    private final boolean hasToStringMethod;
+    private boolean hasToStringMethod;
     private volatile ObjectBinaryPrinter suggestedPrinter;
     private final Set<String> superClassesNames = new HashSet<>();
     private final Set<String> interfacesClassesNames = new HashSet<>();
 
-    public ByteBuddyTypeInfo(Class<?> clazz) {
-        this(TypeDescription.ForLoadedType.of(clazz).asGenericType());
+    public static TypeInfo of(Class<?> clazz) {
+        return of(TypeDescription.ForLoadedType.of(clazz).asGenericType());
     }
 
-    public ByteBuddyTypeInfo(TypeDescription.Generic type) {
+    public static TypeInfo of(TypeDescription.Generic type) {
+        try {
+            return new ByteBuddyTypeInfo(type);
+        } catch (Exception | NoClassDefFoundError e) {
+            return UnknownTypeInfo.getInstance();
+        }
+    }
+
+    private ByteBuddyTypeInfo(TypeDescription.Generic type) {
         // DO NOT store reference to type here. There could be millions of type objects, they consume memory pretty good
         this.id = classDescriptionId.incrementAndGet();
         this.actualName = type.getActualName();
         this.addSuperTypes(type);
         this.typeTraits = derive(type);
 
-        if (!this.typeTraits.contains(TypeTrait.TYPE_VAR)) {
-            hasToStringMethod = type.getDeclaredMethods().stream().anyMatch(
-                    method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
-            );
-        } else {
+        try {
+            if (!this.typeTraits.contains(TypeTrait.TYPE_VAR)) {
+                hasToStringMethod = type.getDeclaredMethods().stream().anyMatch(
+                        method -> method.getActualName().equals("toString") && method.getReturnType().equals(TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(String.class))
+                );
+            } else {
+                hasToStringMethod = false;
+            }
+        } catch (Exception e) {
             hasToStringMethod = false;
         }
     }
@@ -107,17 +116,21 @@ public class ByteBuddyTypeInfo implements TypeInfo {
     }
 
     private void addSuperTypes(TypeDescription.Generic type) {
-        TypeDefinition.Sort sort = type.getSort();
-        if (sort != TypeDefinition.Sort.VARIABLE && sort != TypeDefinition.Sort.VARIABLE_SYMBOLIC && sort != TypeDefinition.Sort.WILDCARD) {
-            while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
-                superClassesNames.add(type.getActualName());
+        try {
+            TypeDefinition.Sort sort = type.getSort();
+            if (sort != TypeDefinition.Sort.VARIABLE && sort != TypeDefinition.Sort.VARIABLE_SYMBOLIC && sort != TypeDefinition.Sort.WILDCARD) {
+                while (type != null && !type.equals(TypeDescription.Generic.OBJECT)) {
+                    superClassesNames.add(type.getActualName());
 
-                for (TypeDescription.Generic interfface : type.getInterfaces()) {
-                    addInterfaceAndAllParentInterfaces(interfface);
+                    for (TypeDescription.Generic interfface : type.getInterfaces()) {
+                        addInterfaceAndAllParentInterfaces(interfface);
+                    }
+
+                    type = type.getSuperClass();
                 }
-
-                type = type.getSuperClass();
             }
+        } catch (Exception e) {
+            // NOP
         }
     }
 

@@ -96,8 +96,8 @@ public class Agent {
                                         .isMethod()
                                         .and(ElementMatchers.not(ElementMatchers.isAbstract()))
                                         .and(ElementMatchers.not(ElementMatchers.isConstructor()))
-                                        .and(ElementMatchers.not(ElementMatchers.isTypeInitializer()))
-                                        .and(ElementMatchers.not(ElementMatchers.isToString())))
+//                                        .and(ElementMatchers.not(ElementMatchers.isToString()))
+                                )
                 ))
                 .transform((builder, typeDescription, classLoader, module) -> builder.visit(
                         Advice.withCustomMapping()
