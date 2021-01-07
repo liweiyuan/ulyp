@@ -152,7 +152,10 @@ public class CallRecordTreeTab extends Tab {
     }
 
     public void dispose() {
-//        this.tree.dispose();
+        if (database != null) {
+            database.close();
+            database = null;
+        }
     }
 
     public synchronized void refreshTreeView() {

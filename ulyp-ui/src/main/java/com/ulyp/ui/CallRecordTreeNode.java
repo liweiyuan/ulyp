@@ -2,29 +2,34 @@ package com.ulyp.ui;
 
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.CallRecordDatabase;
-import it.unimi.dsi.fastutil.longs.LongList;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
 
     private final RenderSettings renderSettings;
-    private final CallRecordDatabase database;
+    private final WeakReference<CallRecordDatabase> databaseRef;
     private final long callRecordId;
 
     private boolean loaded = false;
 
     public CallRecordTreeNode(CallRecordDatabase database, long callRecordId, RenderSettings renderSettings) {
         super(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
-        this.database = database;
+        this.databaseRef = new WeakReference<>(database);
         this.callRecordId = callRecordId;
         this.renderSettings = renderSettings;
     }
 
     public void refresh() {
+        CallRecordDatabase database = databaseRef.get();
+        if (database == null) {
+            return;
+        }
+
         setValue(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
         if (loaded) {
             List<Long> newChildren = database.getChildrenIds(callRecordId);
@@ -57,6 +62,12 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
     }
 
     private void loadChildren() {
+        CallRecordDatabase database = databaseRef.get();
+        if (database == null) {
+            loaded = true;
+            return;
+        }
+
         List<CallRecordTreeNode> children = new ArrayList<>();
 
         List<Long> childrenIds = database.getChildrenIds(callRecordId);
@@ -69,6 +80,11 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
     }
 
     public CallRecord getCallRecord() {
+        CallRecordDatabase database = databaseRef.get();
+        if (database == null) {
+            return null;
+        }
+
         return database.find(callRecordId);
     }
 

@@ -18,11 +18,15 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatabase {
 
+    private final File enterRecordsFile;
+    private final File exitRecordsFile;
+
     private final OutputStream enterRecordsOutputStream;
     private final RandomAccessFile enterRecordRandomAccess;
     private final RandomAccessFile exitRecordRandomAccess;
     private final OutputStream exitRecordsOutputStream;
 
+    private boolean open = true;
     private long enterPos = 0;
     private long exitPos = 0;
     private final AtomicLong totalCount = new AtomicLong(0);
@@ -48,9 +52,9 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         idToSubtreeCountMap.defaultReturnValue(-1);
 
         try {
-            File enterRecordsFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
+            enterRecordsFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
             enterRecordsFile.deleteOnExit();
-            File exitRecordsFile = File.createTempFile("ulyp-" + name + "-exit-records", null);
+            exitRecordsFile = File.createTempFile("ulyp-" + name + "-exit-records", null);
             exitRecordsFile.deleteOnExit();
 
             this.enterRecordsOutputStream = new BufferedOutputStream(new FileOutputStream(enterRecordsFile, false));
@@ -68,6 +72,8 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             MethodInfoList methodInfoList,
             List<TClassDescription> classDescriptionList) throws IOException
     {
+        checkOpen();
+
         Iterator<TMethodInfoDecoder> iterator = methodInfoList.copyingIterator();
         while (iterator.hasNext()) {
             TMethodInfoDecoder methodDescription = iterator.next();
@@ -114,6 +120,8 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     }
 
     private synchronized void updateChildrenParentAndSubtreeCountMaps(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) {
+        checkOpen();
+
         PeekingIterator<TCallEnterRecordDecoder> enterRecordIt = Iterators.peekingIterator(enterRecords.iterator());
         PeekingIterator<TCallExitRecordDecoder> exitRecordIt = Iterators.peekingIterator(exitRecords.iterator());
 
@@ -160,6 +168,8 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
 
     @Override
     public synchronized CallRecord find(long id) {
+        checkOpen();
+
         long enterRecordAddress = enterRecordPos.get(id);
         if (enterRecordAddress == -1) {
             return null;
@@ -231,6 +241,8 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     }
 
     public synchronized void deleteSubtree(long id) {
+        checkOpen();
+
 //        for (CallRecord child : getChildren(id)) {
 //            deleteSubtree(child.getId());
 //        }
@@ -258,15 +270,28 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         return idToSubtreeCountMap.get((int) id);
     }
 
+    private synchronized void checkOpen() {
+        if (!open) {
+            throw new IllegalStateException("Database is closed");
+        }
+    }
+
     @Override
     public synchronized void close() {
         try {
+            checkOpen();
+
             enterRecordsOutputStream.close();
             exitRecordsOutputStream.close();
             exitRecordRandomAccess.close();
             enterRecordRandomAccess.close();
+
+            enterRecordsFile.delete();
+            exitRecordsFile.delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            open = false;
         }
     }
 }
