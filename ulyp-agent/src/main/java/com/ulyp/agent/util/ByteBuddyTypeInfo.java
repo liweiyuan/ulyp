@@ -50,7 +50,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
     public static TypeInfo of(TypeDescription.Generic type) {
         try {
             return new ByteBuddyTypeInfo(type);
-        } catch (Exception | NoClassDefFoundError e) {
+        } catch (Throwable e) {
             return UnknownTypeInfo.getInstance();
         }
     }
@@ -70,7 +70,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
             } else {
                 hasToStringMethod = false;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             hasToStringMethod = false;
         }
     }
