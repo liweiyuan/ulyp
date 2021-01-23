@@ -19,7 +19,7 @@ public class RecordingMatcherTest extends AbstractInstrumentationTest {
 
         assertThat(root.getMethodName(), is("main"));
         assertThat(root.getClassName(), is(TestCases.class.getName()));
-        assertThat(root.getChildren(), Matchers.hasSize(6));
+        assertThat(root.getChildren(), Matchers.hasSize(3));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class RecordingMatcherTest extends AbstractInstrumentationTest {
         );
 
         // threads have two recording sessions each (constructor + method call)
-        recordingResult.assertRecordingSessionCount(5);
+        recordingResult.assertRecordingSessionCount(3);
     }
 
     public static class MultithreadedExample {
