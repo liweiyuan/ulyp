@@ -28,7 +28,7 @@ public class MethodInfoSerializationTest extends AbstractInstrumentationTest {
             System.out.println(methodInfo);
         }
 
-        Assert.assertEquals(2, methodDescriptions.size());
+        Assert.assertEquals(1, methodDescriptions.size());
     }
 
     static class X {
