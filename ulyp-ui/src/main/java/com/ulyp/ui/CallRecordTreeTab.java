@@ -140,7 +140,8 @@ public class CallRecordTreeTab extends Tab {
                     .append(element.getFileName())
                     .append(":")
                     .append(element.getLineNumber())
-                    .append(")");
+                    .append(")")
+                    .append("\n");
         }
 
         return new Tooltip(builder.toString());
