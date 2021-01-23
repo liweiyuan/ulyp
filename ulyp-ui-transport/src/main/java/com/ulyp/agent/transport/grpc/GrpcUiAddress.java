@@ -4,7 +4,7 @@ import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UiTransport;
 
 /**
- * Used by default unless UI connection is disabled explicitly (it's disabled only in benchmarks)
+ * Used by default unless UI connection is disabled explicitly or file path is specified for the agent
  *
  * User can specify host/port for UI
  */
