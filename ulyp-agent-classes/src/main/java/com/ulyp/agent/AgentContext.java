@@ -1,6 +1,5 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.settings.AgentSettings;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.UiTransport;
@@ -61,7 +60,7 @@ public class AgentContext {
         return transport;
     }
 
-    public AgentSettings getSysPropsSettings() {
+    public SystemPropertiesSettings getSysPropsSettings() {
         return sysPropsSettings;
     }
 }
