@@ -52,9 +52,9 @@ public class Recorder {
             @Nullable Object callee,
             Object[] args)
     {
-        if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
+        /*if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
             return -1;
-        }
+        }*/
 
         CallRecordLog recordLog = threadLocalRecordsLog.getOrCreate(() -> {
             CallRecordLog log = new CallRecordLog(
@@ -72,9 +72,9 @@ public class Recorder {
             MethodInfo methodInfo,
             Object[] args)
     {
-        if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
+/*        if (!recordingIsActiveInCurrentThread() && !mayStartRecording) {
             return -1;
-        }
+        }*/
 
         CallRecordLog recordLog = threadLocalRecordsLog.getOrCreate(() -> {
             CallRecordLog log = new CallRecordLog(
