@@ -11,7 +11,6 @@ import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,8 +19,7 @@ public class RenderedCallRecord extends TextFlow {
     public RenderedCallRecord(CallRecord node, RenderSettings renderSettings) {
         List<Node> text = new ArrayList<>();
 
-        text.addAll(renderReturnValue(node));
-
+        text.addAll(renderReturnValue(node, renderSettings));
         text.addAll(renderMethodName(node));
         text.addAll(renderArguments(node, renderSettings));
 
@@ -32,13 +30,24 @@ public class RenderedCallRecord extends TextFlow {
         return new TextBuilder().style("ulyp-ctt");
     }
 
-    private static List<Node> renderReturnValue(CallRecord node) {
+    private static List<Node> renderReturnValue(CallRecord node, RenderSettings renderSettings) {
         if (!node.isVoidMethod() || node.hasThrown()) {
+
+            List<Node> output = new ArrayList<>();
+
+            if (renderSettings.showTypes()) {
+                output.add(text().text(node.getReturnValue().getType().getName()).style("ulyp-ctt-sep").build());
+                output.add(text().text(": ").style("ulyp-ctt-sep").build());
+            }
+
             RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get();
             if (node.hasThrown()) {
                 renderedObject = new WithStylesPane<>(renderedObject, "ulyp-ctt-thrown").get();
             }
-            return Arrays.asList(renderedObject, text().text(" : ").style("ulyp-ctt-sep").build());
+
+            output.add(renderedObject);
+            output.add(text().text(" : ").style("ulyp-ctt-sep").build());
+            return output;
         } else {
             return Collections.emptyList();
         }
@@ -52,8 +61,8 @@ public class RenderedCallRecord extends TextFlow {
 
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectRepresentation argValue = node.getArgs().get(i);
-            if (renderSettings.showsArgumentClassNames()) {
-                output.add(text().text(argValue.getType().getSimpleName()).style("ulyp-ctt-arg-value").build());
+            if (renderSettings.showTypes()) {
+                output.add(text().text(argValue.getType().getName()).style("ulyp-ctt-sep").build());
                 output.add(text().text(": ").style("ulyp-ctt-sep").build());
             }
 

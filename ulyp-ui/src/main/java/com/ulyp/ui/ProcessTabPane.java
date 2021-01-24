@@ -62,8 +62,7 @@ public class ProcessTabPane extends TabPane {
         if (event.getCode() == KeyCode.SHIFT) {
             CallRecordTreeNode selected = getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
-                renderSettings.setShowReturnValueClassName(true);
-                renderSettings.setShowArgumentClassNames(true);
+                renderSettings.setShowTypes(true);
                 selected.refresh();
             }
         } else {
@@ -88,8 +87,7 @@ public class ProcessTabPane extends TabPane {
         if (event.getCode() == KeyCode.SHIFT) {
             CallRecordTreeNode selected = getSelectedTab().getSelectedTreeTab().getSelected();
             if (selected != null) {
-                renderSettings.setShowReturnValueClassName(false);
-                renderSettings.setShowArgumentClassNames(false);
+                renderSettings.setShowTypes(false);
                 selected.refresh();
             }
         }

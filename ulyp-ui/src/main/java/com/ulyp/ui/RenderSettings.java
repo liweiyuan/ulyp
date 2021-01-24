@@ -1,28 +1,21 @@
 package com.ulyp.ui;
 
+import javafx.application.Platform;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RenderSettings {
 
-    private boolean showArgumentClassNames = false;
-    private boolean showReturnValueClassName = false;
+    private boolean showTypes = false;
 
-    public boolean showsArgumentClassNames() {
-        return showArgumentClassNames;
+    public boolean showTypes() {
+        Platform.isFxApplicationThread();
+        return showTypes;
     }
 
-    public RenderSettings setShowArgumentClassNames(boolean showArgumentClassNames) {
-        this.showArgumentClassNames = showArgumentClassNames;
-        return this;
-    }
-
-    public boolean showsReturnValueClassName() {
-        return showReturnValueClassName;
-    }
-
-    public RenderSettings setShowReturnValueClassName(boolean showReturnValueClassName) {
-        this.showReturnValueClassName = showReturnValueClassName;
+    public RenderSettings setShowTypes(boolean showTypes) {
+        Platform.isFxApplicationThread();
+        this.showTypes = showTypes;
         return this;
     }
 }
