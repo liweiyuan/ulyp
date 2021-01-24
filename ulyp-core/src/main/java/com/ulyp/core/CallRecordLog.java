@@ -80,15 +80,9 @@ public class CallRecordLog {
         }
         inProcessOfTracing = false;
         try {
-//            int callsMadeInCurrentMethod = callCountStack.getInt(callCountStack.size() - 1);
 
             long callId = callIdCounter++;
-//            boolean canRecord = callIdsStack.size() <= maxDepth && callsMadeInCurrentMethod < maxCallsToRecordPerMethod;
-
-//            if (canRecord) {
-                enterRecords.add(callId, methodId, agentRuntime, printers, callee, args);
-//                callCountStack.setInt(callCountStack.size() - 2, callsMadeInCurrentMethod + 1);
-//            }
+            enterRecords.add(callId, methodId, agentRuntime, printers, callee, args);
             return callId;
         } finally {
             inProcessOfTracing = true;
@@ -117,7 +111,6 @@ public class CallRecordLog {
 
     public boolean isComplete() {
         return lastExitCallId == 0;
-//        return callIdsStack.isEmpty();
     }
 
     public long size() {
