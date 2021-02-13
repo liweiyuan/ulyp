@@ -33,7 +33,6 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     private long exitPos = 0;
     private final AtomicLong totalCount = new AtomicLong(0);
     private final Int2ObjectMap<IntArrayList> children = new Int2ObjectOpenHashMap<>();
-    private final Int2IntMap idToParentIdMap = new Int2IntOpenHashMap();
     private final Int2IntMap idToSubtreeCountMap = new Int2IntOpenHashMap();
     private final Int2LongMap enterRecordPos = new Int2LongOpenHashMap();
     private final Int2LongMap exitRecordPos = new Int2LongOpenHashMap();
@@ -50,7 +49,6 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     public InMemoryIndexFileBasedCallRecordDatabase(String name) {
         exitRecordPos.defaultReturnValue(-1L);
         enterRecordPos.defaultReturnValue(-1L);
-        idToParentIdMap.defaultReturnValue(-1);
         idToSubtreeCountMap.defaultReturnValue(-1);
 
         try {
@@ -149,7 +147,6 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             } else if (enterRecordIt.hasNext()) {
                 TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
 
-                idToParentIdMap.put((int) enterRecord.callId(), currentCallId);
                 children.computeIfAbsent(currentCallId, i -> new IntArrayList()).add((int) enterRecord.callId());
                 idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
 
