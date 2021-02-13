@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatabase {
 
+    private static final IntArrayList EMPTY_LIST = new IntArrayList();
+
     private final File enterRecordsFile;
     private final File exitRecordsFile;
 
@@ -30,15 +32,15 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     private long enterPos = 0;
     private long exitPos = 0;
     private final AtomicLong totalCount = new AtomicLong(0);
-    private final Int2ObjectMap<IntList> children = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<IntArrayList> children = new Int2ObjectOpenHashMap<>();
     private final Int2IntMap idToParentIdMap = new Int2IntOpenHashMap();
     private final Int2IntMap idToSubtreeCountMap = new Int2IntOpenHashMap();
-    private final Long2LongMap enterRecordPos = new Long2LongOpenHashMap();
-    private final Long2LongMap exitRecordPos = new Long2LongOpenHashMap();
+    private final Int2LongMap enterRecordPos = new Int2LongOpenHashMap();
+    private final Int2LongMap exitRecordPos = new Int2LongOpenHashMap();
     private final Long2ObjectMap<TypeInfo> classIdMap = new Long2ObjectOpenHashMap<>();
     private final DecodingContext decodingContext = new DecodingContext(classIdMap);
     private final Long2ObjectMap<TMethodInfoDecoder> methodDescriptionMap = new Long2ObjectOpenHashMap<>();
-    private final LongArrayList currentRootStack = new LongArrayList();
+    private final IntArrayList currentRootStack = new IntArrayList();
     private final byte[] tmpBuf = new byte[512 * 1024];
 
     public InMemoryIndexFileBasedCallRecordDatabase() {
@@ -105,7 +107,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         while (enterRecordIterator.hasNext()) {
             long addr = enterRecordIterator.address();
             TCallEnterRecordDecoder enterRecord = enterRecordIterator.next();
-            enterRecordPos.put(enterRecord.callId(), prevEnterRecordPos + addr);
+            enterRecordPos.put((int) enterRecord.callId(), prevEnterRecordPos + addr);
         }
 
         AddressableItemIterator<TCallExitRecordDecoder> exitIterator = exitRecords.iterator();
@@ -113,7 +115,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         while (exitIterator.hasNext()) {
             long addr = exitIterator.address();
             TCallExitRecordDecoder exitRecord = exitIterator.next();
-            exitRecordPos.put(exitRecord.callId(), prevExitRecordPos + addr);
+            exitRecordPos.put((int) exitRecord.callId(), prevExitRecordPos + addr);
         }
 
         updateChildrenParentAndSubtreeCountMaps(enterRecords, exitRecords);
@@ -130,33 +132,37 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             if (enterRecord.callId() != 0) {
                 throw new RuntimeException("Call id of the root must be 0");
             }
-            currentRootStack.push(enterRecord.callId());
+            currentRootStack.push((int) enterRecord.callId());
             idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
         }
 
         while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
-            long currentCallId = currentRootStack.topLong();
+            int currentCallId = currentRootStack.topInt();
 
             if (exitRecordIt.hasNext() && exitRecordIt.peek().callId() == currentCallId) {
                 exitRecordIt.next();
-                currentRootStack.popLong();
+                int id = currentRootStack.popInt();
+                IntArrayList childrenList = children.get(id);
+                if (childrenList != null) {
+                    childrenList.trim();
+                }
             } else if (enterRecordIt.hasNext()) {
                 TCallEnterRecordDecoder enterRecord = enterRecordIt.next();
 
-                idToParentIdMap.put((int) enterRecord.callId(), (int) currentCallId);
-                children.computeIfAbsent((int) currentCallId, i -> new IntArrayList()).add((int) enterRecord.callId());
+                idToParentIdMap.put((int) enterRecord.callId(), currentCallId);
+                children.computeIfAbsent(currentCallId, i -> new IntArrayList()).add((int) enterRecord.callId());
                 idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
 
                 for (int i = 0; i < currentRootStack.size(); i++) {
-                    int id = (int) currentRootStack.getLong(i);
+                    int id = currentRootStack.getInt(i);
                     idToSubtreeCountMap.put(id, idToSubtreeCountMap.get(id) + 1);
                 }
 
-                currentRootStack.push(enterRecord.callId());
+                currentRootStack.push((int) enterRecord.callId());
                 totalCount.lazySet(totalCount.get() + 1);
             } else {
                 if (!currentRootStack.isEmpty() && currentRootStack.size() > 1) {
-                    currentRootStack.popLong();
+                    currentRootStack.popInt();
                 } else {
                     throw new RuntimeException("Inconsistent state");
                 }
@@ -170,7 +176,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
     public synchronized CallRecord find(long id) {
         checkOpen();
 
-        long enterRecordAddress = enterRecordPos.get(id);
+        long enterRecordAddress = enterRecordPos.get((int) id);
         if (enterRecordAddress == -1) {
             return null;
         }
@@ -215,7 +221,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
                     this
             );
 
-            long exitPos = exitRecordPos.get(id);
+            long exitPos = exitRecordPos.get((int) id);
             if (exitPos == -1) {
                 return callRecord;
             }
@@ -252,7 +258,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
 
     @Override
     public synchronized LongList getChildrenIds(long id) {
-        IntList childrenIds = children.getOrDefault((int) id, IntLists.EMPTY_LIST);
+        IntList childrenIds = children.getOrDefault((int) id, EMPTY_LIST);
         LongArrayList longs = new LongArrayList();
         for (int i = 0; i < childrenIds.size(); i++) {
             longs.add(childrenIds.getInt(i));
