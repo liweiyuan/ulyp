@@ -127,6 +127,7 @@ public class OnDiskFileBasedCallRecordDatabase implements CallRecordDatabase {
             record.setSubtreeCallCount(1);
             record.setEnterRecordAddress(prevEnterRecordPos + addr);
             currentPathFromRoot.push(record);
+            totalCount.lazySet(totalCount.get() + 1);
             repository.insert(record);
         }
 

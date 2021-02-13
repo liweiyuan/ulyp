@@ -1,10 +1,7 @@
 package com.ulyp.core.impl;
 
 import com.ulyp.core.*;
-import com.ulyp.core.printers.IdentityObjectRepresentation;
-import com.ulyp.core.printers.ObjectBinaryPrinter;
-import com.ulyp.core.printers.ObjectBinaryPrinterType;
-import com.ulyp.core.printers.ObjectRepresentation;
+import com.ulyp.core.printers.*;
 import com.ulyp.transport.TClassDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -15,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
 
 public abstract class CallRecordDatabaseTest {
 
@@ -24,7 +20,7 @@ public abstract class CallRecordDatabaseTest {
     private final TestAgentRuntime agentRuntime = new TestAgentRuntime();
 
     @Test
-    public void test() throws IOException {
+    public void testRecordsSaving() throws IOException {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
@@ -32,6 +28,98 @@ public abstract class CallRecordDatabaseTest {
         MethodInfo toStringMethod = new MethodInfo(
                 100,
                 "toString",
+                false,
+                false,
+                true,
+                new ArrayList<>(),
+                agentRuntime.get(String.class),
+                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+        );
+
+        methodInfos.add(toStringMethod);
+
+        enterRecords.add(
+                0,
+                100,
+                agentRuntime,
+                new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance()},
+                this,
+                new Object[]{}
+        );
+        exitRecords.add(0, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
+
+        CallRecordDatabase database = build();
+
+        database.persistBatch(enterRecords, exitRecords, methodInfos, Collections.emptyList());
+
+        CallRecord root = database.getRoot();
+
+        assertThat(root.getChildren(), Matchers.empty());
+        assertEquals("toString", root.getMethodName());
+    }
+
+    @Test
+    public void testFieldsSavingWithTwoCallRecords() throws IOException {
+        CallEnterRecordList enterRecords = new CallEnterRecordList();
+        CallExitRecordList exitRecords = new CallExitRecordList();
+        MethodInfoList methodInfos = new MethodInfoList();
+
+        MethodInfo toStringMethod = new MethodInfo(
+                100,
+                "toString",
+                false,
+                false,
+                true,
+                new ArrayList<>(),
+                agentRuntime.get(String.class),
+                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+        );
+
+        methodInfos.add(toStringMethod);
+
+        enterRecords.add(
+                0,
+                100,
+                agentRuntime,
+                new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance()},
+                this,
+                new Object[]{}
+        );
+        enterRecords.add(
+                1,
+                100,
+                agentRuntime,
+                new ObjectBinaryPrinter[] {ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance()},
+                this,
+                new Object[]{}
+        );
+        exitRecords.add(1, 100, agentRuntime, false, ObjectBinaryPrinterType.STRING_PRINTER.getInstance(), "zzzxzxzx");
+        exitRecords.add(0, 100, agentRuntime, false, ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance(), "asdasdad");
+
+        CallRecordDatabase database = build();
+
+        database.persistBatch(enterRecords, exitRecords, methodInfos, Collections.emptyList());
+
+        assertEquals(2L, database.countAll());
+
+        CallRecord firstCall = database.getRoot();
+
+        CallRecord secondCall = firstCall.getChildren().get(0);
+
+        assertThat(secondCall.getReturnValue(), Matchers.instanceOf(StringObjectRepresentation.class));
+        assertEquals("zzzxzxzx", secondCall.getReturnValue().print());
+    }
+
+    @Test
+    public void testSavingAsWholeChunk() throws IOException {
+        CallEnterRecordList enterRecords = new CallEnterRecordList();
+        CallExitRecordList exitRecords = new CallExitRecordList();
+        MethodInfoList methodInfos = new MethodInfoList();
+
+        MethodInfo toStringMethod = new MethodInfo(
+                100,
+                "toString",
+                false,
                 false,
                 true,
                 new ArrayList<>(),
@@ -73,6 +161,8 @@ public abstract class CallRecordDatabaseTest {
 
         database.persistBatch(enterRecords, exitRecords, methodInfos, Collections.emptyList());
 
+        assertEquals(3L, database.countAll());
+
         CallRecord root = database.find(0);
 
         assertEquals(0, root.getId());
@@ -95,6 +185,7 @@ public abstract class CallRecordDatabaseTest {
         MethodInfo toStringMethod = new MethodInfo(
                 100,
                 "toString",
+                false,
                 false,
                 true,
                 new ArrayList<>(),
@@ -132,6 +223,8 @@ public abstract class CallRecordDatabaseTest {
         CallRecordDatabase database = build();
 
         database.persistBatch(enterRecords, exitRecords, methodInfos, classDescriptionList);
+
+        assertEquals(3L, database.countAll());
 
         CallRecord root = database.getRoot();
 

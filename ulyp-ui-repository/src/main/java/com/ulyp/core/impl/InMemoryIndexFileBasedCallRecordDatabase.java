@@ -132,6 +132,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             }
             currentRootStack.push((int) enterRecord.callId());
             idToSubtreeCountMap.put((int) enterRecord.callId(), 1);
+            totalCount.lazySet(totalCount.get() + 1);
         }
 
         while (enterRecordIt.hasNext() || exitRecordIt.hasNext()) {
