@@ -2,7 +2,6 @@ package com.ulyp.core;
 
 import com.ulyp.transport.TClassDescription;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,7 @@ public interface CallRecordDatabase {
             CallEnterRecordList enterRecords,
             CallExitRecordList exitRecords,
             MethodInfoList methodInfoList,
-            List<TClassDescription> classDescriptionList) throws IOException;
+            List<TClassDescription> classDescriptionList);
 
     /**
     * @return the root of the call record tree. The root node stands for the first method which is called in a

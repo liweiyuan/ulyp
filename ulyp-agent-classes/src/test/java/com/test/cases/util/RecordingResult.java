@@ -5,7 +5,6 @@ import com.ulyp.core.impl.InMemoryIndexFileBasedCallRecordDatabase;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
 import org.junit.Assert;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,21 +18,17 @@ public class RecordingResult {
         this.requests = requests;
 
         for (TCallRecordLogUploadRequest request : requests) {
-            try {
-                CallRecordDatabase database = recordingIdToRequest.computeIfAbsent(
-                        request.getRecordingInfo().getRecordingId(),
-                        id -> new InMemoryIndexFileBasedCallRecordDatabase()
-                );
+            CallRecordDatabase database = recordingIdToRequest.computeIfAbsent(
+                    request.getRecordingInfo().getRecordingId(),
+                    id -> new InMemoryIndexFileBasedCallRecordDatabase()
+            );
 
-                database.persistBatch(
-                        new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
-                        new CallExitRecordList(request.getRecordLog().getExitRecords()),
-                        new MethodInfoList(request.getMethodDescriptionList().getData()),
-                        request.getDescriptionList()
-                );
-            } catch (IOException e) {
-                throw new AssertionError(e);
-            }
+            database.persistBatch(
+                    new CallEnterRecordList(request.getRecordLog().getEnterRecords()),
+                    new CallExitRecordList(request.getRecordLog().getExitRecords()),
+                    new MethodInfoList(request.getMethodDescriptionList().getData()),
+                    request.getDescriptionList()
+            );
         }
     }
 

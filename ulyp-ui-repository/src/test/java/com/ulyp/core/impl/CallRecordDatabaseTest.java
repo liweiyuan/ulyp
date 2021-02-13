@@ -6,7 +6,6 @@ import com.ulyp.transport.TClassDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +19,7 @@ public abstract class CallRecordDatabaseTest {
     private final TestAgentRuntime agentRuntime = new TestAgentRuntime();
 
     @Test
-    public void testRecordsSaving() throws IOException {
+    public void testRecordsSaving() {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
@@ -59,7 +58,7 @@ public abstract class CallRecordDatabaseTest {
     }
 
     @Test
-    public void testFieldsSavingWithTwoCallRecords() throws IOException {
+    public void testFieldsSavingWithTwoCallRecords() {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
@@ -111,7 +110,7 @@ public abstract class CallRecordDatabaseTest {
     }
 
     @Test
-    public void testSavingAsWholeChunk() throws IOException {
+    public void testSavingAsWholeChunk() {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();
@@ -176,7 +175,7 @@ public abstract class CallRecordDatabaseTest {
     }
 
     @Test
-    public void testSavingPartialChunk() throws IOException {
+    public void testSavingPartialChunk() {
         CallEnterRecordList enterRecords = new CallEnterRecordList();
         CallExitRecordList exitRecords = new CallExitRecordList();
         MethodInfoList methodInfos = new MethodInfoList();

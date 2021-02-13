@@ -77,7 +77,7 @@ public class OnDiskFileBasedCallRecordDatabase implements CallRecordDatabase {
             CallEnterRecordList enterRecords,
             CallExitRecordList exitRecords,
             MethodInfoList methodInfoList,
-            List<TClassDescription> classDescriptionList) throws IOException
+            List<TClassDescription> classDescriptionList)
     {
         Iterator<TMethodInfoDecoder> iterator = methodInfoList.copyingIterator();
         while (iterator.hasNext()) {
@@ -92,7 +92,11 @@ public class OnDiskFileBasedCallRecordDatabase implements CallRecordDatabase {
             );
         }
 
-        updateChildrenParentAndSubtreeCountMaps(enterRecords, exitRecords);
+        try {
+            updateChildrenParentAndSubtreeCountMaps(enterRecords, exitRecords);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private synchronized void updateChildrenParentAndSubtreeCountMaps(CallEnterRecordList enterRecords, CallExitRecordList exitRecords) throws IOException {
@@ -251,14 +255,6 @@ public class OnDiskFileBasedCallRecordDatabase implements CallRecordDatabase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public synchronized void deleteSubtree(long id) {
-//        for (CallRecord child : getChildren(id)) {
-//            deleteSubtree(child.getId());
-//        }
-//        nodes.remove(id);
-        // TODO implement
     }
 
     @Override

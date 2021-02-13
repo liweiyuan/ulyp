@@ -20,17 +20,9 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
 
     private static final IntArrayList EMPTY_LIST = new IntArrayList();
 
-    private final File enterRecordsFile;
-    private final File exitRecordsFile;
-
-    private final OutputStream enterRecordsOutputStream;
-    private final RandomAccessFile enterRecordRandomAccess;
-    private final RandomAccessFile exitRecordRandomAccess;
-    private final OutputStream exitRecordsOutputStream;
-
     private boolean open = true;
-    private long enterPos = 0;
-    private long exitPos = 0;
+    private final IndexedLog enterRecordsLog;
+    private final IndexedLog exitRecordsLog;
     private final AtomicLong totalCount = new AtomicLong(0);
     private final Int2ObjectMap<IntArrayList> children = new Int2ObjectOpenHashMap<>();
     private final Int2IntMap idToSubtreeCountMap = new Int2IntOpenHashMap();
@@ -52,15 +44,11 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         idToSubtreeCountMap.defaultReturnValue(-1);
 
         try {
-            enterRecordsFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
-            enterRecordsFile.deleteOnExit();
-            exitRecordsFile = File.createTempFile("ulyp-" + name + "-exit-records", null);
-            exitRecordsFile.deleteOnExit();
-
-            this.enterRecordsOutputStream = new BufferedOutputStream(new FileOutputStream(enterRecordsFile, false));
-            this.exitRecordsOutputStream = new BufferedOutputStream(new FileOutputStream(exitRecordsFile, false));
-            this.enterRecordRandomAccess = new RandomAccessFile(enterRecordsFile, "r");
-            this.exitRecordRandomAccess = new RandomAccessFile(exitRecordsFile, "r");
+            File enterRecodsLogFile = File.createTempFile("ulyp-" + name + "-enter-records", null);
+            enterRecordsLog = new IndexedLog(enterRecodsLogFile);
+            File exitRecordsLogFile = File.createTempFile("ulyp-" + name + "-exit-records", null);
+            exitRecordsLog = new IndexedLog(exitRecordsLogFile);
+            enterRecodsLogFile.deleteOnExit();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +58,7 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             CallEnterRecordList enterRecords,
             CallExitRecordList exitRecords,
             MethodInfoList methodInfoList,
-            List<TClassDescription> classDescriptionList) throws IOException
+            List<TClassDescription> classDescriptionList)
     {
         checkOpen();
 
@@ -87,18 +75,11 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
             );
         }
 
-        long prevEnterRecordPos = enterPos;
-        long prevExitRecordPos = exitPos;
+        long prevEnterRecordPos = enterRecordsLog.pos();
+        long prevExitRecordPos = exitRecordsLog.pos();
 
-        byte[] bytes = enterRecords.toByteString().toByteArray();
-        enterRecordsOutputStream.write(bytes);
-        enterRecordsOutputStream.flush();
-        enterPos += bytes.length;
-
-        bytes = exitRecords.toByteString().toByteArray();
-        exitRecordsOutputStream.write(bytes);
-        exitRecordsOutputStream.flush();
-        exitPos += bytes.length;
+        enterRecordsLog.write(enterRecords.toByteString().toByteArray());
+        exitRecordsLog.write(exitRecords.toByteString().toByteArray());
 
         AddressableItemIterator<TCallEnterRecordDecoder> enterRecordIterator = enterRecords.iterator();
 
@@ -178,80 +159,64 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         if (enterRecordAddress == -1) {
             return null;
         }
-        try {
-            enterRecordRandomAccess.seek(enterRecordAddress);
 
-            int bytesRead = enterRecordRandomAccess.read(tmpBuf);
-            UnsafeBuffer unsafeBuffer = new UnsafeBuffer(tmpBuf, 0, bytesRead);
-            TCallEnterRecordDecoder enterRecordDecoder = new TCallEnterRecordDecoder();
-            int blockLength = unsafeBuffer.getInt(Integer.BYTES);
-            enterRecordDecoder.wrap(unsafeBuffer, RECORD_HEADER_LENGTH, blockLength, 0);
+        int bytesRead = enterRecordsLog.readAt(enterRecordAddress, tmpBuf);
+        UnsafeBuffer unsafeBuffer = new UnsafeBuffer(tmpBuf, 0, bytesRead);
+        TCallEnterRecordDecoder enterRecordDecoder = new TCallEnterRecordDecoder();
+        int blockLength = unsafeBuffer.getInt(Integer.BYTES);
+        enterRecordDecoder.wrap(unsafeBuffer, RECORD_HEADER_LENGTH, blockLength, 0);
 
-            List<ObjectRepresentation> args = new ArrayList<>();
+        List<ObjectRepresentation> args = new ArrayList<>();
 
-            TCallEnterRecordDecoder.ArgumentsDecoder arguments = enterRecordDecoder.arguments();
-            while (arguments.hasNext()) {
-                arguments = arguments.next();
-                UnsafeBuffer buffer = new UnsafeBuffer();
-                arguments.wrapValue(buffer);
-                args.add(ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(
-                        classIdMap.get(arguments.classId()),
-                        new BinaryInputImpl(buffer),
-                        decodingContext)
-                );
-            }
-
+        TCallEnterRecordDecoder.ArgumentsDecoder arguments = enterRecordDecoder.arguments();
+        while (arguments.hasNext()) {
+            arguments = arguments.next();
             UnsafeBuffer buffer = new UnsafeBuffer();
-            enterRecordDecoder.wrapCallee(buffer);
-
-            TypeInfo calleeTypeInfo = classIdMap.get(enterRecordDecoder.calleeClassId());
-
-            ObjectRepresentation callee = ObjectBinaryPrinterType.printerForId(enterRecordDecoder.calleePrinterId()).read(
-                    calleeTypeInfo,
+            arguments.wrapValue(buffer);
+            args.add(ObjectBinaryPrinterType.printerForId(arguments.printerId()).read(
+                    classIdMap.get(arguments.classId()),
                     new BinaryInputImpl(buffer),
-                    decodingContext
+                    decodingContext)
             );
-            CallRecord callRecord = new CallRecord(
-                    id,
-                    callee,
-                    args,
-                    methodDescriptionMap.get(enterRecordDecoder.methodId()),
-                    this
-            );
-
-            long exitPos = exitRecordPos.get((int) id);
-            if (exitPos == -1) {
-                return callRecord;
-            }
-            exitRecordRandomAccess.seek(exitPos);
-            bytesRead = exitRecordRandomAccess.read(tmpBuf);
-            unsafeBuffer = new UnsafeBuffer(tmpBuf, 0, bytesRead);
-            TCallExitRecordDecoder exitRecordDecoder = new TCallExitRecordDecoder();
-            exitRecordDecoder.wrap(unsafeBuffer, RECORD_HEADER_LENGTH, unsafeBuffer.getInt(Integer.BYTES), 0);
-
-            UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
-            exitRecordDecoder.wrapReturnValue(returnValueBuffer);
-            ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(exitRecordDecoder.returnPrinterId());
-            ObjectRepresentation returnValue = printer.read(classIdMap.get(exitRecordDecoder.returnClassId()), new BinaryInputImpl(returnValueBuffer), decodingContext);
-            boolean thrown = exitRecordDecoder.thrown() == BooleanType.T;
-
-            callRecord.setReturnValue(returnValue);
-            callRecord.setThrown(thrown);
-
-            return callRecord;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-    }
 
-    public synchronized void deleteSubtree(long id) {
-        checkOpen();
+        UnsafeBuffer buffer = new UnsafeBuffer();
+        enterRecordDecoder.wrapCallee(buffer);
 
-//        for (CallRecord child : getChildren(id)) {
-//            deleteSubtree(child.getId());
-//        }
-//        nodes.remove(id);
-        // TODO implement
+        TypeInfo calleeTypeInfo = classIdMap.get(enterRecordDecoder.calleeClassId());
+
+        ObjectRepresentation callee = ObjectBinaryPrinterType.printerForId(enterRecordDecoder.calleePrinterId()).read(
+                calleeTypeInfo,
+                new BinaryInputImpl(buffer),
+                decodingContext
+        );
+        CallRecord callRecord = new CallRecord(
+                id,
+                callee,
+                args,
+                methodDescriptionMap.get(enterRecordDecoder.methodId()),
+                this
+        );
+
+        long exitPos = exitRecordPos.get((int) id);
+        if (exitPos == -1) {
+            return callRecord;
+        }
+        bytesRead = exitRecordsLog.readAt(exitPos, tmpBuf);
+        unsafeBuffer = new UnsafeBuffer(tmpBuf, 0, bytesRead);
+        TCallExitRecordDecoder exitRecordDecoder = new TCallExitRecordDecoder();
+        exitRecordDecoder.wrap(unsafeBuffer, RECORD_HEADER_LENGTH, unsafeBuffer.getInt(Integer.BYTES), 0);
+
+        UnsafeBuffer returnValueBuffer = new UnsafeBuffer();
+        exitRecordDecoder.wrapReturnValue(returnValueBuffer);
+        ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(exitRecordDecoder.returnPrinterId());
+        ObjectRepresentation returnValue = printer.read(classIdMap.get(exitRecordDecoder.returnClassId()), new BinaryInputImpl(returnValueBuffer), decodingContext);
+        boolean thrown = exitRecordDecoder.thrown() == BooleanType.T;
+
+        callRecord.setReturnValue(returnValue);
+        callRecord.setThrown(thrown);
+
+        return callRecord;
     }
 
     @Override
@@ -285,15 +250,8 @@ public class InMemoryIndexFileBasedCallRecordDatabase implements CallRecordDatab
         try {
             checkOpen();
 
-            enterRecordsOutputStream.close();
-            exitRecordsOutputStream.close();
-            exitRecordRandomAccess.close();
-            enterRecordRandomAccess.close();
-
-            enterRecordsFile.delete();
-            exitRecordsFile.delete();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            enterRecordsLog.close();
+            exitRecordsLog.close();
         } finally {
             open = false;
         }
