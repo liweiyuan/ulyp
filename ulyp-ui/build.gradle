@@ -29,7 +29,6 @@ def protocVersion = protobufVersion
 
 dependencies {
     compile project(':ulyp-ui-transport')
-    compile project(':ulyp-ui-repository')
 
     implementation files('libs/fernflower.jar')
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"

@@ -33,6 +33,11 @@ dependencies {
     compile group: 'org.agrona', name: 'agrona', version: '1.4.0'
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
     compileOnly "io.grpc:grpc-netty:${grpcVersion}"
+
+    implementation(platform("org.dizitart:nitrite-bom:4.0.0-SNAPSHOT"))
+    implementation 'org.dizitart:nitrite'
+    implementation 'org.dizitart:nitrite-mvstore-adapter'
+
     compile group: 'org.jetbrains', name: 'annotations', version: '18.0.0'
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"
     testCompile group: 'junit', name: 'junit', version: '4.12'

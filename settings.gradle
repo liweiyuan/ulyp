@@ -6,5 +6,4 @@ include 'ulyp-core'
 include 'ulyp-agent'
 include 'ulyp-agent-classes'
 include 'ulyp-ui-transport'
-include 'ulyp-ui-repository'
 
