@@ -6,14 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class BenchmarkEnv {
-
-    public static int pickFreePort() {
-        // TODO implement
-        return 10000 + ThreadLocalRandom.current().nextInt(1000);
-    }
 
     public static File findBuiltAgentJar() {
         Path libDir;

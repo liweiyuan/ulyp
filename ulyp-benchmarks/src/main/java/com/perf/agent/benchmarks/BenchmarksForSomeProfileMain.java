@@ -1,8 +1,8 @@
+/*
 package com.perf.agent.benchmarks;
 
 import com.perf.agent.benchmarks.impl.SpringHibernateSmallBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
-import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.util.PackageList;
 import com.ulyp.transport.TCallRecordLogUploadRequest;
@@ -57,27 +57,23 @@ public class BenchmarksForSomeProfileMain {
     private static int run(Class<?> benchmarkClazz, BenchmarkProfile profile, Histogram procTimeHistogram, Histogram recordingTimeHistogram) {
 
         try (MillisMeasured measured = new MillisMeasured(procTimeHistogram)) {
-            try (UIServerStub uiServerStub = new UIServerStub(profile)) {
-
-                BenchmarkProcessRunner.runClassInSeparateJavaProcess(benchmarkClazz, profile);
-
-                if (profile.shouldSendSomethingToUi()) {
-
-                    TCallRecordLogUploadRequest request = uiServerStub.get(5, TimeUnit.MINUTES);
-                    recordingTimeHistogram.recordValue(request.getRecordingInfo().getLifetimeMillis());
-
-                    CallEnterRecordList enterRecords = new CallEnterRecordList(request.getRecordLog().getEnterRecords());
-                    return enterRecords.size();
-                }
-
-                return 0;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            BenchmarkProcessRunner.runClassInSeparateJavaProcess(benchmarkClazz, profile);
         }
+
+        if (profile.shouldSendSomethingToUi()) {
+
+            List<TCallRecordLogUploadRequest> requests = profile.getOutputFile().read();
+            recordingTimeHistogram.recordValue(request.getRecordingInfo().getLifetimeMillis());
+
+            CallEnterRecordList enterRecords = new CallEnterRecordList(request.getRecordLog().getEnterRecords());
+            return enterRecords.size();
+        }
+
+        return 0;
     }
 
     private static Histogram emptyHistogram() {
         return new Histogram(1, TimeUnit.MINUTES.toMillis(5), 2);
     }
 }
+*/

@@ -1,9 +1,8 @@
+/*
 package com.perf.agent.benchmarks;
 
-import com.perf.agent.benchmarks.impl.SpringHibernateMediumBenchmark;
 import com.perf.agent.benchmarks.impl.SpringHibernateSmallBenchmark;
 import com.perf.agent.benchmarks.proc.BenchmarkProcessRunner;
-import com.perf.agent.benchmarks.proc.UIServerStub;
 import com.ulyp.core.CallEnterRecordList;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.transport.TCallEnterRecordDecoder;
@@ -13,11 +12,12 @@ import org.agrona.concurrent.UnsafeBuffer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
+*/
 /**
  * Prints out total bytes serialized by each printer
- */
+ *//*
+
 public class PrinterMetricsBenchmarksMain {
 
     public static void main(String[] args) throws Exception {
@@ -82,17 +82,12 @@ public class PrinterMetricsBenchmarksMain {
 
     private static TCallRecordLogUploadRequest run(Class<?> benchmarkClazz, BenchmarkProfile profile) {
 
-        try (UIServerStub uiServerStub = new UIServerStub(profile)) {
+        BenchmarkProcessRunner.runClassInSeparateJavaProcess(benchmarkClazz, profile);
 
-            BenchmarkProcessRunner.runClassInSeparateJavaProcess(benchmarkClazz, profile);
-
-            return uiServerStub.get(5, TimeUnit.MINUTES);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static Histogram emptyHistogram() {
         return new Histogram(1, 1_000_000_000, 2);
     }
 }
+*/

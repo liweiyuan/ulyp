@@ -1,9 +1,9 @@
 package com.perf.agent.benchmarks;
 
 import com.perf.agent.benchmarks.proc.BenchmarkEnv;
+import com.perf.agent.benchmarks.proc.OutputFile;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -15,64 +15,47 @@ public class BenchmarkProfile {
 
     @Nullable
     private final MethodMatcher methodToRecord;
+    private final OutputFile outputFile = new OutputFile("test", ".dat");
     @NotNull
     private final PackageList instrumentedPackages;
     private final List<String> additionalProcessArgs;
     private final boolean uiEnabled;
-    private final int uiListenPort;
 
     public BenchmarkProfile(
             @Nullable MethodMatcher methodToRecord,
             @NotNull PackageList instrumentedPackages,
             List<String> additionalProcessArgs,
-            boolean uiEnabled,
-            int uiListenPort) {
+            boolean uiEnabled) {
         this.methodToRecord = methodToRecord;
         this.instrumentedPackages = instrumentedPackages;
         this.additionalProcessArgs = additionalProcessArgs;
         this.uiEnabled = uiEnabled;
-        this.uiListenPort = uiListenPort;
     }
 
     public boolean shouldSendSomethingToUi() {
-        return uiEnabled && !instrumentedPackages.isEmpty() && methodToRecord != null;
+        return !instrumentedPackages.isEmpty() && methodToRecord != null;
     }
 
-    public int getUiListenPort() {
-        return uiListenPort;
-    }
-
-    /**
-     * Only will be called if this has {@link BenchmarkProfile#uiEnabled} set to true
-     * @return settings to send to subprocess back as a response to settings request
-     */
-    public Settings getSettingsFromUi() {
-        Settings.Builder builder = Settings
-                .newBuilder()
-                .setMayStartRecording(true)
-                .setRecordCollectionsItems(false)
-                .addAllInstrumentedPackages(instrumentedPackages);
-
-        if (methodToRecord != null) {
-            builder = builder.addMethodsToRecord(methodToRecord.toString());
-        }
-
-        return builder.build();
+    public OutputFile getOutputFile() {
+        return outputFile;
     }
 
     public List<String> getSubprocessCmdArgs() {
         List<String> args = new ArrayList<>();
+
         if (!instrumentedPackages.isEmpty()) {
             args.add("-javaagent:" + BenchmarkEnv.findBuiltAgentJar());
         }
+
         if (uiEnabled) {
-            args.add("-Dulyp.ui-host=localhost");
-            args.add("-Dulyp.ui-port=" + uiListenPort);
+
         } else {
-            args.add("-Dulyp.ui-enabled=false");
-            args.add("-Dulyp.methods=" + Objects.requireNonNull(this.methodToRecord));
-            args.add("-Dulyp.packages=" + this.instrumentedPackages);
+//            args.add("-Dulyp.ui-enabled=false");
         }
+
+        args.add("-Dulyp.file=" + outputFile);
+        args.add("-Dulyp.methods=" + Objects.requireNonNull(this.methodToRecord));
+        args.add("-Dulyp.packages=" + this.instrumentedPackages);
         args.addAll(additionalProcessArgs);
 
         return args;
