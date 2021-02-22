@@ -20,8 +20,6 @@ import java.util.concurrent.*;
 
 public class GrpcUiTransport implements UiTransport {
 
-    public static final GrpcUiAddress DEFAULT_ADDRESS = new GrpcUiAddress("localhost", 13991);
-
     private final ManagedChannel channel;
     private final UiTransportGrpc.UiTransportFutureStub uploadingServiceFutureStub;
 

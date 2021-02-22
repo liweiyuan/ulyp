@@ -1,9 +1,5 @@
 package com.ulyp.ui;
 
-import com.ulyp.agent.transport.grpc.GrpcUiTransport;
-import com.ulyp.ui.grpc.UIConnectorServiceImpl;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,9 +10,7 @@ import javafx.stage.Stage;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 public class UIMain extends Application {
 
@@ -55,30 +49,9 @@ public class UIMain extends Application {
         stage.getIcons().add(new Image(iconStream));
 
         stage.show();
-
-        startGrpcServer();
     }
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    private void startGrpcServer() throws IOException {
-        Server server = ServerBuilder.forPort(GrpcUiTransport.DEFAULT_ADDRESS.port)
-                .maxInboundMessageSize(1324 * 1024 * 1024)
-                .addService(context.getBean(UIConnectorServiceImpl.class))
-                .build()
-                .start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                server.shutdownNow();
-
-                server.awaitTermination(1, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                e.printStackTrace(System.err);
-            }
-
-        }));
     }
 }

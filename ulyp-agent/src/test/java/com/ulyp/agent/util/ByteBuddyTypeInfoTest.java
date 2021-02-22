@@ -1,5 +1,6 @@
 package com.ulyp.agent.util;
 
+import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.core.printers.TypeTrait;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
@@ -28,9 +29,9 @@ public class ByteBuddyTypeInfoTest {
     @Test
     public void testHasToString() {
 
-        assertTrue(new ByteBuddyTypeInfo(TypeDescription.ForLoadedType.of(X.class).asGenericType()).hasToStringMethod());
+        assertTrue(ByteBuddyTypeInfo.of(TypeDescription.ForLoadedType.of(X.class).asGenericType()).hasToStringMethod());
 
-        assertFalse(new ByteBuddyTypeInfo(TypeDescription.ForLoadedType.of(Y.class).asGenericType()).hasToStringMethod());
+        assertFalse(ByteBuddyTypeInfo.of(TypeDescription.ForLoadedType.of(Y.class).asGenericType()).hasToStringMethod());
     }
 
     static class BaseClass implements I2, I3 {
@@ -73,7 +74,7 @@ public class ByteBuddyTypeInfoTest {
         TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
 
 
-        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+        TypeInfo byteBuddyTypeInfo = ByteBuddyTypeInfo.of(firstArgType);
 
 
         assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.NON_PRIMITIVE_ARRAY));
@@ -91,7 +92,7 @@ public class ByteBuddyTypeInfoTest {
         TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
 
 
-        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+        TypeInfo byteBuddyTypeInfo = ByteBuddyTypeInfo.of(firstArgType);
 
 
         assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.NON_PRIMITIVE_ARRAY));
@@ -109,7 +110,7 @@ public class ByteBuddyTypeInfoTest {
 
         TypeDescription.Generic firstArgType = method.getParameters().asTypeList().get(0);
 
-        ByteBuddyTypeInfo byteBuddyTypeInfo = new ByteBuddyTypeInfo(firstArgType);
+        TypeInfo byteBuddyTypeInfo = ByteBuddyTypeInfo.of(firstArgType);
 
         assertThat(byteBuddyTypeInfo.getTraits(), Matchers.hasItem(TypeTrait.CLASS_OBJECT));
     }
@@ -117,14 +118,14 @@ public class ByteBuddyTypeInfoTest {
     @Test
     public void testNumberTypeTraits() {
 
-        assertThat(new ByteBuddyTypeInfo(Integer.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
+        assertThat(ByteBuddyTypeInfo.of(Integer.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
 
-        assertThat(new ByteBuddyTypeInfo(Long.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
+        assertThat(ByteBuddyTypeInfo.of(Long.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
     }
 
     @Test
     public void testBaseClassNamesResolve() {
-        ByteBuddyTypeInfo type = new ByteBuddyTypeInfo(TestClass.class);
+        TypeInfo type = ByteBuddyTypeInfo.of(TestClass.class);
 
         Assert.assertEquals(
                 new HashSet<String>() {{

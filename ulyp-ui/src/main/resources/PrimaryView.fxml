@@ -27,6 +27,7 @@
               </items>
             </Menu>-->
         </MenuBar>
+        <!--
         <HBox alignment="CENTER_LEFT" spacing="20.0">
             <ToggleButton fx:id="recordSwitchButton" mnemonicParsing="false" selected="true" styleClass="" text="Activate tracing">
                 <HBox.margin>
@@ -36,36 +37,8 @@
                     <Tooltip text="If this button is pressed, then any instrumented app connected to the UI can start tracing which is a default behavior. Deactivating tracing could be useful for large apps where tracing is unwanted during the long startup." />
                 </tooltip>
             </ToggleButton>
-         <TextField fx:id="instrumentedPackagesTextField" prefWidth="200.0" promptText="Packages to instrument...">
-            <HBox.margin>
-               <Insets />
-            </HBox.margin>
-             <tooltip>
-                 <Tooltip text="Comma separated list of packages which should be instrumented. Leaving this empty will allow for all available classes to be instrumented." />
-             </tooltip>
-         </TextField>
-         <TextField fx:id="excludedFromInstrumentationPackagesTextField" prefWidth="200.0" promptText="Exclude from instrumentation packages...">
-            <tooltip>
-               <Tooltip text="Comma separated list of packages which should not be instrumented." />
-            </tooltip>
-         </TextField>
-            <TextField fx:id="startMethodTextField" minWidth="200.0" prefWidth="200.0" promptText="Start tracing at...">
-                <tooltip>
-                    <Tooltip text="Comma separated list of methods which should be recorded. If you have a class a.b.c.D with method foo(), then specify list of packages as 'a' and methods to record as D.foo" />
-                </tooltip>
-            </TextField>
-         <Slider fx:id="recordPrecisionSlider" blockIncrement="1.0" majorTickUnit="1.0" max="2.0" minorTickCount="2">
-            <HBox.margin>
-               <Insets />
-            </HBox.margin>
-            <padding>
-               <Insets bottom="10.0" top="10.0" />
-            </padding>
-             <tooltip>
-                 <Tooltip text="Recording precision slider. Move a slider to the right side in order to increase a recording precision, but performance and memory overhead will be higher in both instrumented process and UI" />
-             </tooltip>
-         </Slider>
         </HBox>
+        -->
       <SplitPane dividerPositions="0.5014044943820225" prefHeight="418.0" prefWidth="714.0" VBox.vgrow="ALWAYS">
         <items>
             <AnchorPane fx:id="processTabAnchorPane" maxHeight="1.7976931348623157E308"

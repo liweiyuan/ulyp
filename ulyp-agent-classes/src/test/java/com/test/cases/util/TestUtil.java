@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class TestUtil {
@@ -30,12 +29,7 @@ public class TestUtil {
             processArgs.add("-cp");
             processArgs.add(classPath);
             processArgs.add("-D" + SystemPropertiesSettings.MAX_CALL_TO_RECORD_PER_METHOD + "=" + settingsBuilder.getMaxCallsPerMethod());
-            if (settingsBuilder.isUiEnabled()) {
-                processArgs.add("-D" + SystemPropertiesSettings.UI_HOST_PROPERTY + "=localhost");
-                processArgs.add("-D" + SystemPropertiesSettings.UI_PORT_PROPERTY + "=" + settingsBuilder.port);
-            } else {
-                processArgs.add("-D" + SystemPropertiesSettings.UI_ENABLED + "=false");
-            }
+            processArgs.addAll(settingsBuilder.toCmdJavaProps());
 //            processArgs.add("-D" + LoggingSettings.LOG_LEVEL_PROPERTY + "=TRACE");
             processArgs.add(settingsBuilder.getMainClassName().getName());
 
@@ -65,10 +59,5 @@ public class TestUtil {
                 .filter(file -> file.getName().endsWith(".jar"))
                 .findAny()
                 .orElseThrow(() -> new AssertionError("Could not find built ulyp agent jar"));
-    }
-
-    public static int pickEmptyPort() {
-        // TODO implement
-        return 10000 + ThreadLocalRandom.current().nextInt(1000);
     }
 }

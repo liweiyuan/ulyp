@@ -7,8 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -36,15 +34,7 @@ public class PrimaryViewController implements Initializable {
     @FXML
     public AnchorPane sourceCodeViewAnchorPane;
     @FXML
-    public TextField instrumentedPackagesTextField;
-    @FXML
-    public TextField excludedFromInstrumentationPackagesTextField;
-    @FXML
-    public TextField startMethodTextField;
-    @FXML
     public ToggleButton recordSwitchButton;
-    @FXML
-    public Slider recordPrecisionSlider;
     @Autowired
     public SourceCodeView sourceCodeView;
     @Autowired
@@ -74,24 +64,8 @@ public class PrimaryViewController implements Initializable {
         processTabPane.clear();
     }
 
-    public TextField getExcludedFromInstrumentationPackagesTextField() {
-        return excludedFromInstrumentationPackagesTextField;
-    }
-
-    public TextField getInstrumentedPackagesTextField() {
-        return instrumentedPackagesTextField;
-    }
-
-    public TextField getStartMethodTextField() {
-        return startMethodTextField;
-    }
-
     public ToggleButton getFxTracingSwitch() {
         return recordSwitchButton;
-    }
-
-    public Slider getRecordPrecisionSlider() {
-        return recordPrecisionSlider;
     }
 
     public void openRecordedDump(ActionEvent actionEvent) {

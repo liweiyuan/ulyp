@@ -1,15 +1,17 @@
 package com.test.cases.util;
 
+import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestSettingsBuilder {
 
-    public String hostName;
-    public int port;
     private Class<?> mainClassName;
     private MethodMatcher methodToRecord;
-    private boolean uiEnabled = true;
+    private OutputFile outputFile = new OutputFile("test", ".dat");
     private PackageList instrumentedPackages = new PackageList();
     private PackageList excludedFromInstrumentationPackages = new PackageList();
     private int minRecordsForLog = 1;
@@ -17,14 +19,6 @@ public class TestSettingsBuilder {
     private int maxCallsPerMethod = Integer.MAX_VALUE;
 
     private boolean recordCollectionItems = false;
-
-    public boolean isUiEnabled() {
-        return uiEnabled;
-    }
-
-    public void setUiEnabled(boolean uiEnabled) {
-        this.uiEnabled = uiEnabled;
-    }
 
     public Class<?> getMainClassName() {
         return mainClassName;
@@ -88,19 +82,17 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public TestSettingsBuilder setHostName(String hostName) {
-        this.hostName = hostName;
-        return this;
-    }
-
-    public TestSettingsBuilder setPort(int port) {
-        this.port = port;
-        return this;
-    }
-
     public TestSettingsBuilder setMinRecordsForLog(int minRecordsForLog) {
         this.minRecordsForLog = minRecordsForLog;
         return this;
+    }
+
+    public OutputFile getOutputFile() {
+        return outputFile;
+    }
+
+    public void setOutputFile(OutputFile outputFile) {
+        this.outputFile = outputFile;
     }
 
     public PackageList getExcludedFromInstrumentationPackages() {
@@ -110,5 +102,22 @@ public class TestSettingsBuilder {
     public TestSettingsBuilder setExcludedFromInstrumentationPackages(String... packages) {
         this.excludedFromInstrumentationPackages = new PackageList(packages);
         return this;
+    }
+
+    public List<String> toCmdJavaProps() {
+        List<String> params = new ArrayList<>();
+
+        params.add("-D" + SystemPropertiesSettings.PACKAGES_PROPERTY + "=" + String.join(",", instrumentedPackages));
+        if (excludedFromInstrumentationPackages.isEmpty()) {
+            params.add("-D" + SystemPropertiesSettings.EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludedFromInstrumentationPackages));
+        }
+
+        params.add("-D" + SystemPropertiesSettings.START_METHOD_PROPERTY + "=" + methodToRecord.toString());
+        params.add("-D" + SystemPropertiesSettings.FILE_PATH + "=" + outputFile);
+//        params.add("-D" + SystemPropertiesSettings.MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
+//        params.add("-D" + SystemPropertiesSettings.MIN_TRACE_COUNT + "=" + minRecordsCountForLog);
+//        params.add("-D" + SystemPropertiesSettings.MAX_CALL_TO_RECORD_PER_METHOD + "=" + maxCallsToRecordPerMethod);
+
+        return params;
     }
 }
