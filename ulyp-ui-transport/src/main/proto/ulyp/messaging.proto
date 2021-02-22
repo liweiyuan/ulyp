@@ -8,21 +8,7 @@ package ulyp;
 
 service UiTransport {
 
-    rpc RequestSettings(SettingsRequest) returns (Settings) {}
-
     rpc UploadCallGraph (TCallRecordLogUploadRequest) returns (TCallRecordLogUploadResponse) {}
-}
-
-message Settings {
-    bool mayStartRecording = 1;
-    bool recordCollectionsItems = 3;
-    repeated string instrumentedPackages = 4;
-    repeated string excludedFromInstrumentationPackages = 6;
-    repeated string methodsToRecord = 5;
-}
-
-message SettingsRequest {
-
 }
 
 message TStackTraceElement {

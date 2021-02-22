@@ -1,6 +1,5 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.settings.UiSettings;
 import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
 import com.ulyp.core.*;
@@ -31,15 +30,8 @@ public class Recorder {
     private final EnhancedThreadLocal<CallRecordLog> threadLocalRecordsLog = new EnhancedThreadLocal<>();
     private final AgentContext context;
 
-    private volatile boolean mayStartRecording = true;
-    private final RecordingParamsUpdater recordingParamsUpdater = new RecordingParamsUpdater();
-
     public Recorder(AgentContext context) {
         this.context = context;
-
-        UiSettings uiSettings = context.getUiSettings();
-        uiSettings.mayStartTracing().addListener((oldValue, newValue) -> this.mayStartRecording = newValue);
-        uiSettings.getRecordCollectionItems().addListener((oldValue, newValue) -> this.recordingParamsUpdater.updateRecordCollectionItems(newValue));
     }
 
     public boolean recordingIsActiveInCurrentThread() {

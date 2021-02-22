@@ -4,10 +4,8 @@ import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.transport.NamedThreadFactory;
 import com.ulyp.agent.transport.RequestConverter;
 import com.ulyp.agent.transport.UiTransport;
-import com.ulyp.transport.Settings;
 
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -17,7 +15,6 @@ import java.util.concurrent.*;
  */
 public class FileUiTransport implements UiTransport {
 
-    private final Settings settings;
     private final FileWriterTask fileWriterTask;
     private final Set<Future<?>> convertingFutures = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -32,14 +29,9 @@ public class FileUiTransport implements UiTransport {
             new NamedThreadFactory("ULYP-File-Writer", true)
     );
 
-    public FileUiTransport(Settings settings, Path filePath) {
+    public FileUiTransport(Path filePath) {
         this.fileWriterTask = new FileWriterTask(filePath);
         this.fileWriterService.submit(fileWriterTask);
-        this.settings = settings;
-    }
-
-    public Settings getSettingsBlocking(Duration duration) {
-        return settings;
     }
 
     public void uploadAsync(CallRecordTreeRequest request) {

@@ -4,12 +4,8 @@ import com.ulyp.agent.transport.UiAddress;
 import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.agent.transport.file.FileUiAddress;
 import com.ulyp.core.util.CommaSeparatedList;
-import com.ulyp.core.util.MethodMatcher;
 import com.ulyp.core.util.PackageList;
-import com.ulyp.transport.Settings;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.stream.Collectors;
 
 public class SystemPropertiesSettings {
 
@@ -22,19 +18,9 @@ public class SystemPropertiesSettings {
         RecordingStartMethodList recordingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(methodsToRecord));
 
         UiAddress uiAddress;
-        // TODO make url
         String file = System.getProperty(FILE_PATH);
         if (file != null) {
-            uiAddress = new FileUiAddress(
-                    Settings.newBuilder()
-                            .addAllInstrumentedPackages(instrumentationPackages)
-                            .addAllExcludedFromInstrumentationPackages(excludedPackages)
-                            .addAllMethodsToRecord(recordingStartMethods.stream().map(MethodMatcher::toString).collect(Collectors.toList()))
-                            .setMayStartRecording(true)
-                            .setRecordCollectionsItems(false)
-                            .build(),
-                    file
-            );
+            uiAddress = new FileUiAddress(file);
         } else {
             throw new RuntimeException("Property " + FILE_PATH + " must be set");
         }
@@ -122,6 +108,10 @@ public class SystemPropertiesSettings {
 
     public PackageList getExcludedFromInstrumentationPackages() {
         return excludedFromInstrumentationPackages;
+    }
+
+    public RecordingStartMethodList getMethodsToRecord() {
+        return methodsToRecord;
     }
 
     public UiTransport buildUiTransport() {

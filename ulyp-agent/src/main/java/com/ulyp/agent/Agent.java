@@ -1,7 +1,7 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.RecordingStartMethodList;
-import com.ulyp.agent.settings.UiSettings;
+import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.core.log.LogLevel;
 import com.ulyp.core.log.LoggingSettings;
 import com.ulyp.core.process.ProcessInfo;
@@ -35,11 +35,12 @@ public class Agent {
 
         String logLevel = LoggingSettings.LOG_LEVEL.name();
         AgentContext instance = AgentContext.getInstance();
-        UiSettings uiSettings = instance.getUiSettings();
 
-        PackageList instrumentedPackages = uiSettings.getInstrumentedPackages().getValue();
-        PackageList excludedPackages = uiSettings.getExcludeFromInstrumentationPackages().getValue();
-        RecordingStartMethodList recordingStartMethodList = uiSettings.getRecordingStartMethod().getValue();
+        SystemPropertiesSettings settings = SystemPropertiesSettings.load();
+
+        PackageList instrumentedPackages = settings.getInstrumentatedPackages();
+        PackageList excludedPackages = settings.getExcludedFromInstrumentationPackages();
+        RecordingStartMethodList recordingStartMethodList = settings.getMethodsToRecord();
 
         if (recordingStartMethodList == null || recordingStartMethodList.isEmpty()) {
             // if not specified, then record main(String[] args) method as it's the only entry point to the program we have
@@ -51,8 +52,8 @@ public class Agent {
 
         System.out.println(ULYP_LOGO);
         System.out.println("Successfully connected to UI, logging level = " + logLevel +
-                ", instrumentation packages = " + uiSettings.getInstrumentedPackages() +
-                ", recording will start at " + uiSettings.getRecordingStartMethod());
+                ", instrumentation packages = " + settings.getInstrumentatedPackages() +
+                ", recording will start at " + settings.getMethodsToRecord());
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
