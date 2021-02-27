@@ -2,6 +2,7 @@ package com.ulyp.core;
 
 import com.ulyp.core.printers.ObjectBinaryPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
+import com.ulyp.database.Database;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -11,11 +12,9 @@ public class CallRecordLog {
 
     public static final AtomicLong idGenerator = new AtomicLong(3000000000L);
 
+    private final Database.Writer dbWriter;
     private final long recordingSessionId;
-    private final long chunkId;
     private final AgentRuntime agentRuntime;
-    private final CallEnterRecordList enterRecords = new CallEnterRecordList();
-    private final CallExitRecordList exitRecords = new CallExitRecordList();
     private final long epochMillisCreatedTime = System.currentTimeMillis();
     private final String threadName;
     private final long threadId;
@@ -27,8 +26,8 @@ public class CallRecordLog {
     private long lastExitCallId = -1;
     private long callIdCounter = 0;
 
-    public CallRecordLog(AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
-        this.chunkId = 0;
+    public CallRecordLog(Database.Writer dbWriter, AgentRuntime agentRuntime, int maxDepth, int maxCallsToRecordPerMethod) {
+        this.dbWriter = dbWriter;
         this.recordingSessionId = idGenerator.incrementAndGet();
         this.maxDepth = maxDepth;
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
@@ -43,7 +42,7 @@ public class CallRecordLog {
     }
 
     private CallRecordLog(
-            long chunkId,
+            Database.Writer dbWriter,
             long recordingSessionId,
             AgentRuntime agentRuntime,
             String threadName,
@@ -54,7 +53,7 @@ public class CallRecordLog {
             boolean inProcessOfTracing,
             long callIdCounter)
     {
-        this.chunkId = chunkId;
+        this.dbWriter = dbWriter;
         this.recordingSessionId = recordingSessionId;
         this.agentRuntime = agentRuntime;
         this.threadName = threadName;
@@ -67,11 +66,7 @@ public class CallRecordLog {
     }
 
     public CallRecordLog cloneWithoutData() {
-        return new CallRecordLog(this.chunkId + 1, this.recordingSessionId, this.agentRuntime, this.threadName, this.threadId, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
-    }
-
-    public long estimateBytesSize() {
-        return enterRecords.buffer.capacity() + exitRecords.buffer.capacity();
+        return new CallRecordLog(this.dbWriter, this.recordingSessionId, this.agentRuntime, this.threadName, this.threadId, this.stackTrace, this.maxDepth, this.maxCallsToRecordPerMethod, this.inProcessOfTracing, this.callIdCounter);
     }
 
     public long onMethodEnter(int methodId, ObjectBinaryPrinter[] printers, @Nullable Object callee, Object[] args) {
@@ -82,7 +77,7 @@ public class CallRecordLog {
         try {
 
             long callId = callIdCounter++;
-            enterRecords.add(callId, methodId, agentRuntime, printers, callee, args);
+            dbWriter.writeEnterRecord(recordingSessionId, callId, methodId, agentRuntime, printers, callee, args);
             return callId;
         } finally {
             inProcessOfTracing = true;
@@ -98,9 +93,9 @@ public class CallRecordLog {
         try {
             if (callId >= 0) {
                 if (thrown == null) {
-                    exitRecords.add(callId, methodId, agentRuntime, false, resultPrinter, returnValue);
+                    dbWriter.writeExitRecord(recordingSessionId, callId, methodId, agentRuntime, false, resultPrinter, returnValue);
                 } else {
-                    exitRecords.add(callId, methodId, agentRuntime, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getInstance(), thrown);
+                    dbWriter.writeExitRecord(recordingSessionId, callId, methodId, agentRuntime, true, ObjectBinaryPrinterType.THROWABLE_PRINTER.getInstance(), thrown);
                 }
                 lastExitCallId = callId;
             }
@@ -113,14 +108,6 @@ public class CallRecordLog {
         return lastExitCallId == 0;
     }
 
-    public long size() {
-        return enterRecords.size();
-    }
-
-    public long getChunkId() {
-        return chunkId;
-    }
-
     public String getThreadName() {
         return threadName;
     }
@@ -131,14 +118,6 @@ public class CallRecordLog {
 
     public StackTraceElement[] getStackTrace() {
         return stackTrace;
-    }
-
-    public CallEnterRecordList getEnterRecords() {
-        return enterRecords;
-    }
-
-    public CallExitRecordList getExitRecords() {
-        return exitRecords;
     }
 
     public long getRecordingSessionId() {

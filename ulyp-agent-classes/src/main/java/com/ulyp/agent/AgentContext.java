@@ -1,14 +1,24 @@
 package com.ulyp.agent;
 
 import com.ulyp.agent.settings.SystemPropertiesSettings;
-import com.ulyp.agent.transport.UiTransport;
 import com.ulyp.core.process.ProcessInfo;
+import com.ulyp.database.Database;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class AgentContext {
 
-    private static final AgentContext instance = new AgentContext();
+    private static final AgentContext instance;
+
+    static {
+        try {
+            instance = new AgentContext();
+        } catch (IOException e) {
+            // TODO proper message
+            throw new RuntimeException(e);
+        }
+    }
 
     private static boolean agentLoaded = false;
 
@@ -25,21 +35,17 @@ public class AgentContext {
     }
 
     private final SystemPropertiesSettings sysPropsSettings;
-    private final UiTransport transport;
+    private final Database.Writer dbWriter;
     private final ProcessInfo processInfo;
 
-    private AgentContext() {
+    private AgentContext() throws IOException {
         this.sysPropsSettings = SystemPropertiesSettings.load();
         this.processInfo = new ProcessInfo();
-        this.transport = sysPropsSettings.buildUiTransport();
+        this.dbWriter = sysPropsSettings.buildDbWriter();
 
         Thread shutdown = new Thread(
                 () -> {
-                    try {
-                        transport.shutdownNowAndAwaitForRecordsLogsSending(30, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+                    dbWriter.shutdownNowAndAwaitForRecordsLogsSending(30, TimeUnit.SECONDS);
                 }
         );
         Runtime.getRuntime().addShutdownHook(shutdown);
@@ -49,8 +55,8 @@ public class AgentContext {
         return processInfo;
     }
 
-    public UiTransport getTransport() {
-        return transport;
+    public Database.Writer getDbWriter() {
+        return dbWriter;
     }
 
     public SystemPropertiesSettings getSysPropsSettings() {

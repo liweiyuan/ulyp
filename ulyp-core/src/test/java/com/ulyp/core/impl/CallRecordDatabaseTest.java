@@ -32,7 +32,7 @@ public abstract class CallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class)
         );
 
         methodInfos.add(toStringMethod);
@@ -71,7 +71,7 @@ public abstract class CallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class)
         );
 
         methodInfos.add(toStringMethod);
@@ -123,7 +123,7 @@ public abstract class CallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class)
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class)
         );
 
         methodInfos.add(toStringMethod);
@@ -189,7 +189,7 @@ public abstract class CallRecordDatabaseTest {
                 true,
                 new ArrayList<>(),
                 agentRuntime.get(String.class),
-                agentRuntime.get(OnDiskFileBasedCallRecordDatabaseTest.class));
+                agentRuntime.get(InMemoryIndexFileBasedCallRecordDatabaseTest.class));
 
         methodInfos.add(toStringMethod);
 

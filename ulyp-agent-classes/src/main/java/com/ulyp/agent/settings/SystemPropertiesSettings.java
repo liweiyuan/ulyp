@@ -1,11 +1,13 @@
 package com.ulyp.agent.settings;
 
-import com.ulyp.agent.transport.UiAddress;
-import com.ulyp.agent.transport.UiTransport;
-import com.ulyp.agent.transport.file.FileUiAddress;
 import com.ulyp.core.util.CommaSeparatedList;
 import com.ulyp.core.util.PackageList;
+import com.ulyp.database.Database;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SystemPropertiesSettings {
 
@@ -17,10 +19,10 @@ public class SystemPropertiesSettings {
         String methodsToRecord = System.getProperty(START_METHOD_PROPERTY, "");
         RecordingStartMethodList recordingStartMethods = new RecordingStartMethodList(CommaSeparatedList.parse(methodsToRecord));
 
-        UiAddress uiAddress;
+        Path outputFilePath;
         String file = System.getProperty(FILE_PATH);
         if (file != null) {
-            uiAddress = new FileUiAddress(file);
+            outputFilePath = Paths.get(file);
         } else {
             throw new RuntimeException("Property " + FILE_PATH + " must be set");
         }
@@ -45,7 +47,7 @@ public class SystemPropertiesSettings {
         int maxRecordedMethodCallsPerMethod = Integer.parseInt(System.getProperty(MAX_CALL_TO_RECORD_PER_METHOD, String.valueOf(Integer.MAX_VALUE / 2)));
         int minRecordsCount = Integer.parseInt(System.getProperty(MIN_TRACE_COUNT, String.valueOf(1)));
         return new SystemPropertiesSettings(
-                uiAddress,
+                outputFilePath,
                 instrumentationPackages,
                 excludedPackages,
                 recordingStartMethods,
@@ -64,7 +66,7 @@ public class SystemPropertiesSettings {
     public static final String MAX_CALL_TO_RECORD_PER_METHOD = "ulyp.max-recorded-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
 
-    @NotNull private final UiAddress uiAddress;
+    private final Path outputFilePath;
     private final PackageList instrumentatedPackages;
     private final PackageList excludedFromInstrumentationPackages;
     @NotNull private final RecordingStartMethodList methodsToRecord;
@@ -73,7 +75,7 @@ public class SystemPropertiesSettings {
     private final int minRecordsCountForLog;
 
     public SystemPropertiesSettings(
-            @NotNull UiAddress uiAddress,
+            Path outputFilePath,
             PackageList instrumentedPackages,
             PackageList excludedFromInstrumentationPackages,
             @NotNull RecordingStartMethodList methodsToRecord,
@@ -81,7 +83,7 @@ public class SystemPropertiesSettings {
             int maxCallsToRecordPerMethod,
             int minRecordsCountForLog)
     {
-        this.uiAddress = uiAddress;
+        this.outputFilePath = outputFilePath;
         this.instrumentatedPackages = instrumentedPackages;
         this.excludedFromInstrumentationPackages = excludedFromInstrumentationPackages;
         this.methodsToRecord = methodsToRecord;
@@ -114,14 +116,14 @@ public class SystemPropertiesSettings {
         return methodsToRecord;
     }
 
-    public UiTransport buildUiTransport() {
-        return uiAddress.buildTransport();
+    public Database.Writer buildDbWriter() throws IOException {
+        return Database.openForWrite(outputFilePath);
     }
 
     @Override
     public String toString() {
         return "Settings{" +
-                "uiAddress=" + uiAddress +
+                "outputFilePath=" + outputFilePath +
                 ", packages=" + instrumentatedPackages +
                 ", excludePackages=" + excludedFromInstrumentationPackages +
                 ", startRecordingMethods=" + methodsToRecord +

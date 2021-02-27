@@ -14,11 +14,13 @@ public class RequestConverter {
 
     public static TCallRecordLogUploadRequest convert(CallRecordTreeRequest request) {
         CallRecordLog recordLog = request.getRecordLog();
+/*
 
         TCallRecordLog log = TCallRecordLog.newBuilder()
                 .setEnterRecords(recordLog.getEnterRecords().toByteString())
                 .setExitRecords(recordLog.getExitRecords().toByteString())
                 .build();
+*/
 
         MethodInfoList methodInfoList = new MethodInfoList();
         for (MethodInfo description : request.getMethods()) {
@@ -55,14 +57,14 @@ public class RequestConverter {
                         .addAllClasspath(request.getProcessInfo().getClasspath().toList())
                         .build())
                 .setRecordingId(request.getRecordLog().getRecordingSessionId())
-                .setChunkId(request.getRecordLog().getChunkId())
+//                .setChunkId(request.getRecordLog().getChunkId())
                 .setCreateEpochMillis(recordLog.getEpochMillisCreatedTime())
                 .setLifetimeMillis(request.getEndLifetimeEpochMillis() - recordLog.getEpochMillisCreatedTime())
                 .build();
 
         return requestBuilder
                 .setRecordingInfo(recordingInfo)
-                .setRecordLog(log)
+//                .setRecordLog(log)
                 .setMethodDescriptionList(TMethodDescriptionList.newBuilder().setData(methodInfoList.toByteString()).build())
                 .build();
     }

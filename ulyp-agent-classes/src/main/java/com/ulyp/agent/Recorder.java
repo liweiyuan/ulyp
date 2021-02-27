@@ -1,8 +1,9 @@
 package com.ulyp.agent;
 
-import com.ulyp.agent.transport.CallRecordTreeRequest;
 import com.ulyp.agent.util.EnhancedThreadLocal;
-import com.ulyp.core.*;
+import com.ulyp.core.AgentRuntime;
+import com.ulyp.core.CallRecordLog;
+import com.ulyp.core.MethodInfo;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -46,6 +47,7 @@ public class Recorder {
     {
         CallRecordLog recordLog = threadLocalRecordsLog.getOrCreate(() -> {
             CallRecordLog log = new CallRecordLog(
+                    context.getDbWriter(),
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsToRecordPerMethod());
@@ -62,6 +64,7 @@ public class Recorder {
     {
         CallRecordLog recordLog = threadLocalRecordsLog.getOrCreate(() -> {
             CallRecordLog log = new CallRecordLog(
+                    context.getDbWriter(),
                     agentRuntime,
                     context.getSysPropsSettings().getMaxTreeDepth(),
                     context.getSysPropsSettings().getMaxCallsToRecordPerMethod());
@@ -78,17 +81,6 @@ public class Recorder {
         if (recordLog != null && recordLog.isComplete()) {
             threadLocalRecordsLog.clear();
             currentRecordingSessionCount.decrementAndGet();
-
-            if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
-                context.getTransport().uploadAsync(
-                        new CallRecordTreeRequest(
-                                recordLog,
-                                MethodDescriptionMap.getInstance().values(),
-                                agentRuntime.getAllKnownTypes(),
-                                context.getProcessInfo()
-                        )
-                );
-            }
         }
     }
 
@@ -100,8 +92,9 @@ public class Recorder {
             threadLocalRecordsLog.clear();
             currentRecordingSessionCount.decrementAndGet();
 
-            if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
-                context.getTransport().uploadAsync(
+//            if (recordLog.size() >= context.getSysPropsSettings().getMinRecordsCountForLog()) {
+                /*
+                context.getDbWriter().uploadAsync(
                         new CallRecordTreeRequest(
                                 recordLog,
                                 MethodDescriptionMap.getInstance().values(),
@@ -109,7 +102,8 @@ public class Recorder {
                                 context.getProcessInfo()
                         )
                 );
-            }
+                */
+//            }
         }
     }
 
@@ -133,20 +127,5 @@ public class Recorder {
         CallRecordLog currentRecordLog = threadLocalRecordsLog.get();
         if (currentRecordLog == null) return;
         currentRecordLog.onMethodExit(method.getId(), method.getResultPrinter(), result, thrown, callId);
-
-        if (currentRecordLog.estimateBytesSize() > 64 * 1024 * 1024/* ||
-                (System.currentTimeMillis() - currentRecordLog.getEpochMillisCreatedTime()) > 1000*/) {
-            CallRecordLog newRecordLog = currentRecordLog.cloneWithoutData();
-            threadLocalRecordsLog.set(newRecordLog);
-
-            context.getTransport().uploadAsync(
-                    new CallRecordTreeRequest(
-                            currentRecordLog,
-                            MethodDescriptionMap.getInstance().values(),
-                            agentRuntime.getAllKnownTypes(),
-                            context.getProcessInfo()
-                    )
-            );
-        }
     }
 }

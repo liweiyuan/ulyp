@@ -37,6 +37,7 @@
     </types>
 
     <sbe:message name="TCallEnterRecord" id="3">
+        <field name="recordingSessionId" id="20" type="int32"/>
         <field name="methodId" id="1" type="int32"/>
         <field name="callId" id="2" type="int64"/>
         <field name="calleeClassId" id="16" type="int32"/>
@@ -50,6 +51,7 @@
     </sbe:message>
 
     <sbe:message name="TCallExitRecord" id="4">
+        <field name="recordingSessionId" id="16" type="int32"/>
         <field name="methodId" id="1" type="int32"/>
         <field name="callId" id="2" type="int64"/>
         <field name="thrown" id="3" type="BooleanType"/>
@@ -74,7 +76,23 @@
 
     <sbe:message name="TClassDescription" id="6">
         <field name="id" id="1" type="int32"/>
-        <data name="simpleClassName" id="2" type="varStringEncoding"/>
-        <data name="className" id="3" type="varStringEncoding"/>
+        <data name="name" id="2" type="varStringEncoding"/>
+    </sbe:message>
+
+    <sbe:message name="TRecordingInfo" id="7">
+        <field name="createEpochMillis" id="1" type="int64"/>
+        <field name="lifetimeMillis" id="2" type="int64"/>
+        <field name="recordingId" id="3" type="int64"/>
+        <field name="chunkId" id="4" type="int64"/>
+        <field name="threadId" id="5" type="int64"/>
+        <field name="pid" id="6" type="int64"/>
+
+        <group name="parameterNames" id="10" dimensionType="groupSizeEncoding">
+            <data name="value" id="7" type="varStringEncoding"/>
+        </group>
+        <data name="threadName" id="8" type="varStringEncoding"/>
+        <data name="mainClassName" id="9" type="varStringEncoding"/>
+
+        <data name="name" id="11" type="varStringEncoding"/>
     </sbe:message>
 </sbe:messageSchema>

@@ -7,6 +7,8 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.sbe.MessageDecoderFlyweight;
 import org.agrona.sbe.MessageEncoderFlyweight;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.NoSuchElementException;
@@ -40,6 +42,14 @@ public abstract class AbstractBinaryEncodedList<Encoder extends MessageEncoderFl
         buffer = new UnsafeBuffer(bytes.asReadOnlyByteBuffer());
 
         initEncoder();
+    }
+
+    public long writeTo(OutputStream outputStream) throws IOException {
+        long length = getLength();
+        for (int i = 0; i < length; i++) {
+            outputStream.write(buffer.getByte(i));
+        }
+        return length;
     }
 
     public ByteString toByteString() {
@@ -95,6 +105,10 @@ public abstract class AbstractBinaryEncodedList<Encoder extends MessageEncoderFl
     }
 
     public int length() {
+        return buffer.getInt(4);
+    }
+
+    private int getLength() {
         return buffer.getInt(4);
     }
 

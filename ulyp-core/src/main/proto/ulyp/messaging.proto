@@ -6,11 +6,6 @@ option java_outer_classname = "HelloWorldProto";
 
 package ulyp;
 
-service UiTransport {
-
-    rpc UploadCallGraph (TCallRecordLogUploadRequest) returns (TCallRecordLogUploadResponse) {}
-}
-
 message TStackTraceElement {
     string declaringClass = 1;
     string methodName = 2;
