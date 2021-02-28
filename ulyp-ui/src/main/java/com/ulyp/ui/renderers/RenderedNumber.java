@@ -5,8 +5,7 @@ import com.ulyp.core.printers.TypeInfo;
 import com.ulyp.ui.RenderSettings;
 import com.ulyp.ui.util.StyledText;
 
-import static com.ulyp.ui.util.CssClass.CALL_TREE_NUMBER;
-import static com.ulyp.ui.util.CssClass.CALL_TREE_TYPE_NAME;
+import static com.ulyp.ui.util.CssClass.*;
 
 public class RenderedNumber extends RenderedObject {
 
@@ -15,6 +14,7 @@ public class RenderedNumber extends RenderedObject {
 
         if (renderSettings.showTypes()) {
             super.getChildren().add(StyledText.of(typeInfo.getName(), CALL_TREE_TYPE_NAME));
+            super.getChildren().add(StyledText.of(": ", CALL_TREE_PLAIN_TEXT));
         }
         super.getChildren().add(StyledText.of(numberObjectRepresentation.getPrintedText(), CALL_TREE_NUMBER));
     }
