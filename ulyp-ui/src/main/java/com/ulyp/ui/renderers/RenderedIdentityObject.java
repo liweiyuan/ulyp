@@ -6,6 +6,8 @@ import com.ulyp.ui.util.StyledText;
 
 import java.util.Arrays;
 
+import static com.ulyp.ui.util.CssClass.CALL_TREE_IDENTITY_REPR;
+
 public class RenderedIdentityObject extends RenderedObject {
 
     public RenderedIdentityObject(IdentityObjectRepresentation repr) {
@@ -13,9 +15,9 @@ public class RenderedIdentityObject extends RenderedObject {
 
         super.getChildren().addAll(
                 Arrays.asList(
-                        StyledText.of(ClassNameUtils.toSimpleName(repr.getType().getName()), "ulyp-ctt-identity"),
-                        StyledText.of("@", "ulyp-ctt-identity"),
-                        StyledText.of(Integer.toHexString(repr.getHashCode()), "ulyp-ctt-identity")
+                        StyledText.of(ClassNameUtils.toSimpleName(repr.getType().getName()), CALL_TREE_IDENTITY_REPR),
+                        StyledText.of("@", CALL_TREE_IDENTITY_REPR),
+                        StyledText.of(Integer.toHexString(repr.getHashCode()), CALL_TREE_IDENTITY_REPR)
                 )
         );
     }
