@@ -23,7 +23,7 @@ public class RenderedCallRecord extends TextFlow {
         List<Node> text = new ArrayList<>();
 
         text.addAll(renderReturnValue(node, renderSettings));
-        text.addAll(renderMethodName(node));
+        text.addAll(renderMethodName(node, renderSettings));
         text.addAll(renderArguments(node, renderSettings));
 
         getChildren().addAll(text);
@@ -38,12 +38,8 @@ public class RenderedCallRecord extends TextFlow {
 
             List<Node> output = new ArrayList<>();
 
-            if (renderSettings.showTypes()) {
-                output.add(text().text(node.getReturnValue().getType().getName()).style(CALL_TREE_PLAIN_TEXT).build());
-                output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
-            }
+            RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue(), renderSettings), CALL_TREE_RETURN_VALUE).get();
 
-            RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), CALL_TREE_RETURN_VALUE).get();
             if (node.hasThrown()) {
                 renderedObject = new WithStylesPane<>(renderedObject, CALL_TREE_THROWN).get();
             }
@@ -64,17 +60,13 @@ public class RenderedCallRecord extends TextFlow {
 
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectRepresentation argValue = node.getArgs().get(i);
-            if (renderSettings.showTypes()) {
-                output.add(text().text(argValue.getType().getName()).style(CALL_TREE_PLAIN_TEXT).build());
-                output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
-            }
 
             if (hasParameterNames) {
                 output.add(text().text(node.getParameterNames().get(i)).style(CALL_TREE_ARG_NAME).build());
                 output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
             }
 
-            output.add(RenderedObject.of(argValue));
+            output.add(RenderedObject.of(argValue, renderSettings));
 
             if (i < node.getArgs().size() - 1) {
                 output.add(text().text(", ").style(CALL_TREE_PLAIN_TEXT).build());
@@ -86,13 +78,13 @@ public class RenderedCallRecord extends TextFlow {
     }
 
     @NotNull
-    private static List<Node> renderMethodName(CallRecord node) {
+    private static List<Node> renderMethodName(CallRecord node, RenderSettings renderSettings) {
         List<Node> result = new ArrayList<>();
 
         if (node.isStatic() || node.isConstructor()) {
             result.add(text().text(ClassNameUtils.toSimpleName(node.getClassName())).style(CALL_TREE_METHOD_NAME).build());
         } else {
-            RenderedObject callee = RenderedObject.of(node.getCallee());
+            RenderedObject callee = RenderedObject.of(node.getCallee(), renderSettings);
             callee.getChildren().forEach(child -> child.getStyleClass().addAll(CALL_TREE_CALLEE.getCssClasses()));
             result.add(callee);
         }

@@ -1,6 +1,7 @@
 package com.ulyp.ui.renderers;
 
 import com.ulyp.core.printers.*;
+import com.ulyp.ui.RenderSettings;
 import javafx.scene.text.TextFlow;
 
 public abstract class RenderedObject extends TextFlow {
@@ -11,36 +12,33 @@ public abstract class RenderedObject extends TextFlow {
         this.typeInfo = typeInfo;
     }
 
-    public static RenderedObject of(ObjectRepresentation repr) {
+    public static RenderedObject of(ObjectRepresentation repr, RenderSettings renderSettings) {
         RenderedObject objectValue;
 
         // TODO replace with map
         if (repr instanceof StringObjectRepresentation) {
-            objectValue = new RenderedStringObject((StringObjectRepresentation) repr, repr.getType());
+            objectValue = new RenderedStringObject((StringObjectRepresentation) repr, repr.getType(), renderSettings);
 
         } else if (repr instanceof NullObjectRepresentation) {
-            objectValue = new RenderedNull();
+            objectValue = new RenderedNull(renderSettings);
 
         } else if (repr instanceof NotRecordedObjectRepresentation) {
 
-            objectValue = new RenderedNotRecordedObject();
+            objectValue = new RenderedNotRecordedObject(renderSettings);
         } else if (repr instanceof NumberObjectRepresentation) {
-            objectValue = new RenderedNumber((NumberObjectRepresentation) repr, repr.getType());
+            objectValue = new RenderedNumber((NumberObjectRepresentation) repr, repr.getType(), renderSettings);
 
         } else if (repr instanceof ObjectArrayRepresentation) {
-            objectValue = new RenderedObjectArray((ObjectArrayRepresentation) repr);
+            objectValue = new RenderedObjectArray((ObjectArrayRepresentation) repr, renderSettings);
 
         } else if (repr instanceof ClassObjectRepresentation) {
-            objectValue = new RenderedClassObject((ClassObjectRepresentation) repr);
+            objectValue = new RenderedClassObject((ClassObjectRepresentation) repr, renderSettings);
         } else if (repr instanceof IdentityObjectRepresentation) {
-            objectValue = new RenderedIdentityObject((IdentityObjectRepresentation) repr);
-
-        } else if (repr instanceof ThrownSomethingRepresentation) {
-            objectValue = new RenderedThrownUnknownObject();
+            objectValue = new RenderedIdentityObject((IdentityObjectRepresentation) repr, renderSettings);
 
         } else {
 
-            objectValue = new RenderedPlainObject(repr, repr.getType());
+            objectValue = new RenderedPlainObject(repr, repr.getType(), renderSettings);
         }
 
         objectValue.getChildren().forEach(node -> {

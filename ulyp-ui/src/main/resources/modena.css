@@ -65,7 +65,15 @@
     -fx-fill: rgb(0, 100, 0);
 }
 
-.ulyp-ctt-identity.ulyp-ctt-callee {
+.ulyp-ctt.ulyp-ctt-typename {
+    -fx-fill: rgb(169, 183, 198);
+}
+
+.ulyp-ctt.ulyp-ctt-typename.ulyp-ctt-callee {
+    -fx-fill: rgb(255, 198, 109);
+}
+
+.ulyp-ctt.ulyp-ctt-identity.ulyp-ctt-callee {
     -fx-fill: rgb(255, 198, 109);
 }
 

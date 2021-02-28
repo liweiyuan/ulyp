@@ -31,6 +31,7 @@ public class CallRecordTreeNode extends TreeItem<CallTreeNodeContent> {
         }
 
         setValue(new CallTreeNodeContent(database.find(callRecordId), renderSettings, database.countAll()));
+
         if (loaded) {
             List<Long> newChildren = database.getChildrenIds(callRecordId);
             int currentLoadedChildrenCount = getChildren().size();

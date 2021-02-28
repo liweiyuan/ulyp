@@ -1,6 +1,7 @@
 package com.ulyp.ui.renderers;
 
 import com.ulyp.core.printers.ObjectArrayRepresentation;
+import com.ulyp.ui.RenderSettings;
 import com.ulyp.ui.util.StyledText;
 import javafx.scene.Node;
 
@@ -12,12 +13,12 @@ import static com.ulyp.ui.util.CssClass.CALL_TREE_PLAIN_TEXT;
 
 public class RenderedObjectArray extends RenderedObject {
 
-    protected RenderedObjectArray(ObjectArrayRepresentation arrayRepresentation) {
+    protected RenderedObjectArray(ObjectArrayRepresentation arrayRepresentation, RenderSettings renderSettings) {
         super(arrayRepresentation.getType());
 
         List<RenderedObject> renderedObjects = arrayRepresentation.getRecordedItems()
                 .stream()
-                .map(RenderedObject::of)
+                .map(repr -> RenderedObject.of(repr, renderSettings))
                 .collect(Collectors.toList());
 
         List<Node> texts = new ArrayList<>();

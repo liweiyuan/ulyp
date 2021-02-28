@@ -5,6 +5,8 @@ import java.util.List;
 
 public enum CssClass {
 
+    CALL_TREE_TYPE_NAME("ulyp-ctt", "ulyp-ctt-typename"),
+    CALL_TREE_NUMBER("ulyp-ctt", "ulyp-ctt-number"),
     CALL_TREE_PLAIN_TEXT("ulyp-ctt", "ulyp-ctt-sep"),
     CALL_TREE_IDENTITY_REPR("ulyp-ctt", "ulyp-ctt-identity"),
     CALL_TREE_METHOD_NAME("ulyp-ctt", "ulyp-ctt-method-name"),
