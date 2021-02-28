@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +32,6 @@ public class PrimaryViewController implements Initializable {
     public AnchorPane processTabAnchorPane;
     @FXML
     public AnchorPane sourceCodeViewAnchorPane;
-    @FXML
-    public ToggleButton recordSwitchButton;
     @Autowired
     public SourceCodeView sourceCodeView;
     @Autowired
@@ -62,10 +59,6 @@ public class PrimaryViewController implements Initializable {
 
     public void clearAll(Event event) {
         processTabPane.clear();
-    }
-
-    public ToggleButton getFxTracingSwitch() {
-        return recordSwitchButton;
     }
 
     public void openRecordedDump(ActionEvent actionEvent) {
