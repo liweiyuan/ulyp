@@ -17,13 +17,13 @@ public class FontSizeChanger {
     private int currentFontSize = 16;
 
     public void upscale(Scene scene) {
-        int font = currentFontSize++;
+        int font = ++currentFontSize;
 
         refreshFont(scene, font);
     }
 
     public void downscale(Scene scene) {
-        int font = currentFontSize--;
+        int font = --currentFontSize;
 
         refreshFont(scene, font);
     }
