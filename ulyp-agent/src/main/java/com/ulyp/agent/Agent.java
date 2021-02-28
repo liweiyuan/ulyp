@@ -87,7 +87,7 @@ public class Agent {
 
         MethodDescriptionFactory methodDescriptionFactory = new MethodDescriptionFactory(recordingStartMethodList);
 
-        AgentBuilder agentBuilder = new AgentBuilder.Default()
+        AgentBuilder.Identified.Extendable agentBuilder = new AgentBuilder.Default()
                 .type(finalMatcher)
                 .transform((builder, typeDescription, classLoader, module) -> builder.visit(
                         Advice.withCustomMapping()
@@ -98,19 +98,24 @@ public class Agent {
                                         .and(ElementMatchers.not(ElementMatchers.isAbstract()))
                                         .and(ElementMatchers.not(ElementMatchers.isConstructor()))
                                 )
-                ))
-                /*.transform((builder, typeDescription, classLoader, module) -> builder.visit(
-                        Advice.withCustomMapping()
-                                .bind(methodDescriptionFactory)
-                                .to(ConstructorCallRecordingAdvice.class)
-                                .on(ElementMatchers.isConstructor())
-                ))*/
-                .with(AgentBuilder.TypeStrategy.Default.REDEFINE);
-                // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
+                ));
+
+        if (settings.shouldRecordConstructors()) {
+            agentBuilder = agentBuilder.transform((builder, typeDescription, classLoader, module) -> builder.visit(
+                    Advice.withCustomMapping()
+                            .bind(methodDescriptionFactory)
+                            .to(ConstructorCallRecordingAdvice.class)
+                            .on(ElementMatchers.isConstructor())
+            ));
+        }
+
+        AgentBuilder agent = agentBuilder.with(AgentBuilder.TypeStrategy.Default.REDEFINE);
+
+        // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 
         if (LoggingSettings.LOG_LEVEL == LogLevel.TRACE) {
-            agentBuilder = agentBuilder.with(AgentBuilder.Listener.StreamWriting.toSystemOut());
+            agent = agent.with(AgentBuilder.Listener.StreamWriting.toSystemOut());
         }
-        agentBuilder.installOn(instrumentation);
+        agent.installOn(instrumentation);
     }
 }

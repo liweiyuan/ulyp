@@ -25,6 +25,11 @@ public class SystemPropertiesSettings {
             throw new RuntimeException("Property " + FILE_PATH + " must be set");
         }
 
+        boolean shouldRecordConstructors = false;
+        if (System.getProperty(RECORD_CONSTRUCTORS) != null) {
+            shouldRecordConstructors = true;
+        }
+
         /*
         if (true) {
 
@@ -51,7 +56,8 @@ public class SystemPropertiesSettings {
                 recordingStartMethods,
                 maxTreeDepth,
                 maxRecordedMethodCallsPerMethod,
-                minRecordsCount
+                minRecordsCount,
+                shouldRecordConstructors
         );
     }
 
@@ -60,6 +66,7 @@ public class SystemPropertiesSettings {
     // TODO name
     public static final String START_METHOD_PROPERTY = "ulyp.methods";
     public static final String FILE_PATH = "ulyp.file";
+    public static final String RECORD_CONSTRUCTORS = "ulyp.constructors";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
     public static final String MAX_CALL_TO_RECORD_PER_METHOD = "ulyp.max-recorded-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
@@ -71,6 +78,7 @@ public class SystemPropertiesSettings {
     private final int maxTreeDepth;
     private final int maxCallsToRecordPerMethod;
     private final int minRecordsCountForLog;
+    private final boolean shouldRecordConstructors;
 
     public SystemPropertiesSettings(
             @NotNull UiAddress uiAddress,
@@ -79,7 +87,8 @@ public class SystemPropertiesSettings {
             @NotNull RecordingStartMethodList methodsToRecord,
             int maxTreeDepth,
             int maxCallsToRecordPerMethod,
-            int minRecordsCountForLog)
+            int minRecordsCountForLog,
+            boolean shouldRecordConstructors)
     {
         this.uiAddress = uiAddress;
         this.instrumentatedPackages = instrumentedPackages;
@@ -88,6 +97,7 @@ public class SystemPropertiesSettings {
         this.maxTreeDepth = maxTreeDepth;
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
         this.minRecordsCountForLog = minRecordsCountForLog;
+        this.shouldRecordConstructors = shouldRecordConstructors;
     }
 
     public int getMaxTreeDepth() {
@@ -116,6 +126,10 @@ public class SystemPropertiesSettings {
 
     public UiTransport buildUiTransport() {
         return uiAddress.buildTransport();
+    }
+
+    public boolean shouldRecordConstructors() {
+        return shouldRecordConstructors;
     }
 
     @Override
