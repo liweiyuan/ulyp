@@ -3,7 +3,7 @@ package com.ulyp.ui;
 import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.RenderedObject;
-import com.ulyp.ui.util.StringUtils;
+import com.ulyp.ui.util.ClassNameUtils;
 import com.ulyp.ui.util.TextBuilder;
 import com.ulyp.ui.util.WithStylesPane;
 import javafx.scene.Node;
@@ -87,7 +87,7 @@ public class RenderedCallRecord extends TextFlow {
         List<Node> result = new ArrayList<>();
 
         if (node.isStatic() || node.isConstructor()) {
-            result.add(text().text(StringUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
+            result.add(text().text(ClassNameUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
         } else {
             RenderedObject callee = RenderedObject.of(node.getCallee());
             callee.getChildren().forEach(child -> child.getStyleClass().add("ulyp-ctt-callee"));

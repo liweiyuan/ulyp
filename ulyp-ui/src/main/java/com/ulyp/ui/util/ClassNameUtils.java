@@ -1,6 +1,6 @@
 package com.ulyp.ui.util;
 
-public class StringUtils {
+public class ClassNameUtils {
 
     public static String toSimpleName(String name) {
         int lastDot = name.lastIndexOf('.');

@@ -10,7 +10,7 @@ import com.ulyp.ui.code.find.SourceCodeFinder;
 import com.ulyp.ui.font.FontSizeChanger;
 import com.ulyp.ui.util.ResizeEvent;
 import com.ulyp.ui.util.ResizeEventSupportingScrollPane;
-import com.ulyp.ui.util.StringUtils;
+import com.ulyp.ui.util.ClassNameUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
@@ -115,7 +115,7 @@ public class CallRecordTreeTab extends Tab {
         boolean complete = database.find(0).isComplete();
 
         return recordingInfo.getThreadName() + " " +
-                StringUtils.toSimpleName(root.getClassName()) + "." +  root.getMethodName() + "(" + recordingInfo.getLifetimeMillis() + " ms, " + database.countAll() + ")";
+                ClassNameUtils.toSimpleName(root.getClassName()) + "." +  root.getMethodName() + "(" + recordingInfo.getLifetimeMillis() + " ms, " + database.countAll() + ")";
     }
 
     private synchronized Tooltip getTooltipText() {
