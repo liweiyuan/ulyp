@@ -14,7 +14,7 @@ public class FontSizeChanger {
 
     private static final String STYLE_PREFIX = "ulyp-ctt-font-style";
 
-    private int currentFontSize = 14;
+    private int currentFontSize = 16;
 
     public void upscale(Scene scene) {
         int font = currentFontSize++;
