@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ulyp.ui.util.CssClass.CALL_TREE_PLAIN_TEXT;
+
 public class RenderedObjectArray extends RenderedObject {
 
     protected RenderedObjectArray(ObjectArrayRepresentation arrayRepresentation) {
@@ -20,20 +22,20 @@ public class RenderedObjectArray extends RenderedObject {
 
         List<Node> texts = new ArrayList<>();
 
-        texts.add(StyledText.of("[", "ulyp-ctt-sep"));
+        texts.add(StyledText.of("[", CALL_TREE_PLAIN_TEXT));
 
         for (int i = 0; i < renderedObjects.size(); i++) {
             texts.add(renderedObjects.get(i));
             if (i != renderedObjects.size() - 1 || renderedObjects.size() < arrayRepresentation.getLength()) {
-                texts.add(StyledText.of(", ", "ulyp-ctt-sep"));
+                texts.add(StyledText.of(", ", CALL_TREE_PLAIN_TEXT));
             }
         }
 
         if (renderedObjects.size() < arrayRepresentation.getLength()) {
-            texts.add(StyledText.of((arrayRepresentation.getLength() - renderedObjects.size()) + " more...", "ulyp-ctt-sep"));
+            texts.add(StyledText.of((arrayRepresentation.getLength() - renderedObjects.size()) + " more...", CALL_TREE_PLAIN_TEXT));
         }
 
-        texts.add(StyledText.of("]", "ulyp-ctt-sep"));
+        texts.add(StyledText.of("]", CALL_TREE_PLAIN_TEXT));
 
         super.getChildren().addAll(texts);
     }

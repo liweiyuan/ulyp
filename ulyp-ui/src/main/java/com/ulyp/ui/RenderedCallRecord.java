@@ -4,6 +4,7 @@ import com.ulyp.core.CallRecord;
 import com.ulyp.core.printers.ObjectRepresentation;
 import com.ulyp.ui.renderers.RenderedObject;
 import com.ulyp.ui.util.ClassNameUtils;
+import com.ulyp.ui.util.CssClass;
 import com.ulyp.ui.util.TextBuilder;
 import com.ulyp.ui.util.WithStylesPane;
 import javafx.scene.Node;
@@ -36,8 +37,8 @@ public class RenderedCallRecord extends TextFlow {
             List<Node> output = new ArrayList<>();
 
             if (renderSettings.showTypes()) {
-                output.add(text().text(node.getReturnValue().getType().getName()).style("ulyp-ctt-sep").build());
-                output.add(text().text(": ").style("ulyp-ctt-sep").build());
+                output.add(text().text(node.getReturnValue().getType().getName()).style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
             }
 
             RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get();
@@ -46,7 +47,7 @@ public class RenderedCallRecord extends TextFlow {
             }
 
             output.add(renderedObject);
-            output.add(text().text(" : ").style("ulyp-ctt-sep").build());
+            output.add(text().text(" : ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
             return output;
         } else {
             return Collections.emptyList();
@@ -57,28 +58,28 @@ public class RenderedCallRecord extends TextFlow {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
         List<Node> output = new ArrayList<>();
-        output.add(text().text("(").style("ulyp-ctt-sep").build());
+        output.add(text().text("(").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
 
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectRepresentation argValue = node.getArgs().get(i);
             if (renderSettings.showTypes()) {
-                output.add(text().text(argValue.getType().getName()).style("ulyp-ctt-sep").build());
-                output.add(text().text(": ").style("ulyp-ctt-sep").build());
+                output.add(text().text(argValue.getType().getName()).style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
             }
 
             if (hasParameterNames) {
                 output.add(text().text(node.getParameterNames().get(i)).style("ulyp-ctt-arg-name").build());
-                output.add(text().text(": ").style("ulyp-ctt-sep").build());
+                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
             }
 
             output.add(RenderedObject.of(argValue));
 
             if (i < node.getArgs().size() - 1) {
-                output.add(text().text(", ").style("ulyp-ctt-sep").build());
+                output.add(text().text(", ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
             }
         }
 
-        output.add(text().text(")").style("ulyp-ctt-sep").build());
+        output.add(text().text(")").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
         return output;
     }
 

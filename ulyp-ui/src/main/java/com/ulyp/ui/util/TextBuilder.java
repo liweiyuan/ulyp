@@ -21,6 +21,11 @@ public class TextBuilder {
         return this;
     }
 
+    public TextBuilder style(CssClass clazz) {
+        this.clazzes.add(clazz.getName());
+        return this;
+    }
+
     public Text build() {
         Text te = new Text(text);
         clazzes.forEach(cl -> te.getStyleClass().add(cl));

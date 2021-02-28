@@ -9,4 +9,10 @@ public class StyledText {
         text.getStyleClass().add(style);
         return text;
     }
+
+    public static Text of(String content, CssClass style) {
+        Text text = new Text(content);
+        text.getStyleClass().add(style.getName());
+        return text;
+    }
 }
