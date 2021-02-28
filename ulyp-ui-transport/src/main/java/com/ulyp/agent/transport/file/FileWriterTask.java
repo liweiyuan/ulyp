@@ -81,6 +81,6 @@ public class FileWriterTask implements Runnable {
                 ", exit records = " + new CallExitRecordList(request.getRecordLog().getExitRecords()).size());
 
         request.writeDelimitedTo(outputStream);
-//        outputStream.flush();
+        outputStream.flush();
     }
 }
