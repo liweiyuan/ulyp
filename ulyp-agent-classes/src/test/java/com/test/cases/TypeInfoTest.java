@@ -22,11 +22,9 @@ public class TypeInfoTest extends AbstractInstrumentationTest {
         );
 
         assertThat(root.getArgs().get(0).getPrintedText(), is("2"));
-        assertThat(root.getArgs().get(0).getType().getSimpleName(), is("AtomicInteger"));
         assertThat(root.getArgs().get(0).getType().getName(), is("java.util.concurrent.atomic.AtomicInteger"));
 
         assertThat(root.getArgs().get(1).getPrintedText(), is("3"));
-        assertThat(root.getArgs().get(1).getType().getSimpleName(), is("AtomicLong"));
         assertThat(root.getArgs().get(1).getType().getName(), is("java.util.concurrent.atomic.AtomicLong"));
 
         assertThat(root.getReturnValue(), instanceOf(StringObjectRepresentation.class));

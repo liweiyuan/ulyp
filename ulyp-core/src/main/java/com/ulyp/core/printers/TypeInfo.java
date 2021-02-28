@@ -20,10 +20,6 @@ public interface TypeInfo {
 
     String getName();
 
-    default String getSimpleName() {
-        return ClassUtils.getSimpleNameFromName(getName());
-    }
-
     Set<TypeTrait> getTraits();
 
     Set<String> getSuperClassesNames();

@@ -1,6 +1,5 @@
 package com.ulyp.core.printers;
 
-@FunctionalInterface
 // TODO retire
 public interface Printable {
 
@@ -9,5 +8,7 @@ public interface Printable {
     }
 
     // TODO can be retired
-    String print();
+    default String print() {
+        return "";
+    }
 }

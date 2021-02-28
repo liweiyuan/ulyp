@@ -1,16 +1,13 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
+import com.ulyp.core.DecodingContext;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.BinaryOutputAppender;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class CollectionDebugPrinter extends ObjectBinaryPrinter {
 
@@ -26,7 +23,7 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
-        long totalElements = input.readLong();
+        /*long totalElements = input.readLong();
         List<Printable> elements = new ArrayList<>();
         long writtenElements = input.readLong();
         for (int i = 0; i < writtenElements; i++) {
@@ -39,7 +36,8 @@ public class CollectionDebugPrinter extends ObjectBinaryPrinter {
                 elements.stream().map(Printable::print).collect(Collectors.joining()) +
                 (notShownElementsCount > 0 ? ", " + notShownElementsCount + " more..." : "") +
                 "]"
-        );
+        );*/
+        return null;
     }
 
     @Override

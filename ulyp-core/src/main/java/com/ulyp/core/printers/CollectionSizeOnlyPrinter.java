@@ -21,12 +21,14 @@ public class CollectionSizeOnlyPrinter extends ObjectBinaryPrinter {
 
     @Override
     public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
-        long size = input.readInt();
+        // TODO
+        /*long size = input.readInt();
         if (size == 0) {
             return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{}");
         } else {
             return new PlainObjectRepresentation(classDescription, classDescription.getSimpleName() + "{" + size + "}");
-        }
+        }*/
+        return null;
     }
 
     @Override
