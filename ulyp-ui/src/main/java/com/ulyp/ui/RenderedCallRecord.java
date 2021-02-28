@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.ulyp.ui.util.CssClass.*;
+
 public class RenderedCallRecord extends TextFlow {
 
     public RenderedCallRecord(CallRecord node, RenderSettings renderSettings) {
@@ -28,7 +30,7 @@ public class RenderedCallRecord extends TextFlow {
     }
 
     private static TextBuilder text() {
-        return new TextBuilder().style("ulyp-ctt");
+        return new TextBuilder();
     }
 
     private static List<Node> renderReturnValue(CallRecord node, RenderSettings renderSettings) {
@@ -37,17 +39,17 @@ public class RenderedCallRecord extends TextFlow {
             List<Node> output = new ArrayList<>();
 
             if (renderSettings.showTypes()) {
-                output.add(text().text(node.getReturnValue().getType().getName()).style(CssClass.CALL_TREE_PLAIN_TEXT).build());
-                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(node.getReturnValue().getType().getName()).style(CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
             }
 
-            RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), "ulyp-ctt-return-value").get();
+            RenderedObject renderedObject = new WithStylesPane<>(RenderedObject.of(node.getReturnValue()), CALL_TREE_RETURN_VALUE).get();
             if (node.hasThrown()) {
-                renderedObject = new WithStylesPane<>(renderedObject, "ulyp-ctt-thrown").get();
+                renderedObject = new WithStylesPane<>(renderedObject, CALL_TREE_THROWN).get();
             }
 
             output.add(renderedObject);
-            output.add(text().text(" : ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+            output.add(text().text(" : ").style(CALL_TREE_PLAIN_TEXT).build());
             return output;
         } else {
             return Collections.emptyList();
@@ -58,28 +60,28 @@ public class RenderedCallRecord extends TextFlow {
         boolean hasParameterNames = !node.getParameterNames().isEmpty() && node.getParameterNames().stream().noneMatch(name -> name.startsWith("arg"));
 
         List<Node> output = new ArrayList<>();
-        output.add(text().text("(").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+        output.add(text().text("(").style(CALL_TREE_PLAIN_TEXT).build());
 
         for (int i = 0; i < node.getArgs().size(); i++) {
             ObjectRepresentation argValue = node.getArgs().get(i);
             if (renderSettings.showTypes()) {
-                output.add(text().text(argValue.getType().getName()).style(CssClass.CALL_TREE_PLAIN_TEXT).build());
-                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(argValue.getType().getName()).style(CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
             }
 
             if (hasParameterNames) {
-                output.add(text().text(node.getParameterNames().get(i)).style("ulyp-ctt-arg-name").build());
-                output.add(text().text(": ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(node.getParameterNames().get(i)).style(CALL_TREE_ARG_NAME).build());
+                output.add(text().text(": ").style(CALL_TREE_PLAIN_TEXT).build());
             }
 
             output.add(RenderedObject.of(argValue));
 
             if (i < node.getArgs().size() - 1) {
-                output.add(text().text(", ").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+                output.add(text().text(", ").style(CALL_TREE_PLAIN_TEXT).build());
             }
         }
 
-        output.add(text().text(")").style(CssClass.CALL_TREE_PLAIN_TEXT).build());
+        output.add(text().text(")").style(CALL_TREE_PLAIN_TEXT).build());
         return output;
     }
 
@@ -88,17 +90,17 @@ public class RenderedCallRecord extends TextFlow {
         List<Node> result = new ArrayList<>();
 
         if (node.isStatic() || node.isConstructor()) {
-            result.add(text().text(ClassNameUtils.toSimpleName(node.getClassName())).style("ulyp-ctt-method-name").build());
+            result.add(text().text(ClassNameUtils.toSimpleName(node.getClassName())).style(CALL_TREE_METHOD_NAME).build());
         } else {
             RenderedObject callee = RenderedObject.of(node.getCallee());
-            callee.getChildren().forEach(child -> child.getStyleClass().add("ulyp-ctt-callee"));
+            callee.getChildren().forEach(child -> child.getStyleClass().addAll(CALL_TREE_CALLEE.getCssClasses()));
             result.add(callee);
         }
-        result.add(text().text(".").style("ulyp-ctt-method-name").build());
+        result.add(text().text(".").style(CssClass.CALL_TREE_METHOD_NAME).build());
 
-        TextBuilder methodNameBuilder = text().text(node.getMethodName()).style("ulyp-ctt-method-name");
+        TextBuilder methodNameBuilder = text().text(node.getMethodName()).style(CssClass.CALL_TREE_METHOD_NAME);
         if (node.isStatic()) {
-            methodNameBuilder = methodNameBuilder.style("ulyp-ctt-static-method-name");
+            methodNameBuilder = methodNameBuilder.style(CssClass.CALL_TREE_METHOD_NAME);
         }
         result.add(methodNameBuilder.build());
         return result;

@@ -1,17 +1,25 @@
 package com.ulyp.ui.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum CssClass {
 
-    CALL_TREE_PLAIN_TEXT("ulyp-ctt-sep"),
-    CALL_TREE_IDENTITY_REPR("ulyp-ctt-identity");
+    CALL_TREE_PLAIN_TEXT("ulyp-ctt", "ulyp-ctt-sep"),
+    CALL_TREE_IDENTITY_REPR("ulyp-ctt", "ulyp-ctt-identity"),
+    CALL_TREE_METHOD_NAME("ulyp-ctt", "ulyp-ctt-method-name"),
+    CALL_TREE_RETURN_VALUE("ulyp-ctt", "ulyp-ctt-return-value"),
+    CALL_TREE_THROWN("ulyp-ctt", "ulyp-ctt-thrown"),
+    CALL_TREE_ARG_NAME("ulyp-ctt", "ulyp-ctt-arg-name"),
+    CALL_TREE_CALLEE("ulyp-ctt", "ulyp-ctt-callee");
 
-    private final String className;
+    private final List<String> classes;
 
-    CssClass(String cssName) {
-        this.className = cssName;
+    CssClass(String... classes) {
+        this.classes = Arrays.asList(classes);
     }
 
-    public String getName() {
-        return className;
+    public List<String> getCssClasses() {
+        return classes;
     }
 }

@@ -22,7 +22,7 @@ public class TextBuilder {
     }
 
     public TextBuilder style(CssClass clazz) {
-        this.clazzes.add(clazz.getName());
+        this.clazzes.addAll(clazz.getCssClasses());
         return this;
     }
 

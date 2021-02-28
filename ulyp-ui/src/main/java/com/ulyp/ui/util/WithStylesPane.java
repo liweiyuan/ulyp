@@ -8,8 +8,8 @@ public class WithStylesPane<T extends Pane> {
 
     private final T pane;
 
-    public WithStylesPane(T pane, String... styles) {
-        pane.getChildren().forEach(child -> Arrays.stream(styles).forEach(style -> child.getStyleClass().add(style)));
+    public WithStylesPane(T pane, CssClass... classes) {
+        pane.getChildren().forEach(child -> Arrays.stream(classes).forEach(style -> child.getStyleClass().addAll(style.getCssClasses())));
 
         this.pane = pane;
     }
