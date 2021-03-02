@@ -53,6 +53,7 @@ public class Agent {
         System.out.println(ULYP_LOGO);
         System.out.println("Successfully connected to UI, logging level = " + logLevel +
                 ", instrumentation packages = " + settings.getInstrumentatedPackages() +
+                ", excluded from instrumentation packages = " + settings.getExcludedFromInstrumentationPackages() +
                 ", recording will start at " + settings.getMethodsToRecord());
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
