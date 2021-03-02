@@ -68,6 +68,7 @@ public class Agent {
         excludedPackages.add("java");
         excludedPackages.add("javax");
         excludedPackages.add("jdk");
+        excludedPackages.add("sun");
 
         for (String excludedPackage : excludedPackages) {
             if (tracingMatcher == null) {
