@@ -29,6 +29,21 @@ public class BinaryInputOutputTest {
     }
 
     @Test
+    public void testRollingBack() throws Exception {
+        try (BinaryOutputAppender appender = binaryOutput.appender()) {
+            Checkpoint checkpoint = appender.checkpoint();
+            appender.append("abc");
+            checkpoint.rollback();
+
+            try (BinaryOutputAppender nested = binaryOutput.appender()) {
+                nested.append("xyz");
+            }
+        }
+
+        assertEquals("xyz", binaryInput.readString());
+    }
+
+    @Test
     public void testSimpleReadWriteUtf8String() throws Exception {
         try (BinaryOutputAppender appender = binaryOutput.appender()) {
             appender.append("АБЦ");

@@ -1,17 +1,23 @@
 package com.ulyp.core.printers;
 
-import com.ulyp.core.DecodingContext;
 import com.ulyp.core.AgentRuntime;
+import com.ulyp.core.DecodingContext;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 import com.ulyp.core.printers.bytes.BinaryOutputAppender;
+import com.ulyp.core.printers.bytes.Checkpoint;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class CollectionPrinter extends ObjectBinaryPrinter {
 
-    private static final ObjectBinaryPrinter collectionSizeOnlyPrinter = new CollectionSizeOnlyPrinter((byte) -1);
-    private static final ObjectBinaryPrinter collectionDebugPrinter = new CollectionDebugPrinter((byte) -1);
+    private volatile boolean active = false;
 
-    private volatile boolean shouldRecordItems = false;
+    private static final int RECORDED_ITEMS = 1;
+    private static final int RECORDED_IDENTITY_ONLY = 0;
 
     protected CollectionPrinter(byte id) {
         super(id);
@@ -19,33 +25,76 @@ public class CollectionPrinter extends ObjectBinaryPrinter {
 
     @Override
     boolean supports(TypeInfo type) {
-        return type.isCollection();
+        return active && type.isCollection();
+    }
+
+    public void activate() {
+        this.active = true;
     }
 
     @Override
     public ObjectRepresentation read(TypeInfo classDescription, BinaryInput input, DecodingContext decodingContext) {
-        boolean recordItems = input.readBoolean();
-        if (recordItems) {
-            return collectionDebugPrinter.read(classDescription, input, decodingContext);
+        int recordedItems = input.readInt();
+
+        if (recordedItems == RECORDED_ITEMS) {
+            int collectionSize = input.readInt();
+            List<ObjectRepresentation> items = new ArrayList<>();
+            int recordedItemsCount = input.readInt();
+            for (int i = 0; i < recordedItemsCount; i++) {
+                TypeInfo itemClassTypeInfo = decodingContext.getType(input.readInt());
+                ObjectBinaryPrinter printer = ObjectBinaryPrinterType.printerForId(input.readByte());
+                items.add(printer.read(itemClassTypeInfo, input, decodingContext));
+            }
+            return new CollectionRepresentation(
+                    classDescription,
+                    collectionSize,
+                    items
+            );
         } else {
-            return collectionSizeOnlyPrinter.read(classDescription, input, decodingContext);
+            return ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().read(classDescription, input, decodingContext);
         }
     }
 
     @Override
     public void write(Object object, TypeInfo classDescription, BinaryOutput out, AgentRuntime runtime) throws Exception {
-        boolean recordItems = this.shouldRecordItems;
         try (BinaryOutputAppender appender = out.appender()) {
-            appender.append(recordItems);
-            if (recordItems) {
-                collectionDebugPrinter.write(object, appender, runtime);
+
+            if (active) {
+                appender.append(RECORDED_ITEMS);
+                Checkpoint checkpoint = appender.checkpoint();
+                try {
+                    Collection<?> collection = (Collection<?>) object;
+                    int length = collection.size();
+                    appender.append(length);
+                    int itemsToRecord = Math.min(3, length);
+                    appender.append(itemsToRecord);
+                    Iterator<?> iterator = collection.iterator();
+                    int recorded = 0;
+
+                    while (recorded < itemsToRecord && iterator.hasNext()) {
+                        Object item = iterator.next();
+                        TypeInfo itemType = runtime.get(item);
+                        appender.append(itemType.getId());
+                        ObjectBinaryPrinter printer = item != null ? itemType.getSuggestedPrinter() : ObjectBinaryPrinterType.NULL_PRINTER.getInstance();
+                        appender.append(printer.getId());
+                        printer.write(item, itemType, appender, runtime);
+                        recorded++;
+                    }
+                } catch (Throwable throwable) {
+                    checkpoint.rollback();
+                    active = false;
+                    writeIdentity(object, out, runtime);
+                }
             } else {
-                collectionSizeOnlyPrinter.write(object, appender, runtime);
+                writeIdentity(object, out, runtime);
             }
         }
     }
 
-    public void setShouldRecordItems(boolean recordItems) {
-        this.shouldRecordItems = recordItems;
+    private void writeIdentity(Object object, BinaryOutput out, AgentRuntime runtime) throws Exception {
+        try (BinaryOutputAppender appender = out.appender()) {
+            appender.append(RECORDED_IDENTITY_ONLY);
+            ObjectBinaryPrinterType.IDENTITY_PRINTER.getInstance().write(object, appender, runtime);
+        }
     }
 }

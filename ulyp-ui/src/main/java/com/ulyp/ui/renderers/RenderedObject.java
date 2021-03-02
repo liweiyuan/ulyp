@@ -31,6 +31,9 @@ public abstract class RenderedObject extends TextFlow {
         } else if (repr instanceof ObjectArrayRepresentation) {
             objectValue = new RenderedObjectArray((ObjectArrayRepresentation) repr, renderSettings);
 
+        } else if (repr instanceof CollectionRepresentation) {
+
+            objectValue = new RenderedCollection((CollectionRepresentation) repr, renderSettings);
         } else if (repr instanceof ClassObjectRepresentation) {
             objectValue = new RenderedClassObject((ClassObjectRepresentation) repr, renderSettings);
         } else if (repr instanceof IdentityObjectRepresentation) {

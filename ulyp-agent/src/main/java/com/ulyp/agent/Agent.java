@@ -4,6 +4,8 @@ import com.ulyp.agent.settings.RecordingStartMethodList;
 import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.core.log.LogLevel;
 import com.ulyp.core.log.LoggingSettings;
+import com.ulyp.core.printers.CollectionPrinter;
+import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.core.process.ProcessInfo;
 import com.ulyp.core.util.ClassUtils;
 import com.ulyp.core.util.MethodMatcher;
@@ -54,7 +56,13 @@ public class Agent {
         System.out.println("Successfully connected to UI, logging level = " + logLevel +
                 ", instrumentation packages = " + settings.getInstrumentatedPackages() +
                 ", excluded from instrumentation packages = " + settings.getExcludedFromInstrumentationPackages() +
-                ", recording will start at " + settings.getMethodsToRecord());
+                ", recording will start at " + settings.getMethodsToRecord() +
+                ", will record collection item (may be dangerous) = " + settings.shouldRecordCollections());
+
+        if (settings.shouldRecordCollections()) {
+            CollectionPrinter printer = (CollectionPrinter) ObjectBinaryPrinterType.COLLECTION_DEBUG_PRINTER.getInstance();
+            printer.activate();
+        }
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;
 
@@ -112,7 +120,6 @@ public class Agent {
         }
 
         AgentBuilder agent = agentBuilder.with(AgentBuilder.TypeStrategy.Default.REDEFINE);
-
         // .with(AgentBuilder.LambdaInstrumentationStrategy.ENABLED);
 
         if (LoggingSettings.LOG_LEVEL == LogLevel.TRACE) {

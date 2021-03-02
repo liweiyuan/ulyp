@@ -78,6 +78,12 @@ public class BinaryOutputAppender implements AutoCloseable, BinaryOutput {
     }
 
     @Override
+    public Checkpoint checkpoint() {
+        final int currentPos = this.bytePos;
+        return () -> this.bytePos = currentPos;
+    }
+
+    @Override
     public void writeBool(boolean val) throws Exception {
         append(val);
     }

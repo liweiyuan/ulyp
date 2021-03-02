@@ -5,6 +5,7 @@ import com.ulyp.core.AgentRuntime;
 import com.ulyp.core.printers.bytes.BinaryInput;
 import com.ulyp.core.printers.bytes.BinaryOutput;
 
+// TODO delete
 public class ObjectArraySizePrinter extends ObjectBinaryPrinter {
 
     protected ObjectArraySizePrinter(byte id) {

@@ -30,6 +30,11 @@ public class SystemPropertiesSettings {
             shouldRecordConstructors = true;
         }
 
+        boolean shouldRecordCollections = false;
+        if (System.getProperty(RECORD_COLLECTIONS) != null) {
+            shouldRecordCollections = true;
+        }
+
         /*
         if (true) {
 
@@ -57,7 +62,8 @@ public class SystemPropertiesSettings {
                 maxTreeDepth,
                 maxRecordedMethodCallsPerMethod,
                 minRecordsCount,
-                shouldRecordConstructors
+                shouldRecordConstructors,
+                shouldRecordCollections
         );
     }
 
@@ -67,6 +73,7 @@ public class SystemPropertiesSettings {
     public static final String START_METHOD_PROPERTY = "ulyp.methods";
     public static final String FILE_PATH = "ulyp.file";
     public static final String RECORD_CONSTRUCTORS = "ulyp.constructors";
+    public static final String RECORD_COLLECTIONS = "ulyp.collections";
     public static final String MAX_DEPTH_PROPERTY = "ulyp.max-depth";
     public static final String MAX_CALL_TO_RECORD_PER_METHOD = "ulyp.max-recorded-calls-per-method";
     public static final String MIN_TRACE_COUNT = "ulyp.min-trace-count";
@@ -79,6 +86,7 @@ public class SystemPropertiesSettings {
     private final int maxCallsToRecordPerMethod;
     private final int minRecordsCountForLog;
     private final boolean shouldRecordConstructors;
+    private final boolean shouldRecordCollections;
 
     public SystemPropertiesSettings(
             @NotNull UiAddress uiAddress,
@@ -88,7 +96,8 @@ public class SystemPropertiesSettings {
             int maxTreeDepth,
             int maxCallsToRecordPerMethod,
             int minRecordsCountForLog,
-            boolean shouldRecordConstructors)
+            boolean shouldRecordConstructors,
+            boolean shouldRecordCollections)
     {
         this.uiAddress = uiAddress;
         this.instrumentatedPackages = instrumentedPackages;
@@ -98,6 +107,7 @@ public class SystemPropertiesSettings {
         this.maxCallsToRecordPerMethod = maxCallsToRecordPerMethod;
         this.minRecordsCountForLog = minRecordsCountForLog;
         this.shouldRecordConstructors = shouldRecordConstructors;
+        this.shouldRecordCollections = shouldRecordCollections;
     }
 
     public int getMaxTreeDepth() {
@@ -130,6 +140,10 @@ public class SystemPropertiesSettings {
 
     public boolean shouldRecordConstructors() {
         return shouldRecordConstructors;
+    }
+
+    public boolean shouldRecordCollections() {
+        return shouldRecordCollections;
     }
 
     @Override

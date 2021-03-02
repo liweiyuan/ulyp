@@ -16,6 +16,7 @@ public class TestSettingsBuilder {
     private PackageList excludedFromInstrumentationPackages = new PackageList();
     private int minRecordsForLog = 1;
     private int maxDepth = Integer.MAX_VALUE;
+    private boolean shouldRecordCollections = false;
     private int maxCallsPerMethod = Integer.MAX_VALUE;
 
     private boolean recordCollectionItems = false;
@@ -32,17 +33,9 @@ public class TestSettingsBuilder {
         return this;
     }
 
-    public boolean getRecordCollectionItems() {
-        return recordCollectionItems;
-    }
-
-    public TestSettingsBuilder setRecordCollectionItems(boolean recordCollectionItems) {
-        this.recordCollectionItems = recordCollectionItems;
+    public TestSettingsBuilder recordCollections() {
+        shouldRecordCollections = true;
         return this;
-    }
-
-    public PackageList getInstrumentedPackages() {
-        return instrumentedPackages;
     }
 
     public TestSettingsBuilder setInstrumentedPackages(String... packages) {
@@ -114,6 +107,10 @@ public class TestSettingsBuilder {
 
         params.add("-D" + SystemPropertiesSettings.START_METHOD_PROPERTY + "=" + methodToRecord.toString());
         params.add("-D" + SystemPropertiesSettings.FILE_PATH + "=" + outputFile);
+        if (shouldRecordCollections) {
+            params.add("-D" + SystemPropertiesSettings.RECORD_COLLECTIONS);
+        }
+
 //        params.add("-D" + SystemPropertiesSettings.MAX_DEPTH_PROPERTY + "=" + maxTreeDepth);
 //        params.add("-D" + SystemPropertiesSettings.MIN_TRACE_COUNT + "=" + minRecordsCountForLog);
 //        params.add("-D" + SystemPropertiesSettings.MAX_CALL_TO_RECORD_PER_METHOD + "=" + maxCallsToRecordPerMethod);

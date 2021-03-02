@@ -11,6 +11,11 @@ public abstract class AbstractBinaryOutput implements BinaryOutput {
         return appender;
     }
 
+    @Override
+    public Checkpoint checkpoint() {
+        return appender.checkpoint();
+    }
+
     public void writeBool(boolean val) throws Exception {
         try (BinaryOutputAppender appender = appender()) {
             appender.append(val);

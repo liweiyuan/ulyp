@@ -4,6 +4,8 @@ public interface BinaryOutput {
 
     BinaryOutputAppender appender();
 
+    Checkpoint checkpoint();
+
     void writeBool(boolean val) throws Exception;
 
     void writeInt(int val) throws Exception;
