@@ -30,6 +30,9 @@ public class TestSettingsBuilder {
         if (instrumentedPackages.isEmpty()) {
             instrumentedPackages = new PackageList(mainClassName.getPackage().getName());
         }
+        if (methodToRecord == null) {
+            this.methodToRecord = new MethodMatcher(mainClassName, "main");
+        }
         return this;
     }
 
@@ -101,7 +104,7 @@ public class TestSettingsBuilder {
         List<String> params = new ArrayList<>();
 
         params.add("-D" + SystemPropertiesSettings.PACKAGES_PROPERTY + "=" + String.join(",", instrumentedPackages));
-        if (excludedFromInstrumentationPackages.isEmpty()) {
+        if (!excludedFromInstrumentationPackages.isEmpty()) {
             params.add("-D" + SystemPropertiesSettings.EXCLUDE_PACKAGES_PROPERTY + "=" + String.join(",", excludedFromInstrumentationPackages));
         }
 

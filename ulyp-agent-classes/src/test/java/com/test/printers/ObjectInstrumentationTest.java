@@ -4,11 +4,11 @@ import com.test.cases.AbstractInstrumentationTest;
 import com.test.cases.SafeCaller;
 import com.test.cases.util.TestSettingsBuilder;
 import com.ulyp.core.CallRecord;
+import com.ulyp.core.printers.IdentityObjectRepresentation;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.Assert.assertThat;
 
 public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
@@ -22,7 +22,8 @@ public class ObjectInstrumentationTest extends AbstractInstrumentationTest {
         );
 
         assertThat(root.getArgs(), Matchers.hasSize(2));
-        assertThat(root.getArgs().get(0).getPrintedText(), matchesPattern("Object@.+"));
+        assertThat(root.getArgs().get(0), Matchers.instanceOf(IdentityObjectRepresentation.class));
+        assertThat(root.getArgs().get(1), Matchers.instanceOf(IdentityObjectRepresentation.class));
     }
 
     @Test
