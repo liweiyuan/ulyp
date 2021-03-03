@@ -2,15 +2,19 @@ package com.ulyp.core.printers;
 
 public class StringObjectRepresentation extends ObjectRepresentation {
 
-    private final String text;
+    private final String value;
 
-    public StringObjectRepresentation(TypeInfo classDescription, String text) {
+    public StringObjectRepresentation(TypeInfo classDescription, String value) {
         super(classDescription);
-        this.text = text;
+        this.value = value;
     }
 
     @Override
     public String print() {
-        return text;
+        return value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

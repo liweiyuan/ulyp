@@ -4,9 +4,7 @@ import com.ulyp.core.printers.*;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ByteBuddyTypeInfo implements TypeInfo {
@@ -17,6 +15,8 @@ public class ByteBuddyTypeInfo implements TypeInfo {
     private static final Set<TypeDescription.Generic> BOXED_INTEGRAL_TYPES = new HashSet<>();
     private static final Set<TypeDescription.Generic> PRIMITIVE_DOUBLE_TYPES = new HashSet<>();
     private static final TypeDescription CLASS_OBJECT_ERASED = TypeDescription.Generic.CLASS.asErasure();
+    private static final TypeDescription COLLECTION_TYPE = TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(Collection.class).asErasure();
+    private static final TypeDescription MAP_TYPE = TypeDescription.Generic.OfNonGenericType.ForLoadedType.of(Map.class).asErasure();
 
     private static final AtomicInteger classDescriptionId = new AtomicInteger(0);
 
@@ -107,9 +107,9 @@ public class ByteBuddyTypeInfo implements TypeInfo {
             }
         } else if (type.isEnum()) {
             traits.add(TypeTrait.ENUM);
-        } else if (getInterfacesClassesNames().contains("java.util.Collection")) {
+        } else if (getInterfacesClassesNames().contains("java.util.Collection") || type.asErasure().equals(COLLECTION_TYPE)) {
             traits.add(TypeTrait.COLLECTION);
-        } else if (getInterfacesClassesNames().contains("java.util.Map")) {
+        } else if (getInterfacesClassesNames().contains("java.util.Map") || type.asErasure().equals(MAP_TYPE)) {
             traits.add(TypeTrait.MAP);
         } else if (type.isInterface()) {
             traits.add(TypeTrait.INTERFACE);

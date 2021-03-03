@@ -105,8 +105,8 @@ public abstract class CallRecordDatabaseTest {
 
         CallRecord secondCall = firstCall.getChildren().get(0);
 
-        assertThat(secondCall.getReturnValue(), Matchers.instanceOf(StringObjectRepresentation.class));
-        assertEquals("zzzxzxzx", secondCall.getReturnValue().print());
+        StringObjectRepresentation returnValue = (StringObjectRepresentation) secondCall.getReturnValue();
+        assertEquals("zzzxzxzx", returnValue.getValue());
     }
 
     @Test

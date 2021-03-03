@@ -9,7 +9,7 @@ public class RenderedStringObject extends RenderedObject {
 
     RenderedStringObject(StringObjectRepresentation representation, TypeInfo classDescription, RenderSettings renderSettings) {
         super(classDescription);
-        Text text = new MultilinedText("\"" + representation.print() + "\"");
+        Text text = new MultilinedText("\"" + representation.getValue() + "\"");
         text.getStyleClass().add("ulyp-ctt-string");
 
         super.getChildren().add(text);

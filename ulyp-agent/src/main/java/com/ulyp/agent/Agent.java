@@ -58,7 +58,7 @@ public class Agent {
                 ", instrumentation packages = " + settings.getInstrumentatedPackages() +
                 ", excluded from instrumentation packages = " + settings.getExcludedFromInstrumentationPackages() +
                 ", recording will start at " + settings.getMethodsToRecord() +
-                ", will record collection item (may be dangerous) = " + settings.shouldRecordCollections());
+                ", will record collection item (may cause side effects) = " + settings.shouldRecordCollections());
 
         if (settings.shouldRecordCollections()) {
             CollectionPrinter printer = (CollectionPrinter) ObjectBinaryPrinterType.COLLECTION_DEBUG_PRINTER.getInstance();

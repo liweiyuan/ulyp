@@ -8,7 +8,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.junit.Assert.*;
 
@@ -121,6 +122,34 @@ public class ByteBuddyTypeInfoTest {
         assertThat(ByteBuddyTypeInfo.of(Integer.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
 
         assertThat(ByteBuddyTypeInfo.of(Long.class).getTraits(), Matchers.hasItem(TypeTrait.NUMBER));
+    }
+
+    @Test
+    public void testCollectionTraits() {
+
+        assertThat(ByteBuddyTypeInfo.of(Collection.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(Queue.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(ConcurrentLinkedQueue.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(List.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(ArrayList.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(Set.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+
+        assertThat(ByteBuddyTypeInfo.of(HashSet.class).getTraits(), Matchers.hasItem(TypeTrait.COLLECTION));
+    }
+
+    @Test
+    public void testMapTraits() {
+
+        assertThat(ByteBuddyTypeInfo.of(Map.class).getTraits(), Matchers.hasItem(TypeTrait.MAP));
+
+        assertThat(ByteBuddyTypeInfo.of(HashMap.class).getTraits(), Matchers.hasItem(TypeTrait.MAP));
+
+        assertThat(ByteBuddyTypeInfo.of(LinkedHashMap.class).getTraits(), Matchers.hasItem(TypeTrait.MAP));
     }
 
     @Test

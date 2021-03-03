@@ -34,10 +34,10 @@ public class CollectionPrintingTest extends AbstractInstrumentationTest {
         List<ObjectRepresentation> items = collection.getRecordedItems();
 
         StringObjectRepresentation firstItemRepr = (StringObjectRepresentation) items.get(0);
-        Assert.assertEquals("a", firstItemRepr.print());
+        Assert.assertEquals("a", firstItemRepr.getValue());
 
         StringObjectRepresentation secondItemRepr = (StringObjectRepresentation) items.get(1);
-        Assert.assertEquals("b", secondItemRepr.print());
+        Assert.assertEquals("b", secondItemRepr.getValue());
     }
 
     @Test
