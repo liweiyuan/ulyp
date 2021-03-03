@@ -54,6 +54,10 @@ public interface TypeInfo {
 
     boolean isCollection();
 
+    default boolean isMap() {
+        return getTraits().contains(TypeTrait.MAP);
+    }
+
     boolean isClassObject();
 
     boolean hasToStringMethod();

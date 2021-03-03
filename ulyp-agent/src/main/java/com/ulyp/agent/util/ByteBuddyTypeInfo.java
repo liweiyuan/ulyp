@@ -107,6 +107,10 @@ public class ByteBuddyTypeInfo implements TypeInfo {
             }
         } else if (type.isEnum()) {
             traits.add(TypeTrait.ENUM);
+        } else if (getInterfacesClassesNames().contains("java.util.Collection")) {
+            traits.add(TypeTrait.COLLECTION);
+        } else if (getInterfacesClassesNames().contains("java.util.Map")) {
+            traits.add(TypeTrait.MAP);
         } else if (type.isInterface()) {
             traits.add(TypeTrait.INTERFACE);
         } else if (type.asErasure().equals(CLASS_OBJECT_ERASED)) {
@@ -216,7 +220,7 @@ public class ByteBuddyTypeInfo implements TypeInfo {
 
     @Override
     public boolean isCollection() {
-        return getInterfacesClassesNames().contains("java.util.Collection");
+        return typeTraits.contains(TypeTrait.COLLECTION);
     }
 
     @Override

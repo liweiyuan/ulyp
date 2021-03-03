@@ -5,6 +5,7 @@ import com.ulyp.agent.settings.SystemPropertiesSettings;
 import com.ulyp.core.log.LogLevel;
 import com.ulyp.core.log.LoggingSettings;
 import com.ulyp.core.printers.CollectionPrinter;
+import com.ulyp.core.printers.MapPrinter;
 import com.ulyp.core.printers.ObjectBinaryPrinterType;
 import com.ulyp.core.process.ProcessInfo;
 import com.ulyp.core.util.ClassUtils;
@@ -62,6 +63,9 @@ public class Agent {
         if (settings.shouldRecordCollections()) {
             CollectionPrinter printer = (CollectionPrinter) ObjectBinaryPrinterType.COLLECTION_DEBUG_PRINTER.getInstance();
             printer.activate();
+
+            MapPrinter mapPrinter = (MapPrinter) ObjectBinaryPrinterType.MAP_PRINTER.getInstance();
+            mapPrinter.activate();
         }
 
         ElementMatcher.Junction<TypeDescription> tracingMatcher = null;

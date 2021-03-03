@@ -11,6 +11,8 @@ public enum TypeTrait {
     PRIMITIVE_ARRAY,
     NON_PRIMITIVE_ARRAY,
     ENUM,
+    COLLECTION,
+    MAP,
     INTERFACE,
     TYPE_VAR,
     CLASS_OBJECT,

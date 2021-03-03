@@ -8,11 +8,9 @@ import com.ulyp.core.printers.bytes.BinaryOutput;
 public abstract class ObjectBinaryPrinter {
 
     private final byte id;
-    private final String simpleClassName;
 
     protected ObjectBinaryPrinter(byte id) {
         this.id = id;
-        this.simpleClassName = getClass().getSimpleName();
     }
 
     public final byte getId() {
